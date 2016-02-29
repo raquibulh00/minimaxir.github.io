@@ -1,0 +1,465 @@
+<!doctype html>
+<!--
+  Material Design Lite
+  Copyright 2015 Google Inc. All rights reserved.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      https://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License
+-->
+<html lang="en">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Facebook Reactions and the Problems With Quantifying Likes Differently</title>
+  
+  
+    
+  
+  
+  
+   
+ <meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@minimaxir">
+<meta name="twitter:creator" content="@minimaxir">
+
+  <meta name="twitter:title" content="Facebook Reactions and the Problems With Quantifying Likes Differently">
+
+
+  <meta name="twitter:url" content="http://minimaxir.com/2016/02/facebook-reactions/">
+
+
+  <meta name="twitter:description" content="Apparently, there is little statistical relationship between things that are cute and things that make you go YAAASS.">
+
+
+  <meta name="twitter:image:src" content="http://minimaxir.com/img/facebook_react2.png">
+
+ 
+ <meta content="minimaxir | Max Woolf's Blog" property="og:site_name">
+
+  <meta content="Facebook Reactions and the Problems With Quantifying Likes Differently" property="og:title">
+
+
+  <meta content="article" property="og:type">
+
+
+  <meta content="Apparently, there is little statistical relationship between things that are cute and things that make you go YAAASS." property="og:description">
+
+
+  <meta content="http://minimaxir.com/2016/02/facebook-reactions/" property="og:url">
+
+
+
+  <meta content="http://minimaxir.com/img/facebook_react2.png" property="og:image">
+
+
+  
+  <meta content="rant" property="article:section">
+  
+
+
+  
+
+
+<meta property="og:locale"    content="en_us" />
+  
+  
+  <meta name="description" content="Last week, Facebook added Facebook Reactions, allowing users to do more than just &ldquo;Like&rdquo; posts and statuses as they have done for the past decade...">
+  <link href="/rss.xml" rel="alternate" title="minimaxir | Max Woolf's Blog" type="application/atom+xml">
+
+  <link rel="canonical" href="http://minimaxir.com/2016/02/facebook-reactions/">
+  
+      <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <!-- Add to homescreen for Safari on iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="white">
+    <meta name="apple-mobile-web-app-title" content="minimaxir">
+    <link rel="apple-touch-icon-precomposed" href="apple-touch-icon-precomposed.png">
+
+    <!-- SEO: If your mobile URL is different from the desktop URL, add a canonical link to the desktop page https://developers.google.com/webmasters/smartphone-sites/feature-phones -->
+    <!--
+    <link rel="canonical" href="http://www.example.com/">
+    -->
+
+	<link rel="apple-touch-icon" sizes="57x57" href="http://minimaxir.com/favicon/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="http://minimaxir.com/favicon/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="http://minimaxir.com/favicon/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="http://minimaxir.com/favicon/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="http://minimaxir.com/favicon/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="http://minimaxir.com/favicon/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="http://minimaxir.com/favicon/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="http://minimaxir.com/favicon/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="http://minimaxir.com/favicon/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192"  href="http://minimaxir.com/favicon/android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://minimaxir.com/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="http://minimaxir.com/favicon/favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="http://minimaxir.com/favicon/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="http://minimaxir.com/favicon/ms-icon-144x144.png">
+<meta name="theme-color" content="#ffffff">
+    <!--<link href='//fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en' rel='stylesheet' type='text/css'> -->
+
+  
+  
+<link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.4/material.indigo-pink.min.css">
+<script src="https://storage.googleapis.com/code.getmdl.io/1.0.4/material.min.js" type="text/javascript"></script>
+<link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,400italic|Source+Code+Pro:400,700|Open+Sans+Condensed:700' rel='stylesheet' type='text/css'>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link rel="stylesheet" href="/css/styles.css">
+<link rel="stylesheet" href="/css/minimaxir.css">
+<link rel="stylesheet" href="/css/font-awesome.min.css"> 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+
+<script type="text/javascript">
+   $(document).ready(function() {
+ 
+  // Facebook
+	$( ".social.facebook" ).children().each(function(index,value) {
+	var facebook_button = $(this);
+	var url = facebook_button.attr("data");
+
+  jQuery.getJSON("http://graph.facebook.com/?id="+url, function(data) {
+  if (typeof data.shares != 'undefined') facebook_button.html("<i class=\"fa fa-facebook\"></i><span class=\"count mdl-cell--hide-phone\"> " + data.shares + "</span>");
+  else if (typeof data.likes != 'undefined') facebook_button.html("<i class=\"fa fa-facebook\"></i><span class=\"count mdl-cell--hide-phone\"> " + data.likes + "</span>");
+  else facebook_button.html("<i class=\"fa fa-facebook\"></i><span class=\"count mdl-cell--hide-phone\"> " + " 0</span>");
+  });
+  });
+ 
+ /*
+ // Twitter
+	$( ".social.twitter" ).children().each(function(index,value) {
+	var twitter_button = $(this);
+	var url = twitter_button.attr("data");
+
+  jQuery.getJSON("http://cdn.api.twitter.com/1/urls/count.json?url="+url+"&callback=?", function(data) {
+  twitter_button.html("<i class=\"fa fa-twitter\"></i><span class=\"count mdl-cell--hide-phone\"> " + data.count + "</span>");
+  });
+  });
+  */
+  
+  // LinkedIn
+	$( ".social.linkedin" ).children().each(function(index,value) {
+	var linkedin_button = $(this);
+	var url = linkedin_button.attr("data");
+
+  jQuery.getJSON("http://www.linkedin.com/countserv/count/share?url="+url+"&format=jsonp&callback=?", function(data) {
+  linkedin_button.html("<i class=\"fa fa-linkedin\"></i><span class=\"count mdl-cell--hide-phone\"> " + data.count + "</span>");
+  });
+  });
+  });  
+
+//$('.mdl-layout__drawer-button').html('<i class=\"fa fa-navicon\"></i>');
+</script>
+	</head>
+  <body>
+  
+  	<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header mdl-color--grey-100">
+  <header class="mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-800">
+    <!-- Top row, always visible -->
+    <div class="mdl-layout__header-row">
+      <!-- Title -->
+      <span class="mdl-layout-title">Max Woolf (@minimaxir)</span>
+      <div class="mdl-layout-spacer"></div>
+      <nav class="mdl-navigation mdl-layout--large-screen-only">
+      	<a class="mdl-navigation__link" href="/">Home</a>
+        <a class="mdl-navigation__link" href="/about/">About</a>
+        <a class="mdl-navigation__link" href="/contact">Contact</a>
+        <a class="mdl-navigation__link" href="/portfolio/">Portfolio</a>
+      </nav>
+      <div class="mdl-layout-spacer"></div>
+      <div class="social-icon-list mdl-layout--large-screen-only">
+    <a title="RSS" href="/rss.xml"><i class="fa fa-rss-square"></i></a>
+  </div>
+
+    </div>
+
+  </header>
+  <div class="mdl-layout__drawer">
+    <span class="mdl-layout-title">Max Woolf</span>
+    <nav class="mdl-navigation">
+      <a class="mdl-navigation__link" href="/"><i class="material-icons">home</i> Home</a>
+    	<a class="mdl-navigation__link" href="/about/"><i class="material-icons">person</i> About</a>
+        <a class="mdl-navigation__link" href="/contact"><i class="material-icons">contacts</i> Contact</a>
+        <a class="mdl-navigation__link" href="/portfolio/"><i class="material-icons">work</i> Portfolio</a>
+    </nav>
+    </div>
+  	
+		  	<div class="demo-ribbon hero" style="background: linear-gradient(to bottom, rgba(44, 62, 80, 0.80), rgba(44, 62, 80, 0.95)), url('/img/facebook_react2.png') no-repeat center center; background-size: cover;" >
+  	<div class="demo-container mdl-grid">
+  	<!--<h1 class="post-title">Facebook Reactions and the Problems With Quantifying Likes Differently</h1>-->
+  	
+  	<div class="mdl-cell mdl-cell--2-col mdl-cell--hide-tablet mdl-cell--hide-phone"></div>
+  	<div class="mdl-cell mdl-cell--8-col">
+  	<div class="post-title">
+  	<h1>Facebook Reactions and the Problems With Quantifying Likes Differently</h1>
+  	</div>
+  	
+  	<div class="post-meta">
+  	Feb 29, 2016
+  	
+  	
+  	<div class="sharing">
+  
+		  <span class="social facebook"><a href="http://www.facebook.com/share.php?u=http://minimaxir.com/2016/02/facebook-reactions/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data="http://minimaxir.com/2016/02/facebook-reactions/"><i class="fa fa-facebook"></i><span class="count mdl-cell--hide-phone"> -</span></a></span>
+  
+		<span class="social twitter"><a href="http://twitter.com/home/?status=Facebook Reactions and the Problems With Quantifying Likes Differently - http://minimaxir.com/2016/02/facebook-reactions/ - via @minimaxir"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data=http://minimaxir.com/2016/02/facebook-reactions/><i class="fa fa-twitter"></i></a> </span>
+
+  <span  class="social linkedin"><a href="http://www.linkedin.com/shareArticle?mini=true&title=Facebook Reactions and the Problems With Quantifying Likes Differently&url=http://minimaxir.com/2016/02/facebook-reactions/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=600');return false;" data=http://minimaxir.com/2016/02/facebook-reactions/><i class="fa fa-linkedin"></i><span class="count mdl-cell--hide-phone"> -</span></a> </span>
+   
+	</div>
+	
+  	</div>
+  	
+  	
+  	</div>
+  	
+
+	</div>
+  	</div>
+  	
+ <main class="demo-main mdl-layout__content">
+<div class="demo-container mdl-grid">
+ <div class="mdl-cell mdl-cell--2-col mdl-cell--hide-tablet mdl-cell--hide-phone"></div>
+ <div class="demo-content mdl-color--white mdl-shadow--4dp content mdl-color-text--grey-800 mdl-cell mdl-cell--8-col">
+
+<div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+
+  <article class="post-content">
+    <p>Last week, Facebook added <a href="http://newsroom.fb.com/news/2016/02/reactions-now-available-globally/">Facebook Reactions</a>, allowing users to do more than just &ldquo;Like&rdquo; posts and statuses as they have done for the past decade. Likes were the universal symbol of approval on social media. Now, Facebook users can apply more granular responses, from positive emotions like <strong>Love</strong>, to negative emotions such as <strong>Angry</strong>. This was widely believed to be Facebook&rsquo;s compromise instead of adding a Dislike button.</p>
+
+<p><img src="/img/facebook-reactions/facebook_react.png" alt="" /></p>
+
+<p>Of course, there&rsquo;s an ulterior motive. The use of reactions provides organic data on the sentiment of a status, which is helpful for numerous marketing and statistical applications. As <a href="http://www.buzzfeed.com/alexkantrowitz/facebook-reactions-launch-today">BuzzFeed notes</a>, Facebook ads may be able &ldquo;to write one product message for someone who mostly uses <strong>Sad</strong> and another who mostly uses <strong>Wow</strong> or <strong>Love.</strong>&rdquo;</p>
+
+<p>However, this isn&rsquo;t the first time a big social network has tried implementing reactions alongside Likes/Dislikes. Four years ago, YouTube added <a href="http://googlesystem.blogspot.com/2011/06/youtube-reactions.html">Reaction buttons</a> to their comments section:</p>
+
+<p><img src="/img/facebook-reactions/youtube-reactions.png" alt="" /></p>
+
+<p>&hellip;and removed them sometime after without fanfare, replacing it with the simple Like/Dislike bar.</p>
+
+<p>Presumably, YouTube implemented the buttons for the similar reason as Facebook. What makes things different now, if anything?</p>
+
+<h2>A Quantitative Approach to Feeling</h2>
+
+<p>Even after YouTube&rsquo;s failure, another data-driven website implemented reaction buttons: BuzzFeed (who else?). At the end of each article (in most categories), registered users can select a quirky reaction to indicate how they felt about the article.</p>
+
+<p><img src="/img/facebook-reactions/buzzfeedreactions.png" alt="" /></p>
+
+<p>The heart represents <strong>Love</strong> internally and is by-far the most-used reaction on BuzzFeed posts. When I started scraping BuzzFeed data in 2014 <a href="http://minimaxir.com/2015/01/linkbait/">to analyze clickbait</a>, I made sure to grab the reaction data of other reactions as well to see if there are any interesting trends or correlations between reactions. A cursory glance at the scraped reaction data revealed a problem that forced me to disregard it.</p>
+
+<p>An important part of variable selection for analysis and modeling is avoiding <em>redundant</em> features, as that can cause issues such as <a href="https://en.wikipedia.org/wiki/Multicollinearity">multicollinearity</a> and <a href="https://en.wikipedia.org/wiki/Overfitting">overfitting</a>. For Facebook, avoiding adding redundant Reactions was an <a href="https://medium.com/facebook-design/reactions-not-everything-in-life-is-likable-5c403de72a3f">explicit design goal</a> of the feature, but the positive emotions such as <strong>Like</strong> and <strong>Wow</strong> might be overly similar regardless (I believe it fair to compare the behavior of BuzzFeed users with the average Facebook user, given that they hit the same demographics). Do BuzzFeed readers use specific positive reactions differently? Did they use specific negative reactions?</p>
+
+<p>I rechecked my 2014 data in light of Facebook Reactions. The scraped dataset contains reaction data from 9,883 BuzzFeed articles in the Celebrity, Animals, Books, Longform, and Business categories. From that, I made a <a href="http://vita.had.co.nz/papers/gpp.pdf">pairs plot</a> for the counts of all the <em>positive</em> reactions on the articles to illustrate all bivariate relationships:</p>
+
+<ul>
+<li>The lower half of the pairs plot is a scatterplot for the two reactions; the axes represent the number of votes for a given reaction on a BuzzFeed article (both axes are scaled logarithmically), color intensity indicates the number of articles at that X/Y combo, and the line is a linear trendline of least-squares.</li>
+<li>The diagonal of the pairs plot represents the density distribution of reaction vote counts for that reaction. (also logarithmically scaled on the X axis)</li>
+<li>The upper half of the pairs plot illustrates the Pearson correlation between the non-log quantities of the two reaction variables. The stars represent statistical significance of the correlation test; since the data set is large, all correlations are statistically significant (rejection of null hypothesis of no correlation) at p &lt; 0.001.</li>
+</ul>
+
+
+<p><img src="/img/facebook-reactions/buzzfeed-pos.png" alt="" /></p>
+
+<p>All of the bivariate correlations of positive reactions are <em>moderately or strongly positively correlated</em>, which is problematic for analysis (except one: apparently, there is little statistical relationship between things that are cute and things that make you go YAAASS). So why not just use the <strong>Love</strong> reaction, since articles tend to get about 100 Loves, while other reactions get around 10?</p>
+
+<p>Does the same hold for negative reactions? Relatedly, we would also expect a negative correlation between the number of <strong>Love</strong> reactions and negative reactions, right?</p>
+
+<p><img src="/img/facebook-reactions/buzzfeed-neg.png" alt="" /></p>
+
+<p>All negative reactions are positively correlated, as expected, but there is a weak <em>positive</em> correlation between <strong>Love</strong> and <strong>Hate</strong>, which is definitely not right. There isn&rsquo;t an ideal &ldquo;negative&rdquo; reaction, since all have similar distributions.</p>
+
+<p>Why does Facebook have 6 different responses to gauge positivity or negativity when one reaction for each would be both more accurate and more intuitive for the user?</p>
+
+<h2>Conceal, Don&rsquo;t Feel</h2>
+
+<p>There are other qualitative issues with Facebook&rsquo;s current implementation of Reactions. Apparently, Likes and Reactions are treated <em>differently internally</em>. As a result, you get separate notifications for Likes and Reactions.</p>
+
+<p><img src="/img/facebook-reactions/facebook_react2.png" alt="" /></p>
+
+<p>Why? No idea. There is enough Notification spam on Facebook, I don&rsquo;t need <em>double notifications</em> in my Notification feed for every status I make.</p>
+
+<p>What&rsquo;s important to note is that a user cannot both Like and React to a status; only one or the other. As a result, the number of Likes on statuses overall will drop, and this is a <em>major</em> problem for businesses who are dependent on measuring the number of Likes for engagement.</p>
+
+<p>I took a look at the Facebook Graph API endpoint for <a href="https://developers.facebook.com/docs/graph-api/reference/v2.5/post">Facebook Page Posts</a> (same endpoint I use for my <a href="https://github.com/minimaxir/facebook-page-post-scraper">Facebook Page Data Scraper</a>), and I can confirm that the API can only report the number of Likes on a status; not the number of Likes + Reactions, or number of Likes + number of each Reaction.</p>
+
+<p><img src="/img/facebook-reactions/cnn_fb.jpg" alt="" /></p>
+
+<p>There is no way currently to automate the retrieval of Reactions data from Facebook posts, which is an unfortunate oversight (especially considering how Twitter <a href="https://blog.twitter.com/2015/hearts-for-developers">handled the transition</a> from Favorites to Likes easily).</p>
+
+<p>The example <a href="https://www.facebook.com/cnn/posts/10154506885211509">CNN story</a> I used for that screenshot is anecdotally one of the very few examples I&rsquo;ve noticed where the number of Likes is <em>almost equal</em> to negative emotions, a relationship which should be weakly correlated and therefore this knowledge may be useful to isolate the story as unusual (and serve ads accordingly). At Facebook&rsquo;s immense scale, identifying a relatively small proportion of unusual stories might be enough to justify adding Reactions.</p>
+
+<p>Or maybe this feature is just the harbinger of a new generation of emotionally-charged linkbait. Perhaps there is more to this Facebook Reactions data than what meets the eye, and I&rsquo;ll update my scripts and do further statistical analysis when able. But given what has happened with Reactions data before with YouTube, I am unconvinced and I still believe the functionality as a whole is a usability regression that won&rsquo;t last.</p>
+
+<p>A Dislike button would have been better, just saying.</p>
+
+<hr />
+
+<p><em>You can view the code and data used to generate the BuzzFeed Reaction data visualizations <a href="https://github.com/minimaxir/facebook-reactions/blob/master/buzzfeed_reactions.ipynb">in this Jupyter notebook</a>, <a href="https://github.com/minimaxir/facebook-reactions">open-sourced on GitHub</a>, or you can <a href="https://github.com/minimaxir/facebook-reactions/raw/master/reactions_pdf.pdf">view as a PDF</a>, which is better if you are on a mobile device.</em></p>
+
+    
+    <div class="post-meta">
+  	Feb 29, 2016
+  	
+  	
+  	<div class="sharing">
+  
+		  <span class="social facebook"><a href="http://www.facebook.com/share.php?u=http://minimaxir.com/2016/02/facebook-reactions/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data="http://minimaxir.com/2016/02/facebook-reactions/"><i class="fa fa-facebook"></i><span class="count mdl-cell--hide-phone"> -</span></a></span>
+  
+		<span class="social twitter"><a href="http://twitter.com/home/?status=Facebook Reactions and the Problems With Quantifying Likes Differently - http://minimaxir.com/2016/02/facebook-reactions/ - via @minimaxir"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data=http://minimaxir.com/2016/02/facebook-reactions/><i class="fa fa-twitter"></i></a> </span>
+
+  <span  class="social linkedin"><a href="http://www.linkedin.com/shareArticle?mini=true&title=Facebook Reactions and the Problems With Quantifying Likes Differently&url=http://minimaxir.com/2016/02/facebook-reactions/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=600');return false;" data=http://minimaxir.com/2016/02/facebook-reactions/><i class="fa fa-linkedin"></i><span class="count mdl-cell--hide-phone"> -</span></a> </span>
+   
+	</div>
+	
+  	</div>
+  </article>
+  
+  
+  
+  
+
+  
+
+</div>
+      </div>
+    </div>
+          </div>
+        </div>
+
+
+
+  <div class="demo-ribbon hero about">
+  	<div class="demo-container mdl-grid">
+  	
+  	<div class="mdl-cell mdl-cell--2-col mdl-cell--hide-tablet mdl-cell--hide-phone"></div>
+  	<div class="mdl-cell mdl-cell--3-col mdl-cell--3-col-tablet mdl-cell--hide-phone">  	
+  	<img src="/MaxFBInvert.png" title="Stop mousing over me! I'm not a XKCD comic!">
+  	</div>
+  	
+  	<div class="mdl-cell mdl-cell--1-col mdl-cell--1-col-tablet mdl-cell--hide-phone"></div>
+  	
+  	<div class="mdl-cell mdl-cell--4-col mdl-cell--4-col-tablet mdl-cell--8-col-phone">  	
+  	<p>Max Woolf (@minimaxir) is a Software QA Engineer living and working in the San Francisco Bay Area for over 3.5 years and a 2012 Carnegie Mellon University graduate.</p>
+  
+  <p>In his spare time, Max uses <a href="https://www.python.org/">Python</a> to gather data from public APIs and <a href="http://ggplot2.org/">ggplot2</a> to make pretty charts from that data.</p>
+  
+  <p>You can learn more about Max <a href="/about">here</a>, or view his portfolio <a href="/portfolio">here</a>.
+  
+  
+    <div class="social-icon-list">
+	
+    <a title="Facebook" href="https://facebook.com/max.woolf" target="_blank"><i class="fa fa-facebook-square"></i></a>
+    
+  	
+    <a title="Twitter" href="https://twitter.com/minimaxir" target="_blank"><i class="fa fa-twitter-square"></i></a>
+    
+	
+    <a title="LinkedIn" href="https://linkedin.com/in/minimaxir" target="_blank"><i class="fa fa-linkedin-square"></i></a>
+    
+    
+    <a title="GitHub" href="https://github.com/minimaxir" target="_blank"><i class="fa fa-github-square"></i></a>
+    
+    
+    <a title="YouTube" href="https://youtube.com/minimaxir" target="_blank"><i class="fa fa-youtube-square"></i></a>
+    
+    
+    <a title="E-Mail" href="mailto:max@minimaxir.com"><i class="fa fa-envelope-square"></i></a>
+    
+  </div>
+  	</div>
+  	
+
+	</div>
+  	</div>
+  
+  <div class="demo-container mdl-grid">
+ <div class="mdl-cell mdl-cell--2-col mdl-cell--hide-tablet mdl-cell--hide-phone"></div>
+ <div class="demo-content mdl-color--white mdl-shadow--4dp content mdl-color-text--grey-800 mdl-cell mdl-cell--8-col">
+  
+  
+        <section>
+          <div id="disqus_thread" aria-live="polite"><script type="text/javascript">
+      var disqus_shortname = 'minimaxir';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://minimaxir.com/2016/02/facebook-reactions/';
+        var disqus_url = 'http://minimaxir.com/2016/02/facebook-reactions/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script></div>
+        </section>
+        
+        
+  <div class="demo-container mdl-grid archive-nav">
+      <div class="mdl-cell mdl-cell--4-col mdl-cell--4-col-tablet mdl-cell--2-col-phone">
+        
+          <h3><a href="/2016/01/startup-haters/" style="float: left;"><i class="material-icons">arrow_back</i>  Prev</a></h3>
+        
+    	</div>
+
+		<div class="mdl-cell mdl-cell--4-col mdl-cell--hide-tablet mdl-cell--hide-phone"></div>
+		
+		<div class="mdl-cell mdl-cell--4-col mdl-cell--4-col-tablet mdl-cell--2-col-phone">
+        
+        </div>
+      </div>
+        
+</div>
+</div>
+  
+  
+
+
+		
+		
+		
+		
+        <footer class="demo-footer mdl-mini-footer">
+          <div class="mdl-mini-footer--left-section">
+            <ul class="mdl-mini-footer--link-list">
+              <li><a href="/">Home</a></li>
+              <li><a href="/about/">About</a></li>
+              <li><a href="/contact">Contact</a></li>
+              <li><a href="/portfolio/">Portfolio</a></li>
+            </ul>
+          </div>
+          
+          <div class="mdl-mini-footer--right-section">
+          <ul class="mdl-mini-footer--link-list">
+          <li>Theme made by Max Woolf using <a href="http://www.getmdl.io/">Material Design Lite</a>.</li>
+          </ul>
+          </div>
+        </footer>
+ </main>
+    </div>
+    
+  </body>
+</html>

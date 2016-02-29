@@ -4,7 +4,7 @@
   <title><![CDATA[minimaxir | Max Woolf's Blog]]></title>
   <link href="http://minimaxir.com/rss.xml" rel="self"/>
   <link href="http://minimaxir.com/"/>
-  <updated>2016-01-25T07:54:20-08:00</updated>
+  <updated>2016-02-29T07:56:43-08:00</updated>
   <id>http://minimaxir.com/</id>
   <author>
     <name><![CDATA[Max Woolf]]></name>
@@ -12,6 +12,84 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Facebook Reactions and the Problems With Quantifying Likes Differently]]></title>
+    <link href="http://minimaxir.com/2016/02/facebook-reactions/"/>
+    <updated>2016-02-29T08:00:00-08:00</updated>
+    <id>http://minimaxir.com/2016/02/facebook-reactions</id>
+    <content type="html"><![CDATA[<p>Last week, Facebook added <a href="http://newsroom.fb.com/news/2016/02/reactions-now-available-globally/">Facebook Reactions</a>, allowing users to do more than just &ldquo;Like&rdquo; posts and statuses as they have done for the past decade. Likes were the universal symbol of approval on social media. Now, Facebook users can apply more granular responses, from positive emotions like <strong>Love</strong>, to negative emotions such as <strong>Angry</strong>. This was widely believed to be Facebook&rsquo;s compromise instead of adding a Dislike button.</p>
+
+<p><img src="http://minimaxir.com/img/facebook-reactions/facebook_react.png" alt="" /></p>
+
+<p>Of course, there&rsquo;s an ulterior motive. The use of reactions provides organic data on the sentiment of a status, which is helpful for numerous marketing and statistical applications. As <a href="http://www.buzzfeed.com/alexkantrowitz/facebook-reactions-launch-today">BuzzFeed notes</a>, Facebook ads may be able &ldquo;to write one product message for someone who mostly uses <strong>Sad</strong> and another who mostly uses <strong>Wow</strong> or <strong>Love.</strong>&rdquo;</p>
+
+<p>However, this isn&rsquo;t the first time a big social network has tried implementing reactions alongside Likes/Dislikes. Four years ago, YouTube added <a href="http://googlesystem.blogspot.com/2011/06/youtube-reactions.html">Reaction buttons</a> to their comments section:</p>
+
+<p><img src="http://minimaxir.com/img/facebook-reactions/youtube-reactions.png" alt="" /></p>
+
+<p>&hellip;and removed them sometime after without fanfare, replacing it with the simple Like/Dislike bar.</p>
+
+<p>Presumably, YouTube implemented the buttons for the similar reason as Facebook. What makes things different now, if anything?</p>
+
+<h2>A Quantitative Approach to Feeling</h2>
+
+<p>Even after YouTube&rsquo;s failure, another data-driven website implemented reaction buttons: BuzzFeed (who else?). At the end of each article (in most categories), registered users can select a quirky reaction to indicate how they felt about the article.</p>
+
+<p><img src="http://minimaxir.com/img/facebook-reactions/buzzfeedreactions.png" alt="" /></p>
+
+<p>The heart represents <strong>Love</strong> internally and is by-far the most-used reaction on BuzzFeed posts. When I started scraping BuzzFeed data in 2014 <a href="http://minimaxir.com/2015/01/linkbait/">to analyze clickbait</a>, I made sure to grab the reaction data of other reactions as well to see if there are any interesting trends or correlations between reactions. A cursory glance at the scraped reaction data revealed a problem that forced me to disregard it.</p>
+
+<p>An important part of variable selection for analysis and modeling is avoiding <em>redundant</em> features, as that can cause issues such as <a href="https://en.wikipedia.org/wiki/Multicollinearity">multicollinearity</a> and <a href="https://en.wikipedia.org/wiki/Overfitting">overfitting</a>. For Facebook, avoiding adding redundant Reactions was an <a href="https://medium.com/facebook-design/reactions-not-everything-in-life-is-likable-5c403de72a3f">explicit design goal</a> of the feature, but the positive emotions such as <strong>Like</strong> and <strong>Wow</strong> might be overly similar regardless (I believe it fair to compare the behavior of BuzzFeed users with the average Facebook user, given that they hit the same demographics). Do BuzzFeed readers use specific positive reactions differently? Did they use specific negative reactions?</p>
+
+<p>I rechecked my 2014 data in light of Facebook Reactions. The scraped dataset contains reaction data from 9,883 BuzzFeed articles in the Celebrity, Animals, Books, Longform, and Business categories. From that, I made a <a href="http://vita.had.co.nz/papers/gpp.pdf">pairs plot</a> for the counts of all the <em>positive</em> reactions on the articles to illustrate all bivariate relationships:</p>
+
+<ul>
+<li>The lower half of the pairs plot is a scatterplot for the two reactions; the axes represent the number of votes for a given reaction on a BuzzFeed article (both axes are scaled logarithmically), color intensity indicates the number of articles at that X/Y combo, and the line is a linear trendline of least-squares.</li>
+<li>The diagonal of the pairs plot represents the density distribution of reaction vote counts for that reaction. (also logarithmically scaled on the X axis)</li>
+<li>The upper half of the pairs plot illustrates the Pearson correlation between the non-log quantities of the two reaction variables. The stars represent statistical significance of the correlation test; since the data set is large, all correlations are statistically significant (rejection of null hypothesis of no correlation) at p &lt; 0.001.</li>
+</ul>
+
+
+<p><img src="http://minimaxir.com/img/facebook-reactions/buzzfeed-pos.png" alt="" /></p>
+
+<p>All of the bivariate correlations of positive reactions are <em>moderately or strongly positively correlated</em>, which is problematic for analysis (except one: apparently, there is little statistical relationship between things that are cute and things that make you go YAAASS). So why not just use the <strong>Love</strong> reaction, since articles tend to get about 100 Loves, while other reactions get around 10?</p>
+
+<p>Does the same hold for negative reactions? Relatedly, we would also expect a negative correlation between the number of <strong>Love</strong> reactions and negative reactions, right?</p>
+
+<p><img src="http://minimaxir.com/img/facebook-reactions/buzzfeed-neg.png" alt="" /></p>
+
+<p>All negative reactions are positively correlated, as expected, but there is a weak <em>positive</em> correlation between <strong>Love</strong> and <strong>Hate</strong>, which is definitely not right. There isn&rsquo;t an ideal &ldquo;negative&rdquo; reaction, since all have similar distributions.</p>
+
+<p>Why does Facebook have 6 different responses to gauge positivity or negativity when one reaction for each would be both more accurate and more intuitive for the user?</p>
+
+<h2>Conceal, Don&rsquo;t Feel</h2>
+
+<p>There are other qualitative issues with Facebook&rsquo;s current implementation of Reactions. Apparently, Likes and Reactions are treated <em>differently internally</em>. As a result, you get separate notifications for Likes and Reactions.</p>
+
+<p><img src="http://minimaxir.com/img/facebook-reactions/facebook_react2.png" alt="" /></p>
+
+<p>Why? No idea. There is enough Notification spam on Facebook, I don&rsquo;t need <em>double notifications</em> in my Notification feed for every status I make.</p>
+
+<p>What&rsquo;s important to note is that a user cannot both Like and React to a status; only one or the other. As a result, the number of Likes on statuses overall will drop, and this is a <em>major</em> problem for businesses who are dependent on measuring the number of Likes for engagement.</p>
+
+<p>I took a look at the Facebook Graph API endpoint for <a href="https://developers.facebook.com/docs/graph-api/reference/v2.5/post">Facebook Page Posts</a> (same endpoint I use for my <a href="https://github.com/minimaxir/facebook-page-post-scraper">Facebook Page Data Scraper</a>), and I can confirm that the API can only report the number of Likes on a status; not the number of Likes + Reactions, or number of Likes + number of each Reaction.</p>
+
+<p><img src="http://minimaxir.com/img/facebook-reactions/cnn_fb.jpg" alt="" /></p>
+
+<p>There is no way currently to automate the retrieval of Reactions data from Facebook posts, which is an unfortunate oversight (especially considering how Twitter <a href="https://blog.twitter.com/2015/hearts-for-developers">handled the transition</a> from Favorites to Likes easily).</p>
+
+<p>The example <a href="https://www.facebook.com/cnn/posts/10154506885211509">CNN story</a> I used for that screenshot is anecdotally one of the very few examples I&rsquo;ve noticed where the number of Likes is <em>almost equal</em> to negative emotions, a relationship which should be weakly correlated and therefore this knowledge may be useful to isolate the story as unusual (and serve ads accordingly). At Facebook&rsquo;s immense scale, identifying a relatively small proportion of unusual stories might be enough to justify adding Reactions.</p>
+
+<p>Or maybe this feature is just the harbinger of a new generation of emotionally-charged linkbait. Perhaps there is more to this Facebook Reactions data than what meets the eye, and I&rsquo;ll update my scripts and do further statistical analysis when able. But given what has happened with Reactions data before with YouTube, I am unconvinced and I still believe the functionality as a whole is a usability regression that won&rsquo;t last.</p>
+
+<p>A Dislike button would have been better, just saying.</p>
+
+<hr />
+
+<p><em>You can view the code and data used to generate the BuzzFeed Reaction data visualizations <a href="https://github.com/minimaxir/facebook-reactions/blob/master/buzzfeed_reactions.ipynb">in this Jupyter notebook</a>, <a href="https://github.com/minimaxir/facebook-reactions">open-sourced on GitHub</a>, or you can <a href="https://github.com/minimaxir/facebook-reactions/raw/master/reactions_pdf.pdf">view as a PDF</a>, which is better if you are on a mobile device.</em></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[You're Not Allowed to Criticize Startups, You Stupid Hater]]></title>
@@ -40,7 +118,7 @@
 
 <blockquote><p>&ldquo;Figuring it out&rdquo; might be the point. You do realize that you are referring to some of the very few people who have actually already built an amazingly successful product.</p></blockquote>
 
-<p>I should have mentioned earlier that Peach was made by <a href="http://byte.co">Byte</a>, which is ran by <a href="https://twitter.com/dhof">Dom Hofmann</a>, a founder of Vine which was purchased by Twitter before launch (it also appears Peach is a pivot from the failed Byte app; something left out by the blog articles). Yes, if a founder has had a previously successful startup, the previous success implies a higher probability for future startup success than for a startup run by an unknown founder. However, it&rsquo;s still not a 100% guarantee, and startups should not be immune to criticism because of asymmetric information between the users and the startup itself. Peach is not impeachable. (pun intended)</p>
+<p>I should have mentioned earlier that Peach was made by <a href="http://byte.co">Byte</a>, which is ran by <a href="https://twitter.com/dhof">Dom Hofmann</a>, a founder of Vine which was purchased by Twitter before launch (it also appears Peach is a pivot from the failed Byte app; something left out by the blog articles). Yes, if a founder has had a previously successful startup, the previous success implies a higher probability for future startup success than for a startup run by an unknown founder. However, it&rsquo;s still not a 100% guarantee, and startups should not be immune to criticism because of asymmetric information between the users and the startup itself. Peach is impeachable. (pun intended)</p>
 
 <p>TechCrunch did a <a href="http://techcrunch.com/2016/01/11/hype-or-not-peach-hit-the-top-10-social-networking-app-list-fast/">follow-up article</a> three days after release stating (paraphrased) &ldquo;Peach is #9 in the App Store in the Social Networking category, despite the haters! Now they will be a success! Haters gonna hate!&rdquo; Social networking is a double-edged sword in terms of network effects: they can grow incredibly fast as friends-of-friends register, and they can <em>die</em> incredibly fast once they all realize the app is a fad. As of publishing, Peach is ranked #110 in the Social Networking category, and off-the-charts in Overall. And <a href="https://www.appannie.com/apps/ios/app/peach-a-space-for-friends/rank-history/">still dropping</a>, with no apparent recovery.</p>
 
@@ -65,6 +143,8 @@
 <p>A startup is mercy-killed through an acquisition/acquihire? Just another step in their incredible journey! The founders still win, and now they have the &ldquo;exited&rdquo; label to leverage for future employment.</p>
 
 <p>Sarcastic rhetorical questions aside, it is very annoying that it is considered socially unacceptable in Silicon Valley to criticize a startup. Even though the majority of startups fail, actually <em>saying so</em> is sacrilegious. In Peach&rsquo;s particular case, the fact that the app is from a previous exited founder should invite <em>more</em> scrutiny instead of giving it a free pass.</p>
+
+<p><strong>EDIT</strong>: Fixed joke so that it is funny.</p>
 ]]></content>
   </entry>
   
@@ -1363,130 +1443,6 @@ dev.off<span class="p">()</span></code></pre></div>
 <p>These sample queries are only a small sample of what can be done with the Reddit data and BigQuery. Although some data scientists may argue that using is BigQuery is pointless since ~200GB of data <a href="http://yourdatafitsinram.com">can fit in RAM</a>, the quick, dirty, and <em>cheap</em> option is much more pragmatic for the majority of potential data analysis on this Reddit dataset.</p>
 
 <p><em>Again, you can view the R code needed to reproduce the visualizations in <a href="https://github.com/minimaxir/reddit-bigquery/blob/master/reddit_bigquery.ipynb">this Jupyter notebook</a>.</em></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Coding, Visualizing, and Animating Bootstrap Resampling]]></title>
-    <link href="http://minimaxir.com/2015/09/bootstrap-resample/"/>
-    <updated>2015-09-22T08:00:00-07:00</updated>
-    <id>http://minimaxir.com/2015/09/bootstrap-resample</id>
-    <content type="html"><![CDATA[<p>A few days ago on Hacker News, I saw a <a href="https://news.ycombinator.com/item?id=10244950">nice submission</a> titled &ldquo;<a href="https://speakerdeck.com/jakevdp/statistics-for-hackers">Statistics for Hackers</a>,&rdquo; which was a slide deck written and presented by <a href="https://twitter.com/jakevdp">Jake Vanderplas</a>. The talk is very explicitly a tutorial for a few good statistical methods for those without a statistical background, using simple tools &ldquo;hackers&rdquo; are familiar with and are occasionally very necessary (it&rsquo;s not hacking in the sense of &ldquo;growth hacking,&rdquo; thankfully).</p>
-
-<p>One important statistical tool discussed in the presentation is <a href="https://en.wikipedia.org/wiki/Bootstrapping_%28statistics%29">bootstrap resampling</a>, a good example for a programming-oriented presentation as it can be easily done with code. Bootstrapping is when a data set is randomized many, many times (usually thousands of times) to simulate similar data sets, and use those simulated datasets to obtain a more accurate range for a particular statistic about the data set, such as the statistical average.</p>
-
-<p><img src="http://minimaxir.com/img/bootstrap-resample/talk0.png" alt="" /></p>
-
-<p>I have reverse-engineered the data and code from the talk with R and ggplot2 in order to create more detailed implementations of bootstrapping, and also to add a few visual improvements.</p>
-
-<h1>Preparing the Data</h1>
-
-<p><em>If you want to view the code with more detailed output and extensive code for the ggplot2 charts, read this <a href="https://github.com/minimaxir/bootstrap-resample-notebook/blob/master/bootstrap_resample_notebook.ipynb">Jupyter notebook</a>, hosted and open-sourced on GitHub.</em></p>
-
-<p>The first thing to do is recreate the test data.</p>
-
-<p><img src="http://minimaxir.com/img/bootstrap-resample/talk1.png" alt="" /></p>
-
-<p>Data is manually transcribed from the linked talk (to the best of my ability), and converted to a <code>tbl_df</code> for ease of use.</p>
-
-<div class="highlight"><pre><code class="language-r" data-lang="r">x <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span><span class="m">8.1</span><span class="p">,</span> <span class="m">8.4</span><span class="p">,</span> <span class="m">8.8</span><span class="p">,</span> <span class="m">8.7</span><span class="p">,</span> <span class="m">9</span><span class="p">,</span> <span class="m">9.1</span><span class="p">,</span> <span class="m">9.2</span><span class="p">,</span> <span class="m">9.3</span><span class="p">,</span> <span class="m">9.4</span><span class="p">,</span> <span class="m">9.6</span><span class="p">,</span> <span class="m">9.9</span><span class="p">,</span> <span class="m">10</span><span class="p">,</span> <span class="m">10</span><span class="p">,</span> <span class="m">10.5</span><span class="p">,</span> <span class="m">10.6</span><span class="p">,</span> <span class="m">10.6</span><span class="p">,</span> <span class="m">11.2</span><span class="p">,</span> <span class="m">11.8</span><span class="p">,</span> <span class="m">12.6</span><span class="p">)</span>
-y <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span><span class="m">21</span><span class="p">,</span> <span class="m">19</span><span class="p">,</span> <span class="m">18</span><span class="p">,</span> <span class="m">16</span><span class="p">,</span> <span class="m">15</span><span class="p">,</span> <span class="m">17</span><span class="p">,</span> <span class="m">17</span><span class="p">,</span> <span class="m">17</span><span class="p">,</span> <span class="m">19</span><span class="p">,</span> <span class="m">14</span><span class="p">,</span> <span class="m">14</span><span class="p">,</span> <span class="m">15</span><span class="p">,</span> <span class="m">11</span><span class="p">,</span> <span class="m">12</span><span class="p">,</span> <span class="m">12</span><span class="p">,</span> <span class="m">13</span><span class="p">,</span> <span class="m">10</span><span class="p">,</span> <span class="m">8</span><span class="p">,</span> <span class="m">9</span><span class="p">)</span>
-
-df <span class="o">&lt;-</span> tbl_df<span class="p">(</span><span class="kt">data.frame</span><span class="p">(</span>x<span class="p">,</span>y<span class="p">))</span></code></pre></div>
-
-
-<p>Let&rsquo;s create a quick plot in ggplot2 to compare it to the source image:</p>
-
-<div class="highlight"><pre><code class="language-r" data-lang="r">qplot<span class="p">(</span>x<span class="p">,</span> y<span class="p">,</span> df<span class="p">)</span> <span class="o">+</span> geom_smooth<span class="p">(</span>method<span class="o">=</span><span class="s">&quot;lm&quot;</span><span class="p">)</span></code></pre></div>
-
-
-<p><img src="http://minimaxir.com/img/bootstrap-resample/qplot.png" alt="" /></p>
-
-<p>Pretty good copy, and it comes with a linear regression line for one line of code!</p>
-
-<p>Performing the linear regression within R itself (via <code>lm()</code>) results in a model containing an X-intercept of 42.3 and a slope of -2.81. (<em>y = 42.3 - 2.81x</em>)</p>
-
-<ul>
-<li><strong>42.3</strong>, the coefficient for the (Intercept), represents the value of the stack if Wind Speed is 0.</li>
-<li>For every 1 unit increase in Wind Speed, the estimated Height <strong>decreases by 2.81</strong>, the coefficient for the <code>x</code> variable.</li>
-</ul>
-
-
-<p>Both coefficients are extremely statistically significant. Regression as a whole has a R<sup>2</sup> of 82.71%; indicating that the change in Wind Speed explains 82.71% of the variation in Height. That&rsquo;s enough to assert causality in this mock data.</p>
-
-<p>Now we can know the true value of the coefficients for the data, we can perform bootstrapping. We can create a function to perform a linear regression on the data frame, having been resampled <em>with replacement</em> (important!), and return the model coefficients:</p>
-
-<div class="highlight"><pre><code class="language-r" data-lang="r">lm_res <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>df<span class="p">)</span> <span class="p">{</span>
-    model <span class="o">&lt;-</span> lm<span class="p">(</span>y <span class="o">~</span> x<span class="p">,</span> df <span class="o">%&gt;%</span> sample_frac<span class="p">(</span>replace<span class="o">=</span><span class="bp">T</span><span class="p">))</span>
-    <span class="kr">return</span> <span class="p">(</span>model<span class="o">$</span>coefficients<span class="p">)</span>
-<span class="p">}</span></code></pre></div>
-
-
-<p>R&rsquo;s <code>replicate</code> function runs a function a specified amount of times and stores the results in the same data frame; perfect for bootstrapping.</p>
-
-<p>There&rsquo;s no limit to the number of repetitions you can perform using this method; however, you can hit diminishing returns as the distribution converges. Generally, 2,000 trials minimum are recommended, but let&rsquo;s do 10,000 trials just to be sure.</p>
-
-<div class="highlight"><pre><code class="language-r" data-lang="r">df_boot <span class="o">&lt;-</span> <span class="kp">replicate</span><span class="p">(</span><span class="m">10000</span><span class="p">,</span> lm_res<span class="p">(</span>df<span class="p">))</span>
-df_boot <span class="o">&lt;-</span> tbl_df<span class="p">(</span><span class="kt">data.frame</span><span class="p">(</span><span class="kp">t</span><span class="p">(</span>df_boot<span class="p">)))</span></code></pre></div>
-
-
-<p>This completed in about 13 seconds on my computer, and results in a dataset of 10,000 pairs of X-intercept and wind speed coefficients!</p>
-
-<p>Now we can build 95% confidence intervals for each coefficient. This is done by finding the 2.5% quartile, and the 97.5% quartile; since there are a very large amount of bootstrapped samples, the confidence interval will be very accurate.</p>
-
-<p>This can be done easily using the <code>gather()</code> function from <code>tidyr</code> to convert the data from wide to long, and <code>dplyr</code>&rsquo;s aggregation and summarization functions.</p>
-
-<div class="highlight"><pre><code class="language-r" data-lang="r">df_boot_agg <span class="o">&lt;-</span> df_boot <span class="o">%&gt;%</span>
-                gather<span class="p">(</span>var<span class="p">,</span> value<span class="p">)</span> <span class="o">%&gt;%</span>
-                group_by<span class="p">(</span>var<span class="p">)</span> <span class="o">%&gt;%</span>
-                summarize<span class="p">(</span>
-                    average <span class="o">=</span> <span class="kp">mean</span><span class="p">(</span>value<span class="p">),</span>
-                    low_ci <span class="o">=</span> quantile<span class="p">(</span>value<span class="p">,</span> <span class="m">0.025</span><span class="p">),</span>
-                    high_ci <span class="o">=</span> quantile<span class="p">(</span>value<span class="p">,</span> <span class="m">0.975</span><span class="p">)</span>
-                        <span class="p">)</span></code></pre></div>
-
-
-<p>From the output, the true value of the X intercept has a 95% chance of being between 36.9 and 49.3, and the true value of the Wind Speed coefficient has a 95% chance of being between -3.53 and -2.28.</p>
-
-<h1>Plotting the Bootstrap of One Variable</h1>
-
-<p>The Wind Speed coefficient is much more interesting, statistically. We have enough information to derive a ggplot2 histogram of the resampled data, and a graphical representation of the confidence interval. We can also include the true value of the coefficient in the visualization (as the dotted vertical line) to see if it make sense.</p>
-
-<p><img src="http://minimaxir.com/img/bootstrap-resample/uni_one.png" alt="" /></p>
-
-<p>Plot is close to a <a href="https://en.wikipedia.org/wiki/Normal_distribution">Normal distribution</a> / bell curve, which is a nice property of bootstrapping and makes the results easier to analyze. The true coefficient value is in the interval, but not quite at the center.</p>
-
-<p>We can write a function to generate a plot for different data size subsets (e.g. 100 samples, 200 samples, etc. up to 10,000 samples). This shows the impact of bootstrapping and how the confidence estimate intervals converge as the number of trials increases. Each of these plots serve as a frame in a GIF.</p>
-
-<p>Each of these frames are stitched together into a high- quality, low file size by my new <a href="https://github.com/minimaxir/frames-to-gif-osx">Convert Frames to GIF OS X tool</a>!</p>
-
-<p><img src="http://minimaxir.com/img/bootstrap-resample/uni_frames.gif" alt="" /></p>
-
-<p>A 99 frame, 640px width GIF, at only half a megabyte! (R has an <a href="https://cran.r-project.org/web/packages/animation/index.html">animation package</a>, but with much worse results, which was the motivation for writing the OS X tool)</p>
-
-<p>From the GIF, it&rsquo;s clear to see that the confidence intervals converge to the final values at about 2000 trials, with the shape of the distribution stabilizing at about 7000 trials.</p>
-
-<h1>Plotting the Bootstrap of Two Variables</h1>
-
-<p>The X-intercept and the Wind Speed coefficient have a linked, negatively correlated relationship, so it makes sense to plot them simultaneously, as in the original talk.</p>
-
-<p><img src="http://minimaxir.com/img/bootstrap-resample/talk2.png" alt="" /></p>
-
-<p>ggplot2&rsquo;s <code>density2d</code> plots a <a href="https://en.wikipedia.org/wiki/Contour_line">contour map</a>, which will help illustrate the area and magnitude where the data converges on a 2D plane. We can also include an <strong>orange</strong> bounding box using the specified values for the 2D confidence intervals for each variable, and a <strong>red</strong> dot representing the true value of the coefficients.</p>
-
-<p><img src="http://minimaxir.com/img/bootstrap-resample/bi_one.png" alt="" /></p>
-
-<p>The pair of coefficients can only occur in a certain range of values, much smaller than the bounding box. The true value is close to the most frequent occurrence, too.</p>
-
-<p>Then we can make another GIF using the same method:</p>
-
-<p><img src="http://minimaxir.com/img/bootstrap-resample/bi_frames.gif" alt="" /></p>
-
-<p>Again, the visualization converges relatively quickly at about 2,000 trials. (although, in retrospect, the orange bounding box may not have been necessary.)</p>
-
-<p>While the sample dataset isn&rsquo;t the most ideal for bootstrapping due to its extremely small size, bootstrapping at the least adds some clarity to the issues that results when simply performing statistics on a given dataset.</p>
-
-<p><em>Again, if you want to view the code with more detailed output and extensive code for the ggplot2 charts, read this <a href="https://github.com/minimaxir/bootstrap-resample-notebook/blob/master/bootstrap_resample_notebook.ipynb">Jupyter notebook</a>.</em></p>
 ]]></content>
   </entry>
   
