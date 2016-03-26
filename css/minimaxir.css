@@ -181,8 +181,9 @@ color: white;
 }
 
 pre p {
-font-size: 13px;
-margin: none;
+font-size: 13px !important;
+margin: 0px!important;
+font-family: Menlo, Monaco, Consolas, "Courier New", monospace !important;
 }
 
 .social {
