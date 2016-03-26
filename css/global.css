@@ -10943,3 +10943,94 @@ h1 > a:focus, h2 > a:focus, h3 > a:focus, h4 > a:focus, h5 > a:focus, h6 > a:foc
   cursor: not-allowed;
   background: #f1f3f6;
 }
+
+/*------------------------------------------------------------------
+    [Blog Grid]
+------------------------------------------------------------------*/
+.blog-grid {
+  position: relative;
+  background: #fff;
+}
+
+/* Video */
+.blog-grid .blog-grid-video {
+  position: relative;
+}
+
+.blog-grid .blog-grid-video .blog-grid-video-player {
+  text-align: center;
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  -webkit-transform: translate3d(0, -50%, 0);
+  -moz-transform: translate3d(0, -50%, 0);
+  transform: translate3d(0, -50%, 0);
+}
+
+/* Content */
+.blog-grid .blog-grid-box-shadow {
+  box-shadow: 0 2px 5px 3px #eff1f8;
+}
+
+.blog-grid .blog-grid-content {
+  padding: 20px;
+}
+
+.blog-grid .blog-grid-content.blog-grid-content-no-gutter {
+  padding: 20px 0;
+}
+
+.blog-grid .blog-grid-title-sm {
+  font-size: 20px;
+}
+
+.blog-grid .blog-grid-title-sm > a {
+  font-size: 20px;
+}
+
+.blog-grid .blog-grid-title-md {
+  font-size: 24px;
+}
+
+.blog-grid .blog-grid-title-md > a {
+  font-size: 24px;
+}
+
+.blog-grid .blog-grid-title-el {
+  font-size: 28px;
+  font-family: Droid Serif, serif;
+}
+
+.blog-grid .blog-grid-title-el .blog-grid-title-link {
+  font-size: 30px;
+  font-family: Droid Serif, serif;
+  text-decoration: none;
+}
+
+/* Supplemental */
+.blog-grid .blog-grid-supplemental {
+  border-top: 1px solid #ebeef6;
+  background: #fff;
+  padding: 20px;
+}
+
+.blog-grid .blog-grid-supplemental-title {
+  font-size: 12px;
+  font-style: italic;
+  font-family: Droid Serif, serif;
+  color: #606060;
+}
+
+.blog-grid .blog-grid-supplemental-category {
+  font-size: 13px;
+  font-family: Droid Serif, serif;
+  color: #2c3e50;
+}
+
+/* Media Queries below 480px */
+@media (max-width: 480px) {
+  .blog-grid .blog-grid-title-lg {
+    font-size: 24px;
+  }
+}
