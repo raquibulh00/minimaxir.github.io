@@ -5,13 +5,118 @@
     <description>A blog by Max Woolf about startups, technology, and blogging. It&#39;s so meta, even this acronym.</description>
     <link>http://minimaxir.com/</link>
     <atom:link href="http://minimaxir.com/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Sat, 26 Mar 2016 21:41:27 -0700</pubDate>
-    <lastBuildDate>Sat, 26 Mar 2016 21:41:27 -0700</lastBuildDate>
+    <pubDate>Tue, 29 Mar 2016 07:55:24 -0700</pubDate>
+    <lastBuildDate>Tue, 29 Mar 2016 07:55:24 -0700</lastBuildDate>
     <generator>Jekyll v3.1.2</generator>
     
       <item>
+        <title>Unlimited Data Storage Using Image Steganography and Cat GIFs</title>
+        <description>&lt;p&gt;&lt;span&gt;&lt;style&gt;
+.suspicious-pregnant-pause {
+  padding: 60px 0;
+  color: #999;
+}
+&lt;/style&gt;&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;In 2016, animated GIFs are absurdly popular. &lt;a href=&quot;https://www.messenger.com&quot;&gt;Facebook Messenger&lt;/a&gt;, &lt;a href=&quot;https://twitter.com&quot;&gt;Twitter&lt;/a&gt;, and &lt;a href=&quot;https://slack.com&quot;&gt;Slack&lt;/a&gt; now natively support GIF sharing, and startups which help facilitate GIF sharing such as &lt;a href=&quot;http://giphy.com&quot;&gt;Giphy&lt;/a&gt; and &lt;a href=&quot;https://www.riffsy.com&quot;&gt;Riffsy&lt;/a&gt; have received &lt;a href=&quot;https://www.crunchbase.com/organization/giphy&quot;&gt;&lt;em&gt;tens of millions&lt;/em&gt; of dollars&lt;/a&gt; in venture capital. I even built my own tool to &lt;a href=&quot;https://github.com/minimaxir/video-to-gif-osx&quot;&gt;convert a video to a GIF&lt;/a&gt; on OSX because &lt;a href=&quot;http://minimaxir.com/2015/08/gif-to-video-osx/&quot;&gt;I wanted to be cool&lt;/a&gt; too.&lt;/p&gt;
+
+&lt;p&gt;On &lt;a href=&quot;https://www.reddit.com&quot;&gt;Reddit&lt;/a&gt;, GIFs are also popular for reactions, often containing submission titles with the phrase MRW (&amp;ldquo;my reaction when&amp;rdquo;). Here is a wordcloud of the titles of all GIF submissions to Reddit in 2015:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/gif-unlimited/reddit-gif-wordcloud-e.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Completely unrelated, &lt;a href=&quot;https://en.wikipedia.org/wiki/Steganography&quot;&gt;image steganography&lt;/a&gt; is a technique that allows the embedding of messages into the pixels of images themselves, allowing for the transmission of secret messages. Image steganography was popular on the internet in the early 2000&amp;rsquo;s, but died out before image-sharing between peers was commonplace and information encryption became a hot political issue.&lt;/p&gt;
+
+&lt;h2&gt;It&amp;rsquo;s a Secret to Everybody&lt;/h2&gt;
+
+&lt;p&gt;In 2012, Zach Oakes created &lt;a href=&quot;https://sekao.net/pixeljihad/&quot;&gt;PixelJihad&lt;/a&gt;, an &lt;a href=&quot;https://github.com/oakes/PixelJihad&quot;&gt;open-source&lt;/a&gt;, client-side tool for image steganography using JavaScript and the HTML5 Canvas. This implementation embeds text messages by converting them into raw binary and modifying the least-significant bit (Aaron Miller wrote &lt;a href=&quot;http://www.aaronmiller.in/thesis/&quot;&gt;an informative paper&lt;/a&gt; on LSB encoding) of the red, blue, and green binary pixel values of the specified image to match the message (e.g. a white pixel with red, blue, and green values of &lt;code&gt;[255, 255, 255]&lt;/code&gt; can be represented in binary form as &lt;code&gt;[11111111, 11111111, 11111111]&lt;/code&gt;; LSB encoding changes the right-most bit to 0 or 1 for each pixel channel). Changing the last bit of a color channel will not result in a detectable visual change by the human eye.&lt;/p&gt;
+
+&lt;p&gt;The image pixels to-be-modified during encoding are selected according to a semirandom schedule. The message can then be decoded by reading the LSB of the changed pixels from the schedule and reconstructing the binary message, then converting back into text.&lt;/p&gt;
+
+&lt;p&gt;Since we can set 3 bits per physical pixel, the maximum amount of data (in bytes) that can be stored is equivalent to the width of an image (in pixels) multiplied by the height times 3, divided by 8.&lt;/p&gt;
+
+&lt;p&gt;Take the Reddit GIF wordcloud I posted above. If you download the image and load it into PixelJihad, you can see I hid a secret message showing how to get the Reddit word data using &lt;a href=&quot;https://cloud.google.com/bigquery/&quot;&gt;BigQuery&lt;/a&gt;. The visualization is 600px by 400px, therefore it can store up to:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;600 * 400 * 3 bits / 8 = 90000 Bytes / 1000 = 90 kB
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The image itself is 257 kB, but a bonus 35% in data storage isn&amp;rsquo;t bad.&lt;/p&gt;
+
+&lt;p&gt;PixelJihad only supports text messages with an artificial limit of 1,000 characters (~1 kB) for &lt;em&gt;sanity&lt;/em&gt;, but I&amp;rsquo;m not fond of being sane. There is &lt;em&gt;nothing&lt;/em&gt; from a technical perspective stopping users from encoding larger text messages, or even raw file data as pure binary into images.&lt;/p&gt;
+
+&lt;p&gt;But embedding data into a &lt;em&gt;static&lt;/em&gt; image is boring. What happens when you embed data into &lt;em&gt;each frame of a GIF&lt;/em&gt;? Just a thought.&lt;/p&gt;
+
+&lt;h2&gt;Meow!&lt;/h2&gt;
+
+&lt;p&gt;Now, back to what you&amp;rsquo;re reading this article for, who cares about all this stegosaurus crap. Here is a cute cat GIF &lt;a href=&quot;https://www.reddit.com/r/gifs/comments/256bir/abduction_cat_re_flying_cat_re_so_big/&quot;&gt;from Reddit&lt;/a&gt;. Look at its cuteness.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/gif-unlimited/aliencat.gif&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Aww.&lt;/p&gt;
+
+&lt;p&gt;The GIF file size is 2.44 MB (sorry, readers on mobile devices!). The dimensions of the GIF are 300px by 399px. But if you open the GIF in Preview on OSX, you can see that the GIF is comprised of 72 frames.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/gif-unlimited/gif-finder-17.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Performing the same math:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;300 * 399 * 72 frames * 3 / 8 = 3231900 / 1000000 = 3.23 MB
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The potential amount of encodable data is larger than the file size of the image itself! Screw secret messages, we&amp;rsquo;re literally &lt;em&gt;creating&lt;/em&gt; data storage out of nothing!&lt;/p&gt;
+
+&lt;p&gt;You know what this means? We can &lt;em&gt;embed the cat GIF into itself&lt;/em&gt; steganographically by splitting it over all 72 frames, and get 780 kB left over to store whatever we want.&lt;/p&gt;
+
+&lt;p&gt;And then we can &lt;em&gt;do it again&lt;/em&gt; to the newly-embedded image.&lt;/p&gt;
+
+&lt;p&gt;Infinitely.&lt;/p&gt;
+
+&lt;p&gt;780 kB free with each iteration.&lt;/p&gt;
+
+&lt;p&gt;Cat GIF recursion.&lt;/p&gt;
+
+&lt;h2&gt;Purrcursion&lt;/h2&gt;
+
+&lt;p&gt;Let&amp;rsquo;s say we want to embed a 10 MB music file into a GIF. Since 10000 kB / 780 kB = 12.82, we re-embed the cat GIF 13 times, including 1/13th of the music file as sidecar data with each iteration. And now we have a cat GIF that contains some pretty sweet tunes!&lt;/p&gt;
+
+&lt;p&gt;And not only do we have a magical cat GIF, the data is completely portable; you can simply e-mail the cat GIF to your friend and they can decode the high-fidelity music file out of the GIF using an app that implements this schema. Or you can post the cat GIF w/ music to Reddit for &lt;em&gt;double&lt;/em&gt; meaningless internet points.&lt;/p&gt;
+
+&lt;p&gt;The only limitation to the &amp;ldquo;infinitely&amp;rdquo; part is the increasing amount of CPU processing power for each decoding, but that&amp;rsquo;s fixable since it&amp;rsquo;s 2016 and smartphones have quad-core processors. Worth every ounce of battery life, in my opinion.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;tl;dr &lt;/strong&gt; I was bored and decided to create infinite data in a way that makes people feel fuzzy inside. No big deal. Of course, I can&amp;rsquo;t show &lt;em&gt;you&lt;/em&gt; a proof-of-concept of how this works. That would be silly. But if you&amp;rsquo;re a venture capitalist who wants to invest more tens of millions of dollars into a clearly-sustainable GIF startup, feel free to email me at &lt;a href=&quot;mailto:max@minimaxir.com&quot;&gt;max@minimaxir.com&lt;/a&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;suspicious-pregnant-pause&quot;&gt;...&lt;/div&gt;
+
+
+
+
+&lt;div class=&quot;suspicious-pregnant-pause&quot;&gt;...&lt;/div&gt;
+
+
+
+
+&lt;div class=&quot;suspicious-pregnant-pause&quot;&gt;...&lt;/div&gt;
+
+
+&lt;p&gt;Yeah, infinite data via image steganography doesn&amp;rsquo;t actually work. But the reasons it doesn&amp;rsquo;t work are not obvious unless you have deep knowledge of how image compression reduces the file size of images, and conversely, how modifying images could cause them to become &lt;em&gt;larger&lt;/em&gt; in file size  (I may or may not have spent several hours forking PixelJihad and adding modern features before realizing that I am not a data storage magician).&lt;/p&gt;
+
+&lt;p&gt;I will write a follow-up post soon detailing the steganographic gotchas. Until then, keep in mind that there is no such thing as a free cat GIF.&lt;/p&gt;
+</description>
+        <pubDate>Tue, 29 Mar 2016 08:00:00 -0700</pubDate>
+        <link>http://minimaxir.com/2016/03/gif-unlimited/</link>
+        <guid isPermaLink="true">http://minimaxir.com/2016/03/gif-unlimited/</guid>
+        
+        
+        <category>Idea</category>
+        
+        <category>Comedy</category>
+        
+        <category>Genius</category>
+        
+      </item>
+    
+      <item>
         <title>Facebook Reactions and the Problems With Quantifying Likes Differently</title>
-        <description>&lt;p&gt;Last week, Facebook added &lt;a href=&quot;http://newsroom.fb.com/news/2016/02/reactions-now-available-globally/&quot;&gt;Facebook Reactions&lt;/a&gt;, allowing users to do more than just &amp;ldquo;Like&amp;rdquo; posts and statuses as they have done for the past decade. Likes were the universal symbol of approval on social media. Now, Facebook users can apply more granular responses, from positive emotions like &lt;strong&gt;Love&lt;/strong&gt;, to negative emotions such as &lt;strong&gt;Angry&lt;/strong&gt;. This was widely believed to be Facebook&amp;rsquo;s compromise instead of adding a Dislike button.&lt;/p&gt;
+        <description>&lt;p&gt;Facebook added &lt;a href=&quot;http://newsroom.fb.com/news/2016/02/reactions-now-available-globally/&quot;&gt;Facebook Reactions&lt;/a&gt;, allowing users to do more than just &amp;ldquo;Like&amp;rdquo; posts and statuses as they have done for the past decade. Likes were the universal symbol of approval on social media. Now, Facebook users can apply more granular responses, from positive emotions like &lt;strong&gt;Love&lt;/strong&gt;, to negative emotions such as &lt;strong&gt;Angry&lt;/strong&gt;. This was widely believed to be Facebook&amp;rsquo;s compromise instead of adding a Dislike button.&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;/img/facebook-reactions/facebook_react.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
@@ -1314,123 +1419,6 @@ dev.off&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&
         <pubDate>Fri, 09 Oct 2015 08:00:00 -0700</pubDate>
         <link>http://minimaxir.com/2015/10/reddit-topwords/</link>
         <guid isPermaLink="true">http://minimaxir.com/2015/10/reddit-topwords/</guid>
-        
-        
-        <category>Data</category>
-        
-      </item>
-    
-      <item>
-        <title>How to Analyze Every Reddit Submission and Comment, in Seconds, for Free</title>
-        <description>&lt;p&gt;While working on my &lt;a href=&quot;http://minimaxir.com/2014/12/reddit-statistics/&quot;&gt;statistical analysis of 142 million Reddit submissions&lt;/a&gt; last year, I had a surprising amount of trouble settings things up. It took a few hours to download the 40+ gigabytes of compressed data, and another few hours to parse the data and store in a local database. Even then, on my old-but-still-pretty-fast desktop PC, simple queries on the entire dataset took minutes to run, with complex queries occasionally taking upwards to an hour.&lt;/p&gt;
-
-&lt;p&gt;Over the past year, I&amp;rsquo;ve had a lot of success using &lt;a href=&quot;https://cloud.google.com/bigquery/&quot;&gt;Google&amp;rsquo;s BigQuery&lt;/a&gt; tool for quick big data analysis without having to manage the data, such as the &lt;a href=&quot;http://minimaxir.com/2015/08/nyc-map/&quot;&gt;recent NYC Taxi data dump&lt;/a&gt;. Recently, Jason Michael Baumgartner of &lt;a href=&quot;https://pushshift.io&quot;&gt;Pushshift.io&lt;/a&gt; (a.k.a &lt;a href=&quot;https://www.reddit.com/user/Stuck_In_the_Matrix&quot;&gt;/u/Stuck_In_The_Matrix&lt;/a&gt; on Reddit), who also provided me the original Reddit data, released &lt;a href=&quot;https://www.reddit.com/r/datasets/comments/3mg812/full_reddit_submission_corpus_now_available_2006/&quot;&gt;new Reddit datasets&lt;/a&gt; containing all submissions and all comments until August 2015. Google BigQuery Developer Advocate Felipe Hoffa &lt;a href=&quot;https://www.reddit.com/r/bigquery/comments/3mv82i/dataset_reddits_full_post_history_shared_on/&quot;&gt;uploaded the dataset&lt;/a&gt; to a public table in BigQuery for anyone to perform analysis on the data.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/reddit-bigquery/bigquery-tool.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;With Reddit data in BigQuery, quantifying all the hundreds of millions of Reddit submissions and comments is trivial.&lt;/p&gt;
-
-&lt;h2&gt;Hello Reddit!&lt;/h2&gt;
-
-&lt;p&gt;&lt;em&gt;Although the data is retrieved and processed in seconds, making the data visualizations in this post takes slightly longer. You can view the R code needed to reproduce the visualizations in &lt;a href=&quot;https://github.com/minimaxir/reddit-bigquery/blob/master/reddit_bigquery.ipynb&quot;&gt;this Jupyter notebook&lt;/a&gt; open-sourced on GitHub.&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;BigQuery allows 1 terabyte (1000 GB) of &lt;a href=&quot;https://cloud.google.com/bigquery/pricing&quot;&gt;free data processing&lt;/a&gt; per month; which is much more than it sounds like, and you&amp;rsquo;ll see why.&lt;/p&gt;
-
-&lt;p&gt;BigQuery syntax works similar to typical SQL. If you can perform basic SQL aggregations such as &lt;code&gt;COUNT&lt;/code&gt; and &lt;code&gt;AVG&lt;/code&gt; on a tiny database, you can perform the same aggregations on a 100+ GB dataset.&lt;/p&gt;
-
-&lt;p&gt;We can write a simple query to just calculate how many Reddit submissions are made each day, to both check the robustness of the data, and to show how much Reddit has grown. (note that the &lt;code&gt;created&lt;/code&gt; field is in seconds UTC; you will need to convert it to a timestamp, then convert to a &lt;code&gt;DATE&lt;/code&gt; which converts the timestamp to a YYYY-MM-DD string, which is the format you want since it sorts lexigraphically)&lt;/p&gt;
-
-&lt;p&gt;&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sql&quot; data-lang=&quot;sql&quot;&gt;&lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;DATE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SEC_TO_TIMESTAMP&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;created&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;date_submission&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;COUNT&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;num_submissions&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fh&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bigquery&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reddit_posts&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;full_corpus_201509&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;GROUP&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;BY&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;date_submission&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;ORDER&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;by&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;date_submission&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;&lt;/p&gt;
-
-&lt;p&gt;Which results in a simple timeseries, as shown above. BigQuery allows you to download the data as a CSV, and it can easily be visualized in any statistical program such as Excel.&lt;/p&gt;
-
-&lt;p&gt;Of course, I prefer R and ggplot2.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/reddit-bigquery/reddit-bigquery-1.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;And that query only took 4.5 seconds to complete, with 1.46 GB data processed! BigQuery only counts the columns used in the query against the 1 TB quota; since the query only used one small column, the query is cheap. (if the query hits the raw submission title/comment text data, then the queries will be significantly larger data-wise)&lt;/p&gt;
-
-&lt;h2&gt;When is the best time to post to Reddit?&lt;/h2&gt;
-
-&lt;p&gt;One of the reasons people might look at Reddit data is for determining the best way to viral. One of the most important factors in making something go viral is timing; since Reddit has a ranking system based on both community approval and time-since-submission, along with the fact that there is more activity at certain times of the day, the time when a submission is made is especially important.&lt;/p&gt;
-
-&lt;p&gt;So here&amp;rsquo;s another aggregation query that aggregates on the day of week a submission is made, and the hour when the submission is made; this creates a 7x24 matrix of timeslot possibilities. Both values are set to Eastern Standard Time, as U.S.-target websites tend to follow that timezone. Lastly, instead of checking the average amount of points for each submission at each timeslot (which would be skewed by the very high proportion of submissions with no upvotes), we&amp;rsquo;ll look at how many submissions go viral (&gt;3000) at each timeslot with a conditional &lt;code&gt;SUM(IF())&lt;/code&gt; statement (which is equivalent to Excel&amp;rsquo;s &lt;code&gt;COUNTIF&lt;/code&gt; conditional)&lt;/p&gt;
-
-&lt;p&gt;&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sql&quot; data-lang=&quot;sql&quot;&gt;&lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt;
-  &lt;span class=&quot;n&quot;&gt;DAYOFWEEK&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SEC_TO_TIMESTAMP&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;created&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;60&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&lt;em&gt;&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;60&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&lt;/em&gt;&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sub_dayofweek&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-  &lt;span class=&quot;n&quot;&gt;HOUR&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SEC_TO_TIMESTAMP&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;created&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;60&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&lt;em&gt;&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;60&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&lt;/em&gt;&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sub_hour&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-  &lt;span class=&quot;k&quot;&gt;SUM&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;IF&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;score&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;num_gte_3000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fh&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bigquery&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reddit_posts&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;full_corpus_201509&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;GROUP&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;BY&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sub_dayofweek&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sub_hour&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;ORDER&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;BY&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sub_dayofweek&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sub_hour&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;&lt;/p&gt;
-
-&lt;p&gt;2.5 seconds, 2.39 GB processed, and a few R tricks results in this:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/reddit-bigquery/reddit-bigquery-2.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;The day-of-week mostly does not matter, but hour matters significantly: about 3x as many submissions go viral when they are posted in the morning EST than if they are posted late in the day. (and rarely anything comparatively goes viral posted late at night, which is intuitive enough)&lt;/p&gt;
-
-&lt;h2&gt;Creating Wordclouds of Subreddit Comments&lt;/h2&gt;
-
-&lt;p&gt;Wordclouds are always a fun representation of data, although not necessarily the most quantifiable. BigQuery can help derive word counts on large quantities of data, although the query is much more complex.&lt;/p&gt;
-
-&lt;p&gt;Due to the amount of data, we&amp;rsquo;ll only look at the latest Reddit comment data (August 2015), and we&amp;rsquo;ll look at the &lt;a href=&quot;https://www.reddit.com/r/news&quot;&gt;/r/news&lt;/a&gt; subreddit to see if there are any linguistic trends. In a subquery, the comment text (from non-bots!) is stripped of punctuation, set to lower case, and split into individual words; each word is counted and aggregated.&lt;/p&gt;
-
-&lt;p&gt;&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sql&quot; data-lang=&quot;sql&quot;&gt;&lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;word&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;COUNT&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&lt;em&gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;num_words&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;AVG&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;score&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;avg_score&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;FLATTEN&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;
-  &lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;SPLIT&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;LOWER&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;REGEXP_REPLACE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;body&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;[.&amp;amp;quot;,&lt;/em&gt;:()[]/|\n]&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39; &amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)),&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39; &amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;word&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;score&lt;/span&gt;
-  &lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fh&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bigquery&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reddit_comments&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2015&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;_08&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
-  &lt;span class=&quot;k&quot;&gt;WHERE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;author&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;NOT&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;IN&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;author&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fh&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bigquery&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reddit_comments&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bots_201505&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
-  &lt;span class=&quot;k&quot;&gt;AND&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;subreddit&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;ss&quot;&gt;&amp;quot;news&amp;quot;&lt;/span&gt;
-  &lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;word&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;GROUP&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;EACH&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;BY&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;word&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;HAVING&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;num_words&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;10000&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;ORDER&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;BY&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;num_words&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;DESC&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;&lt;/p&gt;
-
-&lt;p&gt;5.0 seconds and 11.3 GB processed, along with removing a few stopwords via R results in this.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/reddit-bigquery/reddit-bigquery-3.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;News is about &lt;strong&gt;people&lt;/strong&gt;. And &lt;strong&gt;more&lt;/strong&gt;. Makes sense. (An &lt;code&gt;avg_score&lt;/code&gt; column for each word is included to allow for emulation of quantifiable impact of a given word, as used in my &lt;a href=&quot;http://minimaxir.com/2015/01/linkbait/&quot;&gt;BuzzFeed analysis&lt;/a&gt;, although that is less useful for comments than submissions.)&lt;/p&gt;
-
-&lt;h2&gt;Monthly Active Users&lt;/h2&gt;
-
-&lt;p&gt;Although Reddit does provide a count of Subscribers for a given subreddit, most of those users are passive. One of the most important metrics of any startup is Monthly Active Users (MAUs), which we can get a reasonable approximation using the comment data. And not only that, we can aggregate the unique number of commenters by a given subreddit and by a given month, to see how subreddit activity changes over time relative to other subreddits.&lt;/p&gt;
-
-&lt;p&gt;How this works in BigQuery is a little more complicated, and requires the use of window functions:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Aggregate by subreddit, month, and count of unique comment authors on &lt;em&gt;all&lt;/em&gt; comments (this will result in a query with a lot of data processed!)&lt;/li&gt;
-&lt;li&gt;For each month, rank the subreddits by number of unique authors.&lt;/li&gt;
-&lt;li&gt;Take the top 20 subreddits by rank for each given month.&lt;/li&gt;
-&lt;/ul&gt;
-
-
-&lt;p&gt;&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sql&quot; data-lang=&quot;sql&quot;&gt;&lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;subreddit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;date&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;unique_authors&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;subreddit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;date&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;unique_authors&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ROW_NUMBER&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;OVER&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;PARTITION&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;BY&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;date&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ORDER&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;BY&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;unique_authors&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;DESC&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rank&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;subreddit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;LEFT&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;DATE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SEC_TO_TIMESTAMP&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;created_utc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)),&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;7&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;date&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;COUNT&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;UNIQUE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;author&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;unique_authors&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;TABLE_QUERY&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fh&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bigquery&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reddit_comments&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;&amp;quot;table_id CONTAINS &amp;#39;20&amp;#39; AND LENGTH(table_id)&amp;lt;8&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;GROUP&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;EACH&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;BY&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;subreddit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;date&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;WHERE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rank&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;20&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;ORDER&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;BY&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;date&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ASC&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;unique_authors&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;DESC&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;&lt;/p&gt;
-
-&lt;p&gt;11.9 seconds and 53.3 GB (!) later, we can create a Top 20 Subreddits visualization for each month, and combine each image into a GIF with my trusty &lt;a href=&quot;https://github.com/minimaxir/frames-to-gif-osx&quot;&gt;Convert Frames to GIF&lt;/a&gt; tool.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/reddit-bigquery/subreddit-ranks.gif&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;You can view the individual frames &lt;a href=&quot;https://github.com/minimaxir/reddit-bigquery/tree/master/subreddit-ranks&quot;&gt;in the project GitHub repository&lt;/a&gt;. There are many trends revealed, such how some subreddits die over time (&lt;a href=&quot;https://www.reddit.com/r/fffffffuuuuuuuuuuuu&quot;&gt;r/fffffffuuuuuuuuuuuu&lt;/a&gt;, &lt;a href=&quot;https://www.reddit.com/r/technology&quot;&gt;/r/technology&lt;/a&gt;), how some rise over time (&lt;a href=&quot;https://www.reddit.com/r/pcmasterrace&quot;&gt;/r/pcmasterrace&lt;/a&gt;), and how some subreddits have relative monthly spikes (&lt;a href=&quot;https://www.reddit.com/r/thebutton&quot;&gt;/r/thebutton&lt;/a&gt;). Note that the colors have no visual meaning but are used to help easily differentiate between subreddits.&lt;/p&gt;
-
-&lt;p&gt;These sample queries are only a small sample of what can be done with the Reddit data and BigQuery. Although some data scientists may argue that using is BigQuery is pointless since ~200GB of data &lt;a href=&quot;http://yourdatafitsinram.com&quot;&gt;can fit in RAM&lt;/a&gt;, the quick, dirty, and &lt;em&gt;cheap&lt;/em&gt; option is much more pragmatic for the majority of potential data analysis on this Reddit dataset.&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;Again, you can view the R code needed to reproduce the visualizations in &lt;a href=&quot;https://github.com/minimaxir/reddit-bigquery/blob/master/reddit_bigquery.ipynb&quot;&gt;this Jupyter notebook&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
-</description>
-        <pubDate>Fri, 02 Oct 2015 08:00:00 -0700</pubDate>
-        <link>http://minimaxir.com/2015/10/reddit-bigquery/</link>
-        <guid isPermaLink="true">http://minimaxir.com/2015/10/reddit-bigquery/</guid>
         
         
         <category>Data</category>
