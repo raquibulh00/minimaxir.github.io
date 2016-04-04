@@ -246,7 +246,7 @@
 
 <p>First, I gathered some preliminary statistics about all submissions to the top 500 subreddits on Reddit, again using the <a href="https://cloud.google.com/bigquery/">BigQuery</a> data dump compiled by Jason Baumgartner and Felipe Hoffa, in order to establish a good base for the analysis:</p>
 
-<p><figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="k">SELECT</span> <span class="n">subreddit</span><span class="p">,</span>
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="k">SELECT</span> <span class="n">subreddit</span><span class="p">,</span>
   <span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">AS</span> <span class="n">num_submissions</span><span class="p">,</span>
   <span class="n">ROUND</span><span class="p">(</span><span class="k">AVG</span><span class="p">(</span><span class="n">score</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span> <span class="k">as</span> <span class="n">avg_score</span><span class="p">,</span>
   <span class="n">NTH</span><span class="p">(</span><span class="mi">25</span><span class="p">,</span> <span class="n">quantiles</span><span class="p">(</span><span class="n">score</span><span class="p">,</span><span class="mi">1000</span><span class="p">))</span> <span class="k">AS</span> <span class="n">lower_95</span><span class="p">,</span>
@@ -255,7 +255,7 @@
 <span class="k">FROM</span> <span class="p">[</span><span class="n">fh</span><span class="o">-</span><span class="n">bigquery</span><span class="p">:</span><span class="n">reddit_posts</span><span class="p">.</span><span class="n">full_corpus_201509</span><span class="p">]</span>
 <span class="k">GROUP</span> <span class="k">BY</span> <span class="n">subreddit</span>
 <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">num_submissions</span> <span class="k">DESC</span>
-<span class="k">LIMIT</span> <span class="mi">500</span></code></pre></figure></p>
+<span class="k">LIMIT</span> <span class="mi">500</span></code></pre></figure>
 
 <p>Which results in <a href="https://docs.google.com/spreadsheets/d/1lyEc7-5vkREKBV8fUreyOszICgyA0CqX2YHaK2-4ndo/edit?usp=sharing">this output</a>. The &ldquo;lower_95&rdquo; and and the &ldquo;upper_95&rdquo; columns represent the 2.5% and the 97.5% percentile respectively, which could be used to form a 95% confidence interval around the median. For example, <a href="http://reddit.com/r/funny">/r/funny</a> has a 2.5% percentile of 0 points, a median of 1 point, and a 97.5% percentile of <em>875 points</em>. However, from those values, it is clear the data is heavily skewed right, which makes running statistical tests more difficult.</p>
 
@@ -271,21 +271,20 @@
 <li>Keep only the Top 20 words for each subreddit. 500 subreddits x 20 words = 10,000 rows maximum, which the limit BigQuery allows for web download, so that works out well.</li>
 </ul>
 
-
-<p><figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="k">SELECT</span> <span class="o"><em></span> <span class="k">FROM</span> <span class="p">(</span>
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="p">(</span>
 <span class="k">SELECT</span> <span class="n">subreddit</span><span class="p">,</span> <span class="n">word</span><span class="p">,</span> <span class="n">num_words</span><span class="p">,</span> <span class="n">avg_score</span><span class="p">,</span> <span class="n">lower_95</span><span class="p">,</span> <span class="n">median</span><span class="p">,</span> <span class="n">upper_95</span><span class="p">,</span> <span class="n">ROW_NUMBER</span><span class="p">()</span> <span class="n">OVER</span> <span class="p">(</span><span class="n">PARTITION</span> <span class="k">BY</span> <span class="n">subreddit</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">avg_score</span> <span class="k">DESC</span><span class="p">)</span> <span class="n">score_rank</span>
 <span class="k">FROM</span> <span class="p">(</span>
 <span class="k">SELECT</span> <span class="n">subreddit</span><span class="p">,</span> <span class="n">word</span><span class="p">,</span> <span class="k">COUNT</span><span class="p">(</span><span class="k">DISTINCT</span><span class="p">(</span><span class="n">id</span><span class="p">))</span> <span class="k">AS</span> <span class="n">num_words</span><span class="p">,</span> <span class="n">ROUND</span><span class="p">(</span><span class="k">AVG</span><span class="p">(</span><span class="n">score</span><span class="p">),</span> <span class="mi">3</span><span class="p">)</span> <span class="k">AS</span> <span class="n">avg_score</span><span class="p">,</span> <span class="n">NTH</span><span class="p">(</span><span class="mi">25</span><span class="p">,</span> <span class="n">quantiles</span><span class="p">(</span><span class="n">score</span><span class="p">,</span><span class="mi">1000</span><span class="p">))</span> <span class="k">AS</span> <span class="n">lower_95</span><span class="p">,</span> <span class="n">NTH</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="n">quantiles</span><span class="p">(</span><span class="n">score</span><span class="p">,</span><span class="mi">1000</span><span class="p">))</span> <span class="k">AS</span> <span class="n">median</span><span class="p">,</span> <span class="n">NTH</span><span class="p">(</span><span class="mi">975</span><span class="p">,</span> <span class="n">quantiles</span><span class="p">(</span><span class="n">score</span><span class="p">,</span><span class="mi">1000</span><span class="p">))</span> <span class="k">AS</span> <span class="n">upper_95</span>
 <span class="k">FROM</span><span class="p">(</span><span class="n">FLATTEN</span><span class="p">((</span>
-  <span class="k">SELECT</span> <span class="n">SPLIT</span><span class="p">(</span><span class="k">LOWER</span><span class="p">(</span><span class="n">REGEXP_REPLACE</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">r</span><span class="s1">&#39;[^\w&amp;#39;</span><span class="p">]</span><span class="s1">&#39;, &#39;</span> <span class="s1">&#39;)), &#39;</span> <span class="err">&#39;</span><span class="p">)</span> <span class="n">word</span><span class="p">,</span> <span class="n">subreddit</span><span class="p">,</span> <span class="n">score</span><span class="p">,</span> <span class="n">id</span>
+  <span class="k">SELECT</span> <span class="n">SPLIT</span><span class="p">(</span><span class="k">LOWER</span><span class="p">(</span><span class="n">REGEXP_REPLACE</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">r</span><span class="s1">&#39;[^\w\&#39;</span><span class="p">]</span><span class="s1">&#39;, &#39;</span> <span class="s1">&#39;)), &#39;</span> <span class="err">&#39;</span><span class="p">)</span> <span class="n">word</span><span class="p">,</span> <span class="n">subreddit</span><span class="p">,</span> <span class="n">score</span><span class="p">,</span> <span class="n">id</span>
   <span class="k">FROM</span> <span class="p">[</span><span class="n">fh</span><span class="o">-</span><span class="n">bigquery</span><span class="p">:</span><span class="n">reddit_posts</span><span class="p">.</span><span class="n">full_corpus_201509</span><span class="p">]</span>
-  <span class="k">WHERE</span> <span class="n">subreddit</span> <span class="k">IN</span> <span class="p">(</span><span class="k">SELECT</span> <span class="n">subreddit</span> <span class="k">FROM</span> <span class="p">(</span><span class="k">SELECT</span> <span class="n">subreddit</span><span class="p">,</span> <span class="k">COUNT</span><span class="p">(</span><span class="o"></em></span><span class="p">)</span> <span class="k">AS</span> <span class="k">c</span> <span class="k">FROM</span> <span class="p">[</span><span class="n">fh</span><span class="o">-</span><span class="n">bigquery</span><span class="p">:</span><span class="n">reddit_posts</span><span class="p">.</span><span class="n">full_corpus_201509</span><span class="p">]</span> <span class="k">GROUP</span> <span class="k">BY</span> <span class="n">subreddit</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="k">c</span> <span class="k">DESC</span> <span class="k">LIMIT</span> <span class="mi">500</span><span class="p">))</span>
+  <span class="k">WHERE</span> <span class="n">subreddit</span> <span class="k">IN</span> <span class="p">(</span><span class="k">SELECT</span> <span class="n">subreddit</span> <span class="k">FROM</span> <span class="p">(</span><span class="k">SELECT</span> <span class="n">subreddit</span><span class="p">,</span> <span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">AS</span> <span class="k">c</span> <span class="k">FROM</span> <span class="p">[</span><span class="n">fh</span><span class="o">-</span><span class="n">bigquery</span><span class="p">:</span><span class="n">reddit_posts</span><span class="p">.</span><span class="n">full_corpus_201509</span><span class="p">]</span> <span class="k">GROUP</span> <span class="k">BY</span> <span class="n">subreddit</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="k">c</span> <span class="k">DESC</span> <span class="k">LIMIT</span> <span class="mi">500</span><span class="p">))</span>
   <span class="p">),</span> <span class="n">word</span><span class="p">))</span>
 <span class="k">GROUP</span> <span class="k">EACH</span> <span class="k">BY</span> <span class="n">subreddit</span><span class="p">,</span> <span class="n">word</span>
 <span class="k">HAVING</span> <span class="n">num_words</span> <span class="o">&gt;=</span> <span class="mi">1000</span>
 <span class="p">))</span>
 <span class="k">WHERE</span> <span class="n">score_rank</span> <span class="o">&lt;=</span> <span class="mi">20</span>
-<span class="k">ORDER</span> <span class="k">BY</span> <span class="n">subreddit</span><span class="p">,</span> <span class="n">avg_score</span> <span class="k">DESC</span></code></pre></figure></p>
+<span class="k">ORDER</span> <span class="k">BY</span> <span class="n">subreddit</span><span class="p">,</span> <span class="n">avg_score</span> <span class="k">DESC</span></code></pre></figure>
 
 <p>Phew! That query results in <a href="https://docs.google.com/spreadsheets/d/1MRfLR_TBO8zveKaifqVXTN0da7tf0FQOr5a2LVkZgkg/edit?usp=sharing">this output</a>, which we can use to plot a bar chart for each subreddit.</p>
 
@@ -295,7 +294,7 @@
 
 <p>After a few R tricks, I managed to chart the Top 10 keywords for each of the Top 15 subreddits:</p>
 
-<p><a href="https://i.imgur.com/dWdCnMI.png"> <img src="/img/reddit-topwords/subreddit-means-half.png" alt="" /> </a></p>
+<p><a href="https://i.imgur.com/dWdCnMI.png"> <img src="/img/reddit-topwords/subreddit-means-half.png" alt=""> </a></p>
 
 <p><em>(Click on image for full-resolution)</em></p>
 
@@ -307,15 +306,15 @@
 
 <p>The most notable trend with the Top 15 subreddits is in the <a href="https://www.reddit.com/r/politics/">/r/politics</a> subreddit, which tells users to &ldquo;Vote based on quality, not opinion,&rdquo; but has a high affiliation for submissions specifically involving Bernie Sanders and Elizabeth Warren.</p>
 
-<p><img src="/img/reddit-topwords/mean-010-politics.png" alt="" /></p>
+<p><img src="/img/reddit-topwords/mean-010-politics.png" alt=""></p>
 
 <p><a href="https://www.reddit.com/r/technology/">/r/technology</a>, intended to be about &ldquo;a broad spectrum of conversation as to the innovations, aspirations, applications and machinations,&rdquo; has a high affiliation for political issues such as the net neutrality controversy involving the FCC, ISPs, and Comcast, and little affiliation for actual <em>technology</em>.</p>
 
-<p><img src="/img/reddit-topwords/mean-018-technology.png" alt="" /></p>
+<p><img src="/img/reddit-topwords/mean-018-technology.png" alt=""></p>
 
 <p>Outside the Top 15 Subreddits, the political affiliations of subreddits such as <a href="http://reddit.com/r/Libertarian">/r/Libertarian</a> are less surprising and more funny as a result.</p>
 
-<p><img src="/img/reddit-topwords/mean-103-Libertarian.png" alt="" /></p>
+<p><img src="/img/reddit-topwords/mean-103-Libertarian.png" alt=""></p>
 
 <h2>Storyreddit</h2>
 
@@ -323,21 +322,21 @@
 
 <p>The biggest offender is <a href="https://www.reddit.com/r/aww/">/r/aww</a>, a subreddit about animals, has a high affinity for words <em>that aren&rsquo;t animals</em>, with only two animal words appearing in the Top 20.</p>
 
-<p><img src="/img/reddit-topwords/mean-011-aww.png" alt="" /></p>
+<p><img src="/img/reddit-topwords/mean-011-aww.png" alt=""></p>
 
 <p>The presence of story titles is also apparent in <a href="https://www.reddit.com/r/Fitness/">/r/Fitness</a>, which in fairness, the atmosphere of self-improvement lends itself more to stories.</p>
 
-<p><img src="/img/reddit-topwords/mean-054-Fitness.png" alt="" /></p>
+<p><img src="/img/reddit-topwords/mean-054-Fitness.png" alt=""></p>
 
 <h2>Metareddit</h2>
 
 <p>The practice of upvoting submissions just because they mention a particular topic is colloquially known as &ldquo;circlejerking.&rdquo; <a href="https://www.reddit.com/r/circlejerk/">/r/circlejerk</a> fits that well, with titles designed to satirize clickbaity issues in order to receive upvotes ironically.</p>
 
-<p><img src="/img/reddit-topwords/mean-025-circlejerk.png" alt="" /></p>
+<p><img src="/img/reddit-topwords/mean-025-circlejerk.png" alt=""></p>
 
 <p><a href="https://www.reddit.com/r/Braveryjerk/">/r/Braveryjerk</a>, however, takes this practice to its logical conclusion.</p>
 
-<p><img src="/img/reddit-topwords/mean-486-Braveryjerk.png" alt="" /></p>
+<p><img src="/img/reddit-topwords/mean-486-Braveryjerk.png" alt=""></p>
 
 <h2>Esotericreddit</h2>
 
@@ -345,15 +344,15 @@
 
 <p><a href="https://www.reddit.com/r/conspiracy/">/r/conspiracy</a>, which apparently have frequent instances of &ldquo;TIL&rdquo; (Today, I Learned) in titles, are simultaneously very <em>suspicious</em> of the actions in the  <a href="https://www.reddit.com/r/TIL/">/r/TIL</a> subreddit.</p>
 
-<p><img src="/img/reddit-topwords/mean-064-conspiracy.png" alt="" /></p>
+<p><img src="/img/reddit-topwords/mean-064-conspiracy.png" alt=""></p>
 
 <p>The keywords in <a href="https://www.reddit.com/r/teenagers/">/r/teenagers</a> captures the essence of modern social media.</p>
 
-<p><img src="/img/reddit-topwords/mean-072-teenagers.png" alt="" /></p>
+<p><img src="/img/reddit-topwords/mean-072-teenagers.png" alt=""></p>
 
 <p>Some subreddits are just plain weird.</p>
 
-<p><img src="/img/reddit-topwords/mean-175-me_irl.png" alt="" /></p>
+<p><img src="/img/reddit-topwords/mean-175-me_irl.png" alt=""></p>
 
 <p>That&rsquo;s <a href="https://www.reddit.com/r/me_irl/">/r/me_irl</a> for you.</p>
 
@@ -363,24 +362,44 @@
 
 <p>There are notable exceptions, however, such as with <a href="https://www.reddit.com/r/Android/">/r/Android</a>.</p>
 
-<p><img src="/img/reddit-topwords/median-059-Android.png" alt="" /></p>
+<p><img src="/img/reddit-topwords/median-059-Android.png" alt=""></p>
 
 <p>That subreddit has official threads for events; it would make sense for users to upvote that whenever it appears as it&rsquo;s <em>important</em> that it&rsquo;s visible, but not necessarily as an agreement of the topic. That&rsquo;s why I believe looking at the medians is a different approach than looking at the means.</p>
 
 <p>Same thing with <a href="https://www.reddit.com/r/relationships/">/r/relationships</a>, where an &ldquo;update&rdquo; is important.</p>
 
-<p><img src="/img/reddit-topwords/median-057-relationships.png" alt="" /></p>
+<p><img src="/img/reddit-topwords/median-057-relationships.png" alt=""></p>
 
 <p>All in all, this is still just a first step for analyzing the importance of keywords in Reddit submission, and the impact of Reddit&rsquo;s hivemind. The next step would be NLP techniques such as POS tagging and TDF-IF, but those require very significant and very expensive computing power. At the least, the good results with these simple analyses validates the idea for further research.</p>
 
 <p><em>Again the R code used to generate the charts is available in <a href="https://github.com/minimaxir/reddit-subreddit-keywords/blob/master/reddit_subreddit_words.ipynb">this Jupyter notebook</a>, open-sourced on GitHub. Additionally, all 500 charts with the keyword ranks for all 500 subreddits are available in <a href="https://github.com/minimaxir/reddit-subreddit-keywords/tree/master/subreddit-mean">the parent repository</a>.</em></p>
 
+						
+            			 <div class="breadcrumbs-v5-subtitle sharing-post" style="color: #999 !important; padding-top:10px; border-top: 1px solid #eee">Share this article!
+
+
+              <span class="sharing index" style="float: right; color: #999 !important;">
+  
+		  <span class="social facebook"><a href="https://www.facebook.com/share.php?u=http://minimaxir.com/2015/10/reddit-topwords/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data="http://minimaxir.com/2015/10/reddit-topwords/"><i class="fa fa-facebook"></i><span class="count hidden-xs"> -</span></a></span>
+  
+		<span class="social twitter"><a href="http://twitter.com/home/?status=Quantifying and Visualizing the Reddit Hivemind - http://minimaxir.com/2015/10/reddit-topwords/ - via @minimaxir"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data=http://minimaxir.com/2015/10/reddit-topwords/><i class="fa fa-twitter"></i><span class="count hidden-xs"></span></a> </span>
+
+  <span  class="social linkedin"><a href="http://www.linkedin.com/shareArticle?mini=true&title=&url=http://minimaxir.com/2015/10/reddit-topwords/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=600');return false;" data=http://minimaxir.com/2015/10/reddit-topwords/><i class="fa fa-linkedin"></i><span class="count hidden-xs"> -</span></a> </span>
+
+   </span>
+   </div>
 						</div>
                         <!-- End Blog Grid Content -->
+                        
+                        
+                        
                     </article>
                     <!-- End Blog Grid -->
 
- 
+ 					
 
                     <!-- Blog Comment -->
                     <div class="bg-color-white margin-b-30">
@@ -411,6 +430,8 @@
                         </div>
                     </div>
                     <!-- End Blog Comment -->
+                    
+                    
                 </div>
 
 			                <!--========== BLOG SIDEBAR ==========-->
@@ -428,11 +449,13 @@
                         
                         <div class="blog-sidebar-content">
                             <!-- Blog Author Bio -->
-                            <p>Max Woolf (@minimaxir) is a Software QA Engineer living and working in the San Francisco Bay Area for over 3.5 years and a 2012 Carnegie Mellon University graduate.</p>
-  
-  <p>In his spare time, Max uses <a href="https://www.python.org/">Python</a> to gather data from public APIs and <a href="http://ggplot2.org/">ggplot2</a> to make pretty charts from that data.</p>
-  
-  <p>You can learn more about Max <a href="/about">here</a>, or view his portfolio <a href="/portfolio">here</a>.
+							
+							<p><strong>Max Woolf (@minimaxir)</strong> is a Software QA Engineer living and working in the San Francisco Bay Area for over 3 years and a 2012 Carnegie Mellon University graduate in Business Administration.</p>
+
+<p>In his spare time, Max uses <a href="https://www.python.org/">Python</a> to gather data from public APIs and <a href="http://ggplot2.org/">ggplot2</a> to make pretty charts from that data.</p>
+
+<p>You can learn more about Max <a href="/about">here</a>, or view his portfolio <a href="/portfolio">here</a>. </p>
+
   
     <ul class="list-inline" style="padding-top:10px; margin-top: 20px; border-top: 1px solid #ebeef6">
                         <li class="theme-icons-wrap"><a title="Facebook" href="https://facebook.com/max.woolf" target="_blank"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-facebook"></i></a></li>
@@ -488,6 +511,13 @@
                                 <div class="latest-tuts-content">
                                     <h5 class="latest-tuts-content-title"><a href="/2016/01/movie-revenue-ratings/">Movie Review Aggregator Ratings Have No Relationship with Box Office Success</a></h5>
                                     <small class="latest-tuts-content-time"> Jan 7, 2016</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="/2015/12/lets-code-1/">Let's Code an Analysis and Visualizations of Yelp Data using R and ggplot2</a></h5>
+                                    <small class="latest-tuts-content-time"> Dec 28, 2015</small>
                                 </div>
                         </article>
                                                 
@@ -587,22 +617,82 @@
 
 
   
-      <!--========== FOOTER ==========-->
-    <footer id="footer" class="footer">
-        <div class="container">
-            <!-- end row -->
+      <!--========== FOOTER V8 ==========-->
+    <footer id="footer" class="footer-v8">
+        <div class="content-sm container">
+            <div class="row">
+                <!-- Logo -->
+                <div class="col-md-6">
+                    
+                    <p>You can contact through any of the following channels, although e-mail is preferred. Following me on Facebook and Twitter certainly doesn't hurt either!</p>
+                     <!-- <h2 class="footer-v8-title">Follow Me</h2> -->
+                    <!-- Theme Icons White Background -->
+                   <!-- <ul class="list-inline ul-li-lr-0">
+                        <li class="theme-icons-wrap"><a title="Facebook" href="https://facebook.com/max.woolf" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-facebook"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="Twitter" href="https://twitter.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-twitter"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="LinkedIn" href="https://linkedin.com/in/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-linkedin"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="GitHub" href="https://github.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-github"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="YouTube" href="https://youtube.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-youtube"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="E-Mail" href="mailto:max@minimaxir.com"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-envelope"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="RSS" href="/rss.xml"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-rss"></i></a></li> -->
+                    <!-- End Theme Icons White Background -->
+                </div>
+                <!-- End Logo -->
 
+                <!-- Contact Info -->
+                <div class="col-md-6">
+                    <h3 class="footer-v8-title">Contact Info</h3>
+                    <div class="footer-v8-contact-info-bg">
+                        <ul class="list-unstyled footer-v8-contact-info">
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-map-marker"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <p class="footer-v8-contact-info-text">SOMA, San Francisco, CA</p>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-facebook"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="Facebook" href="https://facebook.com/max.woolf" target="_blank">max.woolf</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-twitter"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="Twitter" href="https://twitter.com/minimaxir" target="_blank"">@minimaxir</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-linkedin"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="LinkedIn" href="https://linkedin.com/in/minimaxir" target="_blank"">minimaxir</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-envelope"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="E-Mail" href="mailto:max@minimaxir.com">max@minimaxir.com</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- End Contact Info -->
 
-            <!-- Copyright -->
-            <ul class="list-inline footer-copyright">
-                <li class="footer-copyright-item">Copyright &#169; 2016 Max Woolf. All Rights Reserved.</li>
-                <li class="footer-copyright-item">minimaxir.com is powered by Jekyll and GitHub Pages.</li>
-            </ul>
-            <!-- End Copyright -->
-
+            </div>
+            <!--// end row -->
         </div>
+
+        <!-- Copyright -->
+        <div class="footer-v8-copyright">
+            <div class="container text-center">
+				Copyright &#169; 2016 Max Woolf. All Rights Reserved. 
+                minimaxir.com is powered by Jekyll and GitHub Pages.
+            </div>
+        </div>
+        <!-- Copyright -->
     </footer>
-    <!--========== END FOOTER ==========-->
+    <!--========== END FOOTER V8 ==========-->
 </div>
 <!-- END WRAPPER -->
 

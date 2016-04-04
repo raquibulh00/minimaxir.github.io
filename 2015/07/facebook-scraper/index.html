@@ -254,7 +254,7 @@
 
 <p>Fortunately, Facebook&rsquo;s <a href="https://developers.facebook.com/docs/graph-api/reference">Graph API documentation</a> is pretty good. We need data from the <a href="https://developers.facebook.com/docs/graph-api/reference/page">/page</a> node, and from there, we can access data from the <a href="https://developers.facebook.com/docs/graph-api/reference/v2.4/page/feed">/feed</a> edge.</p>
 
-<p>Between the two nodes, we have access to <code>id</code>, which is a unique identifer that can be used to create a link back to the update itself (e.g. <a href="https://www.facebook.com/5281959998_10150628170209999">https://www.facebook.com/5281959998_10150628170209999</a>) <code>message</code>, the text of the update; <code>link</code>, the URL which the update is linking; <code>name</code>, the title of the webpage of the link, <code>type</code>, an identifier if the update is text, a photo, or a video; and <code>created_time</code>, when the update is published.</p>
+<p>Between the two nodes, we have access to <code>id</code>, which is a unique identifer that can be used to create a link back to the update itself (e.g. https://www.facebook.com/5281959998_10150628170209999) <code>message</code>, the text of the update; <code>link</code>, the URL which the update is linking; <code>name</code>, the title of the webpage of the link, <code>type</code>, an identifier if the update is text, a photo, or a video; and <code>created_time</code>, when the update is published.</p>
 
 <p>Accessing the numerical counts of <code>likes</code>, <code>comments</code>, and <code>shares</code> is less explicit in the documentation. Fortunately, <a href="http://stackoverflow.com/questions/6984526/facebook-graph-api-get-like-count-on-page-group-photos">StackOverflow</a> has the answer: you need to request <code>likes.limit(1).summary(true)</code> instead of normal <code>likes</code>.</p>
 
@@ -270,36 +270,37 @@
 
 <p>First, we need to see how to actually access the API. It&rsquo;s no longer a public API, and it requires user authentication via <a href="https://developers.facebook.com/docs/facebook-login/access-tokens">access tokens</a>. Users can get Short-Term tokens, but as their name suggests, they expire quickly, so they are not recommended. The Graph API allows a neat trick; by concatenating the App ID from a user-created App and the App Secret, you create an access token which never expires. Of course, this is a major security risk, so create a separate app for the sole purpose of scraping, and reset your API Secret if it becomes known.</p>
 
-<p>Let&rsquo;s say we want to scrape the New York Times' Facebook page. We would send a request to <a href="https://graph.facebook.com/v2.4/nytimes?access_token=XXXXX">https://graph.facebook.com/v2.4/nytimes?access_token=XXXXX</a> and we would get:</p>
+<p>Let&rsquo;s say we want to scrape the New York Times&rsquo; Facebook page. We would send a request to https://graph.facebook.com/v2.4/nytimes?access_token=XXXXX and we would get:</p>
 
-<p><figure class="highlight"><pre><code class="language-json" data-lang="json"><span class="p">{</span>
-        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;5281959998&quot;</span><span class="p">,</span>
+<figure class="highlight"><pre><code class="language-json" data-lang="json"><span class="p">{</span>
+        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;5281959998&quot;</span><span class="p">,</span> 
         <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;The New York Times&quot;</span>
-<span class="p">}</span></code></pre></figure></p>
+<span class="p">}</span></code></pre></figure>
 
 <p>i.e., the page metadata. Sending a request to /nytimes/feed results in what we want:</p>
 
-<p><figure class="highlight"><pre><code class="language-json" data-lang="json"><span class="p">{</span>
+<figure class="highlight"><pre><code class="language-json" data-lang="json"><span class="p">{</span>
         <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span>
             <span class="p">{</span>
-                <span class="nt">&quot;created_time&quot;</span><span class="p">:</span> <span class="s2">&quot;2015-07-20T01:25:01+0000&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;5281959998_10150628157724999&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;created_time&quot;</span><span class="p">:</span> <span class="s2">&quot;2015-07-20T01:25:01+0000&quot;</span><span class="p">,</span> 
+                <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;5281959998_10150628157724999&quot;</span><span class="p">,</span> 
                 <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;The planned megalopolis, a metropolitan area that would be about 6 times the size of New York\u2019s, is meant to revamp northern China\u2019s economy and become a laboratory for modern urban growth.&quot;</span>
-            <span class="p">},</span>
+            <span class="p">},</span> 
             <span class="p">{</span>
-                <span class="nt">&quot;created_time&quot;</span><span class="p">:</span> <span class="s2">&quot;2015-07-19T22:55:01+0000&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;5281959998_10150628161129999&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;&amp;quot;It\u2019s safe to say that federal agencies are not where we want them to be across the board,&amp;quot; said President Barack Obama&#39;s top cybersecurity adviser. &amp;quot;We clearly need to be moving faster.&amp;quot;&quot;</span>
+                <span class="nt">&quot;created_time&quot;</span><span class="p">:</span> <span class="s2">&quot;2015-07-19T22:55:01+0000&quot;</span><span class="p">,</span> 
+                <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;5281959998_10150628161129999&quot;</span><span class="p">,</span> 
+                <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;\&quot;It\u2019s safe to say that federal agencies are not where we want them to be across the board,\&quot; said President Barack Obama&#39;s top cybersecurity adviser. \&quot;We clearly need to be moving faster.\&quot;&quot;</span>
             <span class="p">}</span>
-         <span class="p">]</span></p>
+         <span class="p">]</span>
 
-<p><span class="p">}</span></code></pre></figure></p>
+            
+<span class="p">}</span></code></pre></figure>
 
 <p>Now we get the post data. But not much of it. In Graph API v2.4, the default behavior is to return very, very little metadata for statuses in order to reduce bandwidth, with the expectation that the user will request the necessary fields.</p>
 
 <p>So let&rsquo;s request <em>all</em> the fields we want. This results in a very long URL not shown here which causes the posts feed to have all the data we need:</p>
 
-<p><figure class="highlight"><pre><code class="language-json" data-lang="json"><span class="p">{</span>
+<figure class="highlight"><pre><code class="language-json" data-lang="json"><span class="p">{</span>
     <span class="nt">&quot;comments&quot;</span><span class="p">:</span> <span class="p">{},</span>
     <span class="nt">&quot;summary&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;order&quot;</span><span class="p">:</span> <span class="s2">&quot;ranked&quot;</span><span class="p">,</span>
@@ -313,14 +314,14 @@
             <span class="nt">&quot;total_count&quot;</span><span class="p">:</span> <span class="mi">278</span>
         <span class="p">}</span>
     <span class="p">},</span>
-    <span class="nt">&quot;link&quot;</span><span class="p">:</span> <span class="s2">&quot;<a href="http://nyti.ms/1Jr6LhU&amp;quot;">http://nyti.ms/1Jr6LhU&amp;quot;</a></span><span class="p">,</span>
+    <span class="nt">&quot;link&quot;</span><span class="p">:</span> <span class="s2">&quot;http://nyti.ms/1Jr6LhU&quot;</span><span class="p">,</span>
     <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;The planned megalopolis, a metropolitan area that would be about 6 times the size of New York’s, is meant to revamp northern China’s economy and become a laboratory for modern urban growth.&quot;</span><span class="p">,</span>
     <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;China Molds a Supercity Around Beijing, Promising to Change Lives&quot;</span><span class="p">,</span>
     <span class="nt">&quot;shares&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;count&quot;</span><span class="p">:</span> <span class="mi">50</span>
     <span class="p">},</span>
     <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;link&quot;</span>
-<span class="p">}</span></code></pre></figure></p>
+<span class="p">}</span></code></pre></figure>
 
 <h2>Post Processing</h2>
 
@@ -328,7 +329,7 @@
 
 <p>If you&rsquo;re an avid Facebook user, you know that not all of these attributes are not guaranteed to exist. Status updates may not have text or links. Since we&rsquo;re making a spreadsheet with an enforced schema, we need to validate that a field exists before attempting to process it.</p>
 
-<p>The &ldquo;\u2019"s in the message correspond to a <a href="http://smartquotesforsmartpeople.com/">smart quote</a> apostrophe. Since this a possibility, along with other unicode characters, the message and link names must be encoded <a href="https://en.wikipedia.org/wiki/UTF-8">in UTF-8</a> to prevent errors.</p>
+<p>The &ldquo;\u2019&quot;s in the message correspond to a <a href="http://smartquotesforsmartpeople.com/">smart quote</a> apostrophe. Since this a possibility, along with other unicode characters, the message and link names must be encoded <a href="https://en.wikipedia.org/wiki/UTF-8">in UTF-8</a> to prevent errors.</p>
 
 <p>The time format is another issue. The date follows the <a href="https://en.wikipedia.org/wiki/ISO_8601">ISO 8601</a> standard for UTC times. However, most spreadsheet programs will not able to parse it as a Date value. Also, since the NYT is based in the USA (specifically, New York), it may be helpful for time-based statistical analysis to convert the time to Eastern Standard Time while fixing the date format.</p>
 
@@ -352,7 +353,7 @@
 
 <p>Although, in fairness, the scraper is not perfect and still has room for improvement. With CNN&rsquo;s Facebook Page post data, for example, somehow the scraper skips all posts from 2013. Although in that case, I blame Facebook.</p>
 
-<hr />
+<hr>
 
 <p><em>You can access all resources used in this blog post at this <a href="https://github.com/minimaxir/facebook-page-post-scraper">GitHub repository</a></em>.</p>
 
@@ -360,12 +361,32 @@
 
 <p><em>And, as an experiment, I&rsquo;ve made an <a href="https://github.com/minimaxir/facebook-page-post-scraper/blob/master/fb_page_data_analysis.ipynb">IPython notebook with the R kernel</a> showing how I made the NYT-BuzzFeed chart!</em></p>
 
+						
+            			 <div class="breadcrumbs-v5-subtitle sharing-post" style="color: #999 !important; padding-top:10px; border-top: 1px solid #eee">Share this article!
+
+
+              <span class="sharing index" style="float: right; color: #999 !important;">
+  
+		  <span class="social facebook"><a href="https://www.facebook.com/share.php?u=http://minimaxir.com/2015/07/facebook-scraper/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data="http://minimaxir.com/2015/07/facebook-scraper/"><i class="fa fa-facebook"></i><span class="count hidden-xs"> -</span></a></span>
+  
+		<span class="social twitter"><a href="http://twitter.com/home/?status=How to Scrape Data From Facebook Page Posts for Statistical Analysis - http://minimaxir.com/2015/07/facebook-scraper/ - via @minimaxir"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data=http://minimaxir.com/2015/07/facebook-scraper/><i class="fa fa-twitter"></i><span class="count hidden-xs"></span></a> </span>
+
+  <span  class="social linkedin"><a href="http://www.linkedin.com/shareArticle?mini=true&title=&url=http://minimaxir.com/2015/07/facebook-scraper/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=600');return false;" data=http://minimaxir.com/2015/07/facebook-scraper/><i class="fa fa-linkedin"></i><span class="count hidden-xs"> -</span></a> </span>
+
+   </span>
+   </div>
 						</div>
                         <!-- End Blog Grid Content -->
+                        
+                        
+                        
                     </article>
                     <!-- End Blog Grid -->
 
- 
+ 					
 
                     <!-- Blog Comment -->
                     <div class="bg-color-white margin-b-30">
@@ -396,6 +417,8 @@
                         </div>
                     </div>
                     <!-- End Blog Comment -->
+                    
+                    
                 </div>
 
 			                <!--========== BLOG SIDEBAR ==========-->
@@ -413,11 +436,13 @@
                         
                         <div class="blog-sidebar-content">
                             <!-- Blog Author Bio -->
-                            <p>Max Woolf (@minimaxir) is a Software QA Engineer living and working in the San Francisco Bay Area for over 3.5 years and a 2012 Carnegie Mellon University graduate.</p>
-  
-  <p>In his spare time, Max uses <a href="https://www.python.org/">Python</a> to gather data from public APIs and <a href="http://ggplot2.org/">ggplot2</a> to make pretty charts from that data.</p>
-  
-  <p>You can learn more about Max <a href="/about">here</a>, or view his portfolio <a href="/portfolio">here</a>.
+							
+							<p><strong>Max Woolf (@minimaxir)</strong> is a Software QA Engineer living and working in the San Francisco Bay Area for over 3 years and a 2012 Carnegie Mellon University graduate in Business Administration.</p>
+
+<p>In his spare time, Max uses <a href="https://www.python.org/">Python</a> to gather data from public APIs and <a href="http://ggplot2.org/">ggplot2</a> to make pretty charts from that data.</p>
+
+<p>You can learn more about Max <a href="/about">here</a>, or view his portfolio <a href="/portfolio">here</a>. </p>
+
   
     <ul class="list-inline" style="padding-top:10px; margin-top: 20px; border-top: 1px solid #ebeef6">
                         <li class="theme-icons-wrap"><a title="Facebook" href="https://facebook.com/max.woolf" target="_blank"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-facebook"></i></a></li>
@@ -473,6 +498,13 @@
                                 <div class="latest-tuts-content">
                                     <h5 class="latest-tuts-content-title"><a href="/2016/01/movie-revenue-ratings/">Movie Review Aggregator Ratings Have No Relationship with Box Office Success</a></h5>
                                     <small class="latest-tuts-content-time"> Jan 7, 2016</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="/2015/12/lets-code-1/">Let's Code an Analysis and Visualizations of Yelp Data using R and ggplot2</a></h5>
+                                    <small class="latest-tuts-content-time"> Dec 28, 2015</small>
                                 </div>
                         </article>
                                                 
@@ -572,22 +604,82 @@
 
 
   
-      <!--========== FOOTER ==========-->
-    <footer id="footer" class="footer">
-        <div class="container">
-            <!-- end row -->
+      <!--========== FOOTER V8 ==========-->
+    <footer id="footer" class="footer-v8">
+        <div class="content-sm container">
+            <div class="row">
+                <!-- Logo -->
+                <div class="col-md-6">
+                    
+                    <p>You can contact through any of the following channels, although e-mail is preferred. Following me on Facebook and Twitter certainly doesn't hurt either!</p>
+                     <!-- <h2 class="footer-v8-title">Follow Me</h2> -->
+                    <!-- Theme Icons White Background -->
+                   <!-- <ul class="list-inline ul-li-lr-0">
+                        <li class="theme-icons-wrap"><a title="Facebook" href="https://facebook.com/max.woolf" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-facebook"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="Twitter" href="https://twitter.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-twitter"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="LinkedIn" href="https://linkedin.com/in/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-linkedin"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="GitHub" href="https://github.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-github"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="YouTube" href="https://youtube.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-youtube"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="E-Mail" href="mailto:max@minimaxir.com"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-envelope"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="RSS" href="/rss.xml"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-rss"></i></a></li> -->
+                    <!-- End Theme Icons White Background -->
+                </div>
+                <!-- End Logo -->
 
+                <!-- Contact Info -->
+                <div class="col-md-6">
+                    <h3 class="footer-v8-title">Contact Info</h3>
+                    <div class="footer-v8-contact-info-bg">
+                        <ul class="list-unstyled footer-v8-contact-info">
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-map-marker"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <p class="footer-v8-contact-info-text">SOMA, San Francisco, CA</p>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-facebook"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="Facebook" href="https://facebook.com/max.woolf" target="_blank">max.woolf</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-twitter"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="Twitter" href="https://twitter.com/minimaxir" target="_blank"">@minimaxir</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-linkedin"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="LinkedIn" href="https://linkedin.com/in/minimaxir" target="_blank"">minimaxir</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-envelope"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="E-Mail" href="mailto:max@minimaxir.com">max@minimaxir.com</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- End Contact Info -->
 
-            <!-- Copyright -->
-            <ul class="list-inline footer-copyright">
-                <li class="footer-copyright-item">Copyright &#169; 2016 Max Woolf. All Rights Reserved.</li>
-                <li class="footer-copyright-item">minimaxir.com is powered by Jekyll and GitHub Pages.</li>
-            </ul>
-            <!-- End Copyright -->
-
+            </div>
+            <!--// end row -->
         </div>
+
+        <!-- Copyright -->
+        <div class="footer-v8-copyright">
+            <div class="container text-center">
+				Copyright &#169; 2016 Max Woolf. All Rights Reserved. 
+                minimaxir.com is powered by Jekyll and GitHub Pages.
+            </div>
+        </div>
+        <!-- Copyright -->
     </footer>
-    <!--========== END FOOTER ==========-->
+    <!--========== END FOOTER V8 ==========-->
 </div>
 <!-- END WRAPPER -->
 

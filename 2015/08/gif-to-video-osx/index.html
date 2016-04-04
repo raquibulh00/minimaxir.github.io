@@ -264,22 +264,18 @@
 
 <p>The first command uses the <code>mencoder</code> functionality of <a href="http://www.mplayerhq.hu/design7/news.html">mplayer</a> to render each frame of the video to PNGs:</p>
 
-<p><figure class="highlight"><pre><code class="language-bash" data-lang="bash">mplayer -ao null -vo png:z<span class="o">=</span>1:outdir<span class="o">=</span>gif -vf <span class="nv">scale</span><span class="o">=</span>608:454 zerowidthedit.mov</code></pre></figure></p>
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">mplayer -ao null -vo png:z<span class="o">=</span>1:outdir<span class="o">=</span>gif -vf <span class="nv">scale</span><span class="o">=</span>608:454 zerowidthedit.mov</code></pre></figure>
 
 <p>I set the size to a width of 608px since it was exactly 50% of the width of the raw video, but I could set it to whatever I want, although it would be ideal to keep the aspect ratio the same.</p>
 
 <p>The second command uses <a href="http://www.imagemagick.org/script/index.php">ImageMagick</a>&rsquo;s famously robust <code>convert</code> comand to convert the rendered frames in to a GIF, with two optimization passes for lower file size and ~16.6ms delay, which is equivalent to 60 frames per second.</p>
-
-<pre><code>convert +repage -fuzz 1.6% -delay 1.7 -loop 0 gif/*.png -layers OptimizePlus -layers OptimizeTransparency Almost.gif
-</code></pre>
-
+<div class="highlight"><pre><code class="language-text" data-lang="text">convert +repage -fuzz 1.6% -delay 1.7 -loop 0 gif/*.png -layers OptimizePlus -layers OptimizeTransparency Almost.gif
+</code></pre></div>
 <p>This results in a 156KB image; much, much better than the 534KB from Gifrocket, and at a much higher framerate too.</p>
 
 <p>Lastly, the GIF is further optimized with <a href="http://www.lcdf.org/gifsicle/">gifsicle</a>, which also limits the color pallete to 256 colors for even lower file size.</p>
-
-<pre><code>gifsicle -O3 --colors 256 Almost.gif &gt; Done.gif
-</code></pre>
-
+<div class="highlight"><pre><code class="language-text" data-lang="text">gifsicle -O3 --colors 256 Almost.gif &gt; Done.gif
+</code></pre></div>
 <p>This results in a 107KB KB, a 31% savings over the already-optimized GIF, without any discernable loss! Here is the final result:</p>
 
 <p><img src="/img/video-to-gif-osx/zerowidthedit_final.gif"  ></p>
@@ -304,12 +300,32 @@
 
 <p>As usual, my code is <a href="https://github.com/minimaxir/video-to-gif-osx">open sourced on GitHub</a> with a MIT license, with instructions on how to set up the tool. The repository also includes two bonus utilities; a Shell Script to run the conversion from the command line and an Application which prompts you for movie files instead of needing to right-click. Install the three command-line applications and convert away! Or fork the repository and make an even <em>better</em> Video-to-GIF conversion tool!</p>
 
+						
+            			 <div class="breadcrumbs-v5-subtitle sharing-post" style="color: #999 !important; padding-top:10px; border-top: 1px solid #eee">Share this article!
+
+
+              <span class="sharing index" style="float: right; color: #999 !important;">
+  
+		  <span class="social facebook"><a href="https://www.facebook.com/share.php?u=http://minimaxir.com/2015/08/gif-to-video-osx/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data="http://minimaxir.com/2015/08/gif-to-video-osx/"><i class="fa fa-facebook"></i><span class="count hidden-xs"> -</span></a></span>
+  
+		<span class="social twitter"><a href="http://twitter.com/home/?status=Making a Video-to-GIF Right-Click Menu Item in OS X - http://minimaxir.com/2015/08/gif-to-video-osx/ - via @minimaxir"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data=http://minimaxir.com/2015/08/gif-to-video-osx/><i class="fa fa-twitter"></i><span class="count hidden-xs"></span></a> </span>
+
+  <span  class="social linkedin"><a href="http://www.linkedin.com/shareArticle?mini=true&title=&url=http://minimaxir.com/2015/08/gif-to-video-osx/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=600');return false;" data=http://minimaxir.com/2015/08/gif-to-video-osx/><i class="fa fa-linkedin"></i><span class="count hidden-xs"> -</span></a> </span>
+
+   </span>
+   </div>
 						</div>
                         <!-- End Blog Grid Content -->
+                        
+                        
+                        
                     </article>
                     <!-- End Blog Grid -->
 
- 
+ 					
 
                     <!-- Blog Comment -->
                     <div class="bg-color-white margin-b-30">
@@ -340,6 +356,8 @@
                         </div>
                     </div>
                     <!-- End Blog Comment -->
+                    
+                    
                 </div>
 
 			                <!--========== BLOG SIDEBAR ==========-->
@@ -357,11 +375,13 @@
                         
                         <div class="blog-sidebar-content">
                             <!-- Blog Author Bio -->
-                            <p>Max Woolf (@minimaxir) is a Software QA Engineer living and working in the San Francisco Bay Area for over 3.5 years and a 2012 Carnegie Mellon University graduate.</p>
-  
-  <p>In his spare time, Max uses <a href="https://www.python.org/">Python</a> to gather data from public APIs and <a href="http://ggplot2.org/">ggplot2</a> to make pretty charts from that data.</p>
-  
-  <p>You can learn more about Max <a href="/about">here</a>, or view his portfolio <a href="/portfolio">here</a>.
+							
+							<p><strong>Max Woolf (@minimaxir)</strong> is a Software QA Engineer living and working in the San Francisco Bay Area for over 3 years and a 2012 Carnegie Mellon University graduate in Business Administration.</p>
+
+<p>In his spare time, Max uses <a href="https://www.python.org/">Python</a> to gather data from public APIs and <a href="http://ggplot2.org/">ggplot2</a> to make pretty charts from that data.</p>
+
+<p>You can learn more about Max <a href="/about">here</a>, or view his portfolio <a href="/portfolio">here</a>. </p>
+
   
     <ul class="list-inline" style="padding-top:10px; margin-top: 20px; border-top: 1px solid #ebeef6">
                         <li class="theme-icons-wrap"><a title="Facebook" href="https://facebook.com/max.woolf" target="_blank"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-facebook"></i></a></li>
@@ -417,6 +437,13 @@
                                 <div class="latest-tuts-content">
                                     <h5 class="latest-tuts-content-title"><a href="/2016/01/movie-revenue-ratings/">Movie Review Aggregator Ratings Have No Relationship with Box Office Success</a></h5>
                                     <small class="latest-tuts-content-time"> Jan 7, 2016</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="/2015/12/lets-code-1/">Let's Code an Analysis and Visualizations of Yelp Data using R and ggplot2</a></h5>
+                                    <small class="latest-tuts-content-time"> Dec 28, 2015</small>
                                 </div>
                         </article>
                                                 
@@ -516,22 +543,82 @@
 
 
   
-      <!--========== FOOTER ==========-->
-    <footer id="footer" class="footer">
-        <div class="container">
-            <!-- end row -->
+      <!--========== FOOTER V8 ==========-->
+    <footer id="footer" class="footer-v8">
+        <div class="content-sm container">
+            <div class="row">
+                <!-- Logo -->
+                <div class="col-md-6">
+                    
+                    <p>You can contact through any of the following channels, although e-mail is preferred. Following me on Facebook and Twitter certainly doesn't hurt either!</p>
+                     <!-- <h2 class="footer-v8-title">Follow Me</h2> -->
+                    <!-- Theme Icons White Background -->
+                   <!-- <ul class="list-inline ul-li-lr-0">
+                        <li class="theme-icons-wrap"><a title="Facebook" href="https://facebook.com/max.woolf" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-facebook"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="Twitter" href="https://twitter.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-twitter"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="LinkedIn" href="https://linkedin.com/in/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-linkedin"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="GitHub" href="https://github.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-github"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="YouTube" href="https://youtube.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-youtube"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="E-Mail" href="mailto:max@minimaxir.com"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-envelope"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="RSS" href="/rss.xml"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-rss"></i></a></li> -->
+                    <!-- End Theme Icons White Background -->
+                </div>
+                <!-- End Logo -->
 
+                <!-- Contact Info -->
+                <div class="col-md-6">
+                    <h3 class="footer-v8-title">Contact Info</h3>
+                    <div class="footer-v8-contact-info-bg">
+                        <ul class="list-unstyled footer-v8-contact-info">
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-map-marker"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <p class="footer-v8-contact-info-text">SOMA, San Francisco, CA</p>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-facebook"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="Facebook" href="https://facebook.com/max.woolf" target="_blank">max.woolf</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-twitter"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="Twitter" href="https://twitter.com/minimaxir" target="_blank"">@minimaxir</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-linkedin"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="LinkedIn" href="https://linkedin.com/in/minimaxir" target="_blank"">minimaxir</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-envelope"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="E-Mail" href="mailto:max@minimaxir.com">max@minimaxir.com</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- End Contact Info -->
 
-            <!-- Copyright -->
-            <ul class="list-inline footer-copyright">
-                <li class="footer-copyright-item">Copyright &#169; 2016 Max Woolf. All Rights Reserved.</li>
-                <li class="footer-copyright-item">minimaxir.com is powered by Jekyll and GitHub Pages.</li>
-            </ul>
-            <!-- End Copyright -->
-
+            </div>
+            <!--// end row -->
         </div>
+
+        <!-- Copyright -->
+        <div class="footer-v8-copyright">
+            <div class="container text-center">
+				Copyright &#169; 2016 Max Woolf. All Rights Reserved. 
+                minimaxir.com is powered by Jekyll and GitHub Pages.
+            </div>
+        </div>
+        <!-- Copyright -->
     </footer>
-    <!--========== END FOOTER ==========-->
+    <!--========== END FOOTER V8 ==========-->
 </div>
 <!-- END WRAPPER -->
 

@@ -7,7 +7,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>Imgur is Covertly Redirecting Image Links on Facebook and Twitter</title>
 <meta property="article:author" content="https://www.facebook.com/max.woolf" />
-<meta name="description" content="I&rsquo;m a fan of Imgur. Image links without gimmicks. But recently, I noticed that whenever I clicked an Imgur link on Facebook or Twitter, it  navigated m...">
+<meta name="description" content="2016 Update: I have heard updates that this behavior now occurs on all websites. If you have reproducible steps for this behavior, please let me know. I&rsqu...">
 <link href="/rss.xml" rel="alternate" title="minimaxir | Max Woolf's Blog" type="application/atom+xml">
 <link rel="canonical" href="http://minimaxir.com/2014/02/moved-temporarily/">
 
@@ -242,7 +242,9 @@
 
                         <!-- Blog Grid Content -->
 						<div class="blog-grid-content">
-						<p>I&rsquo;m a fan of <a href="http://imgur.com/">Imgur</a>. Image links without gimmicks. But recently, I noticed that whenever I clicked an Imgur link on Facebook or Twitter, it  navigated me to the main image page, with loads of blank empty space and links to other Imgur images instead of just showing me only the image. I double-check the URL, and it indeed begins with the &ldquo;i&rdquo; subdomain that indicates a direct link to the image, such as &ldquo;<a href="http://i.imgur.com/p9lG2ss.png">http://i.imgur.com/p9lG2ss.png</a>&rdquo;, so what&rsquo;s happening?</p>
+						<p><strong>2016 Update</strong>: I have heard updates that this behavior now occurs on all websites. If you have reproducible steps for this behavior, please let me know. </p>
+
+<p>I&rsquo;m a fan of <a href="http://imgur.com/">Imgur</a>. Image links without gimmicks. But recently, I noticed that whenever I clicked an Imgur link on Facebook or Twitter, it  navigated me to the main image page, with loads of blank empty space and links to other Imgur images instead of just showing me only the image. I double-check the URL, and it indeed begins with the &ldquo;i&rdquo; subdomain that indicates a direct link to the image, such as &ldquo;http://i.imgur.com/p9lG2ss.png&rdquo;, so what&rsquo;s happening?</p>
 
 <p><img src="/img/imgur_direct.png"  ></p>
 
@@ -252,49 +254,40 @@
 
 <p>This behavior isn&rsquo;t particularly honest and upfront.</p>
 
-<p>But is Imgur redirecting links from only these social media sites? Are these redirects an accident or are they deliberate?</p>
+<p>But is Imgur redirecting links from only these social media sites? Are these redirects an accident or are they deliberate? </p>
 
 <p>A quick and dirty way to check is to use the command line. The <em>curl</em> command loads the data from a specified website. An optional parameter is <em>referrer</em>, which &ldquo;spoofs&rdquo; the URL of the website where the user is navigating from.</p>
 
 <p>Let&rsquo;s say I wanted to &ldquo;access&rdquo; an image direct link coming from a website I know Imgur is not redirecting, such as Reddit. I run this command in the Windows Command Prompt or the Mac Terminal:</p>
-
-<pre><code>curl http://i.imgur.com/p9lG2ss.png --referer http://reddit.com -I
-</code></pre>
-
+<div class="highlight"><pre><code class="language-text" data-lang="text">curl http://i.imgur.com/p9lG2ss.png --referer http://reddit.com -I
+</code></pre></div>
 <p>That gives me a Status Code 200, &ldquo;OK&rdquo;, meaning that the image was accessed successfully.</p>
-
-<pre><code>HTTP/1.1 200 OK
+<div class="highlight"><pre><code class="language-text" data-lang="text">HTTP/1.1 200 OK
 Server: cloudflare-nginx
 Date: Wed, 05 Feb 2014 01:41:40 GMT Content-Type: image/png [...]
-</code></pre>
-
+</code></pre></div>
 <p>Now what happens if the user accesses the link from Facebook or Twitter?</p>
-
-<pre><code>curl http://i.imgur.com/p9lG2ss.png --referer http://facebook.com -I
-</code></pre>
-
+<div class="highlight"><pre><code class="language-text" data-lang="text">curl http://i.imgur.com/p9lG2ss.png --referer http://facebook.com -I
+</code></pre></div>
 <p>That returns something different.</p>
-
-<pre><code>HTTP/1.1 302 Moved Temporarily
+<div class="highlight"><pre><code class="language-text" data-lang="text">HTTP/1.1 302 Moved Temporarily
 Server: cloudflare-nginx
 Date: Wed, 05 Feb 2014 01:44:03 GMT
 Content-Type: text/html
 [...]
 Set-Cookie: __cfduid=dc2e0ae5ee57ff598e079d75fa628f0321391564643058; expires=Mon, 23-Dec-2019 23:50:00 GMT; path=/;     domain=.imgur.com; HttpOnly
 Location: http://imgur.com/p9lG2ss`
-</code></pre>
-
+</code></pre></div>
 <p><a href="http://en.wikipedia.org/wiki/HTTP_302">Status Code 302</a>, &ldquo;Moved Temporarily,&rdquo; is the error code for a redirect, and shows that Imgur implemented this behavior intentionally. It also provides the Location of the link to redirect to, in this case the default image page with Imgur&rsquo;s branding.</p>
 
 <p>After checking all popular social media sites (and their respective URL shortners) as referrers against Imgur&rsquo;s direct image links, I determined that the only referrer domains that Imgur redirects are:</p>
 
 <ul>
-<li><a href="http://facebook.com">http://facebook.com</a></li>
-<li><a href="http://twitter.com">http://twitter.com</a></li>
-<li><a href="http://t.co">http://t.co</a></li>
-<li><a href="http://plus.google.com">http://plus.google.com</a></li>
+<li>http://facebook.com</li>
+<li>http://twitter.com</li>
+<li>http://t.co</li>
+<li>http://plus.google.com</li>
 </ul>
-
 
 <p>If you want to share your cat photos and .gifs directly to friends, I guess you can still share them on LinkedIn.</p>
 
@@ -304,12 +297,32 @@ Location: http://imgur.com/p9lG2ss`
 
 <p>If the redirects are successful at converting new users for Imgur, what&rsquo;s stopping them from redirecting other sites? I strongly hope that Imgur won&rsquo;t turn into the next Photobucket or Imageshack, but whenever a startup does something weird and not transparent, it&rsquo;s <em>never</em> a good sign.</p>
 
+						
+            			 <div class="breadcrumbs-v5-subtitle sharing-post" style="color: #999 !important; padding-top:10px; border-top: 1px solid #eee">Share this article!
+
+
+              <span class="sharing index" style="float: right; color: #999 !important;">
+  
+		  <span class="social facebook"><a href="https://www.facebook.com/share.php?u=http://minimaxir.com/2014/02/moved-temporarily/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data="http://minimaxir.com/2014/02/moved-temporarily/"><i class="fa fa-facebook"></i><span class="count hidden-xs"> -</span></a></span>
+  
+		<span class="social twitter"><a href="http://twitter.com/home/?status=Imgur is Covertly Redirecting Image Links on Facebook and Twitter - http://minimaxir.com/2014/02/moved-temporarily/ - via @minimaxir"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data=http://minimaxir.com/2014/02/moved-temporarily/><i class="fa fa-twitter"></i><span class="count hidden-xs"></span></a> </span>
+
+  <span  class="social linkedin"><a href="http://www.linkedin.com/shareArticle?mini=true&title=&url=http://minimaxir.com/2014/02/moved-temporarily/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=600');return false;" data=http://minimaxir.com/2014/02/moved-temporarily/><i class="fa fa-linkedin"></i><span class="count hidden-xs"> -</span></a> </span>
+
+   </span>
+   </div>
 						</div>
                         <!-- End Blog Grid Content -->
+                        
+                        
+                        
                     </article>
                     <!-- End Blog Grid -->
 
- 
+ 					
 
                     <!-- Blog Comment -->
                     <div class="bg-color-white margin-b-30">
@@ -340,6 +353,8 @@ Location: http://imgur.com/p9lG2ss`
                         </div>
                     </div>
                     <!-- End Blog Comment -->
+                    
+                    
                 </div>
 
 			                <!--========== BLOG SIDEBAR ==========-->
@@ -357,11 +372,13 @@ Location: http://imgur.com/p9lG2ss`
                         
                         <div class="blog-sidebar-content">
                             <!-- Blog Author Bio -->
-                            <p>Max Woolf (@minimaxir) is a Software QA Engineer living and working in the San Francisco Bay Area for over 3.5 years and a 2012 Carnegie Mellon University graduate.</p>
-  
-  <p>In his spare time, Max uses <a href="https://www.python.org/">Python</a> to gather data from public APIs and <a href="http://ggplot2.org/">ggplot2</a> to make pretty charts from that data.</p>
-  
-  <p>You can learn more about Max <a href="/about">here</a>, or view his portfolio <a href="/portfolio">here</a>.
+							
+							<p><strong>Max Woolf (@minimaxir)</strong> is a Software QA Engineer living and working in the San Francisco Bay Area for over 3 years and a 2012 Carnegie Mellon University graduate in Business Administration.</p>
+
+<p>In his spare time, Max uses <a href="https://www.python.org/">Python</a> to gather data from public APIs and <a href="http://ggplot2.org/">ggplot2</a> to make pretty charts from that data.</p>
+
+<p>You can learn more about Max <a href="/about">here</a>, or view his portfolio <a href="/portfolio">here</a>. </p>
+
   
     <ul class="list-inline" style="padding-top:10px; margin-top: 20px; border-top: 1px solid #ebeef6">
                         <li class="theme-icons-wrap"><a title="Facebook" href="https://facebook.com/max.woolf" target="_blank"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-facebook"></i></a></li>
@@ -417,6 +434,13 @@ Location: http://imgur.com/p9lG2ss`
                                 <div class="latest-tuts-content">
                                     <h5 class="latest-tuts-content-title"><a href="/2016/01/movie-revenue-ratings/">Movie Review Aggregator Ratings Have No Relationship with Box Office Success</a></h5>
                                     <small class="latest-tuts-content-time"> Jan 7, 2016</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="/2015/12/lets-code-1/">Let's Code an Analysis and Visualizations of Yelp Data using R and ggplot2</a></h5>
+                                    <small class="latest-tuts-content-time"> Dec 28, 2015</small>
                                 </div>
                         </article>
                                                 
@@ -516,22 +540,82 @@ Location: http://imgur.com/p9lG2ss`
 
 
   
-      <!--========== FOOTER ==========-->
-    <footer id="footer" class="footer">
-        <div class="container">
-            <!-- end row -->
+      <!--========== FOOTER V8 ==========-->
+    <footer id="footer" class="footer-v8">
+        <div class="content-sm container">
+            <div class="row">
+                <!-- Logo -->
+                <div class="col-md-6">
+                    
+                    <p>You can contact through any of the following channels, although e-mail is preferred. Following me on Facebook and Twitter certainly doesn't hurt either!</p>
+                     <!-- <h2 class="footer-v8-title">Follow Me</h2> -->
+                    <!-- Theme Icons White Background -->
+                   <!-- <ul class="list-inline ul-li-lr-0">
+                        <li class="theme-icons-wrap"><a title="Facebook" href="https://facebook.com/max.woolf" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-facebook"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="Twitter" href="https://twitter.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-twitter"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="LinkedIn" href="https://linkedin.com/in/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-linkedin"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="GitHub" href="https://github.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-github"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="YouTube" href="https://youtube.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-youtube"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="E-Mail" href="mailto:max@minimaxir.com"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-envelope"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="RSS" href="/rss.xml"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-rss"></i></a></li> -->
+                    <!-- End Theme Icons White Background -->
+                </div>
+                <!-- End Logo -->
 
+                <!-- Contact Info -->
+                <div class="col-md-6">
+                    <h3 class="footer-v8-title">Contact Info</h3>
+                    <div class="footer-v8-contact-info-bg">
+                        <ul class="list-unstyled footer-v8-contact-info">
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-map-marker"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <p class="footer-v8-contact-info-text">SOMA, San Francisco, CA</p>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-facebook"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="Facebook" href="https://facebook.com/max.woolf" target="_blank">max.woolf</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-twitter"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="Twitter" href="https://twitter.com/minimaxir" target="_blank"">@minimaxir</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-linkedin"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="LinkedIn" href="https://linkedin.com/in/minimaxir" target="_blank"">minimaxir</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-envelope"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="E-Mail" href="mailto:max@minimaxir.com">max@minimaxir.com</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- End Contact Info -->
 
-            <!-- Copyright -->
-            <ul class="list-inline footer-copyright">
-                <li class="footer-copyright-item">Copyright &#169; 2016 Max Woolf. All Rights Reserved.</li>
-                <li class="footer-copyright-item">minimaxir.com is powered by Jekyll and GitHub Pages.</li>
-            </ul>
-            <!-- End Copyright -->
-
+            </div>
+            <!--// end row -->
         </div>
+
+        <!-- Copyright -->
+        <div class="footer-v8-copyright">
+            <div class="container text-center">
+				Copyright &#169; 2016 Max Woolf. All Rights Reserved. 
+                minimaxir.com is powered by Jekyll and GitHub Pages.
+            </div>
+        </div>
+        <!-- Copyright -->
     </footer>
-    <!--========== END FOOTER ==========-->
+    <!--========== END FOOTER V8 ==========-->
 </div>
 <!-- END WRAPPER -->
 

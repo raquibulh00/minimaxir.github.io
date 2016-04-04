@@ -3850,7 +3850,7 @@ h1 > a:focus, h2 > a:focus, h3 > a:focus, h4 > a:focus, h5 > a:focus, h6 > a:foc
 }
 
 .footer-v8 .footer-v8-contact-info-bg {
-  background: url(../../assets/img/widgets/world-map.png) no-repeat;
+  /*background: url(/world-map.png) no-repeat;*/
   background-size: 100%;
   background-position: center center;
   min-height: 220px;

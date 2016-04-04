@@ -248,12 +248,9 @@
 
 <p>Like any math nerd, I wasn&rsquo;t comfortable with simple circumstantial evidence. When I <a href="http://www.facebook.com/max.woolf/posts/10151223309670450">asked on Facebook</a> if there is any statistical data indicating that including a question to the community at the end of a blog post / Facebook post increases the response rate, TechCrunch writer and Facebook specialist Josh Constine responded and linked to<a href="http://www.facebook.com/notes/facebook-journalists/study-how-people-are-engaging-journalists-on-facebook-best-practices/245775148767840"> a Facebook report</a> stating that such posts have double the comments and significantly greater feedback.</p>
 
-<p>I decided to put that to the test. I wrote a quick script in R that parses the Facebook page of a brand and extracts the number of likes for all of their posts, the number of comments on all posts, and whether or not each post contained a question. The brand I chose for my testing is none other than <a href="http://www.techcrunch.com/">TechCrunch</a>, because <a href="http://www.facebook.com/techcrunch">its Facebook page</a>, managed by the wonderful <a href="https://twitter.com/elinblesener">Elin Blesner</a>, has large sample sizes in terms of both unique postings and response rates on each post, ensuring that the analysis of the data is statistically significant. Additionally, having a<em>nother</em> perspective on TechCrunch to comment about certainly doesn&rsquo;t hurt either.</p>
+<p>I decided to put that to the test. I wrote a quick script in R that parses the Facebook page of a brand and extracts the number of likes for all of their posts, the number of comments on all posts, and whether or not each post contained a question. The brand I chose for my testing is none other than <a href="http://www.techcrunch.com/">TechCrunch</a>, because <a href="http://www.facebook.com/techcrunch">its Facebook page</a>, managed by the wonderful <a href="https://twitter.com/elinblesener">Elin Blesner</a>, has large sample sizes in terms of both unique postings and response rates on each post, ensuring that the analysis of the data is statistically significant. Additionally, having a*nother* perspective on TechCrunch to comment about certainly doesn&rsquo;t hurt either.</p>
 
 <p>After collecting about 2,500 posts - 12 months of data - I analyzed the data conditional on whether or not the post was a question, among other things. The results surprised me.</p>
-
-<!-- more -->
-
 
 <p><strong>tl;dr: Asking a question to the readers in a Facebook post <em>does</em> increase the number of comments very significantly, but <em>decreases</em> the number of Likes!</strong></p>
 
@@ -261,19 +258,19 @@
 
 <p>Since the data goes back a year, we can more easily detect seasonal trends in the data. First, let&rsquo;s see the real world numbers as a sanity check.</p>
 
-<p><img src="/img/tcfb1.png" title="How many Comments and Likes do TechCrunch posts receive?" alt="It's much more than you may think." /></p>
+<p><img src="/img/tcfb1.png" alt="It&#39;s much more than you may think." title="How many Comments and Likes do TechCrunch posts receive?"></p>
 
-<p>The number of Likes per month appears to be positively correlated with the number of comments, which is to be expected. Some months have significantly more activity than others; September 2012 had the most because of TechCrunch Disrupt SF. (interestingly, there wasn&rsquo;t such a spike in May 2012 with Disrupt NYC) The average number of likes/comments per post per month, as opposed to the sum, is a more consistent measurement, so we will be using that going forward.</p>
+<p>The number of Likes per month appears to be positively correlated with the number of comments, which is to be expected. Some months have significantly more activity than others; September 2012 had the most because of TechCrunch Disrupt SF. (interestingly, there wasn&rsquo;t such a spike in May 2012 with Disrupt NYC) The average number of likes/comments per post per month, as opposed to the sum, is a more consistent measurement, so we will be using that going forward. </p>
 
 <h2>How many Comments and Likes do TechCrunch Facebook posts receive on average?</h2>
 
-<p><img src="/img/tcfb2.png" title="How many Comments and Likes do TechCrunch posts receive on average?" alt="Triple-Digit Likes and double-digit Comments. Not too shabby." /></p>
+<p><img src="/img/tcfb2.png" alt="Triple-Digit Likes and double-digit Comments. Not too shabby." title="How many Comments and Likes do TechCrunch posts receive on average?"></p>
 
 <p>Overall average is 162 Likes and 30 Comments per post. The average number of Likes/Comments are consistent across the past year, with growth in the last few months. Nothing too surprising here. ## Does the time of day of a Facebook posting affect the number of Likes/Comments it receives?</p>
 
 <p>Here&rsquo;s a fun measurement I decided to analyze. TechCrunch makes postings at all hours as it&rsquo;s a globally-targeted blog, but readers in the US may be asleep at the time. This could be a possible confounding variable (social activity may be correlated with geographic location), so it&rsquo;s best to see whether or not we can rule it out.</p>
 
-<p><img src="/img/tcfb3.png" title="Does the time of day of a Facebook posting affect the number of Likes/Comments it receives?" alt="The spike in average comments at 4AM PST / 7AM EST is interesting. European workday?" /></p>
+<p><img src="/img/tcfb3.png" alt="The spike in average comments at 4AM PST / 7AM EST is interesting. European workday?" title="Does the time of day of a Facebook posting affect the number of Likes/Comments it receives?"></p>
 
 <p>As it turns out, time of day does <strong>not</strong> appear to have an effect on number of Likes/Comments received for TechCrunch!</p>
 
@@ -281,7 +278,7 @@
 
 <p>Here&rsquo;s the main question that began this entire investigation. Has the TechCrunch Facebook been writing posts that ask questions more frequently?</p>
 
-<p><img src="/img/tcfb4.png" title="How many TechCrunch Facebook posts ask a question, relative to the ones that do not?" alt="TechCrunch-themed columns!" /></p>
+<p><img src="/img/tcfb4.png" alt="TechCrunch-themed columns!" title="How many TechCrunch Facebook posts ask a question, relative to the ones that do not?"></p>
 
 <p>As it turns out, no, TechCrunch has asked the same proportion of questions on their Facebook page, as there is no change in trend. Overall average is 31.38% of TC&rsquo;s posts ask a question. (about a third of the posts)</p>
 
@@ -289,7 +286,7 @@
 
 <p>And here&rsquo;s the analysis of the main hypothesis. The results were quite surprising.</p>
 
-<p><img src="/img/tcfb5.png" title="Does including a question to the community increase the number of Likes/Comments on the post?" alt="Now with more DROP SHADOWS!" /></p>
+<p><img src="/img/tcfb5.png" alt="Now with more DROP SHADOWS!" title="Does including a question to the community increase the number of Likes/Comments on the post?"></p>
 
 <p>The average amount of Likes for a post that asked a question is <em>lower</em> than a post that does not! (141 Likes for post that asks question, 172 for post that does not, a 18% decrease) That&rsquo;s unexpected!</p>
 
@@ -311,16 +308,36 @@
 
 <h2>Do photo posts have greater response rates than posts without photos?</h2>
 
-<p><img src="/img/tc-graph.png" alt="14" /></p>
+<p><img src="/img/tc-graph.png" alt="14"></p>
 
 <p>Yep. Not too surprising. It&rsquo;s why Facebook bought Instagram! (although I&rsquo;m curious what happened in April&hellip;)</p>
 
+						
+            			 <div class="breadcrumbs-v5-subtitle sharing-post" style="color: #999 !important; padding-top:10px; border-top: 1px solid #eee">Share this article!
+
+
+              <span class="sharing index" style="float: right; color: #999 !important;">
+  
+		  <span class="social facebook"><a href="https://www.facebook.com/share.php?u=http://minimaxir.com/2012/10/questions-equals-reponses/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data="http://minimaxir.com/2012/10/questions-equals-reponses/"><i class="fa fa-facebook"></i><span class="count hidden-xs"> -</span></a></span>
+  
+		<span class="social twitter"><a href="http://twitter.com/home/?status=Does Asking Questions To Readers Increase Response Rate? - And Other TechCrunch Analyses - http://minimaxir.com/2012/10/questions-equals-reponses/ - via @minimaxir"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data=http://minimaxir.com/2012/10/questions-equals-reponses/><i class="fa fa-twitter"></i><span class="count hidden-xs"></span></a> </span>
+
+  <span  class="social linkedin"><a href="http://www.linkedin.com/shareArticle?mini=true&title=&url=http://minimaxir.com/2012/10/questions-equals-reponses/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=600');return false;" data=http://minimaxir.com/2012/10/questions-equals-reponses/><i class="fa fa-linkedin"></i><span class="count hidden-xs"> -</span></a> </span>
+
+   </span>
+   </div>
 						</div>
                         <!-- End Blog Grid Content -->
+                        
+                        
+                        
                     </article>
                     <!-- End Blog Grid -->
 
- 
+ 					
 
                     <!-- Blog Comment -->
                     <div class="bg-color-white margin-b-30">
@@ -351,6 +368,8 @@
                         </div>
                     </div>
                     <!-- End Blog Comment -->
+                    
+                    
                 </div>
 
 			                <!--========== BLOG SIDEBAR ==========-->
@@ -368,11 +387,13 @@
                         
                         <div class="blog-sidebar-content">
                             <!-- Blog Author Bio -->
-                            <p>Max Woolf (@minimaxir) is a Software QA Engineer living and working in the San Francisco Bay Area for over 3.5 years and a 2012 Carnegie Mellon University graduate.</p>
-  
-  <p>In his spare time, Max uses <a href="https://www.python.org/">Python</a> to gather data from public APIs and <a href="http://ggplot2.org/">ggplot2</a> to make pretty charts from that data.</p>
-  
-  <p>You can learn more about Max <a href="/about">here</a>, or view his portfolio <a href="/portfolio">here</a>.
+							
+							<p><strong>Max Woolf (@minimaxir)</strong> is a Software QA Engineer living and working in the San Francisco Bay Area for over 3 years and a 2012 Carnegie Mellon University graduate in Business Administration.</p>
+
+<p>In his spare time, Max uses <a href="https://www.python.org/">Python</a> to gather data from public APIs and <a href="http://ggplot2.org/">ggplot2</a> to make pretty charts from that data.</p>
+
+<p>You can learn more about Max <a href="/about">here</a>, or view his portfolio <a href="/portfolio">here</a>. </p>
+
   
     <ul class="list-inline" style="padding-top:10px; margin-top: 20px; border-top: 1px solid #ebeef6">
                         <li class="theme-icons-wrap"><a title="Facebook" href="https://facebook.com/max.woolf" target="_blank"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-facebook"></i></a></li>
@@ -428,6 +449,13 @@
                                 <div class="latest-tuts-content">
                                     <h5 class="latest-tuts-content-title"><a href="/2016/01/movie-revenue-ratings/">Movie Review Aggregator Ratings Have No Relationship with Box Office Success</a></h5>
                                     <small class="latest-tuts-content-time"> Jan 7, 2016</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="/2015/12/lets-code-1/">Let's Code an Analysis and Visualizations of Yelp Data using R and ggplot2</a></h5>
+                                    <small class="latest-tuts-content-time"> Dec 28, 2015</small>
                                 </div>
                         </article>
                                                 
@@ -527,22 +555,82 @@
 
 
   
-      <!--========== FOOTER ==========-->
-    <footer id="footer" class="footer">
-        <div class="container">
-            <!-- end row -->
+      <!--========== FOOTER V8 ==========-->
+    <footer id="footer" class="footer-v8">
+        <div class="content-sm container">
+            <div class="row">
+                <!-- Logo -->
+                <div class="col-md-6">
+                    
+                    <p>You can contact through any of the following channels, although e-mail is preferred. Following me on Facebook and Twitter certainly doesn't hurt either!</p>
+                     <!-- <h2 class="footer-v8-title">Follow Me</h2> -->
+                    <!-- Theme Icons White Background -->
+                   <!-- <ul class="list-inline ul-li-lr-0">
+                        <li class="theme-icons-wrap"><a title="Facebook" href="https://facebook.com/max.woolf" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-facebook"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="Twitter" href="https://twitter.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-twitter"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="LinkedIn" href="https://linkedin.com/in/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-linkedin"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="GitHub" href="https://github.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-github"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="YouTube" href="https://youtube.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-youtube"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="E-Mail" href="mailto:max@minimaxir.com"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-envelope"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="RSS" href="/rss.xml"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-rss"></i></a></li> -->
+                    <!-- End Theme Icons White Background -->
+                </div>
+                <!-- End Logo -->
 
+                <!-- Contact Info -->
+                <div class="col-md-6">
+                    <h3 class="footer-v8-title">Contact Info</h3>
+                    <div class="footer-v8-contact-info-bg">
+                        <ul class="list-unstyled footer-v8-contact-info">
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-map-marker"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <p class="footer-v8-contact-info-text">SOMA, San Francisco, CA</p>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-facebook"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="Facebook" href="https://facebook.com/max.woolf" target="_blank">max.woolf</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-twitter"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="Twitter" href="https://twitter.com/minimaxir" target="_blank"">@minimaxir</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-linkedin"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="LinkedIn" href="https://linkedin.com/in/minimaxir" target="_blank"">minimaxir</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-envelope"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="E-Mail" href="mailto:max@minimaxir.com">max@minimaxir.com</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- End Contact Info -->
 
-            <!-- Copyright -->
-            <ul class="list-inline footer-copyright">
-                <li class="footer-copyright-item">Copyright &#169; 2016 Max Woolf. All Rights Reserved.</li>
-                <li class="footer-copyright-item">minimaxir.com is powered by Jekyll and GitHub Pages.</li>
-            </ul>
-            <!-- End Copyright -->
-
+            </div>
+            <!--// end row -->
         </div>
+
+        <!-- Copyright -->
+        <div class="footer-v8-copyright">
+            <div class="container text-center">
+				Copyright &#169; 2016 Max Woolf. All Rights Reserved. 
+                minimaxir.com is powered by Jekyll and GitHub Pages.
+            </div>
+        </div>
+        <!-- Copyright -->
     </footer>
-    <!--========== END FOOTER ==========-->
+    <!--========== END FOOTER V8 ==========-->
 </div>
 <!-- END WRAPPER -->
 

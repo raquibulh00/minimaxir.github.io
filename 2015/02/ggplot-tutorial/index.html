@@ -268,18 +268,16 @@
 
 <p>For this tutorial, we&rsquo;ll be using <code>ggplot2</code>, plus three additional R packages: <code>RColorBrewer</code>, which allows for the procedural generation of colors from a palette for the chart, <code>scales</code>, which allows for the axes to express numbers with commas/percents, and <code>grid</code>, which allows for manipulation of the chart margins and layout. We can install and load these packages at the beginning of the R file:</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">install.packages<span class="p">(</span><span class="kt">c</span><span class="p">(</span><span class="s">&quot;ggplot2&quot;</span><span class="p">,</span><span class="s">&quot;RColorBrewer&quot;</span><span class="p">,</span><span class="s">&quot;scales&quot;</span><span class="p">))</span>
-<span class="kn">library</span><span class="p">(</span>ggplot2<span class="p">);</span> <span class="kn">library</span><span class="p">(</span>scales<span class="p">);</span> <span class="kn">library</span><span class="p">(</span>grid<span class="p">);</span> <span class="kn">library</span><span class="p">(</span>RColorBrewer<span class="p">)</span></code></pre></figure></p>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">install.packages<span class="p">(</span><span class="kt">c</span><span class="p">(</span><span class="s">&quot;ggplot2&quot;</span><span class="p">,</span><span class="s">&quot;RColorBrewer&quot;</span><span class="p">,</span><span class="s">&quot;scales&quot;</span><span class="p">))</span>
+<span class="kn">library</span><span class="p">(</span>ggplot2<span class="p">);</span> <span class="kn">library</span><span class="p">(</span>scales<span class="p">);</span> <span class="kn">library</span><span class="p">(</span>grid<span class="p">);</span> <span class="kn">library</span><span class="p">(</span>RColorBrewer<span class="p">)</span></code></pre></figure>
 
 <p>The dataset we&rsquo;ll use is my <a href="http://minimaxir.com/csv/buzzfeed_linkbait_headlines.csv">list of 15,101 BuzzFeed listicles</a> that I used <a href="http://minimaxir.com/2015/01/linkbait/">in my previous blog post</a>, including both the listicle size and number of Facebook shares the listicle received, which have been prefiltered to listicle sizes of 50 or less, and have received atleast 1 Facebook share. Download the file, and set the working directory of R to the containing folder. We load the dataset into R by reading the CSV:</p>
-
-<pre><code>df &lt;- read.csv("buzzfeed_linkbait_headlines.csv", header=T)
-</code></pre>
-
+<div class="highlight"><pre><code class="language-text" data-lang="text">df &lt;- read.csv(&quot;buzzfeed_linkbait_headlines.csv&quot;, header=T)
+</code></pre></div>
 <p>We can make a basic histogram in two lines of code.</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">ggplot<span class="p">(</span>df<span class="p">,</span> aes<span class="p">(</span>listicle_size<span class="p">))</span> <span class="o">+</span>
-    geom_histogram<span class="p">(</span>binwidth<span class="o">=</span><span class="m">1</span><span class="p">)</span></code></pre></figure></p>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">ggplot<span class="p">(</span>df<span class="p">,</span> aes<span class="p">(</span>listicle_size<span class="p">))</span> <span class="o">+</span>
+    geom_histogram<span class="p">(</span>binwidth<span class="o">=</span><span class="m">1</span><span class="p">)</span></code></pre></figure>
 
 <p>The first line instantiates the charts and defines the variables used for plotting. We declare the use of the data frame <code>df</code>, and the <code>listicle_size</code> vector from that data frame as the plotting aesthetic. The second line tells ggplot to make a histogram out of the given data with <code>geom_histogram</code>, and we specify a binwidth of 1 so that each column represents one discrete value of listicle. Running that code will cause a plot to pop up.</p>
 
@@ -287,56 +285,56 @@
 
 <p>Not a bad start. In order to save the created plot, we use the <code>ggsave</code> command, which saves the last-generated plot to an image in your working directory. The first parameter, the filename, determines the filetype.</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">ggsave<span class="p">(</span><span class="s">&quot;tutorial_1.png&quot;</span><span class="p">,</span> dpi<span class="o">=</span><span class="m">300</span><span class="p">,</span> width<span class="o">=</span><span class="m">4</span><span class="p">,</span> height<span class="o">=</span><span class="m">3</span><span class="p">)</span></code></pre></figure></p>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">ggsave<span class="p">(</span><span class="s">&quot;tutorial_1.png&quot;</span><span class="p">,</span> dpi<span class="o">=</span><span class="m">300</span><span class="p">,</span> width<span class="o">=</span><span class="m">4</span><span class="p">,</span> height<span class="o">=</span><span class="m">3</span><span class="p">)</span></code></pre></figure>
 
 <p>Now we can add a theme to make it look classy.</p>
 
 <p>A ggplot2 theme is a function that overrides the graphical parameters of the default theme. Here&rsquo;s the long code block for my FiveThirtyEight-inspired theme, with code comments for each code subblock:</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">fte_theme <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">()</span> <span class="p">{</span></p>
-
-<p><span class="c1"># Generate the colors for the chart procedurally with RColorBrewer</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">fte_theme <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">()</span> <span class="p">{</span>
+      
+<span class="c1"># Generate the colors for the chart procedurally with RColorBrewer</span>
 palette <span class="o">&lt;-</span> brewer.pal<span class="p">(</span><span class="s">&quot;Greys&quot;</span><span class="p">,</span> n<span class="o">=</span><span class="m">9</span><span class="p">)</span>
 color.background <span class="o">=</span> palette<span class="p">[</span><span class="m">2</span><span class="p">]</span>
 color.grid.major <span class="o">=</span> palette<span class="p">[</span><span class="m">3</span><span class="p">]</span>
 color.axis.text <span class="o">=</span> palette<span class="p">[</span><span class="m">6</span><span class="p">]</span>
 color.axis.title <span class="o">=</span> palette<span class="p">[</span><span class="m">7</span><span class="p">]</span>
-color.title <span class="o">=</span> palette<span class="p">[</span><span class="m">9</span><span class="p">]</span></p>
-
-<p><span class="c1"># Begin construction of chart</span>
-theme_bw<span class="p">(</span>base_size<span class="o">=</span><span class="m">9</span><span class="p">)</span> <span class="o">+</span></p>
-
-<p><span class="c1"># Set the entire chart region to a light gray color</span>
+color.title <span class="o">=</span> palette<span class="p">[</span><span class="m">9</span><span class="p">]</span>
+      
+<span class="c1"># Begin construction of chart</span>
+theme_bw<span class="p">(</span>base_size<span class="o">=</span><span class="m">9</span><span class="p">)</span> <span class="o">+</span>
+        
+<span class="c1"># Set the entire chart region to a light gray color</span>
 theme<span class="p">(</span>panel.background<span class="o">=</span>element_rect<span class="p">(</span>fill<span class="o">=</span>color.background<span class="p">,</span> color<span class="o">=</span>color.background<span class="p">))</span> <span class="o">+</span>
 theme<span class="p">(</span>plot.background<span class="o">=</span>element_rect<span class="p">(</span>fill<span class="o">=</span>color.background<span class="p">,</span> color<span class="o">=</span>color.background<span class="p">))</span> <span class="o">+</span>
-theme<span class="p">(</span>panel.border<span class="o">=</span>element_rect<span class="p">(</span>color<span class="o">=</span>color.background<span class="p">))</span> <span class="o">+</span></p>
-
-<p><span class="c1"># Format the grid</span>
+theme<span class="p">(</span>panel.border<span class="o">=</span>element_rect<span class="p">(</span>color<span class="o">=</span>color.background<span class="p">))</span> <span class="o">+</span>
+      
+<span class="c1"># Format the grid</span>
 theme<span class="p">(</span>panel.grid.major<span class="o">=</span>element_line<span class="p">(</span>color<span class="o">=</span>color.grid.major<span class="p">,</span>size<span class="o">=</span><span class="m">.25</span><span class="p">))</span> <span class="o">+</span>
 theme<span class="p">(</span>panel.grid.minor<span class="o">=</span>element_blank<span class="p">())</span> <span class="o">+</span>
-theme<span class="p">(</span>axis.ticks<span class="o">=</span>element_blank<span class="p">())</span> <span class="o">+</span></p>
-
-<p><span class="c1"># Format the legend, but hide by default</span>
+theme<span class="p">(</span>axis.ticks<span class="o">=</span>element_blank<span class="p">())</span> <span class="o">+</span>
+      
+<span class="c1"># Format the legend, but hide by default</span>
 theme<span class="p">(</span>legend.position<span class="o">=</span><span class="s">&quot;none&quot;</span><span class="p">)</span> <span class="o">+</span>
 theme<span class="p">(</span>legend.background <span class="o">=</span> element_rect<span class="p">(</span>fill<span class="o">=</span>color.background<span class="p">))</span> <span class="o">+</span>
-theme<span class="p">(</span>legend.text <span class="o">=</span> element_text<span class="p">(</span>size<span class="o">=</span><span class="m">7</span><span class="p">,</span>color<span class="o">=</span>color.axis.title<span class="p">))</span> <span class="o">+</span></p>
-
-<p><span class="c1"># Set title and axis labels, and format these and tick marks</span>
+theme<span class="p">(</span>legend.text <span class="o">=</span> element_text<span class="p">(</span>size<span class="o">=</span><span class="m">7</span><span class="p">,</span>color<span class="o">=</span>color.axis.title<span class="p">))</span> <span class="o">+</span>
+      
+<span class="c1"># Set title and axis labels, and format these and tick marks</span>
 theme<span class="p">(</span>plot.title<span class="o">=</span>element_text<span class="p">(</span>color<span class="o">=</span>color.title<span class="p">,</span> size<span class="o">=</span><span class="m">10</span><span class="p">,</span> vjust<span class="o">=</span><span class="m">1.25</span><span class="p">))</span> <span class="o">+</span>
 theme<span class="p">(</span>axis.text.x<span class="o">=</span>element_text<span class="p">(</span>size<span class="o">=</span><span class="m">7</span><span class="p">,</span>color<span class="o">=</span>color.axis.text<span class="p">))</span> <span class="o">+</span>
 theme<span class="p">(</span>axis.text.y<span class="o">=</span>element_text<span class="p">(</span>size<span class="o">=</span><span class="m">7</span><span class="p">,</span>color<span class="o">=</span>color.axis.text<span class="p">))</span> <span class="o">+</span>
 theme<span class="p">(</span>axis.title.x<span class="o">=</span>element_text<span class="p">(</span>size<span class="o">=</span><span class="m">8</span><span class="p">,</span>color<span class="o">=</span>color.axis.title<span class="p">,</span> vjust<span class="o">=</span><span class="m">0</span><span class="p">))</span> <span class="o">+</span>
-theme<span class="p">(</span>axis.title.y<span class="o">=</span>element_text<span class="p">(</span>size<span class="o">=</span><span class="m">8</span><span class="p">,</span>color<span class="o">=</span>color.axis.title<span class="p">,</span> vjust<span class="o">=</span><span class="m">1.25</span><span class="p">))</span> <span class="o">+</span></p>
-
-<p><span class="c1"># Plot margins</span>
+theme<span class="p">(</span>axis.title.y<span class="o">=</span>element_text<span class="p">(</span>size<span class="o">=</span><span class="m">8</span><span class="p">,</span>color<span class="o">=</span>color.axis.title<span class="p">,</span> vjust<span class="o">=</span><span class="m">1.25</span><span class="p">))</span> <span class="o">+</span>
+      
+<span class="c1"># Plot margins</span>
 theme<span class="p">(</span>plot.margin <span class="o">=</span> unit<span class="p">(</span><span class="kt">c</span><span class="p">(</span><span class="m">0.35</span><span class="p">,</span> <span class="m">0.2</span><span class="p">,</span> <span class="m">0.3</span><span class="p">,</span> <span class="m">0.35</span><span class="p">),</span> <span class="s">&quot;cm&quot;</span><span class="p">))</span>
-<span class="p">}</span></code></pre></figure></p>
+<span class="p">}</span></code></pre></figure>
 
 <p>Adding the completed theme to the chart is just one line of code:</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">ggplot<span class="p">(</span>df<span class="p">,</span> aes<span class="p">(</span>listicle_size<span class="p">))</span> <span class="o">+</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">ggplot<span class="p">(</span>df<span class="p">,</span> aes<span class="p">(</span>listicle_size<span class="p">))</span> <span class="o">+</span>
     geom_histogram<span class="p">(</span>binwidth<span class="o">=</span><span class="m">1</span><span class="p">)</span> <span class="o">+</span>
-    fte_theme<span class="p">()</span></code></pre></figure></p>
+    fte_theme<span class="p">()</span></code></pre></figure>
 
 <p><img src="/img/ggplot-tutorial/tutorial_2.png"  ></p>
 
@@ -344,10 +342,10 @@ theme<span class="p">(</span>plot.margin <span class="o">=</span> unit<span clas
 
 <p>Of course, all charts need properly labled axes and a title. We can add that with the <code>labs</code> function:</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">ggplot<span class="p">(</span>df<span class="p">,</span> aes<span class="p">(</span>listicle_size<span class="p">))</span> <span class="o">+</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">ggplot<span class="p">(</span>df<span class="p">,</span> aes<span class="p">(</span>listicle_size<span class="p">))</span> <span class="o">+</span>
     geom_histogram<span class="p">(</span>binwidth<span class="o">=</span><span class="m">1</span><span class="p">)</span> <span class="o">+</span>
     fte_theme<span class="p">()</span> <span class="o">+</span>
-labs<span class="p">(</span>title<span class="o">=</span><span class="s">&quot;Distribution of Listicle Sizes for BuzzFeed Listicles&quot;</span><span class="p">,</span> x<span class="o">=</span><span class="s">&quot;# of Entries in Listicle&quot;</span><span class="p">,</span> y<span class="o">=</span><span class="s">&quot;# of Listicles&quot;</span><span class="p">)</span></code></pre></figure></p>
+labs<span class="p">(</span>title<span class="o">=</span><span class="s">&quot;Distribution of Listicle Sizes for BuzzFeed Listicles&quot;</span><span class="p">,</span> x<span class="o">=</span><span class="s">&quot;# of Entries in Listicle&quot;</span><span class="p">,</span> y<span class="o">=</span><span class="s">&quot;# of Listicles&quot;</span><span class="p">)</span></code></pre></figure>
 
 <p><img src="/img/ggplot-tutorial/tutorial_3.png"  ></p>
 
@@ -355,13 +353,13 @@ labs<span class="p">(</span>title<span class="o">=</span><span class="s">&quot;D
 
 <p>Putting it all together:</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">ggplot<span class="p">(</span>df<span class="p">,</span> aes<span class="p">(</span>listicle_size<span class="p">))</span> <span class="o">+</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">ggplot<span class="p">(</span>df<span class="p">,</span> aes<span class="p">(</span>listicle_size<span class="p">))</span> <span class="o">+</span>
     geom_histogram<span class="p">(</span>binwidth<span class="o">=</span><span class="m">1</span><span class="p">,</span> fill<span class="o">=</span><span class="s">&quot;#c0392b&quot;</span><span class="p">,</span> alpha<span class="o">=</span><span class="m">0.75</span><span class="p">)</span> <span class="o">+</span>
     fte_theme<span class="p">()</span> <span class="o">+</span>
     labs<span class="p">(</span>title<span class="o">=</span><span class="s">&quot;Distribution of Listicle Sizes for BuzzFeed Listicles&quot;</span><span class="p">,</span> x<span class="o">=</span><span class="s">&quot;# of Entries in Listicle&quot;</span><span class="p">,</span> y<span class="o">=</span><span class="s">&quot;# of Listicles&quot;</span><span class="p">)</span> <span class="o">+</span>
     scale_x_continuous<span class="p">(</span>breaks<span class="o">=</span><span class="kp">seq</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">50</span><span class="p">,</span> by<span class="o">=</span><span class="m">5</span><span class="p">))</span> <span class="o">+</span>
-    scale_y_continuous<span class="p">(</span>labels<span class="o">=</span>comma<span class="p">)</span> <span class="o">+</span>
-    geom_hline<span class="p">(</span>yintercept<span class="o">=</span><span class="m">0</span><span class="p">,</span> size<span class="o">=</span><span class="m">0.4</span><span class="p">,</span> color<span class="o">=</span><span class="s">&quot;black&quot;</span><span class="p">)</span></code></pre></figure></p>
+    scale_y_continuous<span class="p">(</span>labels<span class="o">=</span>comma<span class="p">)</span> <span class="o">+</span> 
+    geom_hline<span class="p">(</span>yintercept<span class="o">=</span><span class="m">0</span><span class="p">,</span> size<span class="o">=</span><span class="m">0.4</span><span class="p">,</span> color<span class="o">=</span><span class="s">&quot;black&quot;</span><span class="p">)</span></code></pre></figure>
 
 <p><img src="/img/ggplot-tutorial/tutorial_4.png"  ></p>
 
@@ -373,16 +371,16 @@ labs<span class="p">(</span>title<span class="o">=</span><span class="s">&quot;D
 
 <p>Creating a scatterplot of the relationship between listicle size and the number of Facebook shares the listicle receives is essentially the same procedure as creating a histogram, except that the x-axis and y-axis aesthetic vectors must be declared explicitly.</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">ggplot<span class="p">(</span>df<span class="p">,</span> aes<span class="p">(</span>x<span class="o">=</span>listicle_size<span class="p">,</span> y<span class="o">=</span>num_fb_shares<span class="p">))</span> <span class="o">+</span>
-    geom_point<span class="p">()</span></code></pre></figure></p>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">ggplot<span class="p">(</span>df<span class="p">,</span> aes<span class="p">(</span>x<span class="o">=</span>listicle_size<span class="p">,</span> y<span class="o">=</span>num_fb_shares<span class="p">))</span> <span class="o">+</span>
+    geom_point<span class="p">()</span></code></pre></figure>
 
 <p><img src="/img/ggplot-tutorial/tutorial_5.png"  ></p>
 
 <p>Because there are a few listicles with <em>over 1 million</em> Facebook shares (welcome to 2015), the entire plot is skewed. As a result, we need to compress the plot by scaling the y-axis logarithmically using <code>scale_y_log10</code>. Additionally, there will be a large amount of overlap between points due to the large sample size, so we need to greatly reduce the opacity of the points. (I set to 5% for this chart, but the best value can be determined through trial and error)</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">ggplot<span class="p">(</span>df<span class="p">,</span> aes<span class="p">(</span>x<span class="o">=</span>listicle_size<span class="p">,</span> y<span class="o">=</span>num_fb_shares<span class="p">))</span> <span class="o">+</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">ggplot<span class="p">(</span>df<span class="p">,</span> aes<span class="p">(</span>x<span class="o">=</span>listicle_size<span class="p">,</span> y<span class="o">=</span>num_fb_shares<span class="p">))</span> <span class="o">+</span>
     geom_point<span class="p">(</span>alpha<span class="o">=</span><span class="m">0.05</span><span class="p">)</span> <span class="o">+</span>
-    scale_y_log10<span class="p">(</span>labels<span class="o">=</span>comma<span class="p">)</span></code></pre></figure></p>
+    scale_y_log10<span class="p">(</span>labels<span class="o">=</span>comma<span class="p">)</span></code></pre></figure>
 
 <p><img src="/img/ggplot-tutorial/tutorial_6.png"  ></p>
 
@@ -390,11 +388,11 @@ labs<span class="p">(</span>title<span class="o">=</span><span class="s">&quot;D
 
 <p>Now we can apply the theme and labels:</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">ggplot<span class="p">(</span>df<span class="p">,</span> aes<span class="p">(</span>x<span class="o">=</span>listicle_size<span class="p">,</span> y<span class="o">=</span>num_fb_shares<span class="p">))</span> <span class="o">+</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">ggplot<span class="p">(</span>df<span class="p">,</span> aes<span class="p">(</span>x<span class="o">=</span>listicle_size<span class="p">,</span> y<span class="o">=</span>num_fb_shares<span class="p">))</span> <span class="o">+</span>
     geom_point<span class="p">(</span>alpha<span class="o">=</span><span class="m">0.05</span><span class="p">)</span> <span class="o">+</span>
     scale_y_log10<span class="p">(</span>labels<span class="o">=</span>comma<span class="p">)</span> <span class="o">+</span>
     fte_theme<span class="p">()</span> <span class="o">+</span>
-    labs<span class="p">(</span>x<span class="o">=</span><span class="s">&quot;# of Entries in Listicle&quot;</span><span class="p">,</span> y<span class="o">=</span><span class="s">&quot;# of Facebook Shares&quot;</span><span class="p">,</span> title<span class="o">=</span><span class="s">&quot;FB Shares vs. Listicle Size for BuzzFeed Listicles&quot;</span><span class="p">)</span></code></pre></figure></p>
+    labs<span class="p">(</span>x<span class="o">=</span><span class="s">&quot;# of Entries in Listicle&quot;</span><span class="p">,</span> y<span class="o">=</span><span class="s">&quot;# of Facebook Shares&quot;</span><span class="p">,</span> title<span class="o">=</span><span class="s">&quot;FB Shares vs. Listicle Size for BuzzFeed Listicles&quot;</span><span class="p">)</span></code></pre></figure>
 
 <p><img src="/img/ggplot-tutorial/tutorial_7.png"  ></p>
 
@@ -402,14 +400,14 @@ labs<span class="p">(</span>title<span class="o">=</span><span class="s">&quot;D
 
 <p>Putting it all together:</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">ggplot<span class="p">(</span>df<span class="p">,</span> aes<span class="p">(</span>x<span class="o">=</span>listicle_size<span class="p">,</span> y<span class="o">=</span>num_fb_shares<span class="p">))</span> <span class="o">+</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">ggplot<span class="p">(</span>df<span class="p">,</span> aes<span class="p">(</span>x<span class="o">=</span>listicle_size<span class="p">,</span> y<span class="o">=</span>num_fb_shares<span class="p">))</span> <span class="o">+</span>
     geom_point<span class="p">(</span>alpha<span class="o">=</span><span class="m">0.05</span><span class="p">,</span> color<span class="o">=</span><span class="s">&quot;#c0392b&quot;</span><span class="p">)</span> <span class="o">+</span>
     scale_x_continuous<span class="p">(</span>breaks<span class="o">=</span><span class="kp">seq</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">50</span><span class="p">,</span> by<span class="o">=</span><span class="m">5</span><span class="p">))</span> <span class="o">+</span>
     scale_y_log10<span class="p">(</span>labels<span class="o">=</span>comma<span class="p">,</span> breaks<span class="o">=</span><span class="m">10</span><span class="o">^</span><span class="p">(</span><span class="m">0</span><span class="o">:</span><span class="m">6</span><span class="p">))</span> <span class="o">+</span>
     geom_hline<span class="p">(</span>yintercept<span class="o">=</span><span class="m">1</span><span class="p">,</span> size<span class="o">=</span><span class="m">0.4</span><span class="p">,</span> color<span class="o">=</span><span class="s">&quot;black&quot;</span><span class="p">)</span> <span class="o">+</span>
     geom_smooth<span class="p">(</span>alpha<span class="o">=</span><span class="m">0.25</span><span class="p">,</span> color<span class="o">=</span><span class="s">&quot;black&quot;</span><span class="p">,</span> fill<span class="o">=</span><span class="s">&quot;black&quot;</span><span class="p">)</span> <span class="o">+</span>
     fte_theme<span class="p">()</span> <span class="o">+</span>
-    labs<span class="p">(</span>x<span class="o">=</span><span class="s">&quot;# of Entries in Listicle&quot;</span><span class="p">,</span> y<span class="o">=</span><span class="s">&quot;# of Facebook Shares&quot;</span><span class="p">,</span> title<span class="o">=</span><span class="s">&quot;FB Shares vs. Listicle Size for BuzzFeed Listicles&quot;</span><span class="p">)</span></code></pre></figure></p>
+    labs<span class="p">(</span>x<span class="o">=</span><span class="s">&quot;# of Entries in Listicle&quot;</span><span class="p">,</span> y<span class="o">=</span><span class="s">&quot;# of Facebook Shares&quot;</span><span class="p">,</span> title<span class="o">=</span><span class="s">&quot;FB Shares vs. Listicle Size for BuzzFeed Listicles&quot;</span><span class="p">)</span></code></pre></figure>
 
 <p><img src="/img/ggplot-tutorial/tutorial_8.png"  ></p>
 
@@ -417,16 +415,36 @@ labs<span class="p">(</span>title<span class="o">=</span><span class="s">&quot;D
 
 <p>Hopefully, this small overview of how ggplot2 gives you an small idea of what it can do. This is just the tip of the iceberg. However, making cooler charts such as categorical bar charts, charts with multiple factor variables, and charts with multiple facets require smart data preprocessing, which is a topic for another blog post.</p>
 
-<hr />
+<hr>
 
 <p><em>You can access a copy of the code used in this blog post <a href="https://github.com/minimaxir/ggplot-tutorial">at this GitHub repository</a>.</em></p>
 
+						
+            			 <div class="breadcrumbs-v5-subtitle sharing-post" style="color: #999 !important; padding-top:10px; border-top: 1px solid #eee">Share this article!
+
+
+              <span class="sharing index" style="float: right; color: #999 !important;">
+  
+		  <span class="social facebook"><a href="https://www.facebook.com/share.php?u=http://minimaxir.com/2015/02/ggplot-tutorial/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data="http://minimaxir.com/2015/02/ggplot-tutorial/"><i class="fa fa-facebook"></i><span class="count hidden-xs"> -</span></a></span>
+  
+		<span class="social twitter"><a href="http://twitter.com/home/?status=An Introduction on How to Make Beautiful Charts With R and ggplot2 - http://minimaxir.com/2015/02/ggplot-tutorial/ - via @minimaxir"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data=http://minimaxir.com/2015/02/ggplot-tutorial/><i class="fa fa-twitter"></i><span class="count hidden-xs"></span></a> </span>
+
+  <span  class="social linkedin"><a href="http://www.linkedin.com/shareArticle?mini=true&title=&url=http://minimaxir.com/2015/02/ggplot-tutorial/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=600');return false;" data=http://minimaxir.com/2015/02/ggplot-tutorial/><i class="fa fa-linkedin"></i><span class="count hidden-xs"> -</span></a> </span>
+
+   </span>
+   </div>
 						</div>
                         <!-- End Blog Grid Content -->
+                        
+                        
+                        
                     </article>
                     <!-- End Blog Grid -->
 
- 
+ 					
 
                     <!-- Blog Comment -->
                     <div class="bg-color-white margin-b-30">
@@ -457,6 +475,8 @@ labs<span class="p">(</span>title<span class="o">=</span><span class="s">&quot;D
                         </div>
                     </div>
                     <!-- End Blog Comment -->
+                    
+                    
                 </div>
 
 			                <!--========== BLOG SIDEBAR ==========-->
@@ -474,11 +494,13 @@ labs<span class="p">(</span>title<span class="o">=</span><span class="s">&quot;D
                         
                         <div class="blog-sidebar-content">
                             <!-- Blog Author Bio -->
-                            <p>Max Woolf (@minimaxir) is a Software QA Engineer living and working in the San Francisco Bay Area for over 3.5 years and a 2012 Carnegie Mellon University graduate.</p>
-  
-  <p>In his spare time, Max uses <a href="https://www.python.org/">Python</a> to gather data from public APIs and <a href="http://ggplot2.org/">ggplot2</a> to make pretty charts from that data.</p>
-  
-  <p>You can learn more about Max <a href="/about">here</a>, or view his portfolio <a href="/portfolio">here</a>.
+							
+							<p><strong>Max Woolf (@minimaxir)</strong> is a Software QA Engineer living and working in the San Francisco Bay Area for over 3 years and a 2012 Carnegie Mellon University graduate in Business Administration.</p>
+
+<p>In his spare time, Max uses <a href="https://www.python.org/">Python</a> to gather data from public APIs and <a href="http://ggplot2.org/">ggplot2</a> to make pretty charts from that data.</p>
+
+<p>You can learn more about Max <a href="/about">here</a>, or view his portfolio <a href="/portfolio">here</a>. </p>
+
   
     <ul class="list-inline" style="padding-top:10px; margin-top: 20px; border-top: 1px solid #ebeef6">
                         <li class="theme-icons-wrap"><a title="Facebook" href="https://facebook.com/max.woolf" target="_blank"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-facebook"></i></a></li>
@@ -534,6 +556,13 @@ labs<span class="p">(</span>title<span class="o">=</span><span class="s">&quot;D
                                 <div class="latest-tuts-content">
                                     <h5 class="latest-tuts-content-title"><a href="/2016/01/movie-revenue-ratings/">Movie Review Aggregator Ratings Have No Relationship with Box Office Success</a></h5>
                                     <small class="latest-tuts-content-time"> Jan 7, 2016</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="/2015/12/lets-code-1/">Let's Code an Analysis and Visualizations of Yelp Data using R and ggplot2</a></h5>
+                                    <small class="latest-tuts-content-time"> Dec 28, 2015</small>
                                 </div>
                         </article>
                                                 
@@ -633,22 +662,82 @@ labs<span class="p">(</span>title<span class="o">=</span><span class="s">&quot;D
 
 
   
-      <!--========== FOOTER ==========-->
-    <footer id="footer" class="footer">
-        <div class="container">
-            <!-- end row -->
+      <!--========== FOOTER V8 ==========-->
+    <footer id="footer" class="footer-v8">
+        <div class="content-sm container">
+            <div class="row">
+                <!-- Logo -->
+                <div class="col-md-6">
+                    
+                    <p>You can contact through any of the following channels, although e-mail is preferred. Following me on Facebook and Twitter certainly doesn't hurt either!</p>
+                     <!-- <h2 class="footer-v8-title">Follow Me</h2> -->
+                    <!-- Theme Icons White Background -->
+                   <!-- <ul class="list-inline ul-li-lr-0">
+                        <li class="theme-icons-wrap"><a title="Facebook" href="https://facebook.com/max.woolf" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-facebook"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="Twitter" href="https://twitter.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-twitter"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="LinkedIn" href="https://linkedin.com/in/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-linkedin"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="GitHub" href="https://github.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-github"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="YouTube" href="https://youtube.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-youtube"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="E-Mail" href="mailto:max@minimaxir.com"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-envelope"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="RSS" href="/rss.xml"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-rss"></i></a></li> -->
+                    <!-- End Theme Icons White Background -->
+                </div>
+                <!-- End Logo -->
 
+                <!-- Contact Info -->
+                <div class="col-md-6">
+                    <h3 class="footer-v8-title">Contact Info</h3>
+                    <div class="footer-v8-contact-info-bg">
+                        <ul class="list-unstyled footer-v8-contact-info">
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-map-marker"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <p class="footer-v8-contact-info-text">SOMA, San Francisco, CA</p>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-facebook"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="Facebook" href="https://facebook.com/max.woolf" target="_blank">max.woolf</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-twitter"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="Twitter" href="https://twitter.com/minimaxir" target="_blank"">@minimaxir</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-linkedin"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="LinkedIn" href="https://linkedin.com/in/minimaxir" target="_blank"">minimaxir</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-envelope"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="E-Mail" href="mailto:max@minimaxir.com">max@minimaxir.com</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- End Contact Info -->
 
-            <!-- Copyright -->
-            <ul class="list-inline footer-copyright">
-                <li class="footer-copyright-item">Copyright &#169; 2016 Max Woolf. All Rights Reserved.</li>
-                <li class="footer-copyright-item">minimaxir.com is powered by Jekyll and GitHub Pages.</li>
-            </ul>
-            <!-- End Copyright -->
-
+            </div>
+            <!--// end row -->
         </div>
+
+        <!-- Copyright -->
+        <div class="footer-v8-copyright">
+            <div class="container text-center">
+				Copyright &#169; 2016 Max Woolf. All Rights Reserved. 
+                minimaxir.com is powered by Jekyll and GitHub Pages.
+            </div>
+        </div>
+        <!-- Copyright -->
     </footer>
-    <!--========== END FOOTER ==========-->
+    <!--========== END FOOTER V8 ==========-->
 </div>
 <!-- END WRAPPER -->
 

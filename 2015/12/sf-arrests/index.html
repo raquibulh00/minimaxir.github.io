@@ -244,7 +244,7 @@
 						<div class="blog-grid-content">
 						<p>The <a href="https://data.sfgov.org">SF OpenData portal</a> is a good source for detailed statistics about San Francisco. One of the most popular datasets on the portal is the <a href="https://data.sfgov.org/Public-Safety/SFPD-Incidents-from-1-January-2003/tmnf-yvry">SFPD Incidents dataset</a>, which contains a tabular list of 1,842,050 reports (at time of writing) from 2003 to present.</p>
 
-<p><img src="/img/sf-arrests/incident-data.png" alt="" /></p>
+<p><img src="/img/sf-arrests/incident-data.png" alt=""></p>
 
 <p>The data can be exported into a 377.9 MB CSV; not large enough to be considered &ldquo;big data,&rdquo; but still too heavy for programs like Excel to process efficiently. Let&rsquo;s take a look at the data using <a href="https://www.r-project.org">R</a> and see if there&rsquo;s anything interesting.</p>
 
@@ -254,30 +254,30 @@
 
 <p>Loading a 1.9 million row file into R can take awhile, even on modern computers with a SSD. Enter <code>readr</code>, <a href="https://github.com/hadley/readr">another R package</a> by <code>ggplot2</code> author Hadley Wickham, which grants access to a <code>read_csv()</code> function that has nearly 10x the speed of the base <code>read.csv()</code> R function, with more sensible defaults too.</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">path <span class="o">&lt;-</span> <span class="s">&quot;~/Downloads/SFPD_Incidents<em>-</em>from_1_January_2003.csv&quot;</span></p>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">path <span class="o">&lt;-</span> <span class="s">&quot;~/Downloads/SFPD_Incidents_-_from_1_January_2003.csv&quot;</span>
 
-<p>df <span class="o">&lt;-</span> read_csv<span class="p">(</span>path<span class="p">)</span></code></pre></figure></p>
+df <span class="o">&lt;-</span> read_csv<span class="p">(</span>path<span class="p">)</span></code></pre></figure>
 
 <p>In memory, the data set is 180.9 MB, and removing a few useless columns (e.g. IncidentNum) further reduces the size to 126.9 MB. Since there are many redundancies in the row data (e.g. only 10 distinct PdDistrict values), R can perform memory optimizations.</p>
 
 <p>You may have noticed in the first article image that the text data in some of the columns is in ALL CAPS, which would look ugly if the text was used in a data visualization. We can create a helper function to convert a column of text values into proper case through the use of <a href="http://stackoverflow.com/questions/15776732/how-to-convert-a-vector-of-strings-to-title-case">regular expression shenanigans</a>.</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">proper_case <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>x<span class="p">)</span> <span class="p">{</span>
-    <span class="kr">return</span> <span class="p">(</span><span class="kp">gsub</span><span class="p">(</span><span class="s">&quot;\b([A-Z])([A-Z]+)&quot;</span><span class="p">,</span> <span class="s">&quot;\U\1\L\2&quot;</span> <span class="p">,</span> x<span class="p">,</span> perl<span class="o">=</span><span class="kc">TRUE</span><span class="p">))</span>
-<span class="p">}</span></code></pre></figure></p>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">proper_case <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>x<span class="p">)</span> <span class="p">{</span>
+    <span class="kr">return</span> <span class="p">(</span><span class="kp">gsub</span><span class="p">(</span><span class="s">&quot;\\b([A-Z])([A-Z]+)&quot;</span><span class="p">,</span> <span class="s">&quot;\\U\\1\\L\\2&quot;</span> <span class="p">,</span> x<span class="p">,</span> perl<span class="o">=</span><span class="kc">TRUE</span><span class="p">))</span>
+<span class="p">}</span></code></pre></figure>
 
 <p>Now we can do more through processing using <code>dplyr</code>, <a href="https://github.com/hadley/dplyr"><em>another</em> Hadley Wickham R package</a>. dplyr is a utility that makes R easier to use: it provides a new syntax that allows data manipulation with intuitive function names, the functions can be chained using the <code>%&gt;%</code> operator for efficiency, and all data processing is <em>significantly</em> faster due to a C++ code base. (Fun fact: before the release of dplyr, I intended to quit using R for data analysis in favor of Python. Base R syntax is <em>that</em> difficult to use.)</p>
 
 <p>In dplyr, <code>mutate</code> allows the creation and transformation of columns. We will transform the text columns by running the columns through the <code>proper_case</code> function earlier:</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">df <span class="o">&lt;-</span> df <span class="o">%&gt;%</span> mutate<span class="p">(</span>Category <span class="o">=</span> proper_case<span class="p">(</span>Category<span class="p">),</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">df <span class="o">&lt;-</span> df <span class="o">%&gt;%</span> mutate<span class="p">(</span>Category <span class="o">=</span> proper_case<span class="p">(</span>Category<span class="p">),</span>
                  Descript <span class="o">=</span> proper_case<span class="p">(</span>Descript<span class="p">),</span>
                  PdDistrict <span class="o">=</span> proper_case<span class="p">(</span>PdDistrict<span class="p">),</span>
-                 Resolution <span class="o">=</span> proper_case<span class="p">(</span>Resolution<span class="p">))</span></code></pre></figure></p>
+                 Resolution <span class="o">=</span> proper_case<span class="p">(</span>Resolution<span class="p">))</span></code></pre></figure>
 
 <p>After all that, the data looks like:</p>
 
-<p><img src="/img/sf-arrests/processed-table.png" alt="" /></p>
+<p><img src="/img/sf-arrests/processed-table.png" alt=""></p>
 
 <p>Much better!</p>
 
@@ -285,7 +285,7 @@
 
 <p>dplyr&rsquo;s  <code>filter</code> command does that, and we can use <code>grepl()</code> to do a text search for each Resolution value for the presence of &ldquo;Arrest&rdquo;.</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">df_arrest <span class="o">&lt;-</span> df <span class="o">%&gt;%</span> filter<span class="p">(</span><span class="kp">grepl</span><span class="p">(</span><span class="s">&quot;Arrest&quot;</span><span class="p">,</span> Resolution<span class="p">))</span></code></pre></figure></p>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">df_arrest <span class="o">&lt;-</span> df <span class="o">%&gt;%</span> filter<span class="p">(</span><span class="kp">grepl</span><span class="p">(</span><span class="s">&quot;Arrest&quot;</span><span class="p">,</span> Resolution<span class="p">))</span></code></pre></figure>
 
 <p>That&rsquo;s it! There are 587,499 arrests total in the dataset.</p>
 
@@ -295,24 +295,24 @@
 
 <p>First, the Date column must be formatted as a Date internally in R instead of text. Then we <code>group_by</code> the Date, and then use <code>summarize</code> to perform an aggregate on each group; in this case, count how many entries for the group. (<code>n()</code> is a convenient shortcut). We can also ensure that the dates are in ascending order.</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">df_arrest_daily <span class="o">&lt;-</span> df_arrest <span class="o">%&gt;%</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">df_arrest_daily <span class="o">&lt;-</span> df_arrest <span class="o">%&gt;%</span>
                     mutate<span class="p">(</span>Date <span class="o">=</span> <span class="kp">as.Date</span><span class="p">(</span>Date<span class="p">,</span> <span class="s">&quot;%m/%d/%Y&quot;</span><span class="p">))</span> <span class="o">%&gt;%</span>
                     group_by<span class="p">(</span>Date<span class="p">)</span> <span class="o">%&gt;%</span>
                     summarize<span class="p">(</span>count <span class="o">=</span> n<span class="p">())</span> <span class="o">%&gt;%</span>
-                    arrange<span class="p">(</span>Date<span class="p">)</span></code></pre></figure></p>
+                    arrange<span class="p">(</span>Date<span class="p">)</span></code></pre></figure>
 
-<p><img src="/img/sf-arrests/date-table.png" alt="" /></p>
+<p><img src="/img/sf-arrests/date-table.png" alt=""></p>
 
 <p>Nifty! However, keep in mind that there are thousands of days in this dataset.</p>
 
 <p>Now we can make a pretty line chart in ggplot2. Here&rsquo;s the code, and I will explain what everything does afterward:</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">plot <span class="o">&lt;-</span> ggplot<span class="p">(</span>df_arrest_daily<span class="p">,</span> aes<span class="p">(</span>x <span class="o">=</span> Date<span class="p">,</span> y <span class="o">=</span> count<span class="p">))</span> <span class="o">+</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">plot <span class="o">&lt;-</span> ggplot<span class="p">(</span>df_arrest_daily<span class="p">,</span> aes<span class="p">(</span>x <span class="o">=</span> Date<span class="p">,</span> y <span class="o">=</span> count<span class="p">))</span> <span class="o">+</span>
     geom_line<span class="p">(</span>color <span class="o">=</span> <span class="s">&quot;#F2CA27&quot;</span><span class="p">,</span> size <span class="o">=</span> <span class="m">0.1</span><span class="p">)</span> <span class="o">+</span>
     geom_smooth<span class="p">(</span>color <span class="o">=</span> <span class="s">&quot;#1A1A1A&quot;</span><span class="p">)</span> <span class="o">+</span>
     fte_theme<span class="p">()</span> <span class="o">+</span>
     scale_x_date<span class="p">(</span>breaks <span class="o">=</span> date_breaks<span class="p">(</span><span class="s">&quot;2 years&quot;</span><span class="p">),</span> labels <span class="o">=</span> date_format<span class="p">(</span><span class="s">&quot;%Y&quot;</span><span class="p">))</span> <span class="o">+</span>
-    labs<span class="p">(</span>x <span class="o">=</span> <span class="s">&quot;Date of Arrest&quot;</span><span class="p">,</span> y <span class="o">=</span> <span class="s">&quot;# of Police Arrests&quot;</span><span class="p">,</span> title <span class="o">=</span> <span class="s">&quot;Daily Police Arrests in San Francisco from 2003 – 2015&quot;</span><span class="p">)</span></code></pre></figure></p>
+    labs<span class="p">(</span>x <span class="o">=</span> <span class="s">&quot;Date of Arrest&quot;</span><span class="p">,</span> y <span class="o">=</span> <span class="s">&quot;# of Police Arrests&quot;</span><span class="p">,</span> title <span class="o">=</span> <span class="s">&quot;Daily Police Arrests in San Francisco from 2003 – 2015&quot;</span><span class="p">)</span></code></pre></figure>
 
 <ul>
 <li><code>ggplot()</code> sets up the base chart and axes.</li>
@@ -323,10 +323,9 @@
 <li><code>labs()</code> is a quick shortcut for labeling your axes and plot (<em>always</em> label!)</li>
 </ul>
 
-
 <p>Running the code and saving the output results in this image:</p>
 
-<p><img src="/img/sf-arrests/sf-arrest-when-1.png" alt="" /></p>
+<p><img src="/img/sf-arrests/sf-arrest-when-1.png" alt=""></p>
 
 <p>The line chart has high variation due to the number of points (in retrospect, a 30-day moving average of arrests would work better visually). As the trendline indicates, the trend is actually <em>multimodal</em>, with daily arrest peaks in 2009 and 2014. Definitely interesting. The number of arrests appears to be on a downward trend since then.</p>
 
@@ -340,31 +339,31 @@
 
 <p>This requires another helper function which uses <code>strsplit()</code> to split a single time value to Hour and Minute components, take the first value (Hour), and convert that value to a numeric value (instead of text) For example, &ldquo;09:40&rdquo; input returns 9.</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">get_hour <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>x<span class="p">)</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">get_hour <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>x<span class="p">)</span> <span class="p">{</span>
     <span class="kr">return</span> <span class="p">(</span><span class="kp">as.numeric</span><span class="p">(</span><span class="kp">strsplit</span><span class="p">(</span>x<span class="p">,</span><span class="s">&quot;:&quot;</span><span class="p">)[[</span><span class="m">1</span><span class="p">]][</span><span class="m">1</span><span class="p">]))</span>
-<span class="p">}</span></code></pre></figure></p>
+<span class="p">}</span></code></pre></figure>
 
 <p>Unfortunately, this will not work for an entire column. Using <code>sapply()</code> applies a specified function to each element in a column, which accomplishes the same goal.</p>
 
 <p>The goal is to count how many Arrests occur for a given day-of-week and hour combination. In dplyr, we <code>group_by</code> both &ldquo;DayOfWeek&rdquo; and &ldquo;Hour&rdquo;, and then use <code>summarize</code> again.</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">df_arrest_time <span class="o">&lt;-</span> df_arrest <span class="o">%&gt;%</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">df_arrest_time <span class="o">&lt;-</span> df_arrest <span class="o">%&gt;%</span>
                     mutate<span class="p">(</span>Hour <span class="o">=</span> <span class="kp">sapply</span><span class="p">(</span>Time<span class="p">,</span> get_hour<span class="p">))</span> <span class="o">%&gt;%</span>
                     group_by<span class="p">(</span>DayOfWeek<span class="p">,</span> Hour<span class="p">)</span> <span class="o">%&gt;%</span>
-                    summarize<span class="p">(</span>count <span class="o">=</span> n<span class="p">())</span></code></pre></figure></p>
+                    summarize<span class="p">(</span>count <span class="o">=</span> n<span class="p">())</span></code></pre></figure>
 
-<p><img src="/img/sf-arrests/dow-table.png" alt="" /></p>
+<p><img src="/img/sf-arrests/dow-table.png" alt=""></p>
 
 <p>A few more tweaks are done (off camera) to convert the Hours to representations like &ldquo;12 PM&rdquo; and get everything in the correct order.</p>
 
 <p>Now, it&rsquo;s time to make the heatmap using <code>ggplot2</code>. Here&rsquo;s the code, and I will explain what the new functions do:</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">plot <span class="o">&lt;-</span> ggplot<span class="p">(</span>df_arrest_time<span class="p">,</span> aes<span class="p">(</span>x <span class="o">=</span> Hour<span class="p">,</span> y <span class="o">=</span> DayOfWeek<span class="p">,</span> fill <span class="o">=</span> count<span class="p">))</span> <span class="o">+</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">plot <span class="o">&lt;-</span> ggplot<span class="p">(</span>df_arrest_time<span class="p">,</span> aes<span class="p">(</span>x <span class="o">=</span> Hour<span class="p">,</span> y <span class="o">=</span> DayOfWeek<span class="p">,</span> fill <span class="o">=</span> count<span class="p">))</span> <span class="o">+</span>
     geom_tile<span class="p">()</span> <span class="o">+</span>
     fte_theme<span class="p">()</span> <span class="o">+</span>
-    theme<span class="p">(</span><span class="kc">&hellip;</span><span class="p">)</span> <span class="o">+</span>
+    theme<span class="p">(</span><span class="kc">...</span><span class="p">)</span> <span class="o">+</span>
     labs<span class="p">(</span>x <span class="o">=</span> <span class="s">&quot;Hour of Arrest (Local Time)&quot;</span><span class="p">,</span> y <span class="o">=</span> <span class="s">&quot;Day of Week of Arrest&quot;</span><span class="p">,</span> title <span class="o">=</span> <span class="s">&quot;# of Police Arrests in San Francisco from 2003 – 2015, by Time of Arrest&quot;</span><span class="p">)</span> <span class="o">+</span>
-    scale_fill_gradient<span class="p">(</span>low <span class="o">=</span> <span class="s">&quot;white&quot;</span><span class="p">,</span> high <span class="o">=</span> <span class="s">&quot;#27AE60&quot;</span><span class="p">,</span> labels <span class="o">=</span> comma<span class="p">)</span></code></pre></figure></p>
+    scale_fill_gradient<span class="p">(</span>low <span class="o">=</span> <span class="s">&quot;white&quot;</span><span class="p">,</span> high <span class="o">=</span> <span class="s">&quot;#27AE60&quot;</span><span class="p">,</span> labels <span class="o">=</span> comma<span class="p">)</span></code></pre></figure>
 
 <ul>
 <li><code>geom_title()</code> creates tiles. (instead of lines)</li>
@@ -372,10 +371,9 @@
 <li><code>scale_fill_gradient()</code> tells the tiles to fill on a gradient, from white as the lowest value to a green as the highest value. The &ldquo;labels = comma&rdquo; parameter is a hidden helpful tip to allow any values in the legend to show with commas.</li>
 </ul>
 
-
 <p>Putting it all together:</p>
 
-<p><img src="/img/sf-arrests/sf-arrest-when-2.png" alt="" /></p>
+<p><img src="/img/sf-arrests/sf-arrest-when-2.png" alt=""></p>
 
 <p>The heatmap is an intuitive result. Arrests don&rsquo;t happen in the early morning, and arrests tend to be elevated Friday and Saturday night, when everyone is out on the town.</p>
 
@@ -389,44 +387,44 @@
 
 <p>After quickly using dplyr to aggregate and sort the top categories of arrest, by number of occurrences:</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">df_top_crimes <span class="o">&lt;-</span> df_arrest <span class="o">%&gt;%</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">df_top_crimes <span class="o">&lt;-</span> df_arrest <span class="o">%&gt;%</span>
                     group_by<span class="p">(</span>Category<span class="p">)</span> <span class="o">%&gt;%</span>
                     summarize<span class="p">(</span>count <span class="o">=</span> n<span class="p">())</span> <span class="o">%&gt;%</span>
-                    arrange<span class="p">(</span>desc<span class="p">(</span>count<span class="p">))</span></code></pre></figure></p>
+                    arrange<span class="p">(</span>desc<span class="p">(</span>count<span class="p">))</span></code></pre></figure>
 
-<p><img src="/img/sf-arrests/top-crimes.png" alt="" /></p>
+<p><img src="/img/sf-arrests/top-crimes.png" alt=""></p>
 
 <p>&ldquo;Other Offenses&rdquo; is a catch-all, so we will ignore that. Filter on the top 18 types of crime excluding Other Offenses and aggregate as usual.</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">df_arrest_time_crime <span class="o">&lt;-</span> df_arrest <span class="o">%&gt;%</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">df_arrest_time_crime <span class="o">&lt;-</span> df_arrest <span class="o">%&gt;%</span>
                     filter<span class="p">(</span>Category <span class="o">%in%</span> df_top_crimes<span class="o">$</span>Category<span class="p">[</span><span class="m">2</span><span class="o">:</span><span class="m">19</span><span class="p">])</span> <span class="o">%&gt;%</span>
                     mutate<span class="p">(</span>Hour <span class="o">=</span> <span class="kp">sapply</span><span class="p">(</span>Time<span class="p">,</span> get_hour<span class="p">))</span> <span class="o">%&gt;%</span>
                     group_by<span class="p">(</span>Category<span class="p">,</span> DayOfWeek<span class="p">,</span> Hour<span class="p">)</span> <span class="o">%&gt;%</span>
-                    summarize<span class="p">(</span>count <span class="o">=</span> n<span class="p">())</span></code></pre></figure></p>
+                    summarize<span class="p">(</span>count <span class="o">=</span> n<span class="p">())</span></code></pre></figure>
 
 <p>Time for the heat map! The <code>ggplot</code> code is nearly identical to the previous heatmap code, except we add <code>facet_wrap()</code>.</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">plot <span class="o">&lt;-</span> ggplot<span class="p">(</span>df_arrest_time_crime<span class="p">,</span> aes<span class="p">(</span>x <span class="o">=</span> Hour<span class="p">,</span> y <span class="o">=</span> DayOfWeek<span class="p">,</span> fill <span class="o">=</span> count<span class="p">))</span> <span class="o">+</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">plot <span class="o">&lt;-</span> ggplot<span class="p">(</span>df_arrest_time_crime<span class="p">,</span> aes<span class="p">(</span>x <span class="o">=</span> Hour<span class="p">,</span> y <span class="o">=</span> DayOfWeek<span class="p">,</span> fill <span class="o">=</span> count<span class="p">))</span> <span class="o">+</span>
     geom_tile<span class="p">()</span> <span class="o">+</span>
     fte_theme<span class="p">()</span> <span class="o">+</span>
-    theme<span class="p">(</span><span class="kc">&hellip;</span><span class="p">)</span> <span class="o">+</span>
+    theme<span class="p">(</span><span class="kc">...</span><span class="p">)</span> <span class="o">+</span>
     labs<span class="p">(</span>x <span class="o">=</span> <span class="s">&quot;Hour of Arrest (Local Time)&quot;</span><span class="p">,</span> y <span class="o">=</span> <span class="s">&quot;Day of Week of Arrest&quot;</span><span class="p">,</span> title <span class="o">=</span> <span class="s">&quot;# of Police Arrests in San Francisco from 2003 – 2015, by Category and Time of Arrest&quot;</span><span class="p">)</span> <span class="o">+</span>
     scale_fill_gradient<span class="p">(</span>low <span class="o">=</span> <span class="s">&quot;white&quot;</span><span class="p">,</span> high <span class="o">=</span> <span class="s">&quot;#2980B9&quot;</span><span class="p">)</span> <span class="o">+</span>
-    facet_wrap<span class="p">(</span><span class="o">~</span> Category<span class="p">,</span> nrow <span class="o">=</span> <span class="m">6</span><span class="p">)</span></code></pre></figure></p>
+    facet_wrap<span class="p">(</span><span class="o">~</span> Category<span class="p">,</span> nrow <span class="o">=</span> <span class="m">6</span><span class="p">)</span></code></pre></figure>
 
-<p><img src="/img/sf-arrests/sf-arrest-when-3.png" alt="" /></p>
+<p><img src="/img/sf-arrests/sf-arrest-when-3.png" alt=""></p>
 
 <p>Easy visualization to make, but it&rsquo;s not fully correct. There can only be one scale for the whole visualization, which is why the categories with lots of arrests appear colored and others do not (however, it shows that Drugs/Narcotics arrests are a large contributor to the Wednesday emphasis of the data). We need to normalize the counts by facet. dplyr has a nice trick for normalization: group by the normalization variable (Category), then mutate to add a column based on the aggregate for each unique value.</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">df_arrest_time_crime <span class="o">&lt;-</span> df_arrest_time_crime <span class="o">%&gt;%</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">df_arrest_time_crime <span class="o">&lt;-</span> df_arrest_time_crime <span class="o">%&gt;%</span>
                             group_by<span class="p">(</span>Category<span class="p">)</span> <span class="o">%&gt;%</span>
-                            mutate<span class="p">(</span>norm <span class="o">=</span> count<span class="o">/</span><span class="kp">sum</span><span class="p">(</span>count<span class="p">))</span></code></pre></figure></p>
+                            mutate<span class="p">(</span>norm <span class="o">=</span> count<span class="o">/</span><span class="kp">sum</span><span class="p">(</span>count<span class="p">))</span></code></pre></figure>
 
-<p><img src="/img/sf-arrests/crime-norm.png" alt="" /></p>
+<p><img src="/img/sf-arrests/crime-norm.png" alt=""></p>
 
 <p>Setting the &ldquo;fill&rdquo; to &ldquo;norm&rdquo; and rerunning the heatmap code yields:</p>
 
-<p><img src="/img/sf-arrests/sf-arrest-when-4.png" alt="" /></p>
+<p><img src="/img/sf-arrests/sf-arrest-when-4.png" alt=""></p>
 
 <p>Now things get interesting.</p>
 
@@ -440,36 +438,56 @@
 
 <p>Doing thus yields this heatmap.</p>
 
-<p><img src="/img/sf-arrests/sf-arrest-when-5.png" alt="" /></p>
+<p><img src="/img/sf-arrests/sf-arrest-when-5.png" alt=""></p>
 
 <p>Which isn&rsquo;t helpful. The charts are mostly identical to each other, and to the original heatmap. (Central Station (<a href="http://www.sf-police.org/Modules/ShowDocument.aspx?documentID=27554">coverage map</a>), however, has activity correlated to Drunkenness arrests.)</p>
 
 <p>Perhaps the frequency of arrests is correlated to the time of year? How about faceting by month?</p>
 
-<p><img src="/img/sf-arrests/sf-arrest-when-6.png" alt="" /></p>
+<p><img src="/img/sf-arrests/sf-arrest-when-6.png" alt=""></p>
 
 <p>Nope. Zero difference.</p>
 
 <p>Last try. As shown in the line chart, the # of Arrests has oscillated over the years. Perhaps there&rsquo;s a specific year that&rsquo;s skewing the results. Let&rsquo;s facet by Year.</p>
 
-<p><img src="/img/sf-arrests/sf-arrest-when-7.png" alt="" /></p>
+<p><img src="/img/sf-arrests/sf-arrest-when-7.png" alt=""></p>
 
-<p>Nope<sup>2</sup>. 2010-2012 have elevated Wednesday activity, but not by much.</p>
+<p>Nope<sup>2.</sup> 2010-2012 have elevated Wednesday activity, but not by much.</p>
 
 <p>This is frustrating. As of this posting, I don&rsquo;t have an obvious answer for the elevated arrests Wednesdays at 4-5PM. That being said, there definitely is still more to learn from looking at SF Crime data, although that&rsquo;s enough analysis for the time being.</p>
 
 <p><a href="http://minimaxir.com/2015/12/sf-arrest-maps/">My next article</a> discusses how to plot arrests on a map using the <code>ggmap</code> R library, which hopefully will provide more answers. The <a href="https://github.com/minimaxir/sf-arrests-when-where">GitHub repository</a> contains a Jupyter notebook with code and visualizations for both for this article, and for the upcoming ggmap visualizations (if you want a sneak peek) which will show <em>where</em> arrests in San Francisco frequently occur.</p>
 
-<hr />
+<hr>
 
 <p><em>If you use the code or data visualization designs contained within this article, it would be greatly appreciated if proper attribution is given back to this article and/or myself. Thanks!</em></p>
 
+						
+            			 <div class="breadcrumbs-v5-subtitle sharing-post" style="color: #999 !important; padding-top:10px; border-top: 1px solid #eee">Share this article!
+
+
+              <span class="sharing index" style="float: right; color: #999 !important;">
+  
+		  <span class="social facebook"><a href="https://www.facebook.com/share.php?u=http://minimaxir.com/2015/12/sf-arrests/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data="http://minimaxir.com/2015/12/sf-arrests/"><i class="fa fa-facebook"></i><span class="count hidden-xs"> -</span></a></span>
+  
+		<span class="social twitter"><a href="http://twitter.com/home/?status=Analyzing San Francisco Crime Data to Determine When Arrests Frequently Occur - http://minimaxir.com/2015/12/sf-arrests/ - via @minimaxir"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data=http://minimaxir.com/2015/12/sf-arrests/><i class="fa fa-twitter"></i><span class="count hidden-xs"></span></a> </span>
+
+  <span  class="social linkedin"><a href="http://www.linkedin.com/shareArticle?mini=true&title=&url=http://minimaxir.com/2015/12/sf-arrests/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=600');return false;" data=http://minimaxir.com/2015/12/sf-arrests/><i class="fa fa-linkedin"></i><span class="count hidden-xs"> -</span></a> </span>
+
+   </span>
+   </div>
 						</div>
                         <!-- End Blog Grid Content -->
+                        
+                        
+                        
                     </article>
                     <!-- End Blog Grid -->
 
- 
+ 					
 
                     <!-- Blog Comment -->
                     <div class="bg-color-white margin-b-30">
@@ -500,6 +518,8 @@
                         </div>
                     </div>
                     <!-- End Blog Comment -->
+                    
+                    
                 </div>
 
 			                <!--========== BLOG SIDEBAR ==========-->
@@ -517,11 +537,13 @@
                         
                         <div class="blog-sidebar-content">
                             <!-- Blog Author Bio -->
-                            <p>Max Woolf (@minimaxir) is a Software QA Engineer living and working in the San Francisco Bay Area for over 3.5 years and a 2012 Carnegie Mellon University graduate.</p>
-  
-  <p>In his spare time, Max uses <a href="https://www.python.org/">Python</a> to gather data from public APIs and <a href="http://ggplot2.org/">ggplot2</a> to make pretty charts from that data.</p>
-  
-  <p>You can learn more about Max <a href="/about">here</a>, or view his portfolio <a href="/portfolio">here</a>.
+							
+							<p><strong>Max Woolf (@minimaxir)</strong> is a Software QA Engineer living and working in the San Francisco Bay Area for over 3 years and a 2012 Carnegie Mellon University graduate in Business Administration.</p>
+
+<p>In his spare time, Max uses <a href="https://www.python.org/">Python</a> to gather data from public APIs and <a href="http://ggplot2.org/">ggplot2</a> to make pretty charts from that data.</p>
+
+<p>You can learn more about Max <a href="/about">here</a>, or view his portfolio <a href="/portfolio">here</a>. </p>
+
   
     <ul class="list-inline" style="padding-top:10px; margin-top: 20px; border-top: 1px solid #ebeef6">
                         <li class="theme-icons-wrap"><a title="Facebook" href="https://facebook.com/max.woolf" target="_blank"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-facebook"></i></a></li>
@@ -577,6 +599,13 @@
                                 <div class="latest-tuts-content">
                                     <h5 class="latest-tuts-content-title"><a href="/2016/01/movie-revenue-ratings/">Movie Review Aggregator Ratings Have No Relationship with Box Office Success</a></h5>
                                     <small class="latest-tuts-content-time"> Jan 7, 2016</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="/2015/12/lets-code-1/">Let's Code an Analysis and Visualizations of Yelp Data using R and ggplot2</a></h5>
+                                    <small class="latest-tuts-content-time"> Dec 28, 2015</small>
                                 </div>
                         </article>
                                                 
@@ -676,22 +705,82 @@
 
 
   
-      <!--========== FOOTER ==========-->
-    <footer id="footer" class="footer">
-        <div class="container">
-            <!-- end row -->
+      <!--========== FOOTER V8 ==========-->
+    <footer id="footer" class="footer-v8">
+        <div class="content-sm container">
+            <div class="row">
+                <!-- Logo -->
+                <div class="col-md-6">
+                    
+                    <p>You can contact through any of the following channels, although e-mail is preferred. Following me on Facebook and Twitter certainly doesn't hurt either!</p>
+                     <!-- <h2 class="footer-v8-title">Follow Me</h2> -->
+                    <!-- Theme Icons White Background -->
+                   <!-- <ul class="list-inline ul-li-lr-0">
+                        <li class="theme-icons-wrap"><a title="Facebook" href="https://facebook.com/max.woolf" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-facebook"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="Twitter" href="https://twitter.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-twitter"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="LinkedIn" href="https://linkedin.com/in/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-linkedin"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="GitHub" href="https://github.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-github"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="YouTube" href="https://youtube.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-youtube"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="E-Mail" href="mailto:max@minimaxir.com"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-envelope"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="RSS" href="/rss.xml"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-rss"></i></a></li> -->
+                    <!-- End Theme Icons White Background -->
+                </div>
+                <!-- End Logo -->
 
+                <!-- Contact Info -->
+                <div class="col-md-6">
+                    <h3 class="footer-v8-title">Contact Info</h3>
+                    <div class="footer-v8-contact-info-bg">
+                        <ul class="list-unstyled footer-v8-contact-info">
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-map-marker"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <p class="footer-v8-contact-info-text">SOMA, San Francisco, CA</p>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-facebook"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="Facebook" href="https://facebook.com/max.woolf" target="_blank">max.woolf</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-twitter"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="Twitter" href="https://twitter.com/minimaxir" target="_blank"">@minimaxir</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-linkedin"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="LinkedIn" href="https://linkedin.com/in/minimaxir" target="_blank"">minimaxir</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-envelope"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="E-Mail" href="mailto:max@minimaxir.com">max@minimaxir.com</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- End Contact Info -->
 
-            <!-- Copyright -->
-            <ul class="list-inline footer-copyright">
-                <li class="footer-copyright-item">Copyright &#169; 2016 Max Woolf. All Rights Reserved.</li>
-                <li class="footer-copyright-item">minimaxir.com is powered by Jekyll and GitHub Pages.</li>
-            </ul>
-            <!-- End Copyright -->
-
+            </div>
+            <!--// end row -->
         </div>
+
+        <!-- Copyright -->
+        <div class="footer-v8-copyright">
+            <div class="container text-center">
+				Copyright &#169; 2016 Max Woolf. All Rights Reserved. 
+                minimaxir.com is powered by Jekyll and GitHub Pages.
+            </div>
+        </div>
+        <!-- Copyright -->
     </footer>
-    <!--========== END FOOTER ==========-->
+    <!--========== END FOOTER V8 ==========-->
 </div>
 <!-- END WRAPPER -->
 

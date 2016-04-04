@@ -246,7 +246,7 @@
 
 <p>One important statistical tool discussed in the presentation is <a href="https://en.wikipedia.org/wiki/Bootstrapping_%28statistics%29">bootstrap resampling</a>, a good example for a programming-oriented presentation as it can be easily done with code. Bootstrapping is when a data set is randomized many, many times (usually thousands of times) to simulate similar data sets, and use those simulated datasets to obtain a more accurate range for a particular statistic about the data set, such as the statistical average.</p>
 
-<p><img src="/img/bootstrap-resample/talk0.png" alt="" /></p>
+<p><img src="/img/bootstrap-resample/talk0.png" alt=""></p>
 
 <p>I have reverse-engineered the data and code from the talk with R and ggplot2 in order to create more detailed implementations of bootstrapping, and also to add a few visual improvements.</p>
 
@@ -256,20 +256,20 @@
 
 <p>The first thing to do is recreate the test data.</p>
 
-<p><img src="/img/bootstrap-resample/talk1.png" alt="" /></p>
+<p><img src="/img/bootstrap-resample/talk1.png" alt=""></p>
 
 <p>Data is manually transcribed from the linked talk (to the best of my ability), and converted to a <code>tbl_df</code> for ease of use.</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">x <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span><span class="m">8.1</span><span class="p">,</span> <span class="m">8.4</span><span class="p">,</span> <span class="m">8.8</span><span class="p">,</span> <span class="m">8.7</span><span class="p">,</span> <span class="m">9</span><span class="p">,</span> <span class="m">9.1</span><span class="p">,</span> <span class="m">9.2</span><span class="p">,</span> <span class="m">9.3</span><span class="p">,</span> <span class="m">9.4</span><span class="p">,</span> <span class="m">9.6</span><span class="p">,</span> <span class="m">9.9</span><span class="p">,</span> <span class="m">10</span><span class="p">,</span> <span class="m">10</span><span class="p">,</span> <span class="m">10.5</span><span class="p">,</span> <span class="m">10.6</span><span class="p">,</span> <span class="m">10.6</span><span class="p">,</span> <span class="m">11.2</span><span class="p">,</span> <span class="m">11.8</span><span class="p">,</span> <span class="m">12.6</span><span class="p">)</span>
-y <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span><span class="m">21</span><span class="p">,</span> <span class="m">19</span><span class="p">,</span> <span class="m">18</span><span class="p">,</span> <span class="m">16</span><span class="p">,</span> <span class="m">15</span><span class="p">,</span> <span class="m">17</span><span class="p">,</span> <span class="m">17</span><span class="p">,</span> <span class="m">17</span><span class="p">,</span> <span class="m">19</span><span class="p">,</span> <span class="m">14</span><span class="p">,</span> <span class="m">14</span><span class="p">,</span> <span class="m">15</span><span class="p">,</span> <span class="m">11</span><span class="p">,</span> <span class="m">12</span><span class="p">,</span> <span class="m">12</span><span class="p">,</span> <span class="m">13</span><span class="p">,</span> <span class="m">10</span><span class="p">,</span> <span class="m">8</span><span class="p">,</span> <span class="m">9</span><span class="p">)</span></p>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">x <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span><span class="m">8.1</span><span class="p">,</span> <span class="m">8.4</span><span class="p">,</span> <span class="m">8.8</span><span class="p">,</span> <span class="m">8.7</span><span class="p">,</span> <span class="m">9</span><span class="p">,</span> <span class="m">9.1</span><span class="p">,</span> <span class="m">9.2</span><span class="p">,</span> <span class="m">9.3</span><span class="p">,</span> <span class="m">9.4</span><span class="p">,</span> <span class="m">9.6</span><span class="p">,</span> <span class="m">9.9</span><span class="p">,</span> <span class="m">10</span><span class="p">,</span> <span class="m">10</span><span class="p">,</span> <span class="m">10.5</span><span class="p">,</span> <span class="m">10.6</span><span class="p">,</span> <span class="m">10.6</span><span class="p">,</span> <span class="m">11.2</span><span class="p">,</span> <span class="m">11.8</span><span class="p">,</span> <span class="m">12.6</span><span class="p">)</span>
+y <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span><span class="m">21</span><span class="p">,</span> <span class="m">19</span><span class="p">,</span> <span class="m">18</span><span class="p">,</span> <span class="m">16</span><span class="p">,</span> <span class="m">15</span><span class="p">,</span> <span class="m">17</span><span class="p">,</span> <span class="m">17</span><span class="p">,</span> <span class="m">17</span><span class="p">,</span> <span class="m">19</span><span class="p">,</span> <span class="m">14</span><span class="p">,</span> <span class="m">14</span><span class="p">,</span> <span class="m">15</span><span class="p">,</span> <span class="m">11</span><span class="p">,</span> <span class="m">12</span><span class="p">,</span> <span class="m">12</span><span class="p">,</span> <span class="m">13</span><span class="p">,</span> <span class="m">10</span><span class="p">,</span> <span class="m">8</span><span class="p">,</span> <span class="m">9</span><span class="p">)</span>
 
-<p>df <span class="o">&lt;-</span> tbl_df<span class="p">(</span><span class="kt">data.frame</span><span class="p">(</span>x<span class="p">,</span>y<span class="p">))</span></code></pre></figure></p>
+df <span class="o">&lt;-</span> tbl_df<span class="p">(</span><span class="kt">data.frame</span><span class="p">(</span>x<span class="p">,</span>y<span class="p">))</span></code></pre></figure>
 
 <p>Let&rsquo;s create a quick plot in ggplot2 to compare it to the source image:</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">qplot<span class="p">(</span>x<span class="p">,</span> y<span class="p">,</span> df<span class="p">)</span> <span class="o">+</span> geom_smooth<span class="p">(</span>method<span class="o">=</span><span class="s">&quot;lm&quot;</span><span class="p">)</span></code></pre></figure></p>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">qplot<span class="p">(</span>x<span class="p">,</span> y<span class="p">,</span> df<span class="p">)</span> <span class="o">+</span> geom_smooth<span class="p">(</span>method<span class="o">=</span><span class="s">&quot;lm&quot;</span><span class="p">)</span></code></pre></figure>
 
-<p><img src="/img/bootstrap-resample/qplot.png" alt="" /></p>
+<p><img src="/img/bootstrap-resample/qplot.png" alt=""></p>
 
 <p>Pretty good copy, and it comes with a linear regression line for one line of code!</p>
 
@@ -280,22 +280,21 @@ y <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span>
 <li>For every 1 unit increase in Wind Speed, the estimated Height <strong>decreases by 2.81</strong>, the coefficient for the <code>x</code> variable.</li>
 </ul>
 
-
 <p>Both coefficients are extremely statistically significant. Regression as a whole has a R<sup>2</sup> of 82.71%; indicating that the change in Wind Speed explains 82.71% of the variation in Height. That&rsquo;s enough to assert causality in this mock data.</p>
 
 <p>Now we can know the true value of the coefficients for the data, we can perform bootstrapping. We can create a function to perform a linear regression on the data frame, having been resampled <em>with replacement</em> (important!), and return the model coefficients:</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">lm_res <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>df<span class="p">)</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">lm_res <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>df<span class="p">)</span> <span class="p">{</span>
     model <span class="o">&lt;-</span> lm<span class="p">(</span>y <span class="o">~</span> x<span class="p">,</span> df <span class="o">%&gt;%</span> sample_frac<span class="p">(</span>replace<span class="o">=</span><span class="bp">T</span><span class="p">))</span>
     <span class="kr">return</span> <span class="p">(</span>model<span class="o">$</span>coefficients<span class="p">)</span>
-<span class="p">}</span></code></pre></figure></p>
+<span class="p">}</span></code></pre></figure>
 
 <p>R&rsquo;s <code>replicate</code> function runs a function a specified amount of times and stores the results in the same data frame; perfect for bootstrapping.</p>
 
 <p>There&rsquo;s no limit to the number of repetitions you can perform using this method; however, you can hit diminishing returns as the distribution converges. Generally, 2,000 trials minimum are recommended, but let&rsquo;s do 10,000 trials just to be sure.</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">df_boot <span class="o">&lt;-</span> <span class="kp">replicate</span><span class="p">(</span><span class="m">10000</span><span class="p">,</span> lm_res<span class="p">(</span>df<span class="p">))</span>
-df_boot <span class="o">&lt;-</span> tbl_df<span class="p">(</span><span class="kt">data.frame</span><span class="p">(</span><span class="kp">t</span><span class="p">(</span>df_boot<span class="p">)))</span></code></pre></figure></p>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">df_boot <span class="o">&lt;-</span> <span class="kp">replicate</span><span class="p">(</span><span class="m">10000</span><span class="p">,</span> lm_res<span class="p">(</span>df<span class="p">))</span>
+df_boot <span class="o">&lt;-</span> tbl_df<span class="p">(</span><span class="kt">data.frame</span><span class="p">(</span><span class="kp">t</span><span class="p">(</span>df_boot<span class="p">)))</span></code></pre></figure>
 
 <p>This completed in about 13 seconds on my computer, and results in a dataset of 10,000 pairs of X-intercept and wind speed coefficients!</p>
 
@@ -303,14 +302,14 @@ df_boot <span class="o">&lt;-</span> tbl_df<span class="p">(</span><span class="
 
 <p>This can be done easily using the <code>gather()</code> function from <code>tidyr</code> to convert the data from wide to long, and <code>dplyr</code>&rsquo;s aggregation and summarization functions.</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">df_boot_agg <span class="o">&lt;-</span> df_boot <span class="o">%&gt;%</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">df_boot_agg <span class="o">&lt;-</span> df_boot <span class="o">%&gt;%</span>
                 gather<span class="p">(</span>var<span class="p">,</span> value<span class="p">)</span> <span class="o">%&gt;%</span>
                 group_by<span class="p">(</span>var<span class="p">)</span> <span class="o">%&gt;%</span>
                 summarize<span class="p">(</span>
                     average <span class="o">=</span> <span class="kp">mean</span><span class="p">(</span>value<span class="p">),</span>
                     low_ci <span class="o">=</span> quantile<span class="p">(</span>value<span class="p">,</span> <span class="m">0.025</span><span class="p">),</span>
                     high_ci <span class="o">=</span> quantile<span class="p">(</span>value<span class="p">,</span> <span class="m">0.975</span><span class="p">)</span>
-                        <span class="p">)</span></code></pre></figure></p>
+                        <span class="p">)</span></code></pre></figure>
 
 <p>From the output, the true value of the X intercept has a 95% chance of being between 36.9 and 49.3, and the true value of the Wind Speed coefficient has a 95% chance of being between -3.53 and -2.28.</p>
 
@@ -318,7 +317,7 @@ df_boot <span class="o">&lt;-</span> tbl_df<span class="p">(</span><span class="
 
 <p>The Wind Speed coefficient is much more interesting, statistically. We have enough information to derive a ggplot2 histogram of the resampled data, and a graphical representation of the confidence interval. We can also include the true value of the coefficient in the visualization (as the dotted vertical line) to see if it make sense.</p>
 
-<p><img src="/img/bootstrap-resample/uni_one.png" alt="" /></p>
+<p><img src="/img/bootstrap-resample/uni_one.png" alt=""></p>
 
 <p>Plot is close to a <a href="https://en.wikipedia.org/wiki/Normal_distribution">Normal distribution</a> / bell curve, which is a nice property of bootstrapping and makes the results easier to analyze. The true coefficient value is in the interval, but not quite at the center.</p>
 
@@ -326,7 +325,7 @@ df_boot <span class="o">&lt;-</span> tbl_df<span class="p">(</span><span class="
 
 <p>Each of these frames are stitched together into a high- quality, low file size by my new <a href="https://github.com/minimaxir/frames-to-gif-osx">Convert Frames to GIF OS X tool</a>!</p>
 
-<p><img src="/img/bootstrap-resample/uni_frames.gif" alt="" /></p>
+<p><img src="/img/bootstrap-resample/uni_frames.gif" alt=""></p>
 
 <p>A 99 frame, 640px width GIF, at only half a megabyte! (R has an <a href="https://cran.r-project.org/web/packages/animation/index.html">animation package</a>, but with much worse results, which was the motivation for writing the OS X tool)</p>
 
@@ -336,17 +335,17 @@ df_boot <span class="o">&lt;-</span> tbl_df<span class="p">(</span><span class="
 
 <p>The X-intercept and the Wind Speed coefficient have a linked, negatively correlated relationship, so it makes sense to plot them simultaneously, as in the original talk.</p>
 
-<p><img src="/img/bootstrap-resample/talk2.png" alt="" /></p>
+<p><img src="/img/bootstrap-resample/talk2.png" alt=""></p>
 
 <p>ggplot2&rsquo;s <code>density2d</code> plots a <a href="https://en.wikipedia.org/wiki/Contour_line">contour map</a>, which will help illustrate the area and magnitude where the data converges on a 2D plane. We can also include an <strong>orange</strong> bounding box using the specified values for the 2D confidence intervals for each variable, and a <strong>red</strong> dot representing the true value of the coefficients.</p>
 
-<p><img src="/img/bootstrap-resample/bi_one.png" alt="" /></p>
+<p><img src="/img/bootstrap-resample/bi_one.png" alt=""></p>
 
 <p>The pair of coefficients can only occur in a certain range of values, much smaller than the bounding box. The true value is close to the most frequent occurrence, too.</p>
 
 <p>Then we can make another GIF using the same method:</p>
 
-<p><img src="/img/bootstrap-resample/bi_frames.gif" alt="" /></p>
+<p><img src="/img/bootstrap-resample/bi_frames.gif" alt=""></p>
 
 <p>Again, the visualization converges relatively quickly at about 2,000 trials. (although, in retrospect, the orange bounding box may not have been necessary.)</p>
 
@@ -354,12 +353,32 @@ df_boot <span class="o">&lt;-</span> tbl_df<span class="p">(</span><span class="
 
 <p><em>Again, if you want to view the code with more detailed output and extensive code for the ggplot2 charts, read this <a href="https://github.com/minimaxir/bootstrap-resample-notebook/blob/master/bootstrap_resample_notebook.ipynb">Jupyter notebook</a>.</em></p>
 
+						
+            			 <div class="breadcrumbs-v5-subtitle sharing-post" style="color: #999 !important; padding-top:10px; border-top: 1px solid #eee">Share this article!
+
+
+              <span class="sharing index" style="float: right; color: #999 !important;">
+  
+		  <span class="social facebook"><a href="https://www.facebook.com/share.php?u=http://minimaxir.com/2015/09/bootstrap-resample/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data="http://minimaxir.com/2015/09/bootstrap-resample/"><i class="fa fa-facebook"></i><span class="count hidden-xs"> -</span></a></span>
+  
+		<span class="social twitter"><a href="http://twitter.com/home/?status=Coding, Visualizing, and Animating Bootstrap Resampling - http://minimaxir.com/2015/09/bootstrap-resample/ - via @minimaxir"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data=http://minimaxir.com/2015/09/bootstrap-resample/><i class="fa fa-twitter"></i><span class="count hidden-xs"></span></a> </span>
+
+  <span  class="social linkedin"><a href="http://www.linkedin.com/shareArticle?mini=true&title=&url=http://minimaxir.com/2015/09/bootstrap-resample/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=600');return false;" data=http://minimaxir.com/2015/09/bootstrap-resample/><i class="fa fa-linkedin"></i><span class="count hidden-xs"> -</span></a> </span>
+
+   </span>
+   </div>
 						</div>
                         <!-- End Blog Grid Content -->
+                        
+                        
+                        
                     </article>
                     <!-- End Blog Grid -->
 
- 
+ 					
 
                     <!-- Blog Comment -->
                     <div class="bg-color-white margin-b-30">
@@ -390,6 +409,8 @@ df_boot <span class="o">&lt;-</span> tbl_df<span class="p">(</span><span class="
                         </div>
                     </div>
                     <!-- End Blog Comment -->
+                    
+                    
                 </div>
 
 			                <!--========== BLOG SIDEBAR ==========-->
@@ -407,11 +428,13 @@ df_boot <span class="o">&lt;-</span> tbl_df<span class="p">(</span><span class="
                         
                         <div class="blog-sidebar-content">
                             <!-- Blog Author Bio -->
-                            <p>Max Woolf (@minimaxir) is a Software QA Engineer living and working in the San Francisco Bay Area for over 3.5 years and a 2012 Carnegie Mellon University graduate.</p>
-  
-  <p>In his spare time, Max uses <a href="https://www.python.org/">Python</a> to gather data from public APIs and <a href="http://ggplot2.org/">ggplot2</a> to make pretty charts from that data.</p>
-  
-  <p>You can learn more about Max <a href="/about">here</a>, or view his portfolio <a href="/portfolio">here</a>.
+							
+							<p><strong>Max Woolf (@minimaxir)</strong> is a Software QA Engineer living and working in the San Francisco Bay Area for over 3 years and a 2012 Carnegie Mellon University graduate in Business Administration.</p>
+
+<p>In his spare time, Max uses <a href="https://www.python.org/">Python</a> to gather data from public APIs and <a href="http://ggplot2.org/">ggplot2</a> to make pretty charts from that data.</p>
+
+<p>You can learn more about Max <a href="/about">here</a>, or view his portfolio <a href="/portfolio">here</a>. </p>
+
   
     <ul class="list-inline" style="padding-top:10px; margin-top: 20px; border-top: 1px solid #ebeef6">
                         <li class="theme-icons-wrap"><a title="Facebook" href="https://facebook.com/max.woolf" target="_blank"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-facebook"></i></a></li>
@@ -467,6 +490,13 @@ df_boot <span class="o">&lt;-</span> tbl_df<span class="p">(</span><span class="
                                 <div class="latest-tuts-content">
                                     <h5 class="latest-tuts-content-title"><a href="/2016/01/movie-revenue-ratings/">Movie Review Aggregator Ratings Have No Relationship with Box Office Success</a></h5>
                                     <small class="latest-tuts-content-time"> Jan 7, 2016</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="/2015/12/lets-code-1/">Let's Code an Analysis and Visualizations of Yelp Data using R and ggplot2</a></h5>
+                                    <small class="latest-tuts-content-time"> Dec 28, 2015</small>
                                 </div>
                         </article>
                                                 
@@ -566,22 +596,82 @@ df_boot <span class="o">&lt;-</span> tbl_df<span class="p">(</span><span class="
 
 
   
-      <!--========== FOOTER ==========-->
-    <footer id="footer" class="footer">
-        <div class="container">
-            <!-- end row -->
+      <!--========== FOOTER V8 ==========-->
+    <footer id="footer" class="footer-v8">
+        <div class="content-sm container">
+            <div class="row">
+                <!-- Logo -->
+                <div class="col-md-6">
+                    
+                    <p>You can contact through any of the following channels, although e-mail is preferred. Following me on Facebook and Twitter certainly doesn't hurt either!</p>
+                     <!-- <h2 class="footer-v8-title">Follow Me</h2> -->
+                    <!-- Theme Icons White Background -->
+                   <!-- <ul class="list-inline ul-li-lr-0">
+                        <li class="theme-icons-wrap"><a title="Facebook" href="https://facebook.com/max.woolf" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-facebook"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="Twitter" href="https://twitter.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-twitter"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="LinkedIn" href="https://linkedin.com/in/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-linkedin"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="GitHub" href="https://github.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-github"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="YouTube" href="https://youtube.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-youtube"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="E-Mail" href="mailto:max@minimaxir.com"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-envelope"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="RSS" href="/rss.xml"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-rss"></i></a></li> -->
+                    <!-- End Theme Icons White Background -->
+                </div>
+                <!-- End Logo -->
 
+                <!-- Contact Info -->
+                <div class="col-md-6">
+                    <h3 class="footer-v8-title">Contact Info</h3>
+                    <div class="footer-v8-contact-info-bg">
+                        <ul class="list-unstyled footer-v8-contact-info">
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-map-marker"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <p class="footer-v8-contact-info-text">SOMA, San Francisco, CA</p>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-facebook"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="Facebook" href="https://facebook.com/max.woolf" target="_blank">max.woolf</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-twitter"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="Twitter" href="https://twitter.com/minimaxir" target="_blank"">@minimaxir</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-linkedin"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="LinkedIn" href="https://linkedin.com/in/minimaxir" target="_blank"">minimaxir</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-envelope"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="E-Mail" href="mailto:max@minimaxir.com">max@minimaxir.com</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- End Contact Info -->
 
-            <!-- Copyright -->
-            <ul class="list-inline footer-copyright">
-                <li class="footer-copyright-item">Copyright &#169; 2016 Max Woolf. All Rights Reserved.</li>
-                <li class="footer-copyright-item">minimaxir.com is powered by Jekyll and GitHub Pages.</li>
-            </ul>
-            <!-- End Copyright -->
-
+            </div>
+            <!--// end row -->
         </div>
+
+        <!-- Copyright -->
+        <div class="footer-v8-copyright">
+            <div class="container text-center">
+				Copyright &#169; 2016 Max Woolf. All Rights Reserved. 
+                minimaxir.com is powered by Jekyll and GitHub Pages.
+            </div>
+        </div>
+        <!-- Copyright -->
     </footer>
-    <!--========== END FOOTER ==========-->
+    <!--========== END FOOTER V8 ==========-->
 </div>
 <!-- END WRAPPER -->
 

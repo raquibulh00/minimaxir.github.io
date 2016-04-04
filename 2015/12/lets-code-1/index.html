@@ -254,7 +254,6 @@
 
 <div class="responsive-video"><iframe src="http://www.youtube.com/embed/Emt9bn0D5ZI " style="width: 100%; height: 100%; border: none; padding-bottom: 20px" allowfullscreen></iframe></div>
 
-
 <p>This particular screencast is also my first significant attempt at working with audio/video editing and voice-over. Feel free to provide suggestions for future videos.</p>
 
 <p>Since the screencast is 40 minutes long (inadvertently!), I&rsquo;ve written an abridged summary of the screencast, along with some clarification of points made.</p>
@@ -267,45 +266,45 @@
 
 <p>Loading the dataset into R is easy and fast with <code>read_csv</code>.</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">df_reviews <span class="o">&lt;-</span> read_csv<span class="p">(</span><span class="s">&quot;yelp_reviews.csv&quot;</span><span class="p">)</span></code></pre></figure></p>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">df_reviews <span class="o">&lt;-</span> read_csv<span class="p">(</span><span class="s">&quot;yelp_reviews.csv&quot;</span><span class="p">)</span></code></pre></figure>
 
 <p>Since dplyr was loaded beforehand, read_csv loads the data into a tbl_df instead of a normal data.frame. When you call a normal data.frame by itself, <em>all data is printed to console</em>, which is a problem when you have 1.6M rows (yes, that happened during a test recording). Calling a tbl_df results in a very descriptive overview of the data:</p>
 
-<p><img src="/img/lets-code-1/overview.png" alt="" /></p>
+<p><img src="/img/lets-code-1/overview.png" alt=""></p>
 
 <p>Most columns are self-explanatory. <code>review_length</code> is approximate number of words in the review, <code>pos_words</code> is the number of positive words in the review, <code>neg_words</code> is what you expect, <code>net_sentiment</code> is pos_words - neg_words.</p>
 
 <p>A quick way to analyze the distribution of numerical data is to perform a summary on the data frame, which returns a by-column <a href="https://en.wikipedia.org/wiki/Five-number_summary">five-number summary</a> + mean:</p>
 
-<p><img src="/img/lets-code-1/summary.png" alt="" /></p>
+<p><img src="/img/lets-code-1/summary.png" alt=""></p>
 
 <p>Ratings are biased toward 4 and 5 star reviews. There is a lot of skew for review length.</p>
 
 <p>dplyr makes it easy to add columns in-line with the <code>mutate</code> command. Let&rsquo;s normalize the pos_words column:</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">df_reviews <span class="o">&lt;-</span> df_reviews <span class="o">%&gt;%</span> mutate<span class="p">(</span>pos_norm <span class="o">=</span> pos_words <span class="o">/</span> review_length<span class="p">)</span></code></pre></figure></p>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">df_reviews <span class="o">&lt;-</span> df_reviews <span class="o">%&gt;%</span> mutate<span class="p">(</span>pos_norm <span class="o">=</span> pos_words <span class="o">/</span> review_length<span class="p">)</span></code></pre></figure>
 
 <p>And we could do similar steps for the neg_words column too. Or use mutate to transform the data of an existing column.</p>
 
 <p>Onto ggplot2. If you want a quick histogram of univariate data, qplot does just that. Let&rsquo;s visualize the distribution of stars.</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">qplot<span class="p">(</span>data<span class="o">=</span>df_reviews<span class="p">,</span> stars<span class="p">)</span></code></pre></figure></p>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">qplot<span class="p">(</span>data<span class="o">=</span>df_reviews<span class="p">,</span> stars<span class="p">)</span></code></pre></figure>
 
-<p><img src="/img/lets-code-1/lc1-qplot-1.png" alt="" /></p>
+<p><img src="/img/lets-code-1/lc1-qplot-1.png" alt=""></p>
 
 <p>Definitely a skew toward 4 and 5 star reviews.</p>
 
 <p>We can do that for other variables too, like review length.</p>
 
-<p><img src="/img/lets-code-1/lc1-qplot-2.png" alt="" /></p>
+<p><img src="/img/lets-code-1/lc1-qplot-2.png" alt=""></p>
 
 <p>What about bivariate data? If you give two variables to qplot, it will create a scatter plot. Perhaps there is a relationship between the number of stars and the number of positive words?</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">qplot<span class="p">(</span>data<span class="o">=</span>df_reviews<span class="p">,</span> stars<span class="p">,</span> pos_words<span class="p">)</span></code></pre></figure></p>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">qplot<span class="p">(</span>data<span class="o">=</span>df_reviews<span class="p">,</span> stars<span class="p">,</span> pos_words<span class="p">)</span></code></pre></figure>
 
 <p>&hellip;and then we run into a problem. In this case, ggplot2 has to plot 1.6M points to screen, which can take awhile, especially if you are simultaneously using your GPU for video recording. Eventually, we get this:</p>
 
-<p><img src="/img/lets-code-1/lc1-qplot-3.png" alt="" /></p>
+<p><img src="/img/lets-code-1/lc1-qplot-3.png" alt=""></p>
 
 <p>At first glance, there appears to be a positive correlation between star rating and number of positive words, but that&rsquo;s misleading: since we don&rsquo;t have alpha transparency on the points, the density is ambiguous. (fixing it requires working outside of a qplot).</p>
 
@@ -313,11 +312,11 @@
 
 <p>We load the Yelp Businesses data into R through the same way as the reviews data. Here&rsquo;s an overview of the data:</p>
 
-<p><img src="/img/lets-code-1/businesses.png" alt="" /></p>
+<p><img src="/img/lets-code-1/businesses.png" alt=""></p>
 
 <p>Both data frames have a <code>business_id</code> column. We can merge them with a <code>left_join</code>, a la SQL. If both data frames have a column with the same name, it will merge on that column by default.</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">df_reviews <span class="o">&lt;-</span> df_reviews <span class="o">%&gt;%</span> left_join<span class="p">(</span>df_businesses<span class="p">)</span></code></pre></figure></p>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">df_reviews <span class="o">&lt;-</span> df_reviews <span class="o">%&gt;%</span> left_join<span class="p">(</span>df_businesses<span class="p">)</span></code></pre></figure>
 
 <p>Then the R console helpfully points out that both dataframes also have a &ldquo;stars&rdquo; column. Uh-oh.</p>
 
@@ -327,21 +326,21 @@
 
 <p>It might be interesting to know the average star rating by city. dplyr allows for <code>group_by</code> and <code>summarize</code> operations in a similar manner as SQL.</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">df_cities <span class="o">&lt;-</span> df_reviews <span class="o">%&gt;%</span> group_by<span class="p">(</span>city<span class="p">)</span> <span class="o">%&gt;%</span> summarize<span class="p">(</span>avg_stars <span class="o">=</span> <span class="kp">mean</span><span class="p">(</span>stars.x<span class="p">))</span></code></pre></figure></p>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">df_cities <span class="o">&lt;-</span> df_reviews <span class="o">%&gt;%</span> group_by<span class="p">(</span>city<span class="p">)</span> <span class="o">%&gt;%</span> summarize<span class="p">(</span>avg_stars <span class="o">=</span> <span class="kp">mean</span><span class="p">(</span>stars.x<span class="p">))</span></code></pre></figure>
 
-<p><img src="/img/lets-code-1/cities.png" alt="" /></p>
+<p><img src="/img/lets-code-1/cities.png" alt=""></p>
 
 <p>&hellip;that&rsquo;s not good. The original Yelp Dataset Challenge page mentioned that the dataset is only from specific cities, not &ldquo;1023 E Frye Rd.&rdquo;</p>
 
-<p><img src="/img/lets-code-1/Dataset_Map.png" alt="" /></p>
+<p><img src="/img/lets-code-1/Dataset_Map.png" alt=""></p>
 
 <p>Hmrph.</p>
 
 <p>From the map, it appears there is no overlap between any of the cities with geographic states, so let&rsquo;s use <code>state</code> instead. Additionally, we can add a count of reviews from that state, and sort by that count descending.</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">df_states <span class="o">&lt;-</span> df_reviews <span class="o">%&gt;%</span> group_by<span class="p">(</span>state<span class="p">)</span> <span class="o">%&gt;%</span> summarize<span class="p">(</span>avg_stars <span class="o">=</span> <span class="kp">mean</span><span class="p">(</span>stars.x<span class="p">),</span> count<span class="o">=</span>n<span class="p">())</span> <span class="o">%&gt;%</span> arrange<span class="p">(</span>desc<span class="p">(</span>count<span class="p">))</span></code></pre></figure></p>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">df_states <span class="o">&lt;-</span> df_reviews <span class="o">%&gt;%</span> group_by<span class="p">(</span>state<span class="p">)</span> <span class="o">%&gt;%</span> summarize<span class="p">(</span>avg_stars <span class="o">=</span> <span class="kp">mean</span><span class="p">(</span>stars.x<span class="p">),</span> count<span class="o">=</span>n<span class="p">())</span> <span class="o">%&gt;%</span> arrange<span class="p">(</span>desc<span class="p">(</span>count<span class="p">))</span></code></pre></figure>
 
-<p><img src="/img/lets-code-1/states.png" alt="" /></p>
+<p><img src="/img/lets-code-1/states.png" alt=""></p>
 
 <p>Looks good enough, but that&rsquo;s tempting fate.</p>
 
@@ -349,57 +348,57 @@
 
 <p>We can plot state vs. avg_stars with ggplot2. Setting it up is easy:</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">ggplot<span class="p">(</span>data<span class="o">=</span>df_states<span class="p">,</span> aes<span class="p">(</span>state<span class="p">,</span> avg_stars<span class="p">))</span></code></pre></figure></p>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">ggplot<span class="p">(</span>data<span class="o">=</span>df_states<span class="p">,</span> aes<span class="p">(</span>state<span class="p">,</span> avg_stars<span class="p">))</span></code></pre></figure>
 
-<p><img src="/img/lets-code-1/lc1-ggplot-1.png" alt="" /></p>
+<p><img src="/img/lets-code-1/lc1-ggplot-1.png" alt=""></p>
 
 <p>The blank plot is actually new to 2.0.0: running the code without any layers would normally throw an error. The axis values appear valid. Let&rsquo;s add columns via <code>geom_bar</code>:</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">ggplot<span class="p">(</span>data<span class="o">=</span>df_states<span class="p">,</span> aes<span class="p">(</span>state<span class="p">,</span> avg_stars<span class="p">))</span> <span class="o">+</span> geom_bar<span class="p">()</span></code></pre></figure></p>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">ggplot<span class="p">(</span>data<span class="o">=</span>df_states<span class="p">,</span> aes<span class="p">(</span>state<span class="p">,</span> avg_stars<span class="p">))</span> <span class="o">+</span> geom_bar<span class="p">()</span></code></pre></figure>
 
-<p>&hellip;and this results in an error. geom_bar by itself does histograms on raw values, as shown in the qplots. The correct fix is to add a <code>stat="identity"</code> parameter to geom_bar, which tells it to scale the bars by the given value of the aesthetic.</p>
+<p>&hellip;and this results in an error. geom_bar by itself does histograms on raw values, as shown in the qplots. The correct fix is to add a <code>stat=&quot;identity&quot;</code> parameter to geom_bar, which tells it to scale the bars by the given value of the aesthetic.</p>
 
-<p><img src="/img/lets-code-1/lc1-ggplot-2.png" alt="" /></p>
+<p><img src="/img/lets-code-1/lc1-ggplot-2.png" alt=""></p>
 
 <p>Better. But the x-axis is cluttered and the States would look better on the y-axis. Time for a <code>coord_flip</code>.</p>
 
-<p><img src="/img/lets-code-1/lc1-ggplot-3.png" alt="" /></p>
+<p><img src="/img/lets-code-1/lc1-ggplot-3.png" alt=""></p>
 
 <p>Better. Now time to fix the order. You may notice that the order of the states is alphabetical going from the bottom of the axis to the top, and R will always set this order for any character vector. We want the sort the labels by their average star rating, descending. To do that we change the internal factor labels of state volume to the specified order.</p>
 
 <p>In the recording, this took awhile due to several brain farts (which happen often when dealing with factor ordering). First, we need to remove a few states with few reviews using a filter The easiest way to do this is to sort the original data frame by avg_stars descending, then set the factor order by using the new state order <em>in reverse</em>. (Ok, ok, it might be easier to just sort ascending and not reverse, but it makes the overview harder to visualize)</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">df_states <span class="o">&lt;-</span> df_states <span class="o">%&gt;%</span> arrange<span class="p">(</span>desc<span class="p">(</span>avg_stars<span class="p">))</span> <span class="o">%&gt;%</span> filter<span class="p">(</span>count <span class="o">&gt;</span> <span class="m">2000</span><span class="p">)</span> <span class="o">%&gt;%</span> mutate<span class="p">(</span>state <span class="o">=</span> <span class="kp">factor</span><span class="p">(</span>state<span class="p">,</span> levels<span class="o">=</span><span class="kp">rev</span><span class="p">(</span>state<span class="p">)))</span></code></pre></figure></p>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">df_states <span class="o">&lt;-</span> df_states <span class="o">%&gt;%</span> arrange<span class="p">(</span>desc<span class="p">(</span>avg_stars<span class="p">))</span> <span class="o">%&gt;%</span> filter<span class="p">(</span>count <span class="o">&gt;</span> <span class="m">2000</span><span class="p">)</span> <span class="o">%&gt;%</span> mutate<span class="p">(</span>state <span class="o">=</span> <span class="kp">factor</span><span class="p">(</span>state<span class="p">,</span> levels<span class="o">=</span><span class="kp">rev</span><span class="p">(</span>state<span class="p">)))</span></code></pre></figure>
 
-<p><img src="/img/lets-code-1/states-2.png" alt="" /></p>
+<p><img src="/img/lets-code-1/states-2.png" alt=""></p>
 
 <p>Rerunning the plot code afterward yields:</p>
 
-<p><img src="/img/lets-code-1/lc1-ggplot-4.png" alt="" /></p>
+<p><img src="/img/lets-code-1/lc1-ggplot-4.png" alt=""></p>
 
 <p>Good! Why not add labels for each point? This can be done with geom_text, along with adding <code>hjust=1</code> to offset the label, changing the size, and setting the text to white. We can round the avg_star values to 2 decimal places as well.</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">ggplot<span class="p">(</span>data<span class="o">=</span>df_states<span class="p">,</span> aes<span class="p">(</span>state<span class="p">,</span> avg_stars<span class="p">))</span> <span class="o">+</span> geom_bar<span class="p">(</span>stat<span class="o">=</span><span class="s">&quot;identity&quot;</span><span class="p">)</span> <span class="o">+</span> coord_flip<span class="p">()</span> <span class="o">+</span> geom_text<span class="p">(</span>aes<span class="p">(</span>label<span class="o">=</span><span class="kp">round</span><span class="p">(</span>avg_stars<span class="p">,</span> <span class="m">2</span><span class="p">)),</span> hjust<span class="o">=</span><span class="m">1</span><span class="p">,</span> color<span class="o">=</span><span class="s">&quot;white&quot;</span><span class="p">)</span></code></pre></figure></p>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">ggplot<span class="p">(</span>data<span class="o">=</span>df_states<span class="p">,</span> aes<span class="p">(</span>state<span class="p">,</span> avg_stars<span class="p">))</span> <span class="o">+</span> geom_bar<span class="p">(</span>stat<span class="o">=</span><span class="s">&quot;identity&quot;</span><span class="p">)</span> <span class="o">+</span> coord_flip<span class="p">()</span> <span class="o">+</span> geom_text<span class="p">(</span>aes<span class="p">(</span>label<span class="o">=</span><span class="kp">round</span><span class="p">(</span>avg_stars<span class="p">,</span> <span class="m">2</span><span class="p">)),</span> hjust<span class="o">=</span><span class="m">1</span><span class="p">,</span> color<span class="o">=</span><span class="s">&quot;white&quot;</span><span class="p">)</span></code></pre></figure>
 
-<p><img src="/img/lets-code-1/lc1-ggplot-5.png" alt="" /></p>
+<p><img src="/img/lets-code-1/lc1-ggplot-5.png" alt=""></p>
 
 <p>The &ldquo;3.7&rdquo; label requires using the <code>sprintf</code> function instead of <code>round</code> to print &ldquo;3.70&rdquo;, which is not fun. Otherwise, these labels are nice so far. Why not add a theme and axis labels?</p>
 
 <p>I go to my <a href="http://minimaxir.com/2015/02/ggplot-tutorial/">previous ggplot2 tutorial</a> and copy-paste the FiveThirtyEight-inspired theme from there because I am efficient. (The theme required loading the RColorBrewer package, though). The axis labels are added through the <code>labs</code> function. (note that since the axes are flipped, the labels must be flipped too!)</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">ggplot<span class="p">(</span>data<span class="o">=</span>df_states<span class="p">,</span> aes<span class="p">(</span>state<span class="p">,</span> avg_stars<span class="p">))</span> <span class="o">+</span> geom_bar<span class="p">(</span>stat<span class="o">=</span><span class="s">&quot;identity&quot;</span><span class="p">)</span> <span class="o">+</span> coord_flip<span class="p">()</span> <span class="o">+</span> geom_text<span class="p">(</span>aes<span class="p">(</span>label<span class="o">=</span><span class="kp">round</span><span class="p">(</span>avg_stars<span class="p">,</span> <span class="m">2</span><span class="p">)),</span> hjust<span class="o">=</span><span class="m">2</span><span class="p">,</span> size<span class="o">=</span><span class="m">2</span><span class="p">,</span> color<span class="o">=</span><span class="s">&quot;white&quot;</span><span class="p">)</span> <span class="o">+</span> fte_theme<span class="p">()</span> <span class="o">+</span> labs<span class="p">(</span>y<span class="o">=</span><span class="s">&quot;Average Star Rating by State&quot;</span><span class="p">,</span> x<span class="o">=</span><span class="s">&quot;State&quot;</span><span class="p">,</span> title<span class="o">=</span><span class="s">&quot;Average Yelp Review Star Ratings by State&quot;</span><span class="p">)</span></code></pre></figure></p>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">ggplot<span class="p">(</span>data<span class="o">=</span>df_states<span class="p">,</span> aes<span class="p">(</span>state<span class="p">,</span> avg_stars<span class="p">))</span> <span class="o">+</span> geom_bar<span class="p">(</span>stat<span class="o">=</span><span class="s">&quot;identity&quot;</span><span class="p">)</span> <span class="o">+</span> coord_flip<span class="p">()</span> <span class="o">+</span> geom_text<span class="p">(</span>aes<span class="p">(</span>label<span class="o">=</span><span class="kp">round</span><span class="p">(</span>avg_stars<span class="p">,</span> <span class="m">2</span><span class="p">)),</span> hjust<span class="o">=</span><span class="m">2</span><span class="p">,</span> size<span class="o">=</span><span class="m">2</span><span class="p">,</span> color<span class="o">=</span><span class="s">&quot;white&quot;</span><span class="p">)</span> <span class="o">+</span> fte_theme<span class="p">()</span> <span class="o">+</span> labs<span class="p">(</span>y<span class="o">=</span><span class="s">&quot;Average Star Rating by State&quot;</span><span class="p">,</span> x<span class="o">=</span><span class="s">&quot;State&quot;</span><span class="p">,</span> title<span class="o">=</span><span class="s">&quot;Average Yelp Review Star Ratings by State&quot;</span><span class="p">)</span></code></pre></figure>
 
-<p><img src="/img/lets-code-1/lc1-ggplot-6.png" alt="" /></p>
+<p><img src="/img/lets-code-1/lc1-ggplot-6.png" alt=""></p>
 
 <p>Why not add 95% confidence intervals for each average? (Note that the normality assumptions for the confidence interval may not be entirely valid). We can calculate the standard error of the mean and rebuild the dataframe and reorder factors again.</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">df_states <span class="o">&lt;-</span> df_reviews <span class="o">%&gt;%</span> group_by<span class="p">(</span>state<span class="p">)</span> <span class="o">%&gt;%</span> summarize<span class="p">(</span>avg_stars <span class="o">=</span> <span class="kp">mean</span><span class="p">(</span>stars.x<span class="p">),</span> count<span class="o">=</span>n<span class="p">(),</span> se_mean<span class="o">=</span>sd<span class="p">(</span>stars.x<span class="p">)</span><span class="o">/</span><span class="kp">sqrt</span><span class="p">(</span>count<span class="p">))</span> <span class="o">%&gt;%</span> arrange<span class="p">(</span>desc<span class="p">(</span>avg_stars<span class="p">))</span> <span class="o">%&gt;%</span> filter<span class="p">(</span>count <span class="o">&gt;</span> <span class="m">2000</span><span class="p">)</span> <span class="o">%&gt;%</span> mutate<span class="p">(</span>state <span class="o">=</span> <span class="kp">factor</span><span class="p">(</span>state<span class="p">,</span> levels<span class="o">=</span><span class="kp">rev</span><span class="p">(</span>state<span class="p">)))</span></code></pre></figure></p>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">df_states <span class="o">&lt;-</span> df_reviews <span class="o">%&gt;%</span> group_by<span class="p">(</span>state<span class="p">)</span> <span class="o">%&gt;%</span> summarize<span class="p">(</span>avg_stars <span class="o">=</span> <span class="kp">mean</span><span class="p">(</span>stars.x<span class="p">),</span> count<span class="o">=</span>n<span class="p">(),</span> se_mean<span class="o">=</span>sd<span class="p">(</span>stars.x<span class="p">)</span><span class="o">/</span><span class="kp">sqrt</span><span class="p">(</span>count<span class="p">))</span> <span class="o">%&gt;%</span> arrange<span class="p">(</span>desc<span class="p">(</span>avg_stars<span class="p">))</span> <span class="o">%&gt;%</span> filter<span class="p">(</span>count <span class="o">&gt;</span> <span class="m">2000</span><span class="p">)</span> <span class="o">%&gt;%</span> mutate<span class="p">(</span>state <span class="o">=</span> <span class="kp">factor</span><span class="p">(</span>state<span class="p">,</span> levels<span class="o">=</span><span class="kp">rev</span><span class="p">(</span>state<span class="p">)))</span></code></pre></figure>
 
 <p>Time to add a <code>geom_errorbar</code> (not a <code>geom_crossbar</code>!)</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">ggplot<span class="p">(</span>data<span class="o">=</span>df_states<span class="p">,</span> aes<span class="p">(</span>state<span class="p">,</span> avg_stars<span class="p">))</span> <span class="o">+</span> geom_bar<span class="p">(</span>stat<span class="o">=</span><span class="s">&quot;identity&quot;</span><span class="p">)</span> <span class="o">+</span> coord_flip<span class="p">()</span> <span class="o">+</span> geom_text<span class="p">(</span>aes<span class="p">(</span>label<span class="o">=</span><span class="kp">round</span><span class="p">(</span>avg_stars<span class="p">,</span> <span class="m">2</span><span class="p">)),</span> hjust<span class="o">=</span><span class="m">2</span><span class="p">,</span> size<span class="o">=</span><span class="m">2</span><span class="p">,</span> color<span class="o">=</span><span class="s">&quot;white&quot;</span><span class="p">)</span> <span class="o">+</span> fte_theme<span class="p">()</span> <span class="o">+</span> labs<span class="p">(</span>y<span class="o">=</span><span class="s">&quot;Average Star Rating by State&quot;</span><span class="p">,</span> x<span class="o">=</span><span class="s">&quot;State&quot;</span><span class="p">,</span> title<span class="o">=</span><span class="s">&quot;Average Yelp Review Star Ratings by State&quot;</span><span class="p">)</span> <span class="o">+</span> geom_errorbar<span class="p">(</span>aes<span class="p">(</span>ymin<span class="o">=</span>avg_stars <span class="o">-</span> <span class="m">1.96</span> <span class="o"><em></span> se_mean<span class="p">,</span> ymax<span class="o">=</span>avg_stars <span class="o">+</span> <span class="m">1.96</span> <span class="o"></em></span> se_mean<span class="p">))</span></code></pre></figure></p>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">ggplot<span class="p">(</span>data<span class="o">=</span>df_states<span class="p">,</span> aes<span class="p">(</span>state<span class="p">,</span> avg_stars<span class="p">))</span> <span class="o">+</span> geom_bar<span class="p">(</span>stat<span class="o">=</span><span class="s">&quot;identity&quot;</span><span class="p">)</span> <span class="o">+</span> coord_flip<span class="p">()</span> <span class="o">+</span> geom_text<span class="p">(</span>aes<span class="p">(</span>label<span class="o">=</span><span class="kp">round</span><span class="p">(</span>avg_stars<span class="p">,</span> <span class="m">2</span><span class="p">)),</span> hjust<span class="o">=</span><span class="m">2</span><span class="p">,</span> size<span class="o">=</span><span class="m">2</span><span class="p">,</span> color<span class="o">=</span><span class="s">&quot;white&quot;</span><span class="p">)</span> <span class="o">+</span> fte_theme<span class="p">()</span> <span class="o">+</span> labs<span class="p">(</span>y<span class="o">=</span><span class="s">&quot;Average Star Rating by State&quot;</span><span class="p">,</span> x<span class="o">=</span><span class="s">&quot;State&quot;</span><span class="p">,</span> title<span class="o">=</span><span class="s">&quot;Average Yelp Review Star Ratings by State&quot;</span><span class="p">)</span> <span class="o">+</span> geom_errorbar<span class="p">(</span>aes<span class="p">(</span>ymin<span class="o">=</span>avg_stars <span class="o">-</span> <span class="m">1.96</span> <span class="o">*</span> se_mean<span class="p">,</span> ymax<span class="o">=</span>avg_stars <span class="o">+</span> <span class="m">1.96</span> <span class="o">*</span> se_mean<span class="p">))</span></code></pre></figure>
 
-<p><img src="/img/lets-code-1/lc1-ggplot-7.png" alt="" /></p>
+<p><img src="/img/lets-code-1/lc1-ggplot-7.png" alt=""></p>
 
 <p>Averages are very stable for all cities due to the large sample size.</p>
 
@@ -409,13 +408,13 @@
 
 <p>I did this recording &ldquo;blind&rdquo; to test whether or not it&rsquo;s feasible for me to <em>stream</em> the coding of data visualization on services like <a href="http://www.twitch.tv">Twitch</a>. It&rsquo;s definitely possible, but has more logistical challenges. (namely, that <a href="https://obsproject.com">OBS</a> is fussy outside of Windows and I still need to figure out how to configure it optimally). I admit the code in this screencast may not be the highest-quality code (in retrospect I should have put the code in an editor instead of directly in the console, and reuse dataframe/ggplot objects), but the transparent process for coding data visualizations is important. If there is enough interest, I may revisit Yelp data again, or even more advanced datasets.</p>
 
-<hr />
+<hr>
 
 <p><em>You can access the R code used for the data visualizations and the Python scripts used to process the raw Yelp dataset <a href="https://github.com/minimaxir/lets-code-1">in this GitHub repository</a>. However, the raw data itself cannot be redistributed.</em></p>
 
 <p><em>For those wondering what I used for recording the screencast:</em></p>
 
-<p>Computer: <em>Late 2013 13" Retina MacBook Pro running OS X 10.11.2</em></p>
+<p>Computer: <em>Late 2013 13&quot; Retina MacBook Pro running OS X 10.11.2</em></p>
 
 <p>Recording Software: <em>Screenflow 4.5</em></p>
 
@@ -423,12 +422,32 @@
 
 <p>Music: <em>Various artists from the &ldquo;No Attribution Required&rdquo; section of the YouTube Audio Library</em></p>
 
+						
+            			 <div class="breadcrumbs-v5-subtitle sharing-post" style="color: #999 !important; padding-top:10px; border-top: 1px solid #eee">Share this article!
+
+
+              <span class="sharing index" style="float: right; color: #999 !important;">
+  
+		  <span class="social facebook"><a href="https://www.facebook.com/share.php?u=http://minimaxir.com/2015/12/lets-code-1/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data="http://minimaxir.com/2015/12/lets-code-1/"><i class="fa fa-facebook"></i><span class="count hidden-xs"> -</span></a></span>
+  
+		<span class="social twitter"><a href="http://twitter.com/home/?status=Let's Code an Analysis and Visualizations of Yelp Data using R and ggplot2 - http://minimaxir.com/2015/12/lets-code-1/ - via @minimaxir"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data=http://minimaxir.com/2015/12/lets-code-1/><i class="fa fa-twitter"></i><span class="count hidden-xs"></span></a> </span>
+
+  <span  class="social linkedin"><a href="http://www.linkedin.com/shareArticle?mini=true&title=&url=http://minimaxir.com/2015/12/lets-code-1/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=600');return false;" data=http://minimaxir.com/2015/12/lets-code-1/><i class="fa fa-linkedin"></i><span class="count hidden-xs"> -</span></a> </span>
+
+   </span>
+   </div>
 						</div>
                         <!-- End Blog Grid Content -->
+                        
+                        
+                        
                     </article>
                     <!-- End Blog Grid -->
 
- 
+ 					
 
                     <!-- Blog Comment -->
                     <div class="bg-color-white margin-b-30">
@@ -459,6 +478,8 @@
                         </div>
                     </div>
                     <!-- End Blog Comment -->
+                    
+                    
                 </div>
 
 			                <!--========== BLOG SIDEBAR ==========-->
@@ -476,11 +497,13 @@
                         
                         <div class="blog-sidebar-content">
                             <!-- Blog Author Bio -->
-                            <p>Max Woolf (@minimaxir) is a Software QA Engineer living and working in the San Francisco Bay Area for over 3.5 years and a 2012 Carnegie Mellon University graduate.</p>
-  
-  <p>In his spare time, Max uses <a href="https://www.python.org/">Python</a> to gather data from public APIs and <a href="http://ggplot2.org/">ggplot2</a> to make pretty charts from that data.</p>
-  
-  <p>You can learn more about Max <a href="/about">here</a>, or view his portfolio <a href="/portfolio">here</a>.
+							
+							<p><strong>Max Woolf (@minimaxir)</strong> is a Software QA Engineer living and working in the San Francisco Bay Area for over 3 years and a 2012 Carnegie Mellon University graduate in Business Administration.</p>
+
+<p>In his spare time, Max uses <a href="https://www.python.org/">Python</a> to gather data from public APIs and <a href="http://ggplot2.org/">ggplot2</a> to make pretty charts from that data.</p>
+
+<p>You can learn more about Max <a href="/about">here</a>, or view his portfolio <a href="/portfolio">here</a>. </p>
+
   
     <ul class="list-inline" style="padding-top:10px; margin-top: 20px; border-top: 1px solid #ebeef6">
                         <li class="theme-icons-wrap"><a title="Facebook" href="https://facebook.com/max.woolf" target="_blank"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-facebook"></i></a></li>
@@ -536,6 +559,13 @@
                                 <div class="latest-tuts-content">
                                     <h5 class="latest-tuts-content-title"><a href="/2016/01/movie-revenue-ratings/">Movie Review Aggregator Ratings Have No Relationship with Box Office Success</a></h5>
                                     <small class="latest-tuts-content-time"> Jan 7, 2016</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="/2015/12/lets-code-1/">Let's Code an Analysis and Visualizations of Yelp Data using R and ggplot2</a></h5>
+                                    <small class="latest-tuts-content-time"> Dec 28, 2015</small>
                                 </div>
                         </article>
                                                 
@@ -635,22 +665,82 @@
 
 
   
-      <!--========== FOOTER ==========-->
-    <footer id="footer" class="footer">
-        <div class="container">
-            <!-- end row -->
+      <!--========== FOOTER V8 ==========-->
+    <footer id="footer" class="footer-v8">
+        <div class="content-sm container">
+            <div class="row">
+                <!-- Logo -->
+                <div class="col-md-6">
+                    
+                    <p>You can contact through any of the following channels, although e-mail is preferred. Following me on Facebook and Twitter certainly doesn't hurt either!</p>
+                     <!-- <h2 class="footer-v8-title">Follow Me</h2> -->
+                    <!-- Theme Icons White Background -->
+                   <!-- <ul class="list-inline ul-li-lr-0">
+                        <li class="theme-icons-wrap"><a title="Facebook" href="https://facebook.com/max.woolf" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-facebook"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="Twitter" href="https://twitter.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-twitter"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="LinkedIn" href="https://linkedin.com/in/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-linkedin"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="GitHub" href="https://github.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-github"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="YouTube" href="https://youtube.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-youtube"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="E-Mail" href="mailto:max@minimaxir.com"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-envelope"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="RSS" href="/rss.xml"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-rss"></i></a></li> -->
+                    <!-- End Theme Icons White Background -->
+                </div>
+                <!-- End Logo -->
 
+                <!-- Contact Info -->
+                <div class="col-md-6">
+                    <h3 class="footer-v8-title">Contact Info</h3>
+                    <div class="footer-v8-contact-info-bg">
+                        <ul class="list-unstyled footer-v8-contact-info">
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-map-marker"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <p class="footer-v8-contact-info-text">SOMA, San Francisco, CA</p>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-facebook"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="Facebook" href="https://facebook.com/max.woolf" target="_blank">max.woolf</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-twitter"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="Twitter" href="https://twitter.com/minimaxir" target="_blank"">@minimaxir</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-linkedin"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="LinkedIn" href="https://linkedin.com/in/minimaxir" target="_blank"">minimaxir</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-envelope"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="E-Mail" href="mailto:max@minimaxir.com">max@minimaxir.com</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- End Contact Info -->
 
-            <!-- Copyright -->
-            <ul class="list-inline footer-copyright">
-                <li class="footer-copyright-item">Copyright &#169; 2016 Max Woolf. All Rights Reserved.</li>
-                <li class="footer-copyright-item">minimaxir.com is powered by Jekyll and GitHub Pages.</li>
-            </ul>
-            <!-- End Copyright -->
-
+            </div>
+            <!--// end row -->
         </div>
+
+        <!-- Copyright -->
+        <div class="footer-v8-copyright">
+            <div class="container text-center">
+				Copyright &#169; 2016 Max Woolf. All Rights Reserved. 
+                minimaxir.com is powered by Jekyll and GitHub Pages.
+            </div>
+        </div>
+        <!-- Copyright -->
     </footer>
-    <!--========== END FOOTER ==========-->
+    <!--========== END FOOTER V8 ==========-->
 </div>
 <!-- END WRAPPER -->
 

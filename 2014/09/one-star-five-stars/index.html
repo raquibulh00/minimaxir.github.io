@@ -266,20 +266,20 @@
 
 <p>To determine the causal impact on positive and negative words on the # of stars given in a review, we can perform a simple linear regression of stars on the number of positive words in the review, the number of negative words in the review, and the number of words in the review itself (since the length of the review is related to the number of positive/negative words; the longer the review, the more words)</p>
 
-<p>A quick-and-dirty way to determine the number of positive/negative words in a given Yelp review is to compare each word of the review against a lexicon of positive/negative words, and count the number of review words in the lexicon. In this case, I use the <a href="http://www.cs.uic.edu/~liub/FBS/sentiment-analysis.html">lexicons compiled by UIC professor Bing Liu</a>.</p>
+<p>A quick-and-dirty way to determine the number of positive/negative words in a given Yelp review is to compare each word of the review against a lexicon of positive/negative words, and count the number of review words in the lexicon. In this case, I use the <a href="http://www.cs.uic.edu/%7Eliub/FBS/sentiment-analysis.html">lexicons compiled by UIC professor Bing Liu</a>.</p>
 
 <p>Running a regression of # stars in a Yelp review on # positive words, # negative words, and # words in review, returns these results:</p>
 
-<p><figure class="highlight"><pre><code class="language-html" data-lang="html">Coefficients:
-               Estimate  Std. Error  t value  Pr(&gt;|t|)  <br/>
-(Intercept)    3.692      1.670e-03  2210.0   <span class="nt">&lt;2e-16</span> <span class="err"><strong><em></span>
-<span class="na">pos_words</span>      <span class="na">0</span><span class="err">.</span><span class="na">122</span>      <span class="na">2</span><span class="err">.</span><span class="na">976e-04</span>   <span class="na">411</span><span class="err">.</span><span class="na">3</span>   <span class="err">&lt;</span><span class="na">2e-16</span> <span class="err"></em></strong></span>
-<span class="na">neg_words</span>     <span class="na">-0</span><span class="err">.</span><span class="na">154</span>      <span class="na">4</span><span class="err">.</span><span class="na">887e-04</span>  <span class="na">-315</span><span class="err">.</span><span class="na">9</span>   <span class="err">&lt;</span><span class="na">2e-16</span> <span class="err"><strong><em></span>
-<span class="na">review_words</span>  <span class="na">-0</span><span class="err">.</span><span class="na">003</span>      <span class="na">1</span><span class="err">.</span><span class="na">984e-05</span>  <span class="na">-169</span><span class="err">.</span><span class="na">4</span>   <span class="err">&lt;</span><span class="na">2e-16</span> <span class="err"></em></strong></span></p>
+<figure class="highlight"><pre><code class="language-html" data-lang="html">Coefficients:
+               Estimate  Std. Error  t value  Pr(&gt;|t|)    
+(Intercept)    3.692      1.670e-03  2210.0   <span class="nt">&lt;2e-16</span> <span class="err">***</span>
+<span class="na">pos_words</span>      <span class="na">0</span><span class="err">.</span><span class="na">122</span>      <span class="na">2</span><span class="err">.</span><span class="na">976e-04</span>   <span class="na">411</span><span class="err">.</span><span class="na">3</span>   <span class="err">&lt;</span><span class="na">2e-16</span> <span class="err">***</span>
+<span class="na">neg_words</span>     <span class="na">-0</span><span class="err">.</span><span class="na">154</span>      <span class="na">4</span><span class="err">.</span><span class="na">887e-04</span>  <span class="na">-315</span><span class="err">.</span><span class="na">9</span>   <span class="err">&lt;</span><span class="na">2e-16</span> <span class="err">***</span>
+<span class="na">review_words</span>  <span class="na">-0</span><span class="err">.</span><span class="na">003</span>      <span class="na">1</span><span class="err">.</span><span class="na">984e-05</span>  <span class="na">-169</span><span class="err">.</span><span class="na">4</span>   <span class="err">&lt;</span><span class="na">2e-16</span> <span class="err">***</span>
 
-<p><span class="na">Residual</span> <span class="na">standard</span> <span class="na">error:</span> <span class="na">1</span><span class="err">.</span><span class="na">119</span> <span class="na">on</span> <span class="na">1125454</span> <span class="na">degrees</span> <span class="na">of</span> <span class="na">freedom</span>
-<span class="na">Multiple</span> <span class="na">R-squared:</span>  <span class="na">0</span><span class="err">.</span><span class="na">2589</span><span class="err">,</span>  <span class="na">Adjusted</span> <span class="na">R-squared:</span>  <span class="na">0</span><span class="err">.</span><span class="na">2589</span>
-<span class="na">F-statistic:</span> <span class="na">1</span><span class="err">.</span><span class="na">311e</span><span class="err">+</span><span class="na">05</span> <span class="na">on</span> <span class="na">3</span> <span class="na">and</span> <span class="na">1125454</span> <span class="na">DF</span><span class="err">,</span>  <span class="na">p-value:</span> <span class="err">&lt;</span> <span class="na">2</span><span class="err">.</span><span class="na">2e-16</span></code></pre></figure></p>
+<span class="na">Residual</span> <span class="na">standard</span> <span class="na">error:</span> <span class="na">1</span><span class="err">.</span><span class="na">119</span> <span class="na">on</span> <span class="na">1125454</span> <span class="na">degrees</span> <span class="na">of</span> <span class="na">freedom</span>
+<span class="na">Multiple</span> <span class="na">R-squared:</span>  <span class="na">0</span><span class="err">.</span><span class="na">2589</span><span class="err">,</span>  <span class="na">Adjusted</span> <span class="na">R-squared:</span>  <span class="na">0</span><span class="err">.</span><span class="na">2589</span> 
+<span class="na">F-statistic:</span> <span class="na">1</span><span class="err">.</span><span class="na">311e</span><span class="err">+</span><span class="na">05</span> <span class="na">on</span> <span class="na">3</span> <span class="na">and</span> <span class="na">1125454</span> <span class="na">DF</span><span class="err">,</span>  <span class="na">p-value:</span> <span class="err">&lt;</span> <span class="na">2</span><span class="err">.</span><span class="na">2e-16</span></code></pre></figure>
 
 <p>The regression output explains these things:</p>
 
@@ -290,7 +290,6 @@
 <li>The amount of words in the review has a lesser, negative effect. (A review that is 333 words indicates a 1-star decrease, but the average amount of words in a Yelp review is 130 words)</li>
 <li>This model explains 25.98% of the variation in the number of stars given in a review. This sounds like a low percentage, but is impressive for such a simple model using unstructured real-world data.</li>
 </ul>
-
 
 <p>All of these conclusions are <em>extremely</em> statistically significant due to the large sample size.</p>
 
@@ -342,7 +341,7 @@
 
 <p><img src="/img/one-star-five-stars/yelp-review-time-series-negativity.png"  ></p>
 
-<p>The average negativity among all reviews is <em>2.0%</em>. Since the average positivity is 5.6%, this implies that the net sentiment among all reviews is positive, despite the increase in 1-star reviews over time.</p>
+<p>The average negativity among all reviews is <em>2.0%</em>. Since the average positivity is 5.6%, this implies that the net sentiment among all reviews is positive, despite the increase in 1-star reviews over time. </p>
 
 <p>The histogram of negative reviews looks much different as well.</p>
 
@@ -352,7 +351,7 @@
 
 <p>The chart is heavily skewed right, making it difficult to determine the proportions of each rating at first glance.</p>
 
-<p>Henceforth here&rsquo;s another proportion chart.</p>
+<p>Henceforth here&rsquo;s another proportion chart. </p>
 
 <p><img src="/img/one-star-five-stars/yelp-review-negativity-density.png"  ></p>
 
@@ -364,7 +363,7 @@
 
 <p>I&rsquo;d give this blog post a solid 4-stars. The content was great, but the length was long, although not as long as <a href="http://minimaxir.com/2014/06/reviewing-reviews/">some others</a>. Can&rsquo;t wait to read this post again!</p>
 
-<hr />
+<hr>
 
 <ul>
 <li><em>Yelp reviews were preprocessed with Python, by simultaneously converting the data from JSON to a tabular structure, tokenizing the words in the review, counting the positive/negative words, and storing bigrams and trigrams in a dictionary to later be exported for creaitng word clouds.</em></li>
@@ -373,13 +372,32 @@
 <li><em>You can download full-resolution PNGs of the two word clouds [5000x2000px] in <a href="https://www.dropbox.com/s/f20gwh9jvkibi4z/Yelp_Wordclouds_5000_200.zip?dl=0">this ZIP file</a> [18 MB]</em></li>
 </ul>
 
+						
+            			 <div class="breadcrumbs-v5-subtitle sharing-post" style="color: #999 !important; padding-top:10px; border-top: 1px solid #eee">Share this article!
 
+
+              <span class="sharing index" style="float: right; color: #999 !important;">
+  
+		  <span class="social facebook"><a href="https://www.facebook.com/share.php?u=http://minimaxir.com/2014/09/one-star-five-stars/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data="http://minimaxir.com/2014/09/one-star-five-stars/"><i class="fa fa-facebook"></i><span class="count hidden-xs"> -</span></a></span>
+  
+		<span class="social twitter"><a href="http://twitter.com/home/?status=The Statistical Difference Between 1-Star and 5-Star Reviews on Yelp - http://minimaxir.com/2014/09/one-star-five-stars/ - via @minimaxir"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data=http://minimaxir.com/2014/09/one-star-five-stars/><i class="fa fa-twitter"></i><span class="count hidden-xs"></span></a> </span>
+
+  <span  class="social linkedin"><a href="http://www.linkedin.com/shareArticle?mini=true&title=&url=http://minimaxir.com/2014/09/one-star-five-stars/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=600');return false;" data=http://minimaxir.com/2014/09/one-star-five-stars/><i class="fa fa-linkedin"></i><span class="count hidden-xs"> -</span></a> </span>
+
+   </span>
+   </div>
 						</div>
                         <!-- End Blog Grid Content -->
+                        
+                        
+                        
                     </article>
                     <!-- End Blog Grid -->
 
- 
+ 					
 
                     <!-- Blog Comment -->
                     <div class="bg-color-white margin-b-30">
@@ -410,6 +428,8 @@
                         </div>
                     </div>
                     <!-- End Blog Comment -->
+                    
+                    
                 </div>
 
 			                <!--========== BLOG SIDEBAR ==========-->
@@ -427,11 +447,13 @@
                         
                         <div class="blog-sidebar-content">
                             <!-- Blog Author Bio -->
-                            <p>Max Woolf (@minimaxir) is a Software QA Engineer living and working in the San Francisco Bay Area for over 3.5 years and a 2012 Carnegie Mellon University graduate.</p>
-  
-  <p>In his spare time, Max uses <a href="https://www.python.org/">Python</a> to gather data from public APIs and <a href="http://ggplot2.org/">ggplot2</a> to make pretty charts from that data.</p>
-  
-  <p>You can learn more about Max <a href="/about">here</a>, or view his portfolio <a href="/portfolio">here</a>.
+							
+							<p><strong>Max Woolf (@minimaxir)</strong> is a Software QA Engineer living and working in the San Francisco Bay Area for over 3 years and a 2012 Carnegie Mellon University graduate in Business Administration.</p>
+
+<p>In his spare time, Max uses <a href="https://www.python.org/">Python</a> to gather data from public APIs and <a href="http://ggplot2.org/">ggplot2</a> to make pretty charts from that data.</p>
+
+<p>You can learn more about Max <a href="/about">here</a>, or view his portfolio <a href="/portfolio">here</a>. </p>
+
   
     <ul class="list-inline" style="padding-top:10px; margin-top: 20px; border-top: 1px solid #ebeef6">
                         <li class="theme-icons-wrap"><a title="Facebook" href="https://facebook.com/max.woolf" target="_blank"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-facebook"></i></a></li>
@@ -487,6 +509,13 @@
                                 <div class="latest-tuts-content">
                                     <h5 class="latest-tuts-content-title"><a href="/2016/01/movie-revenue-ratings/">Movie Review Aggregator Ratings Have No Relationship with Box Office Success</a></h5>
                                     <small class="latest-tuts-content-time"> Jan 7, 2016</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="/2015/12/lets-code-1/">Let's Code an Analysis and Visualizations of Yelp Data using R and ggplot2</a></h5>
+                                    <small class="latest-tuts-content-time"> Dec 28, 2015</small>
                                 </div>
                         </article>
                                                 
@@ -586,22 +615,82 @@
 
 
   
-      <!--========== FOOTER ==========-->
-    <footer id="footer" class="footer">
-        <div class="container">
-            <!-- end row -->
+      <!--========== FOOTER V8 ==========-->
+    <footer id="footer" class="footer-v8">
+        <div class="content-sm container">
+            <div class="row">
+                <!-- Logo -->
+                <div class="col-md-6">
+                    
+                    <p>You can contact through any of the following channels, although e-mail is preferred. Following me on Facebook and Twitter certainly doesn't hurt either!</p>
+                     <!-- <h2 class="footer-v8-title">Follow Me</h2> -->
+                    <!-- Theme Icons White Background -->
+                   <!-- <ul class="list-inline ul-li-lr-0">
+                        <li class="theme-icons-wrap"><a title="Facebook" href="https://facebook.com/max.woolf" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-facebook"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="Twitter" href="https://twitter.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-twitter"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="LinkedIn" href="https://linkedin.com/in/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-linkedin"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="GitHub" href="https://github.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-github"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="YouTube" href="https://youtube.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-youtube"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="E-Mail" href="mailto:max@minimaxir.com"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-envelope"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="RSS" href="/rss.xml"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-rss"></i></a></li> -->
+                    <!-- End Theme Icons White Background -->
+                </div>
+                <!-- End Logo -->
 
+                <!-- Contact Info -->
+                <div class="col-md-6">
+                    <h3 class="footer-v8-title">Contact Info</h3>
+                    <div class="footer-v8-contact-info-bg">
+                        <ul class="list-unstyled footer-v8-contact-info">
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-map-marker"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <p class="footer-v8-contact-info-text">SOMA, San Francisco, CA</p>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-facebook"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="Facebook" href="https://facebook.com/max.woolf" target="_blank">max.woolf</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-twitter"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="Twitter" href="https://twitter.com/minimaxir" target="_blank"">@minimaxir</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-linkedin"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="LinkedIn" href="https://linkedin.com/in/minimaxir" target="_blank"">minimaxir</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-envelope"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="E-Mail" href="mailto:max@minimaxir.com">max@minimaxir.com</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- End Contact Info -->
 
-            <!-- Copyright -->
-            <ul class="list-inline footer-copyright">
-                <li class="footer-copyright-item">Copyright &#169; 2016 Max Woolf. All Rights Reserved.</li>
-                <li class="footer-copyright-item">minimaxir.com is powered by Jekyll and GitHub Pages.</li>
-            </ul>
-            <!-- End Copyright -->
-
+            </div>
+            <!--// end row -->
         </div>
+
+        <!-- Copyright -->
+        <div class="footer-v8-copyright">
+            <div class="container text-center">
+				Copyright &#169; 2016 Max Woolf. All Rights Reserved. 
+                minimaxir.com is powered by Jekyll and GitHub Pages.
+            </div>
+        </div>
+        <!-- Copyright -->
     </footer>
-    <!--========== END FOOTER ==========-->
+    <!--========== END FOOTER V8 ==========-->
 </div>
 <!-- END WRAPPER -->
 

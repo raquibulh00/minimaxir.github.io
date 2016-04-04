@@ -250,7 +250,7 @@
 
 <p>Continuing from the previous analysis, I have a data frame of all police arrests that have occurred in San Francisco from 2003 - 2015 (587,499 arrests total).</p>
 
-<p><img src="/img/sf-arrest-map/arrests.png" alt="" /></p>
+<p><img src="/img/sf-arrest-map/arrests.png" alt=""></p>
 
 <p>What is the most efficient way to make a map for the data? There are too many data points for rendering each point in a tool like <a href="http://www.tableau.com">Tableau</a> or <a href="https://www.google.com/maps">Google Maps</a>. I can use <code>ggplot2</code> again as I did <a href="http://minimaxir.com/2015/11/nyc-ggplot2-howto/">to make a map of New York City</a> manually, but as noted in that article, the abstract nature of the map may hide information.</p>
 
@@ -264,23 +264,23 @@
 
 <p>Since we&rsquo;ve identified the map parameters, now we can request an appropriate map:</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">bbox <span class="o">=</span> <span class="kt">c</span><span class="p">(</span><span class="m">-122.516441</span><span class="p">,</span><span class="m">37.702072</span><span class="p">,</span><span class="m">-122.37276</span><span class="p">,</span><span class="m">37.811818</span><span class="p">)</span></p>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">bbox <span class="o">=</span> <span class="kt">c</span><span class="p">(</span><span class="m">-122.516441</span><span class="p">,</span><span class="m">37.702072</span><span class="p">,</span><span class="m">-122.37276</span><span class="p">,</span><span class="m">37.811818</span><span class="p">)</span>
 
-<p>map <span class="o">&lt;-</span> get_map<span class="p">(</span>location <span class="o">=</span> bbox<span class="p">,</span> <span class="kn">source</span> <span class="o">=</span> <span class="s">&quot;stamen&quot;</span><span class="p">,</span> maptype <span class="o">=</span> <span class="s">&quot;toner-lite&quot;</span><span class="p">)</span></code></pre></figure></p>
+map <span class="o">&lt;-</span> get_map<span class="p">(</span>location <span class="o">=</span> bbox<span class="p">,</span> <span class="kn">source</span> <span class="o">=</span> <span class="s">&quot;stamen&quot;</span><span class="p">,</span> maptype <span class="o">=</span> <span class="s">&quot;toner-lite&quot;</span><span class="p">)</span></code></pre></figure>
 
 <p>Plotting the map by itself results in something like this:</p>
 
-<p><img src="/img/sf-arrest-map/sf-arrest-where-0.png" alt="" /></p>
+<p><img src="/img/sf-arrest-map/sf-arrest-where-0.png" alt=""></p>
 
 <p>On the right track (aside from two Guerrero Streets), but obviously it&rsquo;ll need some aesthetic adjustments.</p>
 
 <p>Let&rsquo;s plot all 587,499 arrests on top of the map for fun and see what happens.</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">plot <span class="o">&lt;-</span> ggmap<span class="p">(</span>map<span class="p">)</span> <span class="o">+</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">plot <span class="o">&lt;-</span> ggmap<span class="p">(</span>map<span class="p">)</span> <span class="o">+</span>
             geom_point<span class="p">(</span>data <span class="o">=</span> df_arrest<span class="p">,</span> aes<span class="p">(</span>x<span class="o">=</span>X<span class="p">,</span> y<span class="o">=</span>Y<span class="p">),</span> color <span class="o">=</span> <span class="s">&quot;#27AE60&quot;</span><span class="p">,</span> size <span class="o">=</span> <span class="m">0.5</span><span class="p">,</span> alpha <span class="o">=</span> <span class="m">0.01</span><span class="p">)</span> <span class="o">+</span>
             fte_theme<span class="p">()</span> <span class="o">+</span>
-            theme<span class="p">(</span><span class="kc">&hellip;</span><span class="p">)</span> <span class="o">+</span>
-            labs<span class="p">(</span>title <span class="o">=</span> <span class="s">&quot;Locations of Police Arrests Made in San Francisco from 2003 – 2015&quot;</span><span class="p">)</span></code></pre></figure></p>
+            theme<span class="p">(</span><span class="kc">...</span><span class="p">)</span> <span class="o">+</span>
+            labs<span class="p">(</span>title <span class="o">=</span> <span class="s">&quot;Locations of Police Arrests Made in San Francisco from 2003 – 2015&quot;</span><span class="p">)</span></code></pre></figure>
 
 <ul>
 <li><code>ggmap()</code> sets up the base map.</li>
@@ -290,10 +290,9 @@
 <li><code>labs()</code> is for labeling the plot (<em>always</em> label!)</li>
 </ul>
 
-
 <p>Rendering the plot results in:</p>
 
-<p><a href="http://i.imgur.com/Xu8wXzc.png" target=_blank><img src="/img/sf-arrest-map/sf-arrest-where-1.png" alt="" /></a></p>
+<p><a href="http://i.imgur.com/Xu8wXzc.png" target=_blank><img src="/img/sf-arrest-map/sf-arrest-where-1.png" alt=""></a></p>
 
 <p><em>NOTE: All maps in this article are embedded at a lower size to ensure that the article doesn&rsquo;t take days to load. To load a high-resolution version of any map, click on it and it will open in a new tab.</em></p>
 
@@ -303,18 +302,18 @@
 
 <p>How about faceting by type of crime again? We can render a map of San Francisco for each type of crime, and then we can see if the clusters for a given type of crime are different from others.</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">plot <span class="o">&lt;-</span> ggmap<span class="p">(</span>map<span class="p">)</span> <span class="o">+</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">plot <span class="o">&lt;-</span> ggmap<span class="p">(</span>map<span class="p">)</span> <span class="o">+</span>
             geom_point<span class="p">(</span>data <span class="o">=</span> df_arrest <span class="o">%&gt;%</span> filter<span class="p">(</span>Category <span class="o">%in%</span> df_top_crimes<span class="o">$</span>Category<span class="p">[</span><span class="m">2</span><span class="o">:</span><span class="m">19</span><span class="p">]),</span> aes<span class="p">(</span>x<span class="o">=</span>X<span class="p">,</span> y<span class="o">=</span>Y<span class="p">,</span> color<span class="o">=</span>Category<span class="p">),</span> size<span class="o">=</span><span class="m">0.75</span><span class="p">,</span> alpha<span class="o">=</span><span class="m">0.05</span><span class="p">)</span> <span class="o">+</span>
             fte_theme<span class="p">()</span> <span class="o">+</span>
-            theme<span class="p">(</span><span class="kc">&hellip;</span><span class="p">)</span> <span class="o">+</span>
+            theme<span class="p">(</span><span class="kc">...</span><span class="p">)</span> <span class="o">+</span>
             labs<span class="p">(</span>title <span class="o">=</span> <span class="s">&quot;Locations of Police Arrests Made in San Francisco from 2003 – 2015, by Type of Crime&quot;</span><span class="p">)</span> <span class="o">+</span>
-            facet_wrap<span class="p">(</span><span class="o">~</span> Category<span class="p">,</span> nrow <span class="o">=</span> <span class="m">3</span><span class="p">)</span></code></pre></figure></p>
+            facet_wrap<span class="p">(</span><span class="o">~</span> Category<span class="p">,</span> nrow <span class="o">=</span> <span class="m">3</span><span class="p">)</span></code></pre></figure>
 
 <p>Again, only one line of new code for the facet, although the source data needs to be filtered as it was in the previous post.</p>
 
 <p>Running the code yields:</p>
 
-<p><a href="http://i.imgur.com/6NgzV3k.jpg" target=_blank><img src="/img/sf-arrest-map/sf-arrest-where-2.png" alt="" /></a></p>
+<p><a href="http://i.imgur.com/6NgzV3k.jpg" target=_blank><img src="/img/sf-arrest-map/sf-arrest-where-2.png" alt=""></a></p>
 
 <p>This is certainly more interesting (and pretty). Some crimes, such as Assaults, Drugs/Narcotics, and Warrants, occur all over the city. Other crimes, such as Disorderly Conduct and Robbery, primarily have clusters in the Tenderloin and in the Mission close to the 16th Street BART stop. (Prostitution notably has a cluster in the Mission and a cluster <em>above</em> the Tenderloin.)</p>
 
@@ -322,28 +321,27 @@
 
 <p>We can reuse the normalization code from the previous post, and the hex overlay code from my NYC taxi plot post as well:</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">sum_thresh <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>x<span class="p">,</span> threshold <span class="o">=</span> <span class="m">10</span><span class="o">^</span><span class="m">-3</span><span class="p">)</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">sum_thresh <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>x<span class="p">,</span> threshold <span class="o">=</span> <span class="m">10</span><span class="o">^</span><span class="m">-3</span><span class="p">)</span> <span class="p">{</span>
     <span class="kr">if</span> <span class="p">(</span><span class="kp">sum</span><span class="p">(</span>x<span class="p">)</span> <span class="o">&lt;</span> threshold<span class="p">)</span> <span class="p">{</span><span class="kr">return</span> <span class="p">(</span><span class="kc">NA</span><span class="p">)}</span>
     <span class="kr">else</span> <span class="p">{</span><span class="kr">return</span> <span class="p">(</span><span class="kp">sum</span><span class="p">(</span>x<span class="p">))}</span>
-<span class="p">}</span></p>
+<span class="p">}</span>
 
-<p>plot <span class="o">&lt;-</span> ggmap<span class="p">(</span>map<span class="p">)</span> <span class="o">+</span>
+plot <span class="o">&lt;-</span> ggmap<span class="p">(</span>map<span class="p">)</span> <span class="o">+</span>
             stat_summary_hex<span class="p">(</span>data <span class="o">=</span> df_arrest <span class="o">%&gt;%</span> filter<span class="p">(</span>Category <span class="o">%in%</span> df_top_crimes<span class="o">$</span>Category<span class="p">[</span><span class="m">2</span><span class="o">:</span><span class="m">19</span><span class="p">])</span> <span class="o">%&gt;%</span> group_by<span class="p">(</span>Category<span class="p">)</span> <span class="o">%&gt;%</span> mutate<span class="p">(</span>w<span class="o">=</span><span class="m">1</span><span class="o">/</span>n<span class="p">()),</span> aes<span class="p">(</span>x<span class="o">=</span>X<span class="p">,</span> y<span class="o">=</span>Y<span class="p">,</span> z<span class="o">=</span>w<span class="p">),</span> fun<span class="o">=</span>sum_thresh<span class="p">,</span> alpha <span class="o">=</span> <span class="m">0.8</span><span class="p">,</span> color<span class="o">=</span><span class="s">&quot;#CCCCCC&quot;</span><span class="p">)</span> <span class="o">+</span>
             fte_theme<span class="p">()</span> <span class="o">+</span>
-            theme<span class="p">(</span><span class="kc">&hellip;</span><span class="p">)</span> <span class="o">+</span>
+            theme<span class="p">(</span><span class="kc">...</span><span class="p">)</span> <span class="o">+</span>
             scale_fill_gradient<span class="p">(</span>low <span class="o">=</span> <span class="s">&quot;#DDDDDD&quot;</span><span class="p">,</span> high <span class="o">=</span> <span class="s">&quot;#2980B9&quot;</span><span class="p">)</span> <span class="o">+</span>
             labs<span class="p">(</span>title <span class="o">=</span> <span class="s">&quot;Locations of Police Arrests Made in San Francisco from 2003 – 2015, Normalized by Type of Crime&quot;</span><span class="p">)</span> <span class="o">+</span>
-            facet_wrap<span class="p">(</span><span class="o">~</span> Category<span class="p">,</span> nrow <span class="o">=</span> <span class="m">3</span><span class="p">)</span></code></pre></figure></p>
+            facet_wrap<span class="p">(</span><span class="o">~</span> Category<span class="p">,</span> nrow <span class="o">=</span> <span class="m">3</span><span class="p">)</span></code></pre></figure>
 
 <ul>
 <li><code>sum_thresh()</code> is a helper function that aggregates the sums of weights, but will not plot the corresponding hex if there is not enough data at that location.</li>
 <li><code>scale_fill_gradient()</code> sets the gradient for the chart. If there are few arrests, the hex will be gray; if there are many arrests, it will be deep blue.</li>
 </ul>
 
-
 <p>Putting it all together:</p>
 
-<p><a href="http://i.imgur.com/LXKPseq.jpg" target=_blank><img src="/img/sf-arrest-map/sf-arrest-where-3.png" alt="" /></a></p>
+<p><a href="http://i.imgur.com/LXKPseq.jpg" target=_blank><img src="/img/sf-arrest-map/sf-arrest-where-3.png" alt=""></a></p>
 
 <p>This confirms the interpretations mentioned above.</p>
 
@@ -351,31 +349,31 @@
 
 <p>How about checking arrest locations by Police Districts?</p>
 
-<p><a href="http://i.imgur.com/i82wsIZ.png" target=_blank><img src="/img/sf-arrest-map/sf-arrest-where-4.png" alt="" /></a></p>
+<p><a href="http://i.imgur.com/i82wsIZ.png" target=_blank><img src="/img/sf-arrest-map/sf-arrest-where-4.png" alt=""></a></p>
 
 <p>The map shows that the hex plotting works correctly, at the least. Notably, the Central, Northern, and Southern Police Districts end up making a large proportion of their arrests nearby the Tenderloin/Market Street instead of anywhere else in their area of perview.</p>
 
 <p>Is the location of arrests seasonal? Does it vary by the month the arrest occured?</p>
 
-<p><a href="http://i.imgur.com/u2eQMZf.png" target=_blank><img src="/img/sf-arrest-map/sf-arrest-where-5.png" alt="" /></a></p>
+<p><a href="http://i.imgur.com/u2eQMZf.png" target=_blank><img src="/img/sf-arrest-map/sf-arrest-where-5.png" alt=""></a></p>
 
 <p>Nope. Still Tenderloin and Mission.</p>
 
 <p>Maybe the locations of arrests have changed over time, as legal polices changed. Let&rsquo;s facet by year.</p>
 
-<p><a href="http://i.imgur.com/x4SRnkU.png" target=_blank><img src="/img/sf-arrest-map/sf-arrest-where-6.png" alt="" /></a></p>
+<p><a href="http://i.imgur.com/x4SRnkU.png" target=_blank><img src="/img/sf-arrest-map/sf-arrest-where-6.png" alt=""></a></p>
 
 <p>Here things are <em>slightly</em> different across each facet; Tenderloin had a much higher concentration of arrests peaking in 2009-2010, and the concentration of yearly arrests in the Tenderloin has decreased relative to everywhere else in the city.</p>
 
 <p>Does the location of arrests vary by the time of day? As noted earlier, there could be more arrests downtown during working hours.</p>
 
-<p><a href="http://i.imgur.com/cDKo8Lt.png" target=_blank><img src="/img/sf-arrest-map/sf-arrest-where-7.png" alt="" /></a></p>
+<p><a href="http://i.imgur.com/cDKo8Lt.png" target=_blank><img src="/img/sf-arrest-map/sf-arrest-where-7.png" alt=""></a></p>
 
 <p>Higher relative concentration in Tenderlion/Mission during work hours, lesser during the night.</p>
 
 <p>Last try. Perhaps the day of week leads to different locations, especially as people tend to go out to bars all across the city.</p>
 
-<p><a href="http://i.imgur.com/tNBRilL.png" target=_blank><img src="/img/sf-arrest-map/sf-arrest-where-8.png" alt="" /></a></p>
+<p><a href="http://i.imgur.com/tNBRilL.png" target=_blank><img src="/img/sf-arrest-map/sf-arrest-where-8.png" alt=""></a></p>
 
 <p><em>Zero</em> difference. Eh.</p>
 
@@ -389,17 +387,17 @@
 
 <p>Through more <code>dplyr</code> shenanigans, I am able to filter the dataset of arrests to Wednesday arrests only, and classify each Wednesday as the first, second, third, or fourth of the month. (there are occasionally fifth Wednesdays but no one cares about those).</p>
 
-<p><img src="/img/sf-arrest-map/ordinal.png" alt="" /></p>
+<p><img src="/img/sf-arrest-map/ordinal.png" alt=""></p>
 
 <p>We can plot a single line chart for each ordinal of the number of arrests over the day. We are looking to see if the First Wednesday has different behavior than the other Wednesdays.</p>
 
-<p><img src="/img/sf-arrest-map/ssi-crime-1.png" alt="" /></p>
+<p><img src="/img/sf-arrest-map/ssi-crime-1.png" alt=""></p>
 
 <p>&hellip;and it doesn&rsquo;t.</p>
 
 <p>Looking at locations data doesn&rsquo;t help either.</p>
 
-<p><a href="http://i.imgur.com/wTDKjOm.png" target=_blank><img src="/img/sf-arrest-map/ssi-crime-2.png" alt="" /></a></p>
+<p><a href="http://i.imgur.com/wTDKjOm.png" target=_blank><img src="/img/sf-arrest-map/ssi-crime-2.png" alt=""></a></p>
 
 <p>Oh well, it was worth a shot.</p>
 
@@ -407,16 +405,36 @@
 
 <p>But for now, at least I made a few pretty charts out of it.</p>
 
-<hr />
+<hr>
 
 <p><em>If you use the code or data visualization designs contained within this article, it would be greatly appreciated if proper attribution is given back to this article and/or myself. Thanks!</em></p>
 
+						
+            			 <div class="breadcrumbs-v5-subtitle sharing-post" style="color: #999 !important; padding-top:10px; border-top: 1px solid #eee">Share this article!
+
+
+              <span class="sharing index" style="float: right; color: #999 !important;">
+  
+		  <span class="social facebook"><a href="https://www.facebook.com/share.php?u=http://minimaxir.com/2015/12/sf-arrest-maps/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data="http://minimaxir.com/2015/12/sf-arrest-maps/"><i class="fa fa-facebook"></i><span class="count hidden-xs"> -</span></a></span>
+  
+		<span class="social twitter"><a href="http://twitter.com/home/?status=Mapping Where Arrests Frequently Occur in San Francisco Using Crime Data - http://minimaxir.com/2015/12/sf-arrest-maps/ - via @minimaxir"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data=http://minimaxir.com/2015/12/sf-arrest-maps/><i class="fa fa-twitter"></i><span class="count hidden-xs"></span></a> </span>
+
+  <span  class="social linkedin"><a href="http://www.linkedin.com/shareArticle?mini=true&title=&url=http://minimaxir.com/2015/12/sf-arrest-maps/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=600');return false;" data=http://minimaxir.com/2015/12/sf-arrest-maps/><i class="fa fa-linkedin"></i><span class="count hidden-xs"> -</span></a> </span>
+
+   </span>
+   </div>
 						</div>
                         <!-- End Blog Grid Content -->
+                        
+                        
+                        
                     </article>
                     <!-- End Blog Grid -->
 
- 
+ 					
 
                     <!-- Blog Comment -->
                     <div class="bg-color-white margin-b-30">
@@ -447,6 +465,8 @@
                         </div>
                     </div>
                     <!-- End Blog Comment -->
+                    
+                    
                 </div>
 
 			                <!--========== BLOG SIDEBAR ==========-->
@@ -464,11 +484,13 @@
                         
                         <div class="blog-sidebar-content">
                             <!-- Blog Author Bio -->
-                            <p>Max Woolf (@minimaxir) is a Software QA Engineer living and working in the San Francisco Bay Area for over 3.5 years and a 2012 Carnegie Mellon University graduate.</p>
-  
-  <p>In his spare time, Max uses <a href="https://www.python.org/">Python</a> to gather data from public APIs and <a href="http://ggplot2.org/">ggplot2</a> to make pretty charts from that data.</p>
-  
-  <p>You can learn more about Max <a href="/about">here</a>, or view his portfolio <a href="/portfolio">here</a>.
+							
+							<p><strong>Max Woolf (@minimaxir)</strong> is a Software QA Engineer living and working in the San Francisco Bay Area for over 3 years and a 2012 Carnegie Mellon University graduate in Business Administration.</p>
+
+<p>In his spare time, Max uses <a href="https://www.python.org/">Python</a> to gather data from public APIs and <a href="http://ggplot2.org/">ggplot2</a> to make pretty charts from that data.</p>
+
+<p>You can learn more about Max <a href="/about">here</a>, or view his portfolio <a href="/portfolio">here</a>. </p>
+
   
     <ul class="list-inline" style="padding-top:10px; margin-top: 20px; border-top: 1px solid #ebeef6">
                         <li class="theme-icons-wrap"><a title="Facebook" href="https://facebook.com/max.woolf" target="_blank"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-facebook"></i></a></li>
@@ -524,6 +546,13 @@
                                 <div class="latest-tuts-content">
                                     <h5 class="latest-tuts-content-title"><a href="/2016/01/movie-revenue-ratings/">Movie Review Aggregator Ratings Have No Relationship with Box Office Success</a></h5>
                                     <small class="latest-tuts-content-time"> Jan 7, 2016</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="/2015/12/lets-code-1/">Let's Code an Analysis and Visualizations of Yelp Data using R and ggplot2</a></h5>
+                                    <small class="latest-tuts-content-time"> Dec 28, 2015</small>
                                 </div>
                         </article>
                                                 
@@ -623,22 +652,82 @@
 
 
   
-      <!--========== FOOTER ==========-->
-    <footer id="footer" class="footer">
-        <div class="container">
-            <!-- end row -->
+      <!--========== FOOTER V8 ==========-->
+    <footer id="footer" class="footer-v8">
+        <div class="content-sm container">
+            <div class="row">
+                <!-- Logo -->
+                <div class="col-md-6">
+                    
+                    <p>You can contact through any of the following channels, although e-mail is preferred. Following me on Facebook and Twitter certainly doesn't hurt either!</p>
+                     <!-- <h2 class="footer-v8-title">Follow Me</h2> -->
+                    <!-- Theme Icons White Background -->
+                   <!-- <ul class="list-inline ul-li-lr-0">
+                        <li class="theme-icons-wrap"><a title="Facebook" href="https://facebook.com/max.woolf" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-facebook"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="Twitter" href="https://twitter.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-twitter"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="LinkedIn" href="https://linkedin.com/in/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-linkedin"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="GitHub" href="https://github.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-github"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="YouTube" href="https://youtube.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-youtube"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="E-Mail" href="mailto:max@minimaxir.com"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-envelope"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="RSS" href="/rss.xml"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-rss"></i></a></li> -->
+                    <!-- End Theme Icons White Background -->
+                </div>
+                <!-- End Logo -->
 
+                <!-- Contact Info -->
+                <div class="col-md-6">
+                    <h3 class="footer-v8-title">Contact Info</h3>
+                    <div class="footer-v8-contact-info-bg">
+                        <ul class="list-unstyled footer-v8-contact-info">
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-map-marker"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <p class="footer-v8-contact-info-text">SOMA, San Francisco, CA</p>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-facebook"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="Facebook" href="https://facebook.com/max.woolf" target="_blank">max.woolf</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-twitter"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="Twitter" href="https://twitter.com/minimaxir" target="_blank"">@minimaxir</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-linkedin"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="LinkedIn" href="https://linkedin.com/in/minimaxir" target="_blank"">minimaxir</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-envelope"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="E-Mail" href="mailto:max@minimaxir.com">max@minimaxir.com</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- End Contact Info -->
 
-            <!-- Copyright -->
-            <ul class="list-inline footer-copyright">
-                <li class="footer-copyright-item">Copyright &#169; 2016 Max Woolf. All Rights Reserved.</li>
-                <li class="footer-copyright-item">minimaxir.com is powered by Jekyll and GitHub Pages.</li>
-            </ul>
-            <!-- End Copyright -->
-
+            </div>
+            <!--// end row -->
         </div>
+
+        <!-- Copyright -->
+        <div class="footer-v8-copyright">
+            <div class="container text-center">
+				Copyright &#169; 2016 Max Woolf. All Rights Reserved. 
+                minimaxir.com is powered by Jekyll and GitHub Pages.
+            </div>
+        </div>
+        <!-- Copyright -->
     </footer>
-    <!--========== END FOOTER ==========-->
+    <!--========== END FOOTER V8 ==========-->
 </div>
 <!-- END WRAPPER -->
 

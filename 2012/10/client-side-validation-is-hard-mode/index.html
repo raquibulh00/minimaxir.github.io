@@ -248,9 +248,6 @@
 
 <p>Needless to say, hilarity ensued.</p>
 
-<!-- more -->
-
-
 <h2>What Went Wrong</h2>
 
 <p><img src="/img/origin.png"  ></p>
@@ -258,13 +255,12 @@
 <p>Even the most amateur web developer knows to follow three important rules for data validation:</p>
 
 <ol>
-<li>Never trust the client.</li>
-<li>Never trust the client.</li>
-<li><strong>Never trust the damn client!</strong></li>
+<li> Never trust the client.</li>
+<li> Never trust the client.</li>
+<li> <strong>Never trust the damn client!</strong></li>
 </ol>
 
-
-<p>The proper way to implement a promo code is logical: when the user attempts to apply a promo code, the server checks, <em>has the user used this promo code before?</em> by querying<em> SELECT FROM transactions WHERE user_id = current_user AND promo_code = &ldquo;OS3874XVC&rdquo;</em>. If the result set is empty, then the user hasn&rsquo;t used the code, and everything&rsquo;s good to go. Otherwise, then that user has used the promo code before, and an appropriate error should be thrown are displayed to the user. This would be repeated at the checkout phase when the server actually charges the credit card, to ensure that the correct amount is charged and that the user has not committed and shenanigans in the meantime. All would be well. *****</p>
+<p>The proper way to implement a promo code is logical: when the user attempts to apply a promo code, the server checks, <em>has the user used this promo code before?</em> by querying* SELECT FROM transactions WHERE user_id = current_user AND promo_code = &ldquo;OS3874XVC&rdquo;<em>. If the result set is empty, then the user hasn&rsquo;t used the code, and everything&rsquo;s good to go. Otherwise, then that user has used the promo code before, and an appropriate error should be thrown are displayed to the user. This would be repeated at the checkout phase when the server actually charges the credit card, to ensure that the correct amount is charged and that the user has not committed and shenanigans in the meantime. All would be well. *</em>***</p>
 
 <p>For some reason, inputting the code in different clients (which should validate against the same backend database) still allowed the code to be input twice. And, for a very confusing reason, a workflow exists that allows the user to input a promo code while logged out, with presumably the intention of it being validated when the user eventually logs in (which it isn&rsquo;t).</p>
 
@@ -278,7 +274,7 @@
 
 <p>According to <a href="http://www.reddit.com/r/gaming/comments/11ggi2/reddit_during_the_recent_origin_discount_coupon/">another Reddit thread</a>, when news of this exploit hit, many gamers went on a downloading spree, and downloaded nearly every free game possible for two reasons. One, if EA is technically incompetent enough to allow such a severe bug to exist, they won&rsquo;t have the technical skills to discern who used the promo code more than once. Two, <em>it is retribution for EA being a terrible company</em>.</p>
 
-<p>What will EA do to punish people who exploited? Are the users at fault here since it&rsquo;s very possible to accidently use the code twice? If so, is it fair to ban <em>ever</em>y<em>one</em> who has used multiple promo codes if innocent people might be banned?</p>
+<p>What will EA do to punish people who exploited? Are the users at fault here since it&rsquo;s very possible to accidently use the code twice? If so, is it fair to ban <em>ever*y*one</em> who has used multiple promo codes if innocent people might be banned?</p>
 
 <p>UPDATE (10/15 1:14AM): EA will <a href="http://forum.ea.com/eaforum/posts/list/60/9040620.page">&ldquo;honor all sales made with the coupon code,&rdquo;</a>  implying that they will <strong>not</strong> ban people who utilized the exploit.</p>
 
@@ -289,20 +285,39 @@
 <p><em>PS: I downloaded exactly one game through the promo code as was intended and stated by a <a href="http://i.imgur.com/4zg7X.jpg">forum user&rsquo;s chat log with Origin Support</a>; I did not attempt to reproduce the exploit itself for verification purposes due to the potential consequences. I like my Battlefield 3!</em></p>
 
 <ul>
-<li><strong>I admit that the SQL pseudocode provided here is an oversimplified, general </strong>solution for the validation issue<strong>, since that I do not have knowledge of EA&rsquo;s database structure and scale.</strong></li>
+<li><strong>I admit that the SQL pseudocode provided here is an oversimplified, general **solution for the validation issue</strong>, since that I do not have knowledge of EA&rsquo;s database structure and scale.**</li>
 </ul>
 
-
-<p><strong>** Discussion on Hacker News <a href="http://news.ycombinator.com/item?id=4652129">here</a>!</strong></p>
+<p>**** Discussion on Hacker News <a href="http://news.ycombinator.com/item?id=4652129">here</a>!**</p>
 
 <p><strong>*</strong>| Discussion on Reddit <a href="http://www.reddit.com/r/technology/comments/11hem0/electronic_arts_gives_away_thousands_of_free/">here</a> and <a href="http://www.reddit.com/r/Games/comments/11h9nj/electronic_arts_gives_away_thousands_of_free/">here</a>.**</p>
 
+						
+            			 <div class="breadcrumbs-v5-subtitle sharing-post" style="color: #999 !important; padding-top:10px; border-top: 1px solid #eee">Share this article!
+
+
+              <span class="sharing index" style="float: right; color: #999 !important;">
+  
+		  <span class="social facebook"><a href="https://www.facebook.com/share.php?u=http://minimaxir.com/2012/10/client-side-validation-is-hard-mode/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data="http://minimaxir.com/2012/10/client-side-validation-is-hard-mode/"><i class="fa fa-facebook"></i><span class="count hidden-xs"> -</span></a></span>
+  
+		<span class="social twitter"><a href="http://twitter.com/home/?status=Electronic Arts "Gives Away" Thousands Of Free Games Due To No Server-Side Validation - http://minimaxir.com/2012/10/client-side-validation-is-hard-mode/ - via @minimaxir"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data=http://minimaxir.com/2012/10/client-side-validation-is-hard-mode/><i class="fa fa-twitter"></i><span class="count hidden-xs"></span></a> </span>
+
+  <span  class="social linkedin"><a href="http://www.linkedin.com/shareArticle?mini=true&title=&url=http://minimaxir.com/2012/10/client-side-validation-is-hard-mode/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=600');return false;" data=http://minimaxir.com/2012/10/client-side-validation-is-hard-mode/><i class="fa fa-linkedin"></i><span class="count hidden-xs"> -</span></a> </span>
+
+   </span>
+   </div>
 						</div>
                         <!-- End Blog Grid Content -->
+                        
+                        
+                        
                     </article>
                     <!-- End Blog Grid -->
 
- 
+ 					
 
                     <!-- Blog Comment -->
                     <div class="bg-color-white margin-b-30">
@@ -333,6 +348,8 @@
                         </div>
                     </div>
                     <!-- End Blog Comment -->
+                    
+                    
                 </div>
 
 			                <!--========== BLOG SIDEBAR ==========-->
@@ -350,11 +367,13 @@
                         
                         <div class="blog-sidebar-content">
                             <!-- Blog Author Bio -->
-                            <p>Max Woolf (@minimaxir) is a Software QA Engineer living and working in the San Francisco Bay Area for over 3.5 years and a 2012 Carnegie Mellon University graduate.</p>
-  
-  <p>In his spare time, Max uses <a href="https://www.python.org/">Python</a> to gather data from public APIs and <a href="http://ggplot2.org/">ggplot2</a> to make pretty charts from that data.</p>
-  
-  <p>You can learn more about Max <a href="/about">here</a>, or view his portfolio <a href="/portfolio">here</a>.
+							
+							<p><strong>Max Woolf (@minimaxir)</strong> is a Software QA Engineer living and working in the San Francisco Bay Area for over 3 years and a 2012 Carnegie Mellon University graduate in Business Administration.</p>
+
+<p>In his spare time, Max uses <a href="https://www.python.org/">Python</a> to gather data from public APIs and <a href="http://ggplot2.org/">ggplot2</a> to make pretty charts from that data.</p>
+
+<p>You can learn more about Max <a href="/about">here</a>, or view his portfolio <a href="/portfolio">here</a>. </p>
+
   
     <ul class="list-inline" style="padding-top:10px; margin-top: 20px; border-top: 1px solid #ebeef6">
                         <li class="theme-icons-wrap"><a title="Facebook" href="https://facebook.com/max.woolf" target="_blank"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-facebook"></i></a></li>
@@ -410,6 +429,13 @@
                                 <div class="latest-tuts-content">
                                     <h5 class="latest-tuts-content-title"><a href="/2016/01/movie-revenue-ratings/">Movie Review Aggregator Ratings Have No Relationship with Box Office Success</a></h5>
                                     <small class="latest-tuts-content-time"> Jan 7, 2016</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="/2015/12/lets-code-1/">Let's Code an Analysis and Visualizations of Yelp Data using R and ggplot2</a></h5>
+                                    <small class="latest-tuts-content-time"> Dec 28, 2015</small>
                                 </div>
                         </article>
                                                 
@@ -509,22 +535,82 @@
 
 
   
-      <!--========== FOOTER ==========-->
-    <footer id="footer" class="footer">
-        <div class="container">
-            <!-- end row -->
+      <!--========== FOOTER V8 ==========-->
+    <footer id="footer" class="footer-v8">
+        <div class="content-sm container">
+            <div class="row">
+                <!-- Logo -->
+                <div class="col-md-6">
+                    
+                    <p>You can contact through any of the following channels, although e-mail is preferred. Following me on Facebook and Twitter certainly doesn't hurt either!</p>
+                     <!-- <h2 class="footer-v8-title">Follow Me</h2> -->
+                    <!-- Theme Icons White Background -->
+                   <!-- <ul class="list-inline ul-li-lr-0">
+                        <li class="theme-icons-wrap"><a title="Facebook" href="https://facebook.com/max.woolf" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-facebook"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="Twitter" href="https://twitter.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-twitter"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="LinkedIn" href="https://linkedin.com/in/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-linkedin"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="GitHub" href="https://github.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-github"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="YouTube" href="https://youtube.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-youtube"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="E-Mail" href="mailto:max@minimaxir.com"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-envelope"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="RSS" href="/rss.xml"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-rss"></i></a></li> -->
+                    <!-- End Theme Icons White Background -->
+                </div>
+                <!-- End Logo -->
 
+                <!-- Contact Info -->
+                <div class="col-md-6">
+                    <h3 class="footer-v8-title">Contact Info</h3>
+                    <div class="footer-v8-contact-info-bg">
+                        <ul class="list-unstyled footer-v8-contact-info">
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-map-marker"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <p class="footer-v8-contact-info-text">SOMA, San Francisco, CA</p>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-facebook"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="Facebook" href="https://facebook.com/max.woolf" target="_blank">max.woolf</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-twitter"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="Twitter" href="https://twitter.com/minimaxir" target="_blank"">@minimaxir</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-linkedin"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="LinkedIn" href="https://linkedin.com/in/minimaxir" target="_blank"">minimaxir</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-envelope"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="E-Mail" href="mailto:max@minimaxir.com">max@minimaxir.com</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- End Contact Info -->
 
-            <!-- Copyright -->
-            <ul class="list-inline footer-copyright">
-                <li class="footer-copyright-item">Copyright &#169; 2016 Max Woolf. All Rights Reserved.</li>
-                <li class="footer-copyright-item">minimaxir.com is powered by Jekyll and GitHub Pages.</li>
-            </ul>
-            <!-- End Copyright -->
-
+            </div>
+            <!--// end row -->
         </div>
+
+        <!-- Copyright -->
+        <div class="footer-v8-copyright">
+            <div class="container text-center">
+				Copyright &#169; 2016 Max Woolf. All Rights Reserved. 
+                minimaxir.com is powered by Jekyll and GitHub Pages.
+            </div>
+        </div>
+        <!-- Copyright -->
     </footer>
-    <!--========== END FOOTER ==========-->
+    <!--========== END FOOTER V8 ==========-->
 </div>
 <!-- END WRAPPER -->
 

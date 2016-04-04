@@ -4,7 +4,7 @@
   <title><![CDATA[minimaxir | Max Woolf's Blog]]></title>
   <link href="http://minimaxir.com/rss.xml" rel="self"/>
   <link href="http://minimaxir.com/"/>
-  <updated>2016-03-29T07:55:24-07:00</updated>
+  <updated>2016-04-03T21:11:16-07:00</updated>
   <id>http://minimaxir.com/</id>
   <author>
     <name><![CDATA[Max Woolf]]></name>
@@ -21,7 +21,6 @@
     <content type="html"><![CDATA[<p><span><style>
 .suspicious-pregnant-pause {
   padding: 60px 0;
-  color: #999;
 }
 </style></span></p>
 
@@ -29,7 +28,7 @@
 
 <p>On <a href="https://www.reddit.com">Reddit</a>, GIFs are also popular for reactions, often containing submission titles with the phrase MRW (&ldquo;my reaction when&rdquo;). Here is a wordcloud of the titles of all GIF submissions to Reddit in 2015:</p>
 
-<p><img src="/img/gif-unlimited/reddit-gif-wordcloud-e.png" alt="" /></p>
+<p><img src="/img/gif-unlimited/reddit-gif-wordcloud-e.png" alt=""></p>
 
 <p>Completely unrelated, <a href="https://en.wikipedia.org/wiki/Steganography">image steganography</a> is a technique that allows the embedding of messages into the pixels of images themselves, allowing for the transmission of secret messages. Image steganography was popular on the internet in the early 2000&rsquo;s, but died out before image-sharing between peers was commonplace and information encryption became a hot political issue.</p>
 
@@ -42,10 +41,8 @@
 <p>Since we can set 3 bits per physical pixel, the maximum amount of data (in bytes) that can be stored is equivalent to the width of an image (in pixels) multiplied by the height times 3, divided by 8.</p>
 
 <p>Take the Reddit GIF wordcloud I posted above. If you download the image and load it into PixelJihad, you can see I hid a secret message showing how to get the Reddit word data using <a href="https://cloud.google.com/bigquery/">BigQuery</a>. The visualization is 600px by 400px, therefore it can store up to:</p>
-
-<pre><code>600 * 400 * 3 bits / 8 = 90000 Bytes / 1000 = 90 kB
-</code></pre>
-
+<div class="highlight"><pre><code class="language-text" data-lang="text">600 * 400 * 3 bits / 8 = 90000 Bytes / 1000 = 90 kB
+</code></pre></div>
 <p>The image itself is 257 kB, but a bonus 35% in data storage isn&rsquo;t bad.</p>
 
 <p>PixelJihad only supports text messages with an artificial limit of 1,000 characters (~1 kB) for <em>sanity</em>, but I&rsquo;m not fond of being sane. There is <em>nothing</em> from a technical perspective stopping users from encoding larger text messages, or even raw file data as pure binary into images.</p>
@@ -56,19 +53,17 @@
 
 <p>Now, back to what you&rsquo;re reading this article for, who cares about all this stegosaurus crap. Here is a cute cat GIF <a href="https://www.reddit.com/r/gifs/comments/256bir/abduction_cat_re_flying_cat_re_so_big/">from Reddit</a>. Look at its cuteness.</p>
 
-<p><img src="/img/gif-unlimited/aliencat.gif" alt="" /></p>
+<p><img src="/img/gif-unlimited/aliencat.gif" alt=""></p>
 
 <p>Aww.</p>
 
 <p>The GIF file size is 2.44 MB (sorry, readers on mobile devices!). The dimensions of the GIF are 300px by 399px. But if you open the GIF in Preview on OSX, you can see that the GIF is comprised of 72 frames.</p>
 
-<p><img src="/img/gif-unlimited/gif-finder-17.png" alt="" /></p>
+<p><img src="/img/gif-unlimited/gif-finder-17.png" alt=""></p>
 
 <p>Performing the same math:</p>
-
-<pre><code>300 * 399 * 72 frames * 3 / 8 = 3231900 / 1000000 = 3.23 MB
-</code></pre>
-
+<div class="highlight"><pre><code class="language-text" data-lang="text">300 * 399 * 72 frames * 3 / 8 = 3231900 / 1000000 = 3.23 MB
+</code></pre></div>
 <p>The potential amount of encodable data is larger than the file size of the image itself! Screw secret messages, we&rsquo;re literally <em>creating</em> data storage out of nothing!</p>
 
 <p>You know what this means? We can <em>embed the cat GIF into itself</em> steganographically by splitting it over all 72 frames, and get 780 kB left over to store whatever we want.</p>
@@ -89,20 +84,13 @@
 
 <p>The only limitation to the &ldquo;infinitely&rdquo; part is the increasing amount of CPU processing power for each decoding, but that&rsquo;s fixable since it&rsquo;s 2016 and smartphones have quad-core processors. Worth every ounce of battery life, in my opinion.</p>
 
-<p><strong>tl;dr </strong> I was bored and decided to create infinite data in a way that makes people feel fuzzy inside. No big deal. Of course, I can&rsquo;t show <em>you</em> a proof-of-concept of how this works. That would be silly. But if you&rsquo;re a venture capitalist who wants to invest more tens of millions of dollars into a clearly-sustainable GIF startup, feel free to email me at <a href="mailto:max@minimaxir.com">max@minimaxir.com</a>.</p>
+<p>*<em>tl;dr *</em> I was bored and decided to create infinite data in a way that makes people feel fuzzy inside. No big deal. Of course, I can&rsquo;t show <em>you</em> a proof-of-concept of how this works. That would be silly. But if you&rsquo;re a venture capitalist who wants to invest more tens of millions of dollars into a clearly-sustainable GIF startup, feel free to email me at <a href="mailto:max@minimaxir.com">max@minimaxir.com</a>.</p>
 
-<div class="suspicious-pregnant-pause">...</div>
+<div class="suspicious-pregnant-pause">&hellip;</div>
 
+<div class="suspicious-pregnant-pause">&hellip;</div>
 
-
-
-<div class="suspicious-pregnant-pause">...</div>
-
-
-
-
-<div class="suspicious-pregnant-pause">...</div>
-
+<div class="suspicious-pregnant-pause">&hellip;</div>
 
 <p>Yeah, infinite data via image steganography doesn&rsquo;t actually work. But the reasons it doesn&rsquo;t work are not obvious unless you have deep knowledge of how image compression reduces the file size of images, and conversely, how modifying images could cause them to become <em>larger</em> in file size  (I may or may not have spent several hours forking PixelJihad and adding modern features before realizing that I am not a data storage magician).</p>
 
@@ -117,13 +105,13 @@
     <id>http://minimaxir.com/2016/02/facebook-reactions</id>
     <content type="html"><![CDATA[<p>Facebook added <a href="http://newsroom.fb.com/news/2016/02/reactions-now-available-globally/">Facebook Reactions</a>, allowing users to do more than just &ldquo;Like&rdquo; posts and statuses as they have done for the past decade. Likes were the universal symbol of approval on social media. Now, Facebook users can apply more granular responses, from positive emotions like <strong>Love</strong>, to negative emotions such as <strong>Angry</strong>. This was widely believed to be Facebook&rsquo;s compromise instead of adding a Dislike button.</p>
 
-<p><img src="/img/facebook-reactions/facebook_react.png" alt="" /></p>
+<p><img src="/img/facebook-reactions/facebook_react.png" alt=""></p>
 
 <p>Of course, there&rsquo;s an ulterior motive. The use of reactions provides organic data on the sentiment of a status, which is helpful for numerous marketing and statistical applications. As <a href="http://www.buzzfeed.com/alexkantrowitz/facebook-reactions-launch-today">BuzzFeed notes</a>, Facebook ads may be able &ldquo;to write one product message for someone who mostly uses <strong>Sad</strong> and another who mostly uses <strong>Wow</strong> or <strong>Love.</strong>&rdquo;</p>
 
 <p>However, this isn&rsquo;t the first time a big social network has tried implementing reactions alongside Likes/Dislikes. Four years ago, YouTube added <a href="http://googlesystem.blogspot.com/2011/06/youtube-reactions.html">Reaction buttons</a> to their comments section:</p>
 
-<p><img src="/img/facebook-reactions/youtube-reactions.png" alt="" /></p>
+<p><img src="/img/facebook-reactions/youtube-reactions.png" alt=""></p>
 
 <p>&hellip;and removed them sometime after without fanfare, replacing it with the simple Like/Dislike bar.</p>
 
@@ -133,7 +121,7 @@
 
 <p>Even after YouTube&rsquo;s failure, another data-driven website implemented reaction buttons: BuzzFeed (who else?). At the end of each article (in most categories), registered users can select a quirky reaction to indicate how they felt about the article.</p>
 
-<p><img src="/img/facebook-reactions/buzzfeedreactions.png" alt="" /></p>
+<p><img src="/img/facebook-reactions/buzzfeedreactions.png" alt=""></p>
 
 <p>The heart represents <strong>Love</strong> internally and is by-far the most-used reaction on BuzzFeed posts. When I started scraping BuzzFeed data in 2014 <a href="http://minimaxir.com/2015/01/linkbait/">to analyze clickbait</a>, I made sure to grab the reaction data of other reactions as well to see if there are any interesting trends or correlations between reactions. A cursory glance at the scraped reaction data revealed a problem that forced me to disregard it.</p>
 
@@ -147,14 +135,13 @@
 <li>The upper half of the pairs plot illustrates the Pearson correlation between the non-log quantities of the two reaction variables. The stars represent statistical significance of the correlation test; since the data set is large, all correlations are statistically significant (rejection of null hypothesis of no correlation) at p &lt; 0.001.</li>
 </ul>
 
-
-<p><img src="/img/facebook-reactions/buzzfeed-pos.png" alt="" /></p>
+<p><img src="/img/facebook-reactions/buzzfeed-pos.png" alt=""></p>
 
 <p>All of the bivariate correlations of positive reactions are <em>moderately or strongly positively correlated</em>, which is problematic for analysis (except one: apparently, there is little statistical relationship between things that are cute and things that make you go YAAASS). So why not just use the <strong>Love</strong> reaction, since articles tend to get about 100 Loves, while other reactions get around 10?</p>
 
 <p>Does the same hold for negative reactions? Relatedly, we would also expect a negative correlation between the number of <strong>Love</strong> reactions and negative reactions, right?</p>
 
-<p><img src="/img/facebook-reactions/buzzfeed-neg.png" alt="" /></p>
+<p><img src="/img/facebook-reactions/buzzfeed-neg.png" alt=""></p>
 
 <p>All negative reactions are positively correlated, as expected, but there is a weak <em>positive</em> correlation between <strong>Love</strong> and <strong>Hate</strong>, which is definitely not right. There isn&rsquo;t an ideal &ldquo;negative&rdquo; reaction, since all have similar distributions.</p>
 
@@ -164,7 +151,7 @@
 
 <p>There are other qualitative issues with Facebook&rsquo;s current implementation of Reactions. Apparently, Likes and Reactions are treated <em>differently internally</em>. As a result, you get separate notifications for Likes and Reactions.</p>
 
-<p><img src="/img/facebook-reactions/facebook_react2.png" alt="" /></p>
+<p><img src="/img/facebook-reactions/facebook_react2.png" alt=""></p>
 
 <p>Why? No idea. There is enough Notification spam on Facebook, I don&rsquo;t need <em>double notifications</em> in my Notification feed for every status I make.</p>
 
@@ -172,7 +159,7 @@
 
 <p>I took a look at the Facebook Graph API endpoint for <a href="https://developers.facebook.com/docs/graph-api/reference/v2.5/post">Facebook Page Posts</a> (same endpoint I use for my <a href="https://github.com/minimaxir/facebook-page-post-scraper">Facebook Page Data Scraper</a>), and I can confirm that the API can only report the number of Likes on a status; not the number of Likes + Reactions, or number of Likes + number of each Reaction.</p>
 
-<p><img src="/img/facebook-reactions/cnn_fb.jpg" alt="" /></p>
+<p><img src="/img/facebook-reactions/cnn_fb.jpg" alt=""></p>
 
 <p>There is no way currently to automate the retrieval of Reactions data from Facebook posts, which is an unfortunate oversight (especially considering how Twitter <a href="https://blog.twitter.com/2015/hearts-for-developers">handled the transition</a> from Favorites to Likes easily).</p>
 
@@ -182,7 +169,7 @@
 
 <p>A Dislike button would have been better, just saying.</p>
 
-<hr />
+<hr>
 
 <p><em>You can view the code and data used to generate the BuzzFeed Reaction data visualizations <a href="https://github.com/minimaxir/facebook-reactions/blob/master/buzzfeed_reactions.ipynb">in this Jupyter notebook</a>, <a href="https://github.com/minimaxir/facebook-reactions">open-sourced on GitHub</a>, or you can <a href="https://github.com/minimaxir/facebook-reactions/raw/master/reactions_pdf.pdf">view as a PDF</a>, which is better if you are on a mobile device.</em></p>
 ]]></content>
@@ -195,31 +182,37 @@
     <id>http://minimaxir.com/2016/01/startup-haters</id>
     <content type="html"><![CDATA[<p>A couple weeks ago, <a href="https://itunes.apple.com/us/app/peach-a-space-for-friends/id1067891186?mt=8">Peach</a>, a messaging app, was released on iOS. Not only did Peach trend on Twitter on the day of release, but there was also an <em>unusual</em> amount of media coverage for app, with both <a href="http://techcrunch.com/2016/01/08/peach-is-a-slick-new-messaging-app-from-the-founder-of-vine/">TechCrunch</a> and <a href="http://www.buzzfeed.com/katienotopoulos/do-i-dare-to-post-on-peach">BuzzFeed</a> posting glowing reviews for it, noting that the app is &ldquo;slick&rdquo; and &ldquo;blowing up&rdquo; respectively (commenters in the BuzzFeed article thought it was paid advertising). Usually, reports for apps from both sites are more neutral, which made me curious.</p>
 
-<p><img src="/img/startup-haters/peach-1.png" alt="" /></p>
+<p><img src="/img/startup-haters/peach-1.png" alt=""></p>
 
 <p>There are <em>already</em> an absurd amount of messaging apps out there, and as a result, product differentiation is the primary value proposition. (e.g. security and <a href="https://itunes.apple.com/us/app/telegram-messenger/id686449807?mt=8">Telegram Messenger</a>) What is Peach&rsquo;s differentiation? &ldquo;Magic Words&rdquo;, apparently, which let you perform contextual actions with words! These Magic Words are implemented in a manner similar to a <a href="https://en.wikipedia.org/wiki/Command-line_interface">command-line interface</a> (CLI). <a href="http://nymag.com/following/2016/01/how-the-command-line-became-mainstream-again.html">NYMag</a> goes into extreme detail about the feature. Nerds love CLIs, so you can tell the product was made by smart people!</p>
 
-<p><img src="/img/startup-haters/peach-2.png" alt="" /></p>
+<p><img src="/img/startup-haters/peach-2.png" alt=""></p>
 
 <p>The <a href="https://news.ycombinator.com/item?id=10883698">Hacker News thread</a> about the NYMag article was interesting. One commenter (jobu) that the Magic Words are similar to those of <a href="https://slack.com">Slack</a>, which allow for &ldquo;/&rdquo; commands (again, messaging app differentiation). A HN user (pbreit) argued in response:</p>
 
-<blockquote><p>You&rsquo;re missing the whole thing. For starters, Slack is for work and Peach is for personal. But I think before you dismiss something as &ldquo;isn&rsquo;t it just x plus y?&rdquo; you need to take a little bit more time and thinking to try and figure out what the product designers are trying to achieve and how.</p></blockquote>
+<blockquote>
+<p>You&rsquo;re missing the whole thing. For starters, Slack is for work and Peach is for personal. But I think before you dismiss something as &ldquo;isn&rsquo;t it just x plus y?&rdquo; you need to take a little bit more time and thinking to try and figure out what the product designers are trying to achieve and how.</p>
+</blockquote>
 
 <p>Wait, what? Are the users of Peach supposed to be mind readers? Are people stupid for not understanding the purpose of Peach?</p>
 
 <p>Another user (thwarted) replied to that response with such:</p>
 
-<blockquote><p>Maybe the product designers and product providers should be more explicit about how their product should be used and who their target demographic is, if they want a successful product, rather than making everyone &ldquo;figure out&rdquo; what they are trying to achieve and how.</p></blockquote>
+<blockquote>
+<p>Maybe the product designers and product providers should be more explicit about how their product should be used and who their target demographic is, if they want a successful product, rather than making everyone &ldquo;figure out&rdquo; what they are trying to achieve and how.</p>
+</blockquote>
 
 <p>pbreit replied:</p>
 
-<blockquote><p>&ldquo;Figuring it out&rdquo; might be the point. You do realize that you are referring to some of the very few people who have actually already built an amazingly successful product.</p></blockquote>
+<blockquote>
+<p>&ldquo;Figuring it out&rdquo; might be the point. You do realize that you are referring to some of the very few people who have actually already built an amazingly successful product.</p>
+</blockquote>
 
 <p>I should have mentioned earlier that Peach was made by <a href="http://byte.co">Byte</a>, which is ran by <a href="https://twitter.com/dhof">Dom Hofmann</a>, a founder of Vine which was purchased by Twitter before launch (it also appears Peach is a pivot from the failed Byte app; something left out by the blog articles). Yes, if a founder has had a previously successful startup, the previous success implies a higher probability for future startup success than for a startup run by an unknown founder. However, it&rsquo;s still not a 100% guarantee, and startups should not be immune to criticism because of asymmetric information between the users and the startup itself. Peach is impeachable. (pun intended)</p>
 
 <p>TechCrunch did a <a href="http://techcrunch.com/2016/01/11/hype-or-not-peach-hit-the-top-10-social-networking-app-list-fast/">follow-up article</a> three days after release stating (paraphrased) &ldquo;Peach is #9 in the App Store in the Social Networking category, despite the haters! Now they will be a success! Haters gonna hate!&rdquo; Social networking is a double-edged sword in terms of network effects: they can grow incredibly fast as friends-of-friends register, and they can <em>die</em> incredibly fast once they all realize the app is a fad. As of publishing, Peach is ranked #110 in the Social Networking category, and off-the-charts in Overall. And <a href="https://www.appannie.com/apps/ios/app/peach-a-space-for-friends/rank-history/">still dropping</a>, with no apparent recovery.</p>
 
-<p><img src="/img/startup-haters/peach-3.png" alt="" /></p>
+<p><img src="/img/startup-haters/peach-3.png" alt=""></p>
 
 <p>I seriously wish the tech media would admit they were wrong, but they never will. The startup world is in dire need of cautionary tales as valuations inflate to absurd levels.</p>
 
@@ -258,11 +251,9 @@
 
 <div class="responsive-video"><iframe src="http://www.youtube.com/embed/jLlian3g7Gg " style="width: 100%; height: 100%; border: none; padding-bottom: 20px" allowfullscreen></iframe></div>
 
-
 <p>AGDQ 2016 also has fun with the concept of speedrunning. One of the best events of AGDQ 2016 was a blind speedrun of user-created <a href="https://www.youtube.com/watch?v=8qC584MWXO4">Super Mario Maker</a> levels from top designers, in which hilarity ensued. (run starts at 27:41)</p>
 
 <div class="responsive-video"><iframe src="http://www.youtube.com/embed/8qC584MWXO4 " style="width: 100%; height: 100%; border: none; padding-bottom: 20px" allowfullscreen></iframe></div>
-
 
 <p>It might be interesting to know <em>which</em> video games lead to the achievement of over $1M donated to charity and the nature of the donations in general.</p>
 
@@ -272,7 +263,7 @@
 
 <p>Here are the cumulative donations during AGDQ, color coded by day:</p>
 
-<p><img src="/img/agdq-2016/agdq-1.png" alt="" /></p>
+<p><img src="/img/agdq-2016/agdq-1.png" alt=""></p>
 
 <p>Cumulative donations were strong the entire run. On the second-to-last day, the donations rallied and increased exponentially, clearing $1M handily on the last day.</p>
 
@@ -280,13 +271,13 @@
 
 <p>Here is a distribution of donations from $5 to $100 (for ease of visualization/interpretation), which account for 97% of all donations:</p>
 
-<p><img src="/img/agdq-2016/agdq-2.png" alt="" /></p>
+<p><img src="/img/agdq-2016/agdq-2.png" alt=""></p>
 
 <p>The median donation amount is $20. What&rsquo;s interesting is that donations occur at clear break points: not only are there many donations at multiple of $10, but there are many donations at $25 and $75 as well. The $50 and $75 points also potentially benefited for being the threshold for entry into a <a href="https://gamesdonequick.com/tracker/prizes/agdq2016">grand prize raffle</a>. I&rsquo;ll note off-chart that there is a spike in $1,000 donations, the threshold for the audience-clapping in celebration and the <a href="https://gamesdonequick.com/tracker/donation/212588">top single donation</a> was made by an AGDQ sponsor, <a href="https://www.theyetee.com/">The Yetee</a>, at $18,225. The <a href="https://gamesdonequick.com/tracker/donation/209613">top donation by a non-sponsor</a> is from Minecraft creator Notch at $8,000, which he <a href="https://gamesdonequick.com/tracker/donation/234071">did twice</a>.</p>
 
 <p>Which games are the most popular and generated the most amount of money for the Prevent Cancer Foundation?</p>
 
-<p><img src="/img/agdq-2016/agdq-4.png" alt="" /></p>
+<p><img src="/img/agdq-2016/agdq-4.png" alt=""></p>
 
 <p>Unsurprisingly, Nintendo games are the most popular due to the nostalgia factor. In fairness, the top runs on this chart occur during the last two days of AGDQ 2016, which as mentioned previously may have been affected by a rally, so we cannot assert causality. The appearance of <a href="http://yachtclubgames.com/shovel-knight/">Shovel Knight</a> and <a href="https://en.wikipedia.org/wiki/Bloodborne">Bloodborne</a> as leading donation games, both relatively recently released, shows that speedrunning has more appeal than just retro games.</p>
 
@@ -294,15 +285,15 @@
 
 <p>Any donation can optionally be assigned as a donation toward an incentive. Which run received the most money toward incentives?</p>
 
-<p><img src="/img/agdq-2016/agdq-5.png" alt="" /></p>
+<p><img src="/img/agdq-2016/agdq-5.png" alt=""></p>
 
-<p>Super Metroid donations incentives accounted for nearly <em>&frac14;th</em> of all the money raised at AGDQ. Final Fantasy IV accounted for a large amount as well, however, in both cases, the rally effect may apply.</p>
+<p>Super Metroid donations incentives accounted for nearly <em>&frac14;th</em> of all the money raised at AGDQ. Final Fantasy IV accounted for a large amount as well, however, in both cases, the rally effect may apply. </p>
 
 <p>Speaking of the Super Metroid donation incentives, it should be noted that this particular incentive is one of the most culturally-important incentives in the show. Super Metroid has an optional objective to Save The Animals from planetary destruction, but this costs time, and time is important for a speedrun. Or the speedruner can Kill The Animals through inaction for efficiency, &ldquo;Saving the Frames.&rdquo;</p>
 
 <p>What is the split of these incentive choices?</p>
 
-<p><img src="/img/agdq-2016/agdq-6.png" alt="" /></p>
+<p><img src="/img/agdq-2016/agdq-6.png" alt=""></p>
 
 <p>Yes, the animals were killed (specifically, they were <strong>REKT</strong>, in the words of a last-minute donator). Both bonus games and vanity naming were popular, but nothing compared to the Save the Animals / Kill the Animals bid war.</p>
 
@@ -310,7 +301,7 @@
 
 <p>Here&rsquo;s a fun, nonscientific word cloud of those comments:</p>
 
-<p><img src="/img/agdq-2016/agdq-7.png" alt="" /></p>
+<p><img src="/img/agdq-2016/agdq-7.png" alt=""></p>
 
 <p>Lots of positivity, aside from the whole &ldquo;Kill the Animals&rdquo; thing. After all, the event is all about preventing cancer.</p>
 
@@ -318,7 +309,7 @@
 
 <p>It will be interesting to see if Twitch and events like AGDQ can leverage charitable livestreaming, or if another startup/organization beats them first. Bidding-Wars-for-Deciding-the-Fate-of-Fictional-Animals-as-a-Service has a nice ring to it.</p>
 
-<hr />
+<hr>
 
 <p><em>You can access a Jupyter notebook with the data processing and chart processing code <a href="https://github.com/minimaxir/agdq-2016">in this GitHub repository</a>. If you use the processed donation data or visualization designs contained within this article, it would be greatly appreciated if proper attribution is given back to this article and/or myself. Thanks! :)</em></p>
 
@@ -333,7 +324,7 @@
     <id>http://minimaxir.com/2016/01/movie-revenue-ratings</id>
     <content type="html"><![CDATA[<p><a href="http://www.rottentomatoes.com">Rotten Tomatoes</a> has become synonymous with movie quality in recent years. The Rotten Tomatoes Tomatometer aggregates all reviews written by movie critics for a given movie on the internet, determines whether each reviewer rates the movie as &ldquo;Fresh&rdquo; or &ldquo;Rotten&rdquo; and calculates an average. If the proportion of Fresh reviews for a given movie is greater than or equal to 60%, the movie itself is considered &ldquo;Fresh&rdquo; and receives a special icon.</p>
 
-<p><img src="/img/movie-revenue-ratings/examples.png" alt="" /></p>
+<p><img src="/img/movie-revenue-ratings/examples.png" alt=""></p>
 
 <p>Top Movies like Christopher Nolan&rsquo;s <a href="http://www.rottentomatoes.com/m/the_dark_knight/">The Dark Knight</a> received a 94% Rotten Tomatoes rating, and generated $533.3 million in domestic box office revenue. But other movies, like Michael Bay&rsquo;s <a href="http://www.rottentomatoes.com/m/transformers_revenge_of_the_fallen/">Transformers: Revenge of the Fallen</a>, received a 19% Tomatometer rating, but still generated $402.1 million in domestic box office revenue.</p>
 
@@ -343,7 +334,6 @@
 
 <div class="responsive-video"><iframe src="http://www.youtube.com/embed/F5Hjlkxw_2A " style="width: 100%; height: 100%; border: none; padding-bottom: 20px" allowfullscreen></iframe></div>
 
-
 <p>For this analysis, we will be looking at the <a href="http://www.r-statistics.com/2013/05/log-transformations-for-skewed-and-wide-distributions-from-practical-data-science-with-r/">log-transformation</a> of domestic box office revenue, since the values are skewed by mega-blockbusters like the ones mentioned previously. Revenues are not inflation-adjusted since the rating data is only present for recent years and due to the log-transformation already present, inflation correction would not impact this particular analysis much.</p>
 
 <h2>Rotten Tomatoes Tomatometer</h2>
@@ -352,7 +342,7 @@
 
 <p>We expect a positive linear relationship: movies with high Tomatometer scores to have high box office revenue, and inversely movies with low score to have low box office revenue.</p>
 
-<p><img src="/img/movie-revenue-ratings/box-office-rating-1.png" alt="" /></p>
+<p><img src="/img/movie-revenue-ratings/box-office-rating-1.png" alt=""></p>
 
 <p>Wait, why does the trendline have a <em>negative</em> slope?</p>
 
@@ -362,9 +352,9 @@
 
 <p>Let&rsquo;s try another visualization of the data using <a href="https://en.wikipedia.org/wiki/Contour_line">contour maps</a>, which allow the data to become 3D, so-to-speak. Using a 2D <a href="https://en.wikipedia.org/wiki/Kernel_density_estimation">kernel density estimator</a>, we can identify and color areas on the plot according to the number of points present in that area; the greater the color saturation, the more points present in the given area.</p>
 
-<p><img src="/img/movie-revenue-ratings/box-office-rating-2.png" alt="" /></p>
+<p><img src="/img/movie-revenue-ratings/box-office-rating-2.png" alt=""></p>
 
-<p>The two clusters mentioned previously are now much more apparent. It appears there are two distinct sets of movies: blockbusters which critics hate, and limited-appeal films which critics loves. Incidentally, there is no discernible difference between movies which are Fresh (>60%) and Rotten.</p>
+<p>The two clusters mentioned previously are now much more apparent. It appears there are two distinct sets of movies: blockbusters which critics hate, and limited-appeal films which critics loves. Incidentally, there is no discernible difference between movies which are Fresh (&gt;60%) and Rotten.</p>
 
 <h2>Metacritic</h2>
 
@@ -372,11 +362,11 @@
 
 <p>Does that change the results for 4,479 movies?</p>
 
-<p><img src="/img/movie-revenue-ratings/box-office-rating-7.png" alt="" /></p>
+<p><img src="/img/movie-revenue-ratings/box-office-rating-7.png" alt=""></p>
 
 <p>Correlation between Metacritic score and log(BoxOffice) is <strong>-0.13</strong>, which puts the analysis in a similar state as the Rotten Tomatoes data. However, the blockbuster cluster has shifted right, and the lesser-appeal cluster has shifted left.</p>
 
-<p><img src="/img/movie-revenue-ratings/box-office-rating-8.png" alt="" /></p>
+<p><img src="/img/movie-revenue-ratings/box-office-rating-8.png" alt=""></p>
 
 <p>Clusters are much closer together.</p>
 
@@ -390,13 +380,13 @@
 
 <p>How does the Audience Score compare for 5,163 movies? After all, the audience is the group of people who determine how much money a movie makes at the Box Office.</p>
 
-<p><img src="/img/movie-revenue-ratings/box-office-rating-3.png" alt="" /></p>
+<p><img src="/img/movie-revenue-ratings/box-office-rating-3.png" alt=""></p>
 
 <p>Correlation between the Audience score and log(BoxOffice) is <strong>0.05</strong>, which is a positive linear correlation, but representative of barely any practical correlation.</p>
 
 <p>Speaking of the Four Point Scale, notice how, like with Metacritic score, there are barely any movies between 0% and 20% Audience Score. Is there really a skew? Let&rsquo;s look at the contours:</p>
 
-<p><img src="/img/movie-revenue-ratings/box-office-rating-4.png" alt="" /></p>
+<p><img src="/img/movie-revenue-ratings/box-office-rating-4.png" alt=""></p>
 
 <p>The locations of the clusters are much different than that of Tomatometer clusters. Both clusters are closer together, with the blockbuster cluster between 50% and 60% audience score and the lesser-appeal cluster between 70% and 80%. Hence, the low correlation.</p>
 
@@ -406,7 +396,7 @@
 
 <p>How do 5,167 movies fare?</p>
 
-<p><img src="/img/movie-revenue-ratings/box-office-rating-5.png" alt="" /></p>
+<p><img src="/img/movie-revenue-ratings/box-office-rating-5.png" alt=""></p>
 
 <p><strong>What?!</strong></p>
 
@@ -414,7 +404,7 @@
 
 <p>Checking the contour map confirms it:</p>
 
-<p><img src="/img/movie-revenue-ratings/box-office-rating-6.png" alt="" /></p>
+<p><img src="/img/movie-revenue-ratings/box-office-rating-6.png" alt=""></p>
 
 <p>That is <em>literally</em> a Four Point Scale between 5 and 8!</p>
 
@@ -432,7 +422,7 @@
 
 <p>User cwyers <a href="https://news.ycombinator.com/item?id=10878019">suggested</a> that Simpson&rsquo;s Paradox may be in play since the number of theaters showing a movie is positively correlated to box office revenue, adding a potentially-confounding affect. I will see if I can obtain that data for future analysis.</p>
 
-<hr />
+<hr>
 
 <p><em>You can access the open-sourced Jupyter notebook and high-resolution charts from this article in <a href="https://github.com/minimaxir/movie-revenue-ratings">this GitHub repository</a>. If you use the code or data visualization designs contained within this article, it would be greatly appreciated if proper attribution is given back to this article and/or myself. Thanks!</em></p>
 
@@ -457,7 +447,6 @@
 
 <div class="responsive-video"><iframe src="http://www.youtube.com/embed/Emt9bn0D5ZI " style="width: 100%; height: 100%; border: none; padding-bottom: 20px" allowfullscreen></iframe></div>
 
-
 <p>This particular screencast is also my first significant attempt at working with audio/video editing and voice-over. Feel free to provide suggestions for future videos.</p>
 
 <p>Since the screencast is 40 minutes long (inadvertently!), I&rsquo;ve written an abridged summary of the screencast, along with some clarification of points made.</p>
@@ -470,45 +459,45 @@
 
 <p>Loading the dataset into R is easy and fast with <code>read_csv</code>.</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">df_reviews <span class="o">&lt;-</span> read_csv<span class="p">(</span><span class="s">&quot;yelp_reviews.csv&quot;</span><span class="p">)</span></code></pre></figure></p>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">df_reviews <span class="o">&lt;-</span> read_csv<span class="p">(</span><span class="s">&quot;yelp_reviews.csv&quot;</span><span class="p">)</span></code></pre></figure>
 
 <p>Since dplyr was loaded beforehand, read_csv loads the data into a tbl_df instead of a normal data.frame. When you call a normal data.frame by itself, <em>all data is printed to console</em>, which is a problem when you have 1.6M rows (yes, that happened during a test recording). Calling a tbl_df results in a very descriptive overview of the data:</p>
 
-<p><img src="/img/lets-code-1/overview.png" alt="" /></p>
+<p><img src="/img/lets-code-1/overview.png" alt=""></p>
 
 <p>Most columns are self-explanatory. <code>review_length</code> is approximate number of words in the review, <code>pos_words</code> is the number of positive words in the review, <code>neg_words</code> is what you expect, <code>net_sentiment</code> is pos_words - neg_words.</p>
 
 <p>A quick way to analyze the distribution of numerical data is to perform a summary on the data frame, which returns a by-column <a href="https://en.wikipedia.org/wiki/Five-number_summary">five-number summary</a> + mean:</p>
 
-<p><img src="/img/lets-code-1/summary.png" alt="" /></p>
+<p><img src="/img/lets-code-1/summary.png" alt=""></p>
 
 <p>Ratings are biased toward 4 and 5 star reviews. There is a lot of skew for review length.</p>
 
 <p>dplyr makes it easy to add columns in-line with the <code>mutate</code> command. Let&rsquo;s normalize the pos_words column:</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">df_reviews <span class="o">&lt;-</span> df_reviews <span class="o">%&gt;%</span> mutate<span class="p">(</span>pos_norm <span class="o">=</span> pos_words <span class="o">/</span> review_length<span class="p">)</span></code></pre></figure></p>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">df_reviews <span class="o">&lt;-</span> df_reviews <span class="o">%&gt;%</span> mutate<span class="p">(</span>pos_norm <span class="o">=</span> pos_words <span class="o">/</span> review_length<span class="p">)</span></code></pre></figure>
 
 <p>And we could do similar steps for the neg_words column too. Or use mutate to transform the data of an existing column.</p>
 
 <p>Onto ggplot2. If you want a quick histogram of univariate data, qplot does just that. Let&rsquo;s visualize the distribution of stars.</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">qplot<span class="p">(</span>data<span class="o">=</span>df_reviews<span class="p">,</span> stars<span class="p">)</span></code></pre></figure></p>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">qplot<span class="p">(</span>data<span class="o">=</span>df_reviews<span class="p">,</span> stars<span class="p">)</span></code></pre></figure>
 
-<p><img src="/img/lets-code-1/lc1-qplot-1.png" alt="" /></p>
+<p><img src="/img/lets-code-1/lc1-qplot-1.png" alt=""></p>
 
 <p>Definitely a skew toward 4 and 5 star reviews.</p>
 
 <p>We can do that for other variables too, like review length.</p>
 
-<p><img src="/img/lets-code-1/lc1-qplot-2.png" alt="" /></p>
+<p><img src="/img/lets-code-1/lc1-qplot-2.png" alt=""></p>
 
 <p>What about bivariate data? If you give two variables to qplot, it will create a scatter plot. Perhaps there is a relationship between the number of stars and the number of positive words?</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">qplot<span class="p">(</span>data<span class="o">=</span>df_reviews<span class="p">,</span> stars<span class="p">,</span> pos_words<span class="p">)</span></code></pre></figure></p>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">qplot<span class="p">(</span>data<span class="o">=</span>df_reviews<span class="p">,</span> stars<span class="p">,</span> pos_words<span class="p">)</span></code></pre></figure>
 
 <p>&hellip;and then we run into a problem. In this case, ggplot2 has to plot 1.6M points to screen, which can take awhile, especially if you are simultaneously using your GPU for video recording. Eventually, we get this:</p>
 
-<p><img src="/img/lets-code-1/lc1-qplot-3.png" alt="" /></p>
+<p><img src="/img/lets-code-1/lc1-qplot-3.png" alt=""></p>
 
 <p>At first glance, there appears to be a positive correlation between star rating and number of positive words, but that&rsquo;s misleading: since we don&rsquo;t have alpha transparency on the points, the density is ambiguous. (fixing it requires working outside of a qplot).</p>
 
@@ -516,11 +505,11 @@
 
 <p>We load the Yelp Businesses data into R through the same way as the reviews data. Here&rsquo;s an overview of the data:</p>
 
-<p><img src="/img/lets-code-1/businesses.png" alt="" /></p>
+<p><img src="/img/lets-code-1/businesses.png" alt=""></p>
 
 <p>Both data frames have a <code>business_id</code> column. We can merge them with a <code>left_join</code>, a la SQL. If both data frames have a column with the same name, it will merge on that column by default.</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">df_reviews <span class="o">&lt;-</span> df_reviews <span class="o">%&gt;%</span> left_join<span class="p">(</span>df_businesses<span class="p">)</span></code></pre></figure></p>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">df_reviews <span class="o">&lt;-</span> df_reviews <span class="o">%&gt;%</span> left_join<span class="p">(</span>df_businesses<span class="p">)</span></code></pre></figure>
 
 <p>Then the R console helpfully points out that both dataframes also have a &ldquo;stars&rdquo; column. Uh-oh.</p>
 
@@ -530,21 +519,21 @@
 
 <p>It might be interesting to know the average star rating by city. dplyr allows for <code>group_by</code> and <code>summarize</code> operations in a similar manner as SQL.</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">df_cities <span class="o">&lt;-</span> df_reviews <span class="o">%&gt;%</span> group_by<span class="p">(</span>city<span class="p">)</span> <span class="o">%&gt;%</span> summarize<span class="p">(</span>avg_stars <span class="o">=</span> <span class="kp">mean</span><span class="p">(</span>stars.x<span class="p">))</span></code></pre></figure></p>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">df_cities <span class="o">&lt;-</span> df_reviews <span class="o">%&gt;%</span> group_by<span class="p">(</span>city<span class="p">)</span> <span class="o">%&gt;%</span> summarize<span class="p">(</span>avg_stars <span class="o">=</span> <span class="kp">mean</span><span class="p">(</span>stars.x<span class="p">))</span></code></pre></figure>
 
-<p><img src="/img/lets-code-1/cities.png" alt="" /></p>
+<p><img src="/img/lets-code-1/cities.png" alt=""></p>
 
 <p>&hellip;that&rsquo;s not good. The original Yelp Dataset Challenge page mentioned that the dataset is only from specific cities, not &ldquo;1023 E Frye Rd.&rdquo;</p>
 
-<p><img src="/img/lets-code-1/Dataset_Map.png" alt="" /></p>
+<p><img src="/img/lets-code-1/Dataset_Map.png" alt=""></p>
 
 <p>Hmrph.</p>
 
 <p>From the map, it appears there is no overlap between any of the cities with geographic states, so let&rsquo;s use <code>state</code> instead. Additionally, we can add a count of reviews from that state, and sort by that count descending.</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">df_states <span class="o">&lt;-</span> df_reviews <span class="o">%&gt;%</span> group_by<span class="p">(</span>state<span class="p">)</span> <span class="o">%&gt;%</span> summarize<span class="p">(</span>avg_stars <span class="o">=</span> <span class="kp">mean</span><span class="p">(</span>stars.x<span class="p">),</span> count<span class="o">=</span>n<span class="p">())</span> <span class="o">%&gt;%</span> arrange<span class="p">(</span>desc<span class="p">(</span>count<span class="p">))</span></code></pre></figure></p>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">df_states <span class="o">&lt;-</span> df_reviews <span class="o">%&gt;%</span> group_by<span class="p">(</span>state<span class="p">)</span> <span class="o">%&gt;%</span> summarize<span class="p">(</span>avg_stars <span class="o">=</span> <span class="kp">mean</span><span class="p">(</span>stars.x<span class="p">),</span> count<span class="o">=</span>n<span class="p">())</span> <span class="o">%&gt;%</span> arrange<span class="p">(</span>desc<span class="p">(</span>count<span class="p">))</span></code></pre></figure>
 
-<p><img src="/img/lets-code-1/states.png" alt="" /></p>
+<p><img src="/img/lets-code-1/states.png" alt=""></p>
 
 <p>Looks good enough, but that&rsquo;s tempting fate.</p>
 
@@ -552,57 +541,57 @@
 
 <p>We can plot state vs. avg_stars with ggplot2. Setting it up is easy:</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">ggplot<span class="p">(</span>data<span class="o">=</span>df_states<span class="p">,</span> aes<span class="p">(</span>state<span class="p">,</span> avg_stars<span class="p">))</span></code></pre></figure></p>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">ggplot<span class="p">(</span>data<span class="o">=</span>df_states<span class="p">,</span> aes<span class="p">(</span>state<span class="p">,</span> avg_stars<span class="p">))</span></code></pre></figure>
 
-<p><img src="/img/lets-code-1/lc1-ggplot-1.png" alt="" /></p>
+<p><img src="/img/lets-code-1/lc1-ggplot-1.png" alt=""></p>
 
 <p>The blank plot is actually new to 2.0.0: running the code without any layers would normally throw an error. The axis values appear valid. Let&rsquo;s add columns via <code>geom_bar</code>:</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">ggplot<span class="p">(</span>data<span class="o">=</span>df_states<span class="p">,</span> aes<span class="p">(</span>state<span class="p">,</span> avg_stars<span class="p">))</span> <span class="o">+</span> geom_bar<span class="p">()</span></code></pre></figure></p>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">ggplot<span class="p">(</span>data<span class="o">=</span>df_states<span class="p">,</span> aes<span class="p">(</span>state<span class="p">,</span> avg_stars<span class="p">))</span> <span class="o">+</span> geom_bar<span class="p">()</span></code></pre></figure>
 
-<p>&hellip;and this results in an error. geom_bar by itself does histograms on raw values, as shown in the qplots. The correct fix is to add a <code>stat="identity"</code> parameter to geom_bar, which tells it to scale the bars by the given value of the aesthetic.</p>
+<p>&hellip;and this results in an error. geom_bar by itself does histograms on raw values, as shown in the qplots. The correct fix is to add a <code>stat=&quot;identity&quot;</code> parameter to geom_bar, which tells it to scale the bars by the given value of the aesthetic.</p>
 
-<p><img src="/img/lets-code-1/lc1-ggplot-2.png" alt="" /></p>
+<p><img src="/img/lets-code-1/lc1-ggplot-2.png" alt=""></p>
 
 <p>Better. But the x-axis is cluttered and the States would look better on the y-axis. Time for a <code>coord_flip</code>.</p>
 
-<p><img src="/img/lets-code-1/lc1-ggplot-3.png" alt="" /></p>
+<p><img src="/img/lets-code-1/lc1-ggplot-3.png" alt=""></p>
 
 <p>Better. Now time to fix the order. You may notice that the order of the states is alphabetical going from the bottom of the axis to the top, and R will always set this order for any character vector. We want the sort the labels by their average star rating, descending. To do that we change the internal factor labels of state volume to the specified order.</p>
 
 <p>In the recording, this took awhile due to several brain farts (which happen often when dealing with factor ordering). First, we need to remove a few states with few reviews using a filter The easiest way to do this is to sort the original data frame by avg_stars descending, then set the factor order by using the new state order <em>in reverse</em>. (Ok, ok, it might be easier to just sort ascending and not reverse, but it makes the overview harder to visualize)</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">df_states <span class="o">&lt;-</span> df_states <span class="o">%&gt;%</span> arrange<span class="p">(</span>desc<span class="p">(</span>avg_stars<span class="p">))</span> <span class="o">%&gt;%</span> filter<span class="p">(</span>count <span class="o">&gt;</span> <span class="m">2000</span><span class="p">)</span> <span class="o">%&gt;%</span> mutate<span class="p">(</span>state <span class="o">=</span> <span class="kp">factor</span><span class="p">(</span>state<span class="p">,</span> levels<span class="o">=</span><span class="kp">rev</span><span class="p">(</span>state<span class="p">)))</span></code></pre></figure></p>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">df_states <span class="o">&lt;-</span> df_states <span class="o">%&gt;%</span> arrange<span class="p">(</span>desc<span class="p">(</span>avg_stars<span class="p">))</span> <span class="o">%&gt;%</span> filter<span class="p">(</span>count <span class="o">&gt;</span> <span class="m">2000</span><span class="p">)</span> <span class="o">%&gt;%</span> mutate<span class="p">(</span>state <span class="o">=</span> <span class="kp">factor</span><span class="p">(</span>state<span class="p">,</span> levels<span class="o">=</span><span class="kp">rev</span><span class="p">(</span>state<span class="p">)))</span></code></pre></figure>
 
-<p><img src="/img/lets-code-1/states-2.png" alt="" /></p>
+<p><img src="/img/lets-code-1/states-2.png" alt=""></p>
 
 <p>Rerunning the plot code afterward yields:</p>
 
-<p><img src="/img/lets-code-1/lc1-ggplot-4.png" alt="" /></p>
+<p><img src="/img/lets-code-1/lc1-ggplot-4.png" alt=""></p>
 
 <p>Good! Why not add labels for each point? This can be done with geom_text, along with adding <code>hjust=1</code> to offset the label, changing the size, and setting the text to white. We can round the avg_star values to 2 decimal places as well.</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">ggplot<span class="p">(</span>data<span class="o">=</span>df_states<span class="p">,</span> aes<span class="p">(</span>state<span class="p">,</span> avg_stars<span class="p">))</span> <span class="o">+</span> geom_bar<span class="p">(</span>stat<span class="o">=</span><span class="s">&quot;identity&quot;</span><span class="p">)</span> <span class="o">+</span> coord_flip<span class="p">()</span> <span class="o">+</span> geom_text<span class="p">(</span>aes<span class="p">(</span>label<span class="o">=</span><span class="kp">round</span><span class="p">(</span>avg_stars<span class="p">,</span> <span class="m">2</span><span class="p">)),</span> hjust<span class="o">=</span><span class="m">1</span><span class="p">,</span> color<span class="o">=</span><span class="s">&quot;white&quot;</span><span class="p">)</span></code></pre></figure></p>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">ggplot<span class="p">(</span>data<span class="o">=</span>df_states<span class="p">,</span> aes<span class="p">(</span>state<span class="p">,</span> avg_stars<span class="p">))</span> <span class="o">+</span> geom_bar<span class="p">(</span>stat<span class="o">=</span><span class="s">&quot;identity&quot;</span><span class="p">)</span> <span class="o">+</span> coord_flip<span class="p">()</span> <span class="o">+</span> geom_text<span class="p">(</span>aes<span class="p">(</span>label<span class="o">=</span><span class="kp">round</span><span class="p">(</span>avg_stars<span class="p">,</span> <span class="m">2</span><span class="p">)),</span> hjust<span class="o">=</span><span class="m">1</span><span class="p">,</span> color<span class="o">=</span><span class="s">&quot;white&quot;</span><span class="p">)</span></code></pre></figure>
 
-<p><img src="/img/lets-code-1/lc1-ggplot-5.png" alt="" /></p>
+<p><img src="/img/lets-code-1/lc1-ggplot-5.png" alt=""></p>
 
 <p>The &ldquo;3.7&rdquo; label requires using the <code>sprintf</code> function instead of <code>round</code> to print &ldquo;3.70&rdquo;, which is not fun. Otherwise, these labels are nice so far. Why not add a theme and axis labels?</p>
 
 <p>I go to my <a href="http://minimaxir.com/2015/02/ggplot-tutorial/">previous ggplot2 tutorial</a> and copy-paste the FiveThirtyEight-inspired theme from there because I am efficient. (The theme required loading the RColorBrewer package, though). The axis labels are added through the <code>labs</code> function. (note that since the axes are flipped, the labels must be flipped too!)</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">ggplot<span class="p">(</span>data<span class="o">=</span>df_states<span class="p">,</span> aes<span class="p">(</span>state<span class="p">,</span> avg_stars<span class="p">))</span> <span class="o">+</span> geom_bar<span class="p">(</span>stat<span class="o">=</span><span class="s">&quot;identity&quot;</span><span class="p">)</span> <span class="o">+</span> coord_flip<span class="p">()</span> <span class="o">+</span> geom_text<span class="p">(</span>aes<span class="p">(</span>label<span class="o">=</span><span class="kp">round</span><span class="p">(</span>avg_stars<span class="p">,</span> <span class="m">2</span><span class="p">)),</span> hjust<span class="o">=</span><span class="m">2</span><span class="p">,</span> size<span class="o">=</span><span class="m">2</span><span class="p">,</span> color<span class="o">=</span><span class="s">&quot;white&quot;</span><span class="p">)</span> <span class="o">+</span> fte_theme<span class="p">()</span> <span class="o">+</span> labs<span class="p">(</span>y<span class="o">=</span><span class="s">&quot;Average Star Rating by State&quot;</span><span class="p">,</span> x<span class="o">=</span><span class="s">&quot;State&quot;</span><span class="p">,</span> title<span class="o">=</span><span class="s">&quot;Average Yelp Review Star Ratings by State&quot;</span><span class="p">)</span></code></pre></figure></p>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">ggplot<span class="p">(</span>data<span class="o">=</span>df_states<span class="p">,</span> aes<span class="p">(</span>state<span class="p">,</span> avg_stars<span class="p">))</span> <span class="o">+</span> geom_bar<span class="p">(</span>stat<span class="o">=</span><span class="s">&quot;identity&quot;</span><span class="p">)</span> <span class="o">+</span> coord_flip<span class="p">()</span> <span class="o">+</span> geom_text<span class="p">(</span>aes<span class="p">(</span>label<span class="o">=</span><span class="kp">round</span><span class="p">(</span>avg_stars<span class="p">,</span> <span class="m">2</span><span class="p">)),</span> hjust<span class="o">=</span><span class="m">2</span><span class="p">,</span> size<span class="o">=</span><span class="m">2</span><span class="p">,</span> color<span class="o">=</span><span class="s">&quot;white&quot;</span><span class="p">)</span> <span class="o">+</span> fte_theme<span class="p">()</span> <span class="o">+</span> labs<span class="p">(</span>y<span class="o">=</span><span class="s">&quot;Average Star Rating by State&quot;</span><span class="p">,</span> x<span class="o">=</span><span class="s">&quot;State&quot;</span><span class="p">,</span> title<span class="o">=</span><span class="s">&quot;Average Yelp Review Star Ratings by State&quot;</span><span class="p">)</span></code></pre></figure>
 
-<p><img src="/img/lets-code-1/lc1-ggplot-6.png" alt="" /></p>
+<p><img src="/img/lets-code-1/lc1-ggplot-6.png" alt=""></p>
 
 <p>Why not add 95% confidence intervals for each average? (Note that the normality assumptions for the confidence interval may not be entirely valid). We can calculate the standard error of the mean and rebuild the dataframe and reorder factors again.</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">df_states <span class="o">&lt;-</span> df_reviews <span class="o">%&gt;%</span> group_by<span class="p">(</span>state<span class="p">)</span> <span class="o">%&gt;%</span> summarize<span class="p">(</span>avg_stars <span class="o">=</span> <span class="kp">mean</span><span class="p">(</span>stars.x<span class="p">),</span> count<span class="o">=</span>n<span class="p">(),</span> se_mean<span class="o">=</span>sd<span class="p">(</span>stars.x<span class="p">)</span><span class="o">/</span><span class="kp">sqrt</span><span class="p">(</span>count<span class="p">))</span> <span class="o">%&gt;%</span> arrange<span class="p">(</span>desc<span class="p">(</span>avg_stars<span class="p">))</span> <span class="o">%&gt;%</span> filter<span class="p">(</span>count <span class="o">&gt;</span> <span class="m">2000</span><span class="p">)</span> <span class="o">%&gt;%</span> mutate<span class="p">(</span>state <span class="o">=</span> <span class="kp">factor</span><span class="p">(</span>state<span class="p">,</span> levels<span class="o">=</span><span class="kp">rev</span><span class="p">(</span>state<span class="p">)))</span></code></pre></figure></p>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">df_states <span class="o">&lt;-</span> df_reviews <span class="o">%&gt;%</span> group_by<span class="p">(</span>state<span class="p">)</span> <span class="o">%&gt;%</span> summarize<span class="p">(</span>avg_stars <span class="o">=</span> <span class="kp">mean</span><span class="p">(</span>stars.x<span class="p">),</span> count<span class="o">=</span>n<span class="p">(),</span> se_mean<span class="o">=</span>sd<span class="p">(</span>stars.x<span class="p">)</span><span class="o">/</span><span class="kp">sqrt</span><span class="p">(</span>count<span class="p">))</span> <span class="o">%&gt;%</span> arrange<span class="p">(</span>desc<span class="p">(</span>avg_stars<span class="p">))</span> <span class="o">%&gt;%</span> filter<span class="p">(</span>count <span class="o">&gt;</span> <span class="m">2000</span><span class="p">)</span> <span class="o">%&gt;%</span> mutate<span class="p">(</span>state <span class="o">=</span> <span class="kp">factor</span><span class="p">(</span>state<span class="p">,</span> levels<span class="o">=</span><span class="kp">rev</span><span class="p">(</span>state<span class="p">)))</span></code></pre></figure>
 
 <p>Time to add a <code>geom_errorbar</code> (not a <code>geom_crossbar</code>!)</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">ggplot<span class="p">(</span>data<span class="o">=</span>df_states<span class="p">,</span> aes<span class="p">(</span>state<span class="p">,</span> avg_stars<span class="p">))</span> <span class="o">+</span> geom_bar<span class="p">(</span>stat<span class="o">=</span><span class="s">&quot;identity&quot;</span><span class="p">)</span> <span class="o">+</span> coord_flip<span class="p">()</span> <span class="o">+</span> geom_text<span class="p">(</span>aes<span class="p">(</span>label<span class="o">=</span><span class="kp">round</span><span class="p">(</span>avg_stars<span class="p">,</span> <span class="m">2</span><span class="p">)),</span> hjust<span class="o">=</span><span class="m">2</span><span class="p">,</span> size<span class="o">=</span><span class="m">2</span><span class="p">,</span> color<span class="o">=</span><span class="s">&quot;white&quot;</span><span class="p">)</span> <span class="o">+</span> fte_theme<span class="p">()</span> <span class="o">+</span> labs<span class="p">(</span>y<span class="o">=</span><span class="s">&quot;Average Star Rating by State&quot;</span><span class="p">,</span> x<span class="o">=</span><span class="s">&quot;State&quot;</span><span class="p">,</span> title<span class="o">=</span><span class="s">&quot;Average Yelp Review Star Ratings by State&quot;</span><span class="p">)</span> <span class="o">+</span> geom_errorbar<span class="p">(</span>aes<span class="p">(</span>ymin<span class="o">=</span>avg_stars <span class="o">-</span> <span class="m">1.96</span> <span class="o"><em></span> se_mean<span class="p">,</span> ymax<span class="o">=</span>avg_stars <span class="o">+</span> <span class="m">1.96</span> <span class="o"></em></span> se_mean<span class="p">))</span></code></pre></figure></p>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">ggplot<span class="p">(</span>data<span class="o">=</span>df_states<span class="p">,</span> aes<span class="p">(</span>state<span class="p">,</span> avg_stars<span class="p">))</span> <span class="o">+</span> geom_bar<span class="p">(</span>stat<span class="o">=</span><span class="s">&quot;identity&quot;</span><span class="p">)</span> <span class="o">+</span> coord_flip<span class="p">()</span> <span class="o">+</span> geom_text<span class="p">(</span>aes<span class="p">(</span>label<span class="o">=</span><span class="kp">round</span><span class="p">(</span>avg_stars<span class="p">,</span> <span class="m">2</span><span class="p">)),</span> hjust<span class="o">=</span><span class="m">2</span><span class="p">,</span> size<span class="o">=</span><span class="m">2</span><span class="p">,</span> color<span class="o">=</span><span class="s">&quot;white&quot;</span><span class="p">)</span> <span class="o">+</span> fte_theme<span class="p">()</span> <span class="o">+</span> labs<span class="p">(</span>y<span class="o">=</span><span class="s">&quot;Average Star Rating by State&quot;</span><span class="p">,</span> x<span class="o">=</span><span class="s">&quot;State&quot;</span><span class="p">,</span> title<span class="o">=</span><span class="s">&quot;Average Yelp Review Star Ratings by State&quot;</span><span class="p">)</span> <span class="o">+</span> geom_errorbar<span class="p">(</span>aes<span class="p">(</span>ymin<span class="o">=</span>avg_stars <span class="o">-</span> <span class="m">1.96</span> <span class="o">*</span> se_mean<span class="p">,</span> ymax<span class="o">=</span>avg_stars <span class="o">+</span> <span class="m">1.96</span> <span class="o">*</span> se_mean<span class="p">))</span></code></pre></figure>
 
-<p><img src="/img/lets-code-1/lc1-ggplot-7.png" alt="" /></p>
+<p><img src="/img/lets-code-1/lc1-ggplot-7.png" alt=""></p>
 
 <p>Averages are very stable for all cities due to the large sample size.</p>
 
@@ -612,13 +601,13 @@
 
 <p>I did this recording &ldquo;blind&rdquo; to test whether or not it&rsquo;s feasible for me to <em>stream</em> the coding of data visualization on services like <a href="http://www.twitch.tv">Twitch</a>. It&rsquo;s definitely possible, but has more logistical challenges. (namely, that <a href="https://obsproject.com">OBS</a> is fussy outside of Windows and I still need to figure out how to configure it optimally). I admit the code in this screencast may not be the highest-quality code (in retrospect I should have put the code in an editor instead of directly in the console, and reuse dataframe/ggplot objects), but the transparent process for coding data visualizations is important. If there is enough interest, I may revisit Yelp data again, or even more advanced datasets.</p>
 
-<hr />
+<hr>
 
 <p><em>You can access the R code used for the data visualizations and the Python scripts used to process the raw Yelp dataset <a href="https://github.com/minimaxir/lets-code-1">in this GitHub repository</a>. However, the raw data itself cannot be redistributed.</em></p>
 
 <p><em>For those wondering what I used for recording the screencast:</em></p>
 
-<p>Computer: <em>Late 2013 13" Retina MacBook Pro running OS X 10.11.2</em></p>
+<p>Computer: <em>Late 2013 13&quot; Retina MacBook Pro running OS X 10.11.2</em></p>
 
 <p>Recording Software: <em>Screenflow 4.5</em></p>
 
@@ -641,7 +630,7 @@
 
 <p>Continuing from the previous analysis, I have a data frame of all police arrests that have occurred in San Francisco from 2003 - 2015 (587,499 arrests total).</p>
 
-<p><img src="/img/sf-arrest-map/arrests.png" alt="" /></p>
+<p><img src="/img/sf-arrest-map/arrests.png" alt=""></p>
 
 <p>What is the most efficient way to make a map for the data? There are too many data points for rendering each point in a tool like <a href="http://www.tableau.com">Tableau</a> or <a href="https://www.google.com/maps">Google Maps</a>. I can use <code>ggplot2</code> again as I did <a href="http://minimaxir.com/2015/11/nyc-ggplot2-howto/">to make a map of New York City</a> manually, but as noted in that article, the abstract nature of the map may hide information.</p>
 
@@ -655,23 +644,23 @@
 
 <p>Since we&rsquo;ve identified the map parameters, now we can request an appropriate map:</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">bbox <span class="o">=</span> <span class="kt">c</span><span class="p">(</span><span class="m">-122.516441</span><span class="p">,</span><span class="m">37.702072</span><span class="p">,</span><span class="m">-122.37276</span><span class="p">,</span><span class="m">37.811818</span><span class="p">)</span></p>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">bbox <span class="o">=</span> <span class="kt">c</span><span class="p">(</span><span class="m">-122.516441</span><span class="p">,</span><span class="m">37.702072</span><span class="p">,</span><span class="m">-122.37276</span><span class="p">,</span><span class="m">37.811818</span><span class="p">)</span>
 
-<p>map <span class="o">&lt;-</span> get_map<span class="p">(</span>location <span class="o">=</span> bbox<span class="p">,</span> <span class="kn">source</span> <span class="o">=</span> <span class="s">&quot;stamen&quot;</span><span class="p">,</span> maptype <span class="o">=</span> <span class="s">&quot;toner-lite&quot;</span><span class="p">)</span></code></pre></figure></p>
+map <span class="o">&lt;-</span> get_map<span class="p">(</span>location <span class="o">=</span> bbox<span class="p">,</span> <span class="kn">source</span> <span class="o">=</span> <span class="s">&quot;stamen&quot;</span><span class="p">,</span> maptype <span class="o">=</span> <span class="s">&quot;toner-lite&quot;</span><span class="p">)</span></code></pre></figure>
 
 <p>Plotting the map by itself results in something like this:</p>
 
-<p><img src="/img/sf-arrest-map/sf-arrest-where-0.png" alt="" /></p>
+<p><img src="/img/sf-arrest-map/sf-arrest-where-0.png" alt=""></p>
 
 <p>On the right track (aside from two Guerrero Streets), but obviously it&rsquo;ll need some aesthetic adjustments.</p>
 
 <p>Let&rsquo;s plot all 587,499 arrests on top of the map for fun and see what happens.</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">plot <span class="o">&lt;-</span> ggmap<span class="p">(</span>map<span class="p">)</span> <span class="o">+</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">plot <span class="o">&lt;-</span> ggmap<span class="p">(</span>map<span class="p">)</span> <span class="o">+</span>
             geom_point<span class="p">(</span>data <span class="o">=</span> df_arrest<span class="p">,</span> aes<span class="p">(</span>x<span class="o">=</span>X<span class="p">,</span> y<span class="o">=</span>Y<span class="p">),</span> color <span class="o">=</span> <span class="s">&quot;#27AE60&quot;</span><span class="p">,</span> size <span class="o">=</span> <span class="m">0.5</span><span class="p">,</span> alpha <span class="o">=</span> <span class="m">0.01</span><span class="p">)</span> <span class="o">+</span>
             fte_theme<span class="p">()</span> <span class="o">+</span>
-            theme<span class="p">(</span><span class="kc">&hellip;</span><span class="p">)</span> <span class="o">+</span>
-            labs<span class="p">(</span>title <span class="o">=</span> <span class="s">&quot;Locations of Police Arrests Made in San Francisco from 2003 – 2015&quot;</span><span class="p">)</span></code></pre></figure></p>
+            theme<span class="p">(</span><span class="kc">...</span><span class="p">)</span> <span class="o">+</span>
+            labs<span class="p">(</span>title <span class="o">=</span> <span class="s">&quot;Locations of Police Arrests Made in San Francisco from 2003 – 2015&quot;</span><span class="p">)</span></code></pre></figure>
 
 <ul>
 <li><code>ggmap()</code> sets up the base map.</li>
@@ -681,10 +670,9 @@
 <li><code>labs()</code> is for labeling the plot (<em>always</em> label!)</li>
 </ul>
 
-
 <p>Rendering the plot results in:</p>
 
-<p><a href="http://i.imgur.com/Xu8wXzc.png" target=_blank><img src="/img/sf-arrest-map/sf-arrest-where-1.png" alt="" /></a></p>
+<p><a href="http://i.imgur.com/Xu8wXzc.png" target=_blank><img src="/img/sf-arrest-map/sf-arrest-where-1.png" alt=""></a></p>
 
 <p><em>NOTE: All maps in this article are embedded at a lower size to ensure that the article doesn&rsquo;t take days to load. To load a high-resolution version of any map, click on it and it will open in a new tab.</em></p>
 
@@ -694,18 +682,18 @@
 
 <p>How about faceting by type of crime again? We can render a map of San Francisco for each type of crime, and then we can see if the clusters for a given type of crime are different from others.</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">plot <span class="o">&lt;-</span> ggmap<span class="p">(</span>map<span class="p">)</span> <span class="o">+</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">plot <span class="o">&lt;-</span> ggmap<span class="p">(</span>map<span class="p">)</span> <span class="o">+</span>
             geom_point<span class="p">(</span>data <span class="o">=</span> df_arrest <span class="o">%&gt;%</span> filter<span class="p">(</span>Category <span class="o">%in%</span> df_top_crimes<span class="o">$</span>Category<span class="p">[</span><span class="m">2</span><span class="o">:</span><span class="m">19</span><span class="p">]),</span> aes<span class="p">(</span>x<span class="o">=</span>X<span class="p">,</span> y<span class="o">=</span>Y<span class="p">,</span> color<span class="o">=</span>Category<span class="p">),</span> size<span class="o">=</span><span class="m">0.75</span><span class="p">,</span> alpha<span class="o">=</span><span class="m">0.05</span><span class="p">)</span> <span class="o">+</span>
             fte_theme<span class="p">()</span> <span class="o">+</span>
-            theme<span class="p">(</span><span class="kc">&hellip;</span><span class="p">)</span> <span class="o">+</span>
+            theme<span class="p">(</span><span class="kc">...</span><span class="p">)</span> <span class="o">+</span>
             labs<span class="p">(</span>title <span class="o">=</span> <span class="s">&quot;Locations of Police Arrests Made in San Francisco from 2003 – 2015, by Type of Crime&quot;</span><span class="p">)</span> <span class="o">+</span>
-            facet_wrap<span class="p">(</span><span class="o">~</span> Category<span class="p">,</span> nrow <span class="o">=</span> <span class="m">3</span><span class="p">)</span></code></pre></figure></p>
+            facet_wrap<span class="p">(</span><span class="o">~</span> Category<span class="p">,</span> nrow <span class="o">=</span> <span class="m">3</span><span class="p">)</span></code></pre></figure>
 
 <p>Again, only one line of new code for the facet, although the source data needs to be filtered as it was in the previous post.</p>
 
 <p>Running the code yields:</p>
 
-<p><a href="http://i.imgur.com/6NgzV3k.jpg" target=_blank><img src="/img/sf-arrest-map/sf-arrest-where-2.png" alt="" /></a></p>
+<p><a href="http://i.imgur.com/6NgzV3k.jpg" target=_blank><img src="/img/sf-arrest-map/sf-arrest-where-2.png" alt=""></a></p>
 
 <p>This is certainly more interesting (and pretty). Some crimes, such as Assaults, Drugs/Narcotics, and Warrants, occur all over the city. Other crimes, such as Disorderly Conduct and Robbery, primarily have clusters in the Tenderloin and in the Mission close to the 16th Street BART stop. (Prostitution notably has a cluster in the Mission and a cluster <em>above</em> the Tenderloin.)</p>
 
@@ -713,28 +701,27 @@
 
 <p>We can reuse the normalization code from the previous post, and the hex overlay code from my NYC taxi plot post as well:</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">sum_thresh <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>x<span class="p">,</span> threshold <span class="o">=</span> <span class="m">10</span><span class="o">^</span><span class="m">-3</span><span class="p">)</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">sum_thresh <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>x<span class="p">,</span> threshold <span class="o">=</span> <span class="m">10</span><span class="o">^</span><span class="m">-3</span><span class="p">)</span> <span class="p">{</span>
     <span class="kr">if</span> <span class="p">(</span><span class="kp">sum</span><span class="p">(</span>x<span class="p">)</span> <span class="o">&lt;</span> threshold<span class="p">)</span> <span class="p">{</span><span class="kr">return</span> <span class="p">(</span><span class="kc">NA</span><span class="p">)}</span>
     <span class="kr">else</span> <span class="p">{</span><span class="kr">return</span> <span class="p">(</span><span class="kp">sum</span><span class="p">(</span>x<span class="p">))}</span>
-<span class="p">}</span></p>
+<span class="p">}</span>
 
-<p>plot <span class="o">&lt;-</span> ggmap<span class="p">(</span>map<span class="p">)</span> <span class="o">+</span>
+plot <span class="o">&lt;-</span> ggmap<span class="p">(</span>map<span class="p">)</span> <span class="o">+</span>
             stat_summary_hex<span class="p">(</span>data <span class="o">=</span> df_arrest <span class="o">%&gt;%</span> filter<span class="p">(</span>Category <span class="o">%in%</span> df_top_crimes<span class="o">$</span>Category<span class="p">[</span><span class="m">2</span><span class="o">:</span><span class="m">19</span><span class="p">])</span> <span class="o">%&gt;%</span> group_by<span class="p">(</span>Category<span class="p">)</span> <span class="o">%&gt;%</span> mutate<span class="p">(</span>w<span class="o">=</span><span class="m">1</span><span class="o">/</span>n<span class="p">()),</span> aes<span class="p">(</span>x<span class="o">=</span>X<span class="p">,</span> y<span class="o">=</span>Y<span class="p">,</span> z<span class="o">=</span>w<span class="p">),</span> fun<span class="o">=</span>sum_thresh<span class="p">,</span> alpha <span class="o">=</span> <span class="m">0.8</span><span class="p">,</span> color<span class="o">=</span><span class="s">&quot;#CCCCCC&quot;</span><span class="p">)</span> <span class="o">+</span>
             fte_theme<span class="p">()</span> <span class="o">+</span>
-            theme<span class="p">(</span><span class="kc">&hellip;</span><span class="p">)</span> <span class="o">+</span>
+            theme<span class="p">(</span><span class="kc">...</span><span class="p">)</span> <span class="o">+</span>
             scale_fill_gradient<span class="p">(</span>low <span class="o">=</span> <span class="s">&quot;#DDDDDD&quot;</span><span class="p">,</span> high <span class="o">=</span> <span class="s">&quot;#2980B9&quot;</span><span class="p">)</span> <span class="o">+</span>
             labs<span class="p">(</span>title <span class="o">=</span> <span class="s">&quot;Locations of Police Arrests Made in San Francisco from 2003 – 2015, Normalized by Type of Crime&quot;</span><span class="p">)</span> <span class="o">+</span>
-            facet_wrap<span class="p">(</span><span class="o">~</span> Category<span class="p">,</span> nrow <span class="o">=</span> <span class="m">3</span><span class="p">)</span></code></pre></figure></p>
+            facet_wrap<span class="p">(</span><span class="o">~</span> Category<span class="p">,</span> nrow <span class="o">=</span> <span class="m">3</span><span class="p">)</span></code></pre></figure>
 
 <ul>
 <li><code>sum_thresh()</code> is a helper function that aggregates the sums of weights, but will not plot the corresponding hex if there is not enough data at that location.</li>
 <li><code>scale_fill_gradient()</code> sets the gradient for the chart. If there are few arrests, the hex will be gray; if there are many arrests, it will be deep blue.</li>
 </ul>
 
-
 <p>Putting it all together:</p>
 
-<p><a href="http://i.imgur.com/LXKPseq.jpg" target=_blank><img src="/img/sf-arrest-map/sf-arrest-where-3.png" alt="" /></a></p>
+<p><a href="http://i.imgur.com/LXKPseq.jpg" target=_blank><img src="/img/sf-arrest-map/sf-arrest-where-3.png" alt=""></a></p>
 
 <p>This confirms the interpretations mentioned above.</p>
 
@@ -742,31 +729,31 @@
 
 <p>How about checking arrest locations by Police Districts?</p>
 
-<p><a href="http://i.imgur.com/i82wsIZ.png" target=_blank><img src="/img/sf-arrest-map/sf-arrest-where-4.png" alt="" /></a></p>
+<p><a href="http://i.imgur.com/i82wsIZ.png" target=_blank><img src="/img/sf-arrest-map/sf-arrest-where-4.png" alt=""></a></p>
 
 <p>The map shows that the hex plotting works correctly, at the least. Notably, the Central, Northern, and Southern Police Districts end up making a large proportion of their arrests nearby the Tenderloin/Market Street instead of anywhere else in their area of perview.</p>
 
 <p>Is the location of arrests seasonal? Does it vary by the month the arrest occured?</p>
 
-<p><a href="http://i.imgur.com/u2eQMZf.png" target=_blank><img src="/img/sf-arrest-map/sf-arrest-where-5.png" alt="" /></a></p>
+<p><a href="http://i.imgur.com/u2eQMZf.png" target=_blank><img src="/img/sf-arrest-map/sf-arrest-where-5.png" alt=""></a></p>
 
 <p>Nope. Still Tenderloin and Mission.</p>
 
 <p>Maybe the locations of arrests have changed over time, as legal polices changed. Let&rsquo;s facet by year.</p>
 
-<p><a href="http://i.imgur.com/x4SRnkU.png" target=_blank><img src="/img/sf-arrest-map/sf-arrest-where-6.png" alt="" /></a></p>
+<p><a href="http://i.imgur.com/x4SRnkU.png" target=_blank><img src="/img/sf-arrest-map/sf-arrest-where-6.png" alt=""></a></p>
 
 <p>Here things are <em>slightly</em> different across each facet; Tenderloin had a much higher concentration of arrests peaking in 2009-2010, and the concentration of yearly arrests in the Tenderloin has decreased relative to everywhere else in the city.</p>
 
 <p>Does the location of arrests vary by the time of day? As noted earlier, there could be more arrests downtown during working hours.</p>
 
-<p><a href="http://i.imgur.com/cDKo8Lt.png" target=_blank><img src="/img/sf-arrest-map/sf-arrest-where-7.png" alt="" /></a></p>
+<p><a href="http://i.imgur.com/cDKo8Lt.png" target=_blank><img src="/img/sf-arrest-map/sf-arrest-where-7.png" alt=""></a></p>
 
 <p>Higher relative concentration in Tenderlion/Mission during work hours, lesser during the night.</p>
 
 <p>Last try. Perhaps the day of week leads to different locations, especially as people tend to go out to bars all across the city.</p>
 
-<p><a href="http://i.imgur.com/tNBRilL.png" target=_blank><img src="/img/sf-arrest-map/sf-arrest-where-8.png" alt="" /></a></p>
+<p><a href="http://i.imgur.com/tNBRilL.png" target=_blank><img src="/img/sf-arrest-map/sf-arrest-where-8.png" alt=""></a></p>
 
 <p><em>Zero</em> difference. Eh.</p>
 
@@ -780,17 +767,17 @@
 
 <p>Through more <code>dplyr</code> shenanigans, I am able to filter the dataset of arrests to Wednesday arrests only, and classify each Wednesday as the first, second, third, or fourth of the month. (there are occasionally fifth Wednesdays but no one cares about those).</p>
 
-<p><img src="/img/sf-arrest-map/ordinal.png" alt="" /></p>
+<p><img src="/img/sf-arrest-map/ordinal.png" alt=""></p>
 
 <p>We can plot a single line chart for each ordinal of the number of arrests over the day. We are looking to see if the First Wednesday has different behavior than the other Wednesdays.</p>
 
-<p><img src="/img/sf-arrest-map/ssi-crime-1.png" alt="" /></p>
+<p><img src="/img/sf-arrest-map/ssi-crime-1.png" alt=""></p>
 
 <p>&hellip;and it doesn&rsquo;t.</p>
 
 <p>Looking at locations data doesn&rsquo;t help either.</p>
 
-<p><a href="http://i.imgur.com/wTDKjOm.png" target=_blank><img src="/img/sf-arrest-map/ssi-crime-2.png" alt="" /></a></p>
+<p><a href="http://i.imgur.com/wTDKjOm.png" target=_blank><img src="/img/sf-arrest-map/ssi-crime-2.png" alt=""></a></p>
 
 <p>Oh well, it was worth a shot.</p>
 
@@ -798,7 +785,7 @@
 
 <p>But for now, at least I made a few pretty charts out of it.</p>
 
-<hr />
+<hr>
 
 <p><em>If you use the code or data visualization designs contained within this article, it would be greatly appreciated if proper attribution is given back to this article and/or myself. Thanks!</em></p>
 ]]></content>
@@ -811,7 +798,7 @@
     <id>http://minimaxir.com/2015/12/sf-arrests</id>
     <content type="html"><![CDATA[<p>The <a href="https://data.sfgov.org">SF OpenData portal</a> is a good source for detailed statistics about San Francisco. One of the most popular datasets on the portal is the <a href="https://data.sfgov.org/Public-Safety/SFPD-Incidents-from-1-January-2003/tmnf-yvry">SFPD Incidents dataset</a>, which contains a tabular list of 1,842,050 reports (at time of writing) from 2003 to present.</p>
 
-<p><img src="/img/sf-arrests/incident-data.png" alt="" /></p>
+<p><img src="/img/sf-arrests/incident-data.png" alt=""></p>
 
 <p>The data can be exported into a 377.9 MB CSV; not large enough to be considered &ldquo;big data,&rdquo; but still too heavy for programs like Excel to process efficiently. Let&rsquo;s take a look at the data using <a href="https://www.r-project.org">R</a> and see if there&rsquo;s anything interesting.</p>
 
@@ -821,30 +808,30 @@
 
 <p>Loading a 1.9 million row file into R can take awhile, even on modern computers with a SSD. Enter <code>readr</code>, <a href="https://github.com/hadley/readr">another R package</a> by <code>ggplot2</code> author Hadley Wickham, which grants access to a <code>read_csv()</code> function that has nearly 10x the speed of the base <code>read.csv()</code> R function, with more sensible defaults too.</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">path <span class="o">&lt;-</span> <span class="s">&quot;~/Downloads/SFPD_Incidents<em>-</em>from_1_January_2003.csv&quot;</span></p>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">path <span class="o">&lt;-</span> <span class="s">&quot;~/Downloads/SFPD_Incidents_-_from_1_January_2003.csv&quot;</span>
 
-<p>df <span class="o">&lt;-</span> read_csv<span class="p">(</span>path<span class="p">)</span></code></pre></figure></p>
+df <span class="o">&lt;-</span> read_csv<span class="p">(</span>path<span class="p">)</span></code></pre></figure>
 
 <p>In memory, the data set is 180.9 MB, and removing a few useless columns (e.g. IncidentNum) further reduces the size to 126.9 MB. Since there are many redundancies in the row data (e.g. only 10 distinct PdDistrict values), R can perform memory optimizations.</p>
 
 <p>You may have noticed in the first article image that the text data in some of the columns is in ALL CAPS, which would look ugly if the text was used in a data visualization. We can create a helper function to convert a column of text values into proper case through the use of <a href="http://stackoverflow.com/questions/15776732/how-to-convert-a-vector-of-strings-to-title-case">regular expression shenanigans</a>.</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">proper_case <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>x<span class="p">)</span> <span class="p">{</span>
-    <span class="kr">return</span> <span class="p">(</span><span class="kp">gsub</span><span class="p">(</span><span class="s">&quot;\b([A-Z])([A-Z]+)&quot;</span><span class="p">,</span> <span class="s">&quot;\U\1\L\2&quot;</span> <span class="p">,</span> x<span class="p">,</span> perl<span class="o">=</span><span class="kc">TRUE</span><span class="p">))</span>
-<span class="p">}</span></code></pre></figure></p>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">proper_case <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>x<span class="p">)</span> <span class="p">{</span>
+    <span class="kr">return</span> <span class="p">(</span><span class="kp">gsub</span><span class="p">(</span><span class="s">&quot;\\b([A-Z])([A-Z]+)&quot;</span><span class="p">,</span> <span class="s">&quot;\\U\\1\\L\\2&quot;</span> <span class="p">,</span> x<span class="p">,</span> perl<span class="o">=</span><span class="kc">TRUE</span><span class="p">))</span>
+<span class="p">}</span></code></pre></figure>
 
 <p>Now we can do more through processing using <code>dplyr</code>, <a href="https://github.com/hadley/dplyr"><em>another</em> Hadley Wickham R package</a>. dplyr is a utility that makes R easier to use: it provides a new syntax that allows data manipulation with intuitive function names, the functions can be chained using the <code>%&gt;%</code> operator for efficiency, and all data processing is <em>significantly</em> faster due to a C++ code base. (Fun fact: before the release of dplyr, I intended to quit using R for data analysis in favor of Python. Base R syntax is <em>that</em> difficult to use.)</p>
 
 <p>In dplyr, <code>mutate</code> allows the creation and transformation of columns. We will transform the text columns by running the columns through the <code>proper_case</code> function earlier:</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">df <span class="o">&lt;-</span> df <span class="o">%&gt;%</span> mutate<span class="p">(</span>Category <span class="o">=</span> proper_case<span class="p">(</span>Category<span class="p">),</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">df <span class="o">&lt;-</span> df <span class="o">%&gt;%</span> mutate<span class="p">(</span>Category <span class="o">=</span> proper_case<span class="p">(</span>Category<span class="p">),</span>
                  Descript <span class="o">=</span> proper_case<span class="p">(</span>Descript<span class="p">),</span>
                  PdDistrict <span class="o">=</span> proper_case<span class="p">(</span>PdDistrict<span class="p">),</span>
-                 Resolution <span class="o">=</span> proper_case<span class="p">(</span>Resolution<span class="p">))</span></code></pre></figure></p>
+                 Resolution <span class="o">=</span> proper_case<span class="p">(</span>Resolution<span class="p">))</span></code></pre></figure>
 
 <p>After all that, the data looks like:</p>
 
-<p><img src="/img/sf-arrests/processed-table.png" alt="" /></p>
+<p><img src="/img/sf-arrests/processed-table.png" alt=""></p>
 
 <p>Much better!</p>
 
@@ -852,7 +839,7 @@
 
 <p>dplyr&rsquo;s  <code>filter</code> command does that, and we can use <code>grepl()</code> to do a text search for each Resolution value for the presence of &ldquo;Arrest&rdquo;.</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">df_arrest <span class="o">&lt;-</span> df <span class="o">%&gt;%</span> filter<span class="p">(</span><span class="kp">grepl</span><span class="p">(</span><span class="s">&quot;Arrest&quot;</span><span class="p">,</span> Resolution<span class="p">))</span></code></pre></figure></p>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">df_arrest <span class="o">&lt;-</span> df <span class="o">%&gt;%</span> filter<span class="p">(</span><span class="kp">grepl</span><span class="p">(</span><span class="s">&quot;Arrest&quot;</span><span class="p">,</span> Resolution<span class="p">))</span></code></pre></figure>
 
 <p>That&rsquo;s it! There are 587,499 arrests total in the dataset.</p>
 
@@ -862,24 +849,24 @@
 
 <p>First, the Date column must be formatted as a Date internally in R instead of text. Then we <code>group_by</code> the Date, and then use <code>summarize</code> to perform an aggregate on each group; in this case, count how many entries for the group. (<code>n()</code> is a convenient shortcut). We can also ensure that the dates are in ascending order.</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">df_arrest_daily <span class="o">&lt;-</span> df_arrest <span class="o">%&gt;%</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">df_arrest_daily <span class="o">&lt;-</span> df_arrest <span class="o">%&gt;%</span>
                     mutate<span class="p">(</span>Date <span class="o">=</span> <span class="kp">as.Date</span><span class="p">(</span>Date<span class="p">,</span> <span class="s">&quot;%m/%d/%Y&quot;</span><span class="p">))</span> <span class="o">%&gt;%</span>
                     group_by<span class="p">(</span>Date<span class="p">)</span> <span class="o">%&gt;%</span>
                     summarize<span class="p">(</span>count <span class="o">=</span> n<span class="p">())</span> <span class="o">%&gt;%</span>
-                    arrange<span class="p">(</span>Date<span class="p">)</span></code></pre></figure></p>
+                    arrange<span class="p">(</span>Date<span class="p">)</span></code></pre></figure>
 
-<p><img src="/img/sf-arrests/date-table.png" alt="" /></p>
+<p><img src="/img/sf-arrests/date-table.png" alt=""></p>
 
 <p>Nifty! However, keep in mind that there are thousands of days in this dataset.</p>
 
 <p>Now we can make a pretty line chart in ggplot2. Here&rsquo;s the code, and I will explain what everything does afterward:</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">plot <span class="o">&lt;-</span> ggplot<span class="p">(</span>df_arrest_daily<span class="p">,</span> aes<span class="p">(</span>x <span class="o">=</span> Date<span class="p">,</span> y <span class="o">=</span> count<span class="p">))</span> <span class="o">+</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">plot <span class="o">&lt;-</span> ggplot<span class="p">(</span>df_arrest_daily<span class="p">,</span> aes<span class="p">(</span>x <span class="o">=</span> Date<span class="p">,</span> y <span class="o">=</span> count<span class="p">))</span> <span class="o">+</span>
     geom_line<span class="p">(</span>color <span class="o">=</span> <span class="s">&quot;#F2CA27&quot;</span><span class="p">,</span> size <span class="o">=</span> <span class="m">0.1</span><span class="p">)</span> <span class="o">+</span>
     geom_smooth<span class="p">(</span>color <span class="o">=</span> <span class="s">&quot;#1A1A1A&quot;</span><span class="p">)</span> <span class="o">+</span>
     fte_theme<span class="p">()</span> <span class="o">+</span>
     scale_x_date<span class="p">(</span>breaks <span class="o">=</span> date_breaks<span class="p">(</span><span class="s">&quot;2 years&quot;</span><span class="p">),</span> labels <span class="o">=</span> date_format<span class="p">(</span><span class="s">&quot;%Y&quot;</span><span class="p">))</span> <span class="o">+</span>
-    labs<span class="p">(</span>x <span class="o">=</span> <span class="s">&quot;Date of Arrest&quot;</span><span class="p">,</span> y <span class="o">=</span> <span class="s">&quot;# of Police Arrests&quot;</span><span class="p">,</span> title <span class="o">=</span> <span class="s">&quot;Daily Police Arrests in San Francisco from 2003 – 2015&quot;</span><span class="p">)</span></code></pre></figure></p>
+    labs<span class="p">(</span>x <span class="o">=</span> <span class="s">&quot;Date of Arrest&quot;</span><span class="p">,</span> y <span class="o">=</span> <span class="s">&quot;# of Police Arrests&quot;</span><span class="p">,</span> title <span class="o">=</span> <span class="s">&quot;Daily Police Arrests in San Francisco from 2003 – 2015&quot;</span><span class="p">)</span></code></pre></figure>
 
 <ul>
 <li><code>ggplot()</code> sets up the base chart and axes.</li>
@@ -890,10 +877,9 @@
 <li><code>labs()</code> is a quick shortcut for labeling your axes and plot (<em>always</em> label!)</li>
 </ul>
 
-
 <p>Running the code and saving the output results in this image:</p>
 
-<p><img src="/img/sf-arrests/sf-arrest-when-1.png" alt="" /></p>
+<p><img src="/img/sf-arrests/sf-arrest-when-1.png" alt=""></p>
 
 <p>The line chart has high variation due to the number of points (in retrospect, a 30-day moving average of arrests would work better visually). As the trendline indicates, the trend is actually <em>multimodal</em>, with daily arrest peaks in 2009 and 2014. Definitely interesting. The number of arrests appears to be on a downward trend since then.</p>
 
@@ -907,31 +893,31 @@
 
 <p>This requires another helper function which uses <code>strsplit()</code> to split a single time value to Hour and Minute components, take the first value (Hour), and convert that value to a numeric value (instead of text) For example, &ldquo;09:40&rdquo; input returns 9.</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">get_hour <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>x<span class="p">)</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">get_hour <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>x<span class="p">)</span> <span class="p">{</span>
     <span class="kr">return</span> <span class="p">(</span><span class="kp">as.numeric</span><span class="p">(</span><span class="kp">strsplit</span><span class="p">(</span>x<span class="p">,</span><span class="s">&quot;:&quot;</span><span class="p">)[[</span><span class="m">1</span><span class="p">]][</span><span class="m">1</span><span class="p">]))</span>
-<span class="p">}</span></code></pre></figure></p>
+<span class="p">}</span></code></pre></figure>
 
 <p>Unfortunately, this will not work for an entire column. Using <code>sapply()</code> applies a specified function to each element in a column, which accomplishes the same goal.</p>
 
 <p>The goal is to count how many Arrests occur for a given day-of-week and hour combination. In dplyr, we <code>group_by</code> both &ldquo;DayOfWeek&rdquo; and &ldquo;Hour&rdquo;, and then use <code>summarize</code> again.</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">df_arrest_time <span class="o">&lt;-</span> df_arrest <span class="o">%&gt;%</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">df_arrest_time <span class="o">&lt;-</span> df_arrest <span class="o">%&gt;%</span>
                     mutate<span class="p">(</span>Hour <span class="o">=</span> <span class="kp">sapply</span><span class="p">(</span>Time<span class="p">,</span> get_hour<span class="p">))</span> <span class="o">%&gt;%</span>
                     group_by<span class="p">(</span>DayOfWeek<span class="p">,</span> Hour<span class="p">)</span> <span class="o">%&gt;%</span>
-                    summarize<span class="p">(</span>count <span class="o">=</span> n<span class="p">())</span></code></pre></figure></p>
+                    summarize<span class="p">(</span>count <span class="o">=</span> n<span class="p">())</span></code></pre></figure>
 
-<p><img src="/img/sf-arrests/dow-table.png" alt="" /></p>
+<p><img src="/img/sf-arrests/dow-table.png" alt=""></p>
 
 <p>A few more tweaks are done (off camera) to convert the Hours to representations like &ldquo;12 PM&rdquo; and get everything in the correct order.</p>
 
 <p>Now, it&rsquo;s time to make the heatmap using <code>ggplot2</code>. Here&rsquo;s the code, and I will explain what the new functions do:</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">plot <span class="o">&lt;-</span> ggplot<span class="p">(</span>df_arrest_time<span class="p">,</span> aes<span class="p">(</span>x <span class="o">=</span> Hour<span class="p">,</span> y <span class="o">=</span> DayOfWeek<span class="p">,</span> fill <span class="o">=</span> count<span class="p">))</span> <span class="o">+</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">plot <span class="o">&lt;-</span> ggplot<span class="p">(</span>df_arrest_time<span class="p">,</span> aes<span class="p">(</span>x <span class="o">=</span> Hour<span class="p">,</span> y <span class="o">=</span> DayOfWeek<span class="p">,</span> fill <span class="o">=</span> count<span class="p">))</span> <span class="o">+</span>
     geom_tile<span class="p">()</span> <span class="o">+</span>
     fte_theme<span class="p">()</span> <span class="o">+</span>
-    theme<span class="p">(</span><span class="kc">&hellip;</span><span class="p">)</span> <span class="o">+</span>
+    theme<span class="p">(</span><span class="kc">...</span><span class="p">)</span> <span class="o">+</span>
     labs<span class="p">(</span>x <span class="o">=</span> <span class="s">&quot;Hour of Arrest (Local Time)&quot;</span><span class="p">,</span> y <span class="o">=</span> <span class="s">&quot;Day of Week of Arrest&quot;</span><span class="p">,</span> title <span class="o">=</span> <span class="s">&quot;# of Police Arrests in San Francisco from 2003 – 2015, by Time of Arrest&quot;</span><span class="p">)</span> <span class="o">+</span>
-    scale_fill_gradient<span class="p">(</span>low <span class="o">=</span> <span class="s">&quot;white&quot;</span><span class="p">,</span> high <span class="o">=</span> <span class="s">&quot;#27AE60&quot;</span><span class="p">,</span> labels <span class="o">=</span> comma<span class="p">)</span></code></pre></figure></p>
+    scale_fill_gradient<span class="p">(</span>low <span class="o">=</span> <span class="s">&quot;white&quot;</span><span class="p">,</span> high <span class="o">=</span> <span class="s">&quot;#27AE60&quot;</span><span class="p">,</span> labels <span class="o">=</span> comma<span class="p">)</span></code></pre></figure>
 
 <ul>
 <li><code>geom_title()</code> creates tiles. (instead of lines)</li>
@@ -939,10 +925,9 @@
 <li><code>scale_fill_gradient()</code> tells the tiles to fill on a gradient, from white as the lowest value to a green as the highest value. The &ldquo;labels = comma&rdquo; parameter is a hidden helpful tip to allow any values in the legend to show with commas.</li>
 </ul>
 
-
 <p>Putting it all together:</p>
 
-<p><img src="/img/sf-arrests/sf-arrest-when-2.png" alt="" /></p>
+<p><img src="/img/sf-arrests/sf-arrest-when-2.png" alt=""></p>
 
 <p>The heatmap is an intuitive result. Arrests don&rsquo;t happen in the early morning, and arrests tend to be elevated Friday and Saturday night, when everyone is out on the town.</p>
 
@@ -956,44 +941,44 @@
 
 <p>After quickly using dplyr to aggregate and sort the top categories of arrest, by number of occurrences:</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">df_top_crimes <span class="o">&lt;-</span> df_arrest <span class="o">%&gt;%</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">df_top_crimes <span class="o">&lt;-</span> df_arrest <span class="o">%&gt;%</span>
                     group_by<span class="p">(</span>Category<span class="p">)</span> <span class="o">%&gt;%</span>
                     summarize<span class="p">(</span>count <span class="o">=</span> n<span class="p">())</span> <span class="o">%&gt;%</span>
-                    arrange<span class="p">(</span>desc<span class="p">(</span>count<span class="p">))</span></code></pre></figure></p>
+                    arrange<span class="p">(</span>desc<span class="p">(</span>count<span class="p">))</span></code></pre></figure>
 
-<p><img src="/img/sf-arrests/top-crimes.png" alt="" /></p>
+<p><img src="/img/sf-arrests/top-crimes.png" alt=""></p>
 
 <p>&ldquo;Other Offenses&rdquo; is a catch-all, so we will ignore that. Filter on the top 18 types of crime excluding Other Offenses and aggregate as usual.</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">df_arrest_time_crime <span class="o">&lt;-</span> df_arrest <span class="o">%&gt;%</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">df_arrest_time_crime <span class="o">&lt;-</span> df_arrest <span class="o">%&gt;%</span>
                     filter<span class="p">(</span>Category <span class="o">%in%</span> df_top_crimes<span class="o">$</span>Category<span class="p">[</span><span class="m">2</span><span class="o">:</span><span class="m">19</span><span class="p">])</span> <span class="o">%&gt;%</span>
                     mutate<span class="p">(</span>Hour <span class="o">=</span> <span class="kp">sapply</span><span class="p">(</span>Time<span class="p">,</span> get_hour<span class="p">))</span> <span class="o">%&gt;%</span>
                     group_by<span class="p">(</span>Category<span class="p">,</span> DayOfWeek<span class="p">,</span> Hour<span class="p">)</span> <span class="o">%&gt;%</span>
-                    summarize<span class="p">(</span>count <span class="o">=</span> n<span class="p">())</span></code></pre></figure></p>
+                    summarize<span class="p">(</span>count <span class="o">=</span> n<span class="p">())</span></code></pre></figure>
 
 <p>Time for the heat map! The <code>ggplot</code> code is nearly identical to the previous heatmap code, except we add <code>facet_wrap()</code>.</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">plot <span class="o">&lt;-</span> ggplot<span class="p">(</span>df_arrest_time_crime<span class="p">,</span> aes<span class="p">(</span>x <span class="o">=</span> Hour<span class="p">,</span> y <span class="o">=</span> DayOfWeek<span class="p">,</span> fill <span class="o">=</span> count<span class="p">))</span> <span class="o">+</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">plot <span class="o">&lt;-</span> ggplot<span class="p">(</span>df_arrest_time_crime<span class="p">,</span> aes<span class="p">(</span>x <span class="o">=</span> Hour<span class="p">,</span> y <span class="o">=</span> DayOfWeek<span class="p">,</span> fill <span class="o">=</span> count<span class="p">))</span> <span class="o">+</span>
     geom_tile<span class="p">()</span> <span class="o">+</span>
     fte_theme<span class="p">()</span> <span class="o">+</span>
-    theme<span class="p">(</span><span class="kc">&hellip;</span><span class="p">)</span> <span class="o">+</span>
+    theme<span class="p">(</span><span class="kc">...</span><span class="p">)</span> <span class="o">+</span>
     labs<span class="p">(</span>x <span class="o">=</span> <span class="s">&quot;Hour of Arrest (Local Time)&quot;</span><span class="p">,</span> y <span class="o">=</span> <span class="s">&quot;Day of Week of Arrest&quot;</span><span class="p">,</span> title <span class="o">=</span> <span class="s">&quot;# of Police Arrests in San Francisco from 2003 – 2015, by Category and Time of Arrest&quot;</span><span class="p">)</span> <span class="o">+</span>
     scale_fill_gradient<span class="p">(</span>low <span class="o">=</span> <span class="s">&quot;white&quot;</span><span class="p">,</span> high <span class="o">=</span> <span class="s">&quot;#2980B9&quot;</span><span class="p">)</span> <span class="o">+</span>
-    facet_wrap<span class="p">(</span><span class="o">~</span> Category<span class="p">,</span> nrow <span class="o">=</span> <span class="m">6</span><span class="p">)</span></code></pre></figure></p>
+    facet_wrap<span class="p">(</span><span class="o">~</span> Category<span class="p">,</span> nrow <span class="o">=</span> <span class="m">6</span><span class="p">)</span></code></pre></figure>
 
-<p><img src="/img/sf-arrests/sf-arrest-when-3.png" alt="" /></p>
+<p><img src="/img/sf-arrests/sf-arrest-when-3.png" alt=""></p>
 
 <p>Easy visualization to make, but it&rsquo;s not fully correct. There can only be one scale for the whole visualization, which is why the categories with lots of arrests appear colored and others do not (however, it shows that Drugs/Narcotics arrests are a large contributor to the Wednesday emphasis of the data). We need to normalize the counts by facet. dplyr has a nice trick for normalization: group by the normalization variable (Category), then mutate to add a column based on the aggregate for each unique value.</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">df_arrest_time_crime <span class="o">&lt;-</span> df_arrest_time_crime <span class="o">%&gt;%</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">df_arrest_time_crime <span class="o">&lt;-</span> df_arrest_time_crime <span class="o">%&gt;%</span>
                             group_by<span class="p">(</span>Category<span class="p">)</span> <span class="o">%&gt;%</span>
-                            mutate<span class="p">(</span>norm <span class="o">=</span> count<span class="o">/</span><span class="kp">sum</span><span class="p">(</span>count<span class="p">))</span></code></pre></figure></p>
+                            mutate<span class="p">(</span>norm <span class="o">=</span> count<span class="o">/</span><span class="kp">sum</span><span class="p">(</span>count<span class="p">))</span></code></pre></figure>
 
-<p><img src="/img/sf-arrests/crime-norm.png" alt="" /></p>
+<p><img src="/img/sf-arrests/crime-norm.png" alt=""></p>
 
 <p>Setting the &ldquo;fill&rdquo; to &ldquo;norm&rdquo; and rerunning the heatmap code yields:</p>
 
-<p><img src="/img/sf-arrests/sf-arrest-when-4.png" alt="" /></p>
+<p><img src="/img/sf-arrests/sf-arrest-when-4.png" alt=""></p>
 
 <p>Now things get interesting.</p>
 
@@ -1007,27 +992,27 @@
 
 <p>Doing thus yields this heatmap.</p>
 
-<p><img src="/img/sf-arrests/sf-arrest-when-5.png" alt="" /></p>
+<p><img src="/img/sf-arrests/sf-arrest-when-5.png" alt=""></p>
 
 <p>Which isn&rsquo;t helpful. The charts are mostly identical to each other, and to the original heatmap. (Central Station (<a href="http://www.sf-police.org/Modules/ShowDocument.aspx?documentID=27554">coverage map</a>), however, has activity correlated to Drunkenness arrests.)</p>
 
 <p>Perhaps the frequency of arrests is correlated to the time of year? How about faceting by month?</p>
 
-<p><img src="/img/sf-arrests/sf-arrest-when-6.png" alt="" /></p>
+<p><img src="/img/sf-arrests/sf-arrest-when-6.png" alt=""></p>
 
 <p>Nope. Zero difference.</p>
 
 <p>Last try. As shown in the line chart, the # of Arrests has oscillated over the years. Perhaps there&rsquo;s a specific year that&rsquo;s skewing the results. Let&rsquo;s facet by Year.</p>
 
-<p><img src="/img/sf-arrests/sf-arrest-when-7.png" alt="" /></p>
+<p><img src="/img/sf-arrests/sf-arrest-when-7.png" alt=""></p>
 
-<p>Nope<sup>2</sup>. 2010-2012 have elevated Wednesday activity, but not by much.</p>
+<p>Nope<sup>2.</sup> 2010-2012 have elevated Wednesday activity, but not by much.</p>
 
 <p>This is frustrating. As of this posting, I don&rsquo;t have an obvious answer for the elevated arrests Wednesdays at 4-5PM. That being said, there definitely is still more to learn from looking at SF Crime data, although that&rsquo;s enough analysis for the time being.</p>
 
 <p><a href="http://minimaxir.com/2015/12/sf-arrest-maps/">My next article</a> discusses how to plot arrests on a map using the <code>ggmap</code> R library, which hopefully will provide more answers. The <a href="https://github.com/minimaxir/sf-arrests-when-where">GitHub repository</a> contains a Jupyter notebook with code and visualizations for both for this article, and for the upcoming ggmap visualizations (if you want a sneak peek) which will show <em>where</em> arrests in San Francisco frequently occur.</p>
 
-<hr />
+<hr>
 
 <p><em>If you use the code or data visualization designs contained within this article, it would be greatly appreciated if proper attribution is given back to this article and/or myself. Thanks!</em></p>
 ]]></content>
@@ -1050,19 +1035,19 @@
 
 <p>In September, the <a href="https://bigquery.cloud.google.com/table/nyc-tlc:yellow.trips">BigQuery dataset</a> was updated to include all data from January 2009 to June 2015: over 1.1 <em>billion</em> Yellow Taxi rides recorded. Here&rsquo;s an updated query, which additionally calculates the total non-tip revenue for a given location, since that might be useful later, and implements a <a href="https://www.reddit.com/r/bigquery/comments/3fo9ao/nyc_taxi_trips_now_officially_shared_by_the_nyc/ctqfr8h">sanity check filter</a> noted by Felipe Hoffa.</p>
 
-<p><figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="k">SELECT</span> <span class="n">ROUND</span><span class="p">(</span><span class="n">pickup_latitude</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="k">AS</span> <span class="n">lat</span><span class="p">,</span>
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="k">SELECT</span> <span class="n">ROUND</span><span class="p">(</span><span class="n">pickup_latitude</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="k">AS</span> <span class="n">lat</span><span class="p">,</span>
 <span class="n">ROUND</span><span class="p">(</span><span class="n">pickup_longitude</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="k">AS</span> <span class="n">long</span><span class="p">,</span>
 <span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">AS</span> <span class="n">num_pickups</span><span class="p">,</span>
 <span class="k">SUM</span><span class="p">(</span><span class="n">fare_amount</span><span class="p">)</span> <span class="k">AS</span> <span class="n">total_revenue</span>
 <span class="k">FROM</span> <span class="p">[</span><span class="n">nyc</span><span class="o">-</span><span class="n">tlc</span><span class="p">:</span><span class="n">yellow</span><span class="p">.</span><span class="n">trips</span><span class="p">]</span>
 <span class="k">WHERE</span> <span class="n">fare_amount</span><span class="o">/</span><span class="n">trip_distance</span> <span class="k">BETWEEN</span> <span class="mi">2</span> <span class="k">AND</span> <span class="mi">10</span>
-<span class="k">GROUP</span> <span class="k">BY</span> <span class="n">lat</span><span class="p">,</span> <span class="n">long</span></code></pre></figure></p>
+<span class="k">GROUP</span> <span class="k">BY</span> <span class="n">lat</span><span class="p">,</span> <span class="n">long</span></code></pre></figure>
 
 <p>The resulting dataset is 4 million rows and 116MB in size! This is well over the limit for downloading from the web BigQuery client, so you must use a local client (in the attached notebook, R), and it will still take about 10-15 minutes to download (as a result, I recommend caching the results locally). Relatedly, rendering 4 million points on a single plot on screen may be computationally intensive: I strongly recommend rendering the visualization to disk by instantiating a <code>png</code> device or by using <code>ggsave</code>.</p>
 
 <p>Here&rsquo;s a few results from that query.</p>
 
-<p><img src="/img/nyc-ggplot2-howto/test-data.png" alt="" /></p>
+<p><img src="/img/nyc-ggplot2-howto/test-data.png" alt=""></p>
 
 <p>As you can see, the second latitude/longitude combo is blatantly <em>wrong</em>. This isn&rsquo;t the first fidelity issue with the dataset, but we will address those in due time.</p>
 
@@ -1070,36 +1055,36 @@
 
 <p>Let&rsquo;s do a basic ggplot2 plot to test things out. All we need to do is plot a small point for every lat/long combination, and then save the resulting plot.</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">plot <span class="o">&lt;-</span> ggplot<span class="p">(</span>df<span class="p">,</span> aes<span class="p">(</span>x<span class="o">=</span>long<span class="p">,</span> y<span class="o">=</span>lat<span class="p">))</span> <span class="o">+</span>
-            geom_point<span class="p">(</span>size<span class="o">=</span><span class="m">0.06</span><span class="p">)</span> <span class="o">+</span></p>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">plot <span class="o">&lt;-</span> ggplot<span class="p">(</span>df<span class="p">,</span> aes<span class="p">(</span>x<span class="o">=</span>long<span class="p">,</span> y<span class="o">=</span>lat<span class="p">))</span> <span class="o">+</span>
+            geom_point<span class="p">(</span>size<span class="o">=</span><span class="m">0.06</span><span class="p">)</span> <span class="o">+</span>
 
-<p>png<span class="p">(</span><span class="s">&quot;nyc-taxi-1.png&quot;</span><span class="p">,</span> w<span class="o">=</span><span class="m">600</span><span class="p">,</span> h<span class="o">=</span><span class="m">600</span><span class="p">)</span>
+png<span class="p">(</span><span class="s">&quot;nyc-taxi-1.png&quot;</span><span class="p">,</span> w<span class="o">=</span><span class="m">600</span><span class="p">,</span> h<span class="o">=</span><span class="m">600</span><span class="p">)</span>
 plot
-dev.off<span class="p">()</span></code></pre></figure></p>
+dev.off<span class="p">()</span></code></pre></figure>
 
-<p><img src="/img/nyc-ggplot2-howto/nyc-taxi-1.png" alt="" /></p>
+<p><img src="/img/nyc-ggplot2-howto/nyc-taxi-1.png" alt=""></p>
 
 <p>&hellip;stupid data fidelity issues.</p>
 
 <p>This issue is fixed by constraining the plot to a <a href="https://en.wikipedia.org/wiki/Minimum_bounding_box">bounding box</a> of latitude and longitude coordinates corresponding to NYC. Flickr has <a href="https://www.flickr.com/places/info/2459115">a good starting point</a> for a NYC bounding box; I took that and edited the limits more precisely using the <a href="http://boundingbox.klokantech.com">Bounding Box Tool</a>.</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">min_lat <span class="o">&lt;-</span> <span class="m">40.5774</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">min_lat <span class="o">&lt;-</span> <span class="m">40.5774</span>
 max_lat <span class="o">&lt;-</span> <span class="m">40.9176</span>
 min_long <span class="o">&lt;-</span> <span class="m">-74.15</span>
-max_long <span class="o">&lt;-</span> <span class="m">-73.7004</span></code></pre></figure></p>
+max_long <span class="o">&lt;-</span> <span class="m">-73.7004</span></code></pre></figure>
 
 <p>You could also enforce the bounding box during the BigQuery. Now let&rsquo;s implement the bounding box in the plot:</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">plot <span class="o">&lt;-</span> ggplot<span class="p">(</span>df<span class="p">,</span> aes<span class="p">(</span>x<span class="o">=</span>long<span class="p">,</span> y<span class="o">=</span>lat<span class="p">))</span> <span class="o">+</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">plot <span class="o">&lt;-</span> ggplot<span class="p">(</span>df<span class="p">,</span> aes<span class="p">(</span>x<span class="o">=</span>long<span class="p">,</span> y<span class="o">=</span>lat<span class="p">))</span> <span class="o">+</span>
             geom_point<span class="p">(</span>size<span class="o">=</span><span class="m">0.06</span><span class="p">)</span> <span class="o">+</span>
             scale_x_continuous<span class="p">(</span>limits<span class="o">=</span><span class="kt">c</span><span class="p">(</span>min_long<span class="p">,</span> max_long<span class="p">))</span> <span class="o">+</span>
-            scale_y_continuous<span class="p">(</span>limits<span class="o">=</span><span class="kt">c</span><span class="p">(</span>min_lat<span class="p">,</span> max_lat<span class="p">))</span></p>
+            scale_y_continuous<span class="p">(</span>limits<span class="o">=</span><span class="kt">c</span><span class="p">(</span>min_lat<span class="p">,</span> max_lat<span class="p">))</span>
 
-<p>png<span class="p">(</span><span class="s">&quot;nyc-taxi-2.png&quot;</span><span class="p">,</span> w<span class="o">=</span><span class="m">600</span><span class="p">,</span> h<span class="o">=</span><span class="m">600</span><span class="p">)</span>
+png<span class="p">(</span><span class="s">&quot;nyc-taxi-2.png&quot;</span><span class="p">,</span> w<span class="o">=</span><span class="m">600</span><span class="p">,</span> h<span class="o">=</span><span class="m">600</span><span class="p">)</span>
 plot
-dev.off<span class="p">()</span></code></pre></figure></p>
+dev.off<span class="p">()</span></code></pre></figure>
 
-<p><img src="/img/nyc-ggplot2-howto/nyc-taxi-2.png" alt="" /></p>
+<p><img src="/img/nyc-ggplot2-howto/nyc-taxi-2.png" alt=""></p>
 
 <p>Much, much better! Now that the visualization generally looks like what we want it to be, we can start theming.</p>
 
@@ -1111,18 +1096,17 @@ dev.off<span class="p">()</span></code></pre></figure></p>
 <li>Set the resolution of the rendering device to 300 DPI; this reduces some of the aliasing in the resulting image.</li>
 </ul>
 
-
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">plot <span class="o">&lt;-</span> ggplot<span class="p">(</span>df <span class="o">%&gt;%</span> filter<span class="p">(</span>num_pickups <span class="o">&gt;</span> <span class="m">10</span><span class="p">),</span> aes<span class="p">(</span>x<span class="o">=</span>long<span class="p">,</span> y<span class="o">=</span>lat<span class="p">))</span> <span class="o">+</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">plot <span class="o">&lt;-</span> ggplot<span class="p">(</span>df <span class="o">%&gt;%</span> filter<span class="p">(</span>num_pickups <span class="o">&gt;</span> <span class="m">10</span><span class="p">),</span> aes<span class="p">(</span>x<span class="o">=</span>long<span class="p">,</span> y<span class="o">=</span>lat<span class="p">))</span> <span class="o">+</span>
             geom_point<span class="p">(</span>color<span class="o">=</span><span class="s">&quot;white&quot;</span><span class="p">,</span> size<span class="o">=</span><span class="m">0.06</span><span class="p">)</span> <span class="o">+</span>
             scale_x_continuous<span class="p">(</span>limits<span class="o">=</span><span class="kt">c</span><span class="p">(</span>min_long<span class="p">,</span> max_long<span class="p">))</span> <span class="o">+</span>
             scale_y_continuous<span class="p">(</span>limits<span class="o">=</span><span class="kt">c</span><span class="p">(</span>min_lat<span class="p">,</span> max_lat<span class="p">))</span> <span class="o">+</span>
-            theme_map_dark<span class="p">()</span></p>
+            theme_map_dark<span class="p">()</span>
 
-<p>png<span class="p">(</span><span class="s">&quot;nyc-taxi-3.png&quot;</span><span class="p">,</span> w<span class="o">=</span><span class="m">600</span><span class="p">,</span> h<span class="o">=</span><span class="m">600</span><span class="p">,</span> res<span class="o">=</span><span class="m">300</span><span class="p">)</span>
+png<span class="p">(</span><span class="s">&quot;nyc-taxi-3.png&quot;</span><span class="p">,</span> w<span class="o">=</span><span class="m">600</span><span class="p">,</span> h<span class="o">=</span><span class="m">600</span><span class="p">,</span> res<span class="o">=</span><span class="m">300</span><span class="p">)</span>
 plot
-dev.off<span class="p">()</span></code></pre></figure></p>
+dev.off<span class="p">()</span></code></pre></figure>
 
-<p><img src="/img/nyc-ggplot2-howto/nyc-taxi-3.png" alt="" /></p>
+<p><img src="/img/nyc-ggplot2-howto/nyc-taxi-3.png" alt=""></p>
 
 <p>Right on track! Now time to make things more professional.</p>
 
@@ -1134,10 +1118,9 @@ dev.off<span class="p">()</span></code></pre></figure></p>
 <li>Force the plot to obey the dimension ratio with <code>coord_equal()</code>, otherwise the map will stretch and distort to fill the entirety of the plotting area. (you can see a vertical stretch effect with the previous image)</li>
 </ul>
 
-
 <p>Putting it all together:</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">plot <span class="o">&lt;-</span> ggplot<span class="p">(</span>df <span class="o">%&gt;%</span> filter<span class="p">(</span>num_pickups <span class="o">&gt;</span> <span class="m">10</span><span class="p">),</span> aes<span class="p">(</span>x<span class="o">=</span>long<span class="p">,</span> y<span class="o">=</span>lat<span class="p">,</span> color<span class="o">=</span>num_pickups<span class="p">))</span> <span class="o">+</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">plot <span class="o">&lt;-</span> ggplot<span class="p">(</span>df <span class="o">%&gt;%</span> filter<span class="p">(</span>num_pickups <span class="o">&gt;</span> <span class="m">10</span><span class="p">),</span> aes<span class="p">(</span>x<span class="o">=</span>long<span class="p">,</span> y<span class="o">=</span>lat<span class="p">,</span> color<span class="o">=</span>num_pickups<span class="p">))</span> <span class="o">+</span>
             geom_point<span class="p">(</span>size<span class="o">=</span><span class="m">0.06</span><span class="p">)</span> <span class="o">+</span>
             scale_x_continuous<span class="p">(</span>limits<span class="o">=</span><span class="kt">c</span><span class="p">(</span>min_long<span class="p">,</span> max_long<span class="p">))</span> <span class="o">+</span>
             scale_y_continuous<span class="p">(</span>limits<span class="o">=</span><span class="kt">c</span><span class="p">(</span>min_lat<span class="p">,</span> max_lat<span class="p">))</span> <span class="o">+</span>
@@ -1145,11 +1128,11 @@ dev.off<span class="p">()</span></code></pre></figure></p>
             scale_color_gradient<span class="p">(</span>low<span class="o">=</span><span class="s">&quot;#CCCCCC&quot;</span><span class="p">,</span> high<span class="o">=</span><span class="s">&quot;#8E44AD&quot;</span><span class="p">,</span> trans<span class="o">=</span><span class="s">&quot;log&quot;</span><span class="p">)</span> <span class="o">+</span>
             labs<span class="p">(</span>title <span class="o">=</span> <span class="s">&quot;Map of NYC, Plotted Using Locations Of All Yellow Taxi Pickups&quot;</span><span class="p">)</span> <span class="o">+</span>
             theme<span class="p">(</span>legend.position<span class="o">=</span><span class="s">&quot;none&quot;</span><span class="p">)</span> <span class="o">+</span>
-            coord_equal<span class="p">()</span></p>
+            coord_equal<span class="p">()</span>
 
-<p>png<span class="p">(</span><span class="s">&quot;nyc-taxi-4.png&quot;</span><span class="p">,</span> w<span class="o">=</span><span class="m">600</span><span class="p">,</span> h<span class="o">=</span><span class="m">600</span><span class="p">,</span> res<span class="o">=</span><span class="m">300</span><span class="p">)</span>
+png<span class="p">(</span><span class="s">&quot;nyc-taxi-4.png&quot;</span><span class="p">,</span> w<span class="o">=</span><span class="m">600</span><span class="p">,</span> h<span class="o">=</span><span class="m">600</span><span class="p">,</span> res<span class="o">=</span><span class="m">300</span><span class="p">)</span>
 plot
-dev.off<span class="p">()</span></code></pre></figure></p>
+dev.off<span class="p">()</span></code></pre></figure>
 
 <p>results in this image, which is what we want! However there is a slight problem, and I will wrap the image in a red border to demonstrate.</p>
 
@@ -1159,7 +1142,7 @@ dev.off<span class="p">()</span></code></pre></figure></p>
 }
 </style></span></p>
 
-<p><span class="border"><img src="/img/nyc-ggplot2-howto/nyc-taxi-4.png" alt="" /></span></p>
+<p><span class="border"><img src="/img/nyc-ggplot2-howto/nyc-taxi-4.png" alt=""></span></p>
 
 <p>Due to <code>coord_equal()</code> enforcing the chart dimensions, the rendering device has a gap of white space at the top due to interaction with the <code>grid</code> graphics package that ggplot2 is based upon; normally not a problem for default charts, but a waste of space for visualizations with non-white backgrounds.</p>
 
@@ -1181,8 +1164,7 @@ dev.off<span class="p">()</span></code></pre></figure></p>
 <li>Set the chart dimensions to avoid the <code>coord_equal()</code> issue mention above.</li>
 </ul>
 
-
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">plot <span class="o">&lt;-</span> ggplot<span class="p">(</span>df <span class="o">%&gt;%</span> filter<span class="p">(</span>num_pickups <span class="o">&gt;</span> <span class="m">20</span><span class="p">),</span> aes<span class="p">(</span>x<span class="o">=</span>long<span class="p">,</span> y<span class="o">=</span>lat<span class="p">,</span> z<span class="o">=</span>total_revenue<span class="p">))</span> <span class="o">+</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">plot <span class="o">&lt;-</span> ggplot<span class="p">(</span>df <span class="o">%&gt;%</span> filter<span class="p">(</span>num_pickups <span class="o">&gt;</span> <span class="m">20</span><span class="p">),</span> aes<span class="p">(</span>x<span class="o">=</span>long<span class="p">,</span> y<span class="o">=</span>lat<span class="p">,</span> z<span class="o">=</span>total_revenue<span class="p">))</span> <span class="o">+</span>
             geom_point<span class="p">(</span>size<span class="o">=</span><span class="m">0.06</span><span class="p">,</span> color<span class="o">=</span><span class="s">&quot;#999999&quot;</span><span class="p">)</span> <span class="o">+</span>
             stat_summary_hex<span class="p">(</span>fun <span class="o">=</span> <span class="kp">sum</span><span class="p">,</span> bins<span class="o">=</span><span class="m">100</span><span class="p">,</span> alpha<span class="o">=</span><span class="m">0.7</span><span class="p">)</span> <span class="o">+</span>
             scale_x_continuous<span class="p">(</span>limits<span class="o">=</span><span class="kt">c</span><span class="p">(</span>min_long<span class="p">,</span> max_long<span class="p">))</span> <span class="o">+</span>
@@ -1190,13 +1172,13 @@ dev.off<span class="p">()</span></code></pre></figure></p>
             theme_map_dark<span class="p">()</span> <span class="o">+</span>
             scale_fill_gradient<span class="p">(</span>low<span class="o">=</span><span class="s">&quot;#CCCCCC&quot;</span><span class="p">,</span> high<span class="o">=</span><span class="s">&quot;#27AE60&quot;</span><span class="p">,</span> labels<span class="o">=</span>dollar<span class="p">)</span> <span class="o">+</span>
             labs<span class="p">(</span>title <span class="o">=</span> <span class="s">&quot;Total Revenue for NYC Yellow Taxis by Pickup Location, from Jan 2009 ― June 2015&quot;</span><span class="p">)</span> <span class="o">+</span>
-            coord_equal<span class="p">()</span></p>
+            coord_equal<span class="p">()</span>
 
-<p>png<span class="p">(</span><span class="s">&quot;nyc-taxi-5.png&quot;</span><span class="p">,</span> w<span class="o">=</span><span class="m">950</span><span class="p">,</span> h<span class="o">=</span><span class="m">860</span><span class="p">,</span> res<span class="o">=</span><span class="m">300</span><span class="p">)</span>
+png<span class="p">(</span><span class="s">&quot;nyc-taxi-5.png&quot;</span><span class="p">,</span> w<span class="o">=</span><span class="m">950</span><span class="p">,</span> h<span class="o">=</span><span class="m">860</span><span class="p">,</span> res<span class="o">=</span><span class="m">300</span><span class="p">)</span>
 plot
-dev.off<span class="p">()</span></code></pre></figure></p>
+dev.off<span class="p">()</span></code></pre></figure>
 
-<p><img src="/img/nyc-ggplot2-howto/nyc-taxi-5.png" alt="" /></p>
+<p><img src="/img/nyc-ggplot2-howto/nyc-taxi-5.png" alt=""></p>
 
 <p>That wasn&rsquo;t too bad. The gradient shows that <a href="https://www.google.com/maps/place/penn+station+nyc/@40.750568,-73.993519,15z">Penn Station</a> in Manhattan, along with the two airports, are the largest revenue generators.</p>
 
@@ -1211,15 +1193,14 @@ dev.off<span class="p">()</span></code></pre></figure></p>
 <li>Make a few more aesthetic tweaks.</li>
 </ul>
 
-
 <p>Here&rsquo;s take two:</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">total_rev <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>x<span class="p">,</span> threshold <span class="o">=</span> <span class="m">10</span><span class="o">^</span><span class="m">5</span><span class="p">)</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">total_rev <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>x<span class="p">,</span> threshold <span class="o">=</span> <span class="m">10</span><span class="o">^</span><span class="m">5</span><span class="p">)</span> <span class="p">{</span>
     <span class="kr">if</span> <span class="p">(</span><span class="kp">sum</span><span class="p">(</span>x<span class="p">)</span> <span class="o">&lt;</span> threshold<span class="p">)</span> <span class="p">{</span><span class="kr">return</span> <span class="p">(</span><span class="kc">NA</span><span class="p">)}</span>
     <span class="kr">else</span> <span class="p">{</span><span class="kr">return</span> <span class="p">(</span><span class="kp">sum</span><span class="p">(</span>x<span class="p">))}</span>
-<span class="p">}</span></p>
+<span class="p">}</span>
 
-<p>plot <span class="o">&lt;-</span> ggplot<span class="p">(</span>df <span class="o">%&gt;%</span> filter<span class="p">(</span>num_pickups <span class="o">&gt;</span> <span class="m">10</span><span class="p">),</span> aes<span class="p">(</span>x<span class="o">=</span>long<span class="p">,</span> y<span class="o">=</span>lat<span class="p">,</span> z<span class="o">=</span>total_revenue<span class="p">))</span> <span class="o">+</span>
+plot <span class="o">&lt;-</span> ggplot<span class="p">(</span>df <span class="o">%&gt;%</span> filter<span class="p">(</span>num_pickups <span class="o">&gt;</span> <span class="m">10</span><span class="p">),</span> aes<span class="p">(</span>x<span class="o">=</span>long<span class="p">,</span> y<span class="o">=</span>lat<span class="p">,</span> z<span class="o">=</span>total_revenue<span class="p">))</span> <span class="o">+</span>
             geom_point<span class="p">(</span>size<span class="o">=</span><span class="m">0.06</span><span class="p">,</span> color<span class="o">=</span><span class="s">&quot;#999999&quot;</span><span class="p">)</span> <span class="o">+</span>
             stat_summary_hex<span class="p">(</span>fun <span class="o">=</span> total_rev<span class="p">,</span> bins<span class="o">=</span><span class="m">100</span><span class="p">,</span> alpha<span class="o">=</span><span class="m">0.5</span><span class="p">)</span> <span class="o">+</span>
             scale_x_continuous<span class="p">(</span>limits<span class="o">=</span><span class="kt">c</span><span class="p">(</span><span class="m">-74.0224</span><span class="p">,</span> <span class="m">-73.8521</span><span class="p">))</span> <span class="o">+</span>
@@ -1227,19 +1208,19 @@ dev.off<span class="p">()</span></code></pre></figure></p>
             theme_map_dark<span class="p">()</span> <span class="o">+</span>
             scale_fill_gradient<span class="p">(</span>low<span class="o">=</span><span class="s">&quot;#FFFFFF&quot;</span><span class="p">,</span> high<span class="o">=</span><span class="s">&quot;#E74C3C&quot;</span><span class="p">,</span> labels<span class="o">=</span>dollar<span class="p">,</span> trans<span class="o">=</span><span class="s">&quot;log&quot;</span><span class="p">,</span> breaks<span class="o">=</span><span class="kt">c</span><span class="p">(</span><span class="m">10</span><span class="o">^</span><span class="p">(</span><span class="m">6</span><span class="o">:</span><span class="m">8</span><span class="p">)))</span> <span class="o">+</span>
             labs<span class="p">(</span>title <span class="o">=</span> <span class="s">&quot;Total Revenue for NYC Yellow Taxis by Pickup Location, from Jan 2009 ― June 2015&quot;</span><span class="p">)</span> <span class="o">+</span>
-            coord_equal<span class="p">()</span></p>
+            coord_equal<span class="p">()</span>
 
-<p>png<span class="p">(</span><span class="s">&quot;nyc-taxi-6.png&quot;</span><span class="p">,</span> w<span class="o">=</span><span class="m">900</span><span class="p">,</span> h<span class="o">=</span><span class="m">900</span><span class="p">,</span> res<span class="o">=</span><span class="m">300</span><span class="p">)</span>
+png<span class="p">(</span><span class="s">&quot;nyc-taxi-6.png&quot;</span><span class="p">,</span> w<span class="o">=</span><span class="m">900</span><span class="p">,</span> h<span class="o">=</span><span class="m">900</span><span class="p">,</span> res<span class="o">=</span><span class="m">300</span><span class="p">)</span>
 plot
-dev.off<span class="p">()</span></code></pre></figure></p>
+dev.off<span class="p">()</span></code></pre></figure>
 
-<p><img src="/img/nyc-ggplot2-howto/nyc-taxi-6.png" alt="" /></p>
+<p><img src="/img/nyc-ggplot2-howto/nyc-taxi-6.png" alt=""></p>
 
 <p>A good step forward. Revenue all through Manhattan is mostly the same except for Penn Station. Meanwhile, the hexes in LaGuardia Airport are noticeably more saturated than Penn Station.</p>
 
 <p>Hopefully, this tutorial gave you a good look into a few interesting tricks that can be accomplished with ggplot2, even though the code can be somewhat messy. If you want more orthodox methods of plotting geographic data in ggplot2, you should look into the <a href="https://cran.r-project.org/web/packages/ggmap/index.html">ggmap</a> R package, which I used to plot <a href="http://minimaxir.com/2014/04/san-francisco/">Facebook Checkin data in San Francisco</a>, and look into the <a href="https://cran.r-project.org/web/packages/maps/index.html">maps</a> R package plus shape files, which I used to plot <a href="http://minimaxir.com/2015/01/tree-time/">Instagram photo location data</a>. Unfortunately, the code may not necessarily be less messy.</p>
 
-<hr />
+<hr>
 
 <p><em>If you use the code or data visualization designs contained within this article, it would be greatly appreciated if proper attribution is given back to this article and/or myself. Thanks!</em></p>
 ]]></content>
@@ -1254,7 +1235,7 @@ dev.off<span class="p">()</span></code></pre></figure></p>
 
 <p>First, I gathered some preliminary statistics about all submissions to the top 500 subreddits on Reddit, again using the <a href="https://cloud.google.com/bigquery/">BigQuery</a> data dump compiled by Jason Baumgartner and Felipe Hoffa, in order to establish a good base for the analysis:</p>
 
-<p><figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="k">SELECT</span> <span class="n">subreddit</span><span class="p">,</span>
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="k">SELECT</span> <span class="n">subreddit</span><span class="p">,</span>
   <span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">AS</span> <span class="n">num_submissions</span><span class="p">,</span>
   <span class="n">ROUND</span><span class="p">(</span><span class="k">AVG</span><span class="p">(</span><span class="n">score</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span> <span class="k">as</span> <span class="n">avg_score</span><span class="p">,</span>
   <span class="n">NTH</span><span class="p">(</span><span class="mi">25</span><span class="p">,</span> <span class="n">quantiles</span><span class="p">(</span><span class="n">score</span><span class="p">,</span><span class="mi">1000</span><span class="p">))</span> <span class="k">AS</span> <span class="n">lower_95</span><span class="p">,</span>
@@ -1263,7 +1244,7 @@ dev.off<span class="p">()</span></code></pre></figure></p>
 <span class="k">FROM</span> <span class="p">[</span><span class="n">fh</span><span class="o">-</span><span class="n">bigquery</span><span class="p">:</span><span class="n">reddit_posts</span><span class="p">.</span><span class="n">full_corpus_201509</span><span class="p">]</span>
 <span class="k">GROUP</span> <span class="k">BY</span> <span class="n">subreddit</span>
 <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">num_submissions</span> <span class="k">DESC</span>
-<span class="k">LIMIT</span> <span class="mi">500</span></code></pre></figure></p>
+<span class="k">LIMIT</span> <span class="mi">500</span></code></pre></figure>
 
 <p>Which results in <a href="https://docs.google.com/spreadsheets/d/1lyEc7-5vkREKBV8fUreyOszICgyA0CqX2YHaK2-4ndo/edit?usp=sharing">this output</a>. The &ldquo;lower_95&rdquo; and and the &ldquo;upper_95&rdquo; columns represent the 2.5% and the 97.5% percentile respectively, which could be used to form a 95% confidence interval around the median. For example, <a href="http://reddit.com/r/funny">/r/funny</a> has a 2.5% percentile of 0 points, a median of 1 point, and a 97.5% percentile of <em>875 points</em>. However, from those values, it is clear the data is heavily skewed right, which makes running statistical tests more difficult.</p>
 
@@ -1279,21 +1260,20 @@ dev.off<span class="p">()</span></code></pre></figure></p>
 <li>Keep only the Top 20 words for each subreddit. 500 subreddits x 20 words = 10,000 rows maximum, which the limit BigQuery allows for web download, so that works out well.</li>
 </ul>
 
-
-<p><figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="k">SELECT</span> <span class="o"><em></span> <span class="k">FROM</span> <span class="p">(</span>
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="p">(</span>
 <span class="k">SELECT</span> <span class="n">subreddit</span><span class="p">,</span> <span class="n">word</span><span class="p">,</span> <span class="n">num_words</span><span class="p">,</span> <span class="n">avg_score</span><span class="p">,</span> <span class="n">lower_95</span><span class="p">,</span> <span class="n">median</span><span class="p">,</span> <span class="n">upper_95</span><span class="p">,</span> <span class="n">ROW_NUMBER</span><span class="p">()</span> <span class="n">OVER</span> <span class="p">(</span><span class="n">PARTITION</span> <span class="k">BY</span> <span class="n">subreddit</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">avg_score</span> <span class="k">DESC</span><span class="p">)</span> <span class="n">score_rank</span>
 <span class="k">FROM</span> <span class="p">(</span>
 <span class="k">SELECT</span> <span class="n">subreddit</span><span class="p">,</span> <span class="n">word</span><span class="p">,</span> <span class="k">COUNT</span><span class="p">(</span><span class="k">DISTINCT</span><span class="p">(</span><span class="n">id</span><span class="p">))</span> <span class="k">AS</span> <span class="n">num_words</span><span class="p">,</span> <span class="n">ROUND</span><span class="p">(</span><span class="k">AVG</span><span class="p">(</span><span class="n">score</span><span class="p">),</span> <span class="mi">3</span><span class="p">)</span> <span class="k">AS</span> <span class="n">avg_score</span><span class="p">,</span> <span class="n">NTH</span><span class="p">(</span><span class="mi">25</span><span class="p">,</span> <span class="n">quantiles</span><span class="p">(</span><span class="n">score</span><span class="p">,</span><span class="mi">1000</span><span class="p">))</span> <span class="k">AS</span> <span class="n">lower_95</span><span class="p">,</span> <span class="n">NTH</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="n">quantiles</span><span class="p">(</span><span class="n">score</span><span class="p">,</span><span class="mi">1000</span><span class="p">))</span> <span class="k">AS</span> <span class="n">median</span><span class="p">,</span> <span class="n">NTH</span><span class="p">(</span><span class="mi">975</span><span class="p">,</span> <span class="n">quantiles</span><span class="p">(</span><span class="n">score</span><span class="p">,</span><span class="mi">1000</span><span class="p">))</span> <span class="k">AS</span> <span class="n">upper_95</span>
 <span class="k">FROM</span><span class="p">(</span><span class="n">FLATTEN</span><span class="p">((</span>
-  <span class="k">SELECT</span> <span class="n">SPLIT</span><span class="p">(</span><span class="k">LOWER</span><span class="p">(</span><span class="n">REGEXP_REPLACE</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">r</span><span class="s1">&#39;[^\w&amp;#39;</span><span class="p">]</span><span class="s1">&#39;, &#39;</span> <span class="s1">&#39;)), &#39;</span> <span class="err">&#39;</span><span class="p">)</span> <span class="n">word</span><span class="p">,</span> <span class="n">subreddit</span><span class="p">,</span> <span class="n">score</span><span class="p">,</span> <span class="n">id</span>
+  <span class="k">SELECT</span> <span class="n">SPLIT</span><span class="p">(</span><span class="k">LOWER</span><span class="p">(</span><span class="n">REGEXP_REPLACE</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">r</span><span class="s1">&#39;[^\w\&#39;</span><span class="p">]</span><span class="s1">&#39;, &#39;</span> <span class="s1">&#39;)), &#39;</span> <span class="err">&#39;</span><span class="p">)</span> <span class="n">word</span><span class="p">,</span> <span class="n">subreddit</span><span class="p">,</span> <span class="n">score</span><span class="p">,</span> <span class="n">id</span>
   <span class="k">FROM</span> <span class="p">[</span><span class="n">fh</span><span class="o">-</span><span class="n">bigquery</span><span class="p">:</span><span class="n">reddit_posts</span><span class="p">.</span><span class="n">full_corpus_201509</span><span class="p">]</span>
-  <span class="k">WHERE</span> <span class="n">subreddit</span> <span class="k">IN</span> <span class="p">(</span><span class="k">SELECT</span> <span class="n">subreddit</span> <span class="k">FROM</span> <span class="p">(</span><span class="k">SELECT</span> <span class="n">subreddit</span><span class="p">,</span> <span class="k">COUNT</span><span class="p">(</span><span class="o"></em></span><span class="p">)</span> <span class="k">AS</span> <span class="k">c</span> <span class="k">FROM</span> <span class="p">[</span><span class="n">fh</span><span class="o">-</span><span class="n">bigquery</span><span class="p">:</span><span class="n">reddit_posts</span><span class="p">.</span><span class="n">full_corpus_201509</span><span class="p">]</span> <span class="k">GROUP</span> <span class="k">BY</span> <span class="n">subreddit</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="k">c</span> <span class="k">DESC</span> <span class="k">LIMIT</span> <span class="mi">500</span><span class="p">))</span>
+  <span class="k">WHERE</span> <span class="n">subreddit</span> <span class="k">IN</span> <span class="p">(</span><span class="k">SELECT</span> <span class="n">subreddit</span> <span class="k">FROM</span> <span class="p">(</span><span class="k">SELECT</span> <span class="n">subreddit</span><span class="p">,</span> <span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">AS</span> <span class="k">c</span> <span class="k">FROM</span> <span class="p">[</span><span class="n">fh</span><span class="o">-</span><span class="n">bigquery</span><span class="p">:</span><span class="n">reddit_posts</span><span class="p">.</span><span class="n">full_corpus_201509</span><span class="p">]</span> <span class="k">GROUP</span> <span class="k">BY</span> <span class="n">subreddit</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="k">c</span> <span class="k">DESC</span> <span class="k">LIMIT</span> <span class="mi">500</span><span class="p">))</span>
   <span class="p">),</span> <span class="n">word</span><span class="p">))</span>
 <span class="k">GROUP</span> <span class="k">EACH</span> <span class="k">BY</span> <span class="n">subreddit</span><span class="p">,</span> <span class="n">word</span>
 <span class="k">HAVING</span> <span class="n">num_words</span> <span class="o">&gt;=</span> <span class="mi">1000</span>
 <span class="p">))</span>
 <span class="k">WHERE</span> <span class="n">score_rank</span> <span class="o">&lt;=</span> <span class="mi">20</span>
-<span class="k">ORDER</span> <span class="k">BY</span> <span class="n">subreddit</span><span class="p">,</span> <span class="n">avg_score</span> <span class="k">DESC</span></code></pre></figure></p>
+<span class="k">ORDER</span> <span class="k">BY</span> <span class="n">subreddit</span><span class="p">,</span> <span class="n">avg_score</span> <span class="k">DESC</span></code></pre></figure>
 
 <p>Phew! That query results in <a href="https://docs.google.com/spreadsheets/d/1MRfLR_TBO8zveKaifqVXTN0da7tf0FQOr5a2LVkZgkg/edit?usp=sharing">this output</a>, which we can use to plot a bar chart for each subreddit.</p>
 
@@ -1303,7 +1283,7 @@ dev.off<span class="p">()</span></code></pre></figure></p>
 
 <p>After a few R tricks, I managed to chart the Top 10 keywords for each of the Top 15 subreddits:</p>
 
-<p><a href="https://i.imgur.com/dWdCnMI.png"> <img src="/img/reddit-topwords/subreddit-means-half.png" alt="" /> </a></p>
+<p><a href="https://i.imgur.com/dWdCnMI.png"> <img src="/img/reddit-topwords/subreddit-means-half.png" alt=""> </a></p>
 
 <p><em>(Click on image for full-resolution)</em></p>
 
@@ -1315,15 +1295,15 @@ dev.off<span class="p">()</span></code></pre></figure></p>
 
 <p>The most notable trend with the Top 15 subreddits is in the <a href="https://www.reddit.com/r/politics/">/r/politics</a> subreddit, which tells users to &ldquo;Vote based on quality, not opinion,&rdquo; but has a high affiliation for submissions specifically involving Bernie Sanders and Elizabeth Warren.</p>
 
-<p><img src="/img/reddit-topwords/mean-010-politics.png" alt="" /></p>
+<p><img src="/img/reddit-topwords/mean-010-politics.png" alt=""></p>
 
 <p><a href="https://www.reddit.com/r/technology/">/r/technology</a>, intended to be about &ldquo;a broad spectrum of conversation as to the innovations, aspirations, applications and machinations,&rdquo; has a high affiliation for political issues such as the net neutrality controversy involving the FCC, ISPs, and Comcast, and little affiliation for actual <em>technology</em>.</p>
 
-<p><img src="/img/reddit-topwords/mean-018-technology.png" alt="" /></p>
+<p><img src="/img/reddit-topwords/mean-018-technology.png" alt=""></p>
 
 <p>Outside the Top 15 Subreddits, the political affiliations of subreddits such as <a href="http://reddit.com/r/Libertarian">/r/Libertarian</a> are less surprising and more funny as a result.</p>
 
-<p><img src="/img/reddit-topwords/mean-103-Libertarian.png" alt="" /></p>
+<p><img src="/img/reddit-topwords/mean-103-Libertarian.png" alt=""></p>
 
 <h2>Storyreddit</h2>
 
@@ -1331,21 +1311,21 @@ dev.off<span class="p">()</span></code></pre></figure></p>
 
 <p>The biggest offender is <a href="https://www.reddit.com/r/aww/">/r/aww</a>, a subreddit about animals, has a high affinity for words <em>that aren&rsquo;t animals</em>, with only two animal words appearing in the Top 20.</p>
 
-<p><img src="/img/reddit-topwords/mean-011-aww.png" alt="" /></p>
+<p><img src="/img/reddit-topwords/mean-011-aww.png" alt=""></p>
 
 <p>The presence of story titles is also apparent in <a href="https://www.reddit.com/r/Fitness/">/r/Fitness</a>, which in fairness, the atmosphere of self-improvement lends itself more to stories.</p>
 
-<p><img src="/img/reddit-topwords/mean-054-Fitness.png" alt="" /></p>
+<p><img src="/img/reddit-topwords/mean-054-Fitness.png" alt=""></p>
 
 <h2>Metareddit</h2>
 
 <p>The practice of upvoting submissions just because they mention a particular topic is colloquially known as &ldquo;circlejerking.&rdquo; <a href="https://www.reddit.com/r/circlejerk/">/r/circlejerk</a> fits that well, with titles designed to satirize clickbaity issues in order to receive upvotes ironically.</p>
 
-<p><img src="/img/reddit-topwords/mean-025-circlejerk.png" alt="" /></p>
+<p><img src="/img/reddit-topwords/mean-025-circlejerk.png" alt=""></p>
 
 <p><a href="https://www.reddit.com/r/Braveryjerk/">/r/Braveryjerk</a>, however, takes this practice to its logical conclusion.</p>
 
-<p><img src="/img/reddit-topwords/mean-486-Braveryjerk.png" alt="" /></p>
+<p><img src="/img/reddit-topwords/mean-486-Braveryjerk.png" alt=""></p>
 
 <h2>Esotericreddit</h2>
 
@@ -1353,15 +1333,15 @@ dev.off<span class="p">()</span></code></pre></figure></p>
 
 <p><a href="https://www.reddit.com/r/conspiracy/">/r/conspiracy</a>, which apparently have frequent instances of &ldquo;TIL&rdquo; (Today, I Learned) in titles, are simultaneously very <em>suspicious</em> of the actions in the  <a href="https://www.reddit.com/r/TIL/">/r/TIL</a> subreddit.</p>
 
-<p><img src="/img/reddit-topwords/mean-064-conspiracy.png" alt="" /></p>
+<p><img src="/img/reddit-topwords/mean-064-conspiracy.png" alt=""></p>
 
 <p>The keywords in <a href="https://www.reddit.com/r/teenagers/">/r/teenagers</a> captures the essence of modern social media.</p>
 
-<p><img src="/img/reddit-topwords/mean-072-teenagers.png" alt="" /></p>
+<p><img src="/img/reddit-topwords/mean-072-teenagers.png" alt=""></p>
 
 <p>Some subreddits are just plain weird.</p>
 
-<p><img src="/img/reddit-topwords/mean-175-me_irl.png" alt="" /></p>
+<p><img src="/img/reddit-topwords/mean-175-me_irl.png" alt=""></p>
 
 <p>That&rsquo;s <a href="https://www.reddit.com/r/me_irl/">/r/me_irl</a> for you.</p>
 
@@ -1371,13 +1351,13 @@ dev.off<span class="p">()</span></code></pre></figure></p>
 
 <p>There are notable exceptions, however, such as with <a href="https://www.reddit.com/r/Android/">/r/Android</a>.</p>
 
-<p><img src="/img/reddit-topwords/median-059-Android.png" alt="" /></p>
+<p><img src="/img/reddit-topwords/median-059-Android.png" alt=""></p>
 
 <p>That subreddit has official threads for events; it would make sense for users to upvote that whenever it appears as it&rsquo;s <em>important</em> that it&rsquo;s visible, but not necessarily as an agreement of the topic. That&rsquo;s why I believe looking at the medians is a different approach than looking at the means.</p>
 
 <p>Same thing with <a href="https://www.reddit.com/r/relationships/">/r/relationships</a>, where an &ldquo;update&rdquo; is important.</p>
 
-<p><img src="/img/reddit-topwords/median-057-relationships.png" alt="" /></p>
+<p><img src="/img/reddit-topwords/median-057-relationships.png" alt=""></p>
 
 <p>All in all, this is still just a first step for analyzing the importance of keywords in Reddit submission, and the impact of Reddit&rsquo;s hivemind. The next step would be NLP techniques such as POS tagging and TDF-IF, but those require very significant and very expensive computing power. At the least, the good results with these simple analyses validates the idea for further research.</p>
 

@@ -127,6 +127,12 @@ color: white !important;
 text-decoration: none;
 }
 
+.sharing-post a, .sharing-post a:hover, .sharing-post {
+font-size: 16px;
+font-weight: 300 !important;
+color: #999 !important;
+}
+
 .blog-classic .blog-classic-overlay {
 text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.5);
 }

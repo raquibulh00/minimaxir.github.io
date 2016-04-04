@@ -254,19 +254,19 @@
 
 <p>In September, the <a href="https://bigquery.cloud.google.com/table/nyc-tlc:yellow.trips">BigQuery dataset</a> was updated to include all data from January 2009 to June 2015: over 1.1 <em>billion</em> Yellow Taxi rides recorded. Here&rsquo;s an updated query, which additionally calculates the total non-tip revenue for a given location, since that might be useful later, and implements a <a href="https://www.reddit.com/r/bigquery/comments/3fo9ao/nyc_taxi_trips_now_officially_shared_by_the_nyc/ctqfr8h">sanity check filter</a> noted by Felipe Hoffa.</p>
 
-<p><figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="k">SELECT</span> <span class="n">ROUND</span><span class="p">(</span><span class="n">pickup_latitude</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="k">AS</span> <span class="n">lat</span><span class="p">,</span>
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="k">SELECT</span> <span class="n">ROUND</span><span class="p">(</span><span class="n">pickup_latitude</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="k">AS</span> <span class="n">lat</span><span class="p">,</span>
 <span class="n">ROUND</span><span class="p">(</span><span class="n">pickup_longitude</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="k">AS</span> <span class="n">long</span><span class="p">,</span>
 <span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">AS</span> <span class="n">num_pickups</span><span class="p">,</span>
 <span class="k">SUM</span><span class="p">(</span><span class="n">fare_amount</span><span class="p">)</span> <span class="k">AS</span> <span class="n">total_revenue</span>
 <span class="k">FROM</span> <span class="p">[</span><span class="n">nyc</span><span class="o">-</span><span class="n">tlc</span><span class="p">:</span><span class="n">yellow</span><span class="p">.</span><span class="n">trips</span><span class="p">]</span>
 <span class="k">WHERE</span> <span class="n">fare_amount</span><span class="o">/</span><span class="n">trip_distance</span> <span class="k">BETWEEN</span> <span class="mi">2</span> <span class="k">AND</span> <span class="mi">10</span>
-<span class="k">GROUP</span> <span class="k">BY</span> <span class="n">lat</span><span class="p">,</span> <span class="n">long</span></code></pre></figure></p>
+<span class="k">GROUP</span> <span class="k">BY</span> <span class="n">lat</span><span class="p">,</span> <span class="n">long</span></code></pre></figure>
 
 <p>The resulting dataset is 4 million rows and 116MB in size! This is well over the limit for downloading from the web BigQuery client, so you must use a local client (in the attached notebook, R), and it will still take about 10-15 minutes to download (as a result, I recommend caching the results locally). Relatedly, rendering 4 million points on a single plot on screen may be computationally intensive: I strongly recommend rendering the visualization to disk by instantiating a <code>png</code> device or by using <code>ggsave</code>.</p>
 
 <p>Here&rsquo;s a few results from that query.</p>
 
-<p><img src="/img/nyc-ggplot2-howto/test-data.png" alt="" /></p>
+<p><img src="/img/nyc-ggplot2-howto/test-data.png" alt=""></p>
 
 <p>As you can see, the second latitude/longitude combo is blatantly <em>wrong</em>. This isn&rsquo;t the first fidelity issue with the dataset, but we will address those in due time.</p>
 
@@ -274,36 +274,36 @@
 
 <p>Let&rsquo;s do a basic ggplot2 plot to test things out. All we need to do is plot a small point for every lat/long combination, and then save the resulting plot.</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">plot <span class="o">&lt;-</span> ggplot<span class="p">(</span>df<span class="p">,</span> aes<span class="p">(</span>x<span class="o">=</span>long<span class="p">,</span> y<span class="o">=</span>lat<span class="p">))</span> <span class="o">+</span>
-            geom_point<span class="p">(</span>size<span class="o">=</span><span class="m">0.06</span><span class="p">)</span> <span class="o">+</span></p>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">plot <span class="o">&lt;-</span> ggplot<span class="p">(</span>df<span class="p">,</span> aes<span class="p">(</span>x<span class="o">=</span>long<span class="p">,</span> y<span class="o">=</span>lat<span class="p">))</span> <span class="o">+</span>
+            geom_point<span class="p">(</span>size<span class="o">=</span><span class="m">0.06</span><span class="p">)</span> <span class="o">+</span>
 
-<p>png<span class="p">(</span><span class="s">&quot;nyc-taxi-1.png&quot;</span><span class="p">,</span> w<span class="o">=</span><span class="m">600</span><span class="p">,</span> h<span class="o">=</span><span class="m">600</span><span class="p">)</span>
+png<span class="p">(</span><span class="s">&quot;nyc-taxi-1.png&quot;</span><span class="p">,</span> w<span class="o">=</span><span class="m">600</span><span class="p">,</span> h<span class="o">=</span><span class="m">600</span><span class="p">)</span>
 plot
-dev.off<span class="p">()</span></code></pre></figure></p>
+dev.off<span class="p">()</span></code></pre></figure>
 
-<p><img src="/img/nyc-ggplot2-howto/nyc-taxi-1.png" alt="" /></p>
+<p><img src="/img/nyc-ggplot2-howto/nyc-taxi-1.png" alt=""></p>
 
 <p>&hellip;stupid data fidelity issues.</p>
 
 <p>This issue is fixed by constraining the plot to a <a href="https://en.wikipedia.org/wiki/Minimum_bounding_box">bounding box</a> of latitude and longitude coordinates corresponding to NYC. Flickr has <a href="https://www.flickr.com/places/info/2459115">a good starting point</a> for a NYC bounding box; I took that and edited the limits more precisely using the <a href="http://boundingbox.klokantech.com">Bounding Box Tool</a>.</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">min_lat <span class="o">&lt;-</span> <span class="m">40.5774</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">min_lat <span class="o">&lt;-</span> <span class="m">40.5774</span>
 max_lat <span class="o">&lt;-</span> <span class="m">40.9176</span>
 min_long <span class="o">&lt;-</span> <span class="m">-74.15</span>
-max_long <span class="o">&lt;-</span> <span class="m">-73.7004</span></code></pre></figure></p>
+max_long <span class="o">&lt;-</span> <span class="m">-73.7004</span></code></pre></figure>
 
 <p>You could also enforce the bounding box during the BigQuery. Now let&rsquo;s implement the bounding box in the plot:</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">plot <span class="o">&lt;-</span> ggplot<span class="p">(</span>df<span class="p">,</span> aes<span class="p">(</span>x<span class="o">=</span>long<span class="p">,</span> y<span class="o">=</span>lat<span class="p">))</span> <span class="o">+</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">plot <span class="o">&lt;-</span> ggplot<span class="p">(</span>df<span class="p">,</span> aes<span class="p">(</span>x<span class="o">=</span>long<span class="p">,</span> y<span class="o">=</span>lat<span class="p">))</span> <span class="o">+</span>
             geom_point<span class="p">(</span>size<span class="o">=</span><span class="m">0.06</span><span class="p">)</span> <span class="o">+</span>
             scale_x_continuous<span class="p">(</span>limits<span class="o">=</span><span class="kt">c</span><span class="p">(</span>min_long<span class="p">,</span> max_long<span class="p">))</span> <span class="o">+</span>
-            scale_y_continuous<span class="p">(</span>limits<span class="o">=</span><span class="kt">c</span><span class="p">(</span>min_lat<span class="p">,</span> max_lat<span class="p">))</span></p>
+            scale_y_continuous<span class="p">(</span>limits<span class="o">=</span><span class="kt">c</span><span class="p">(</span>min_lat<span class="p">,</span> max_lat<span class="p">))</span>
 
-<p>png<span class="p">(</span><span class="s">&quot;nyc-taxi-2.png&quot;</span><span class="p">,</span> w<span class="o">=</span><span class="m">600</span><span class="p">,</span> h<span class="o">=</span><span class="m">600</span><span class="p">)</span>
+png<span class="p">(</span><span class="s">&quot;nyc-taxi-2.png&quot;</span><span class="p">,</span> w<span class="o">=</span><span class="m">600</span><span class="p">,</span> h<span class="o">=</span><span class="m">600</span><span class="p">)</span>
 plot
-dev.off<span class="p">()</span></code></pre></figure></p>
+dev.off<span class="p">()</span></code></pre></figure>
 
-<p><img src="/img/nyc-ggplot2-howto/nyc-taxi-2.png" alt="" /></p>
+<p><img src="/img/nyc-ggplot2-howto/nyc-taxi-2.png" alt=""></p>
 
 <p>Much, much better! Now that the visualization generally looks like what we want it to be, we can start theming.</p>
 
@@ -315,18 +315,17 @@ dev.off<span class="p">()</span></code></pre></figure></p>
 <li>Set the resolution of the rendering device to 300 DPI; this reduces some of the aliasing in the resulting image.</li>
 </ul>
 
-
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">plot <span class="o">&lt;-</span> ggplot<span class="p">(</span>df <span class="o">%&gt;%</span> filter<span class="p">(</span>num_pickups <span class="o">&gt;</span> <span class="m">10</span><span class="p">),</span> aes<span class="p">(</span>x<span class="o">=</span>long<span class="p">,</span> y<span class="o">=</span>lat<span class="p">))</span> <span class="o">+</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">plot <span class="o">&lt;-</span> ggplot<span class="p">(</span>df <span class="o">%&gt;%</span> filter<span class="p">(</span>num_pickups <span class="o">&gt;</span> <span class="m">10</span><span class="p">),</span> aes<span class="p">(</span>x<span class="o">=</span>long<span class="p">,</span> y<span class="o">=</span>lat<span class="p">))</span> <span class="o">+</span>
             geom_point<span class="p">(</span>color<span class="o">=</span><span class="s">&quot;white&quot;</span><span class="p">,</span> size<span class="o">=</span><span class="m">0.06</span><span class="p">)</span> <span class="o">+</span>
             scale_x_continuous<span class="p">(</span>limits<span class="o">=</span><span class="kt">c</span><span class="p">(</span>min_long<span class="p">,</span> max_long<span class="p">))</span> <span class="o">+</span>
             scale_y_continuous<span class="p">(</span>limits<span class="o">=</span><span class="kt">c</span><span class="p">(</span>min_lat<span class="p">,</span> max_lat<span class="p">))</span> <span class="o">+</span>
-            theme_map_dark<span class="p">()</span></p>
+            theme_map_dark<span class="p">()</span>
 
-<p>png<span class="p">(</span><span class="s">&quot;nyc-taxi-3.png&quot;</span><span class="p">,</span> w<span class="o">=</span><span class="m">600</span><span class="p">,</span> h<span class="o">=</span><span class="m">600</span><span class="p">,</span> res<span class="o">=</span><span class="m">300</span><span class="p">)</span>
+png<span class="p">(</span><span class="s">&quot;nyc-taxi-3.png&quot;</span><span class="p">,</span> w<span class="o">=</span><span class="m">600</span><span class="p">,</span> h<span class="o">=</span><span class="m">600</span><span class="p">,</span> res<span class="o">=</span><span class="m">300</span><span class="p">)</span>
 plot
-dev.off<span class="p">()</span></code></pre></figure></p>
+dev.off<span class="p">()</span></code></pre></figure>
 
-<p><img src="/img/nyc-ggplot2-howto/nyc-taxi-3.png" alt="" /></p>
+<p><img src="/img/nyc-ggplot2-howto/nyc-taxi-3.png" alt=""></p>
 
 <p>Right on track! Now time to make things more professional.</p>
 
@@ -338,10 +337,9 @@ dev.off<span class="p">()</span></code></pre></figure></p>
 <li>Force the plot to obey the dimension ratio with <code>coord_equal()</code>, otherwise the map will stretch and distort to fill the entirety of the plotting area. (you can see a vertical stretch effect with the previous image)</li>
 </ul>
 
-
 <p>Putting it all together:</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">plot <span class="o">&lt;-</span> ggplot<span class="p">(</span>df <span class="o">%&gt;%</span> filter<span class="p">(</span>num_pickups <span class="o">&gt;</span> <span class="m">10</span><span class="p">),</span> aes<span class="p">(</span>x<span class="o">=</span>long<span class="p">,</span> y<span class="o">=</span>lat<span class="p">,</span> color<span class="o">=</span>num_pickups<span class="p">))</span> <span class="o">+</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">plot <span class="o">&lt;-</span> ggplot<span class="p">(</span>df <span class="o">%&gt;%</span> filter<span class="p">(</span>num_pickups <span class="o">&gt;</span> <span class="m">10</span><span class="p">),</span> aes<span class="p">(</span>x<span class="o">=</span>long<span class="p">,</span> y<span class="o">=</span>lat<span class="p">,</span> color<span class="o">=</span>num_pickups<span class="p">))</span> <span class="o">+</span>
             geom_point<span class="p">(</span>size<span class="o">=</span><span class="m">0.06</span><span class="p">)</span> <span class="o">+</span>
             scale_x_continuous<span class="p">(</span>limits<span class="o">=</span><span class="kt">c</span><span class="p">(</span>min_long<span class="p">,</span> max_long<span class="p">))</span> <span class="o">+</span>
             scale_y_continuous<span class="p">(</span>limits<span class="o">=</span><span class="kt">c</span><span class="p">(</span>min_lat<span class="p">,</span> max_lat<span class="p">))</span> <span class="o">+</span>
@@ -349,11 +347,11 @@ dev.off<span class="p">()</span></code></pre></figure></p>
             scale_color_gradient<span class="p">(</span>low<span class="o">=</span><span class="s">&quot;#CCCCCC&quot;</span><span class="p">,</span> high<span class="o">=</span><span class="s">&quot;#8E44AD&quot;</span><span class="p">,</span> trans<span class="o">=</span><span class="s">&quot;log&quot;</span><span class="p">)</span> <span class="o">+</span>
             labs<span class="p">(</span>title <span class="o">=</span> <span class="s">&quot;Map of NYC, Plotted Using Locations Of All Yellow Taxi Pickups&quot;</span><span class="p">)</span> <span class="o">+</span>
             theme<span class="p">(</span>legend.position<span class="o">=</span><span class="s">&quot;none&quot;</span><span class="p">)</span> <span class="o">+</span>
-            coord_equal<span class="p">()</span></p>
+            coord_equal<span class="p">()</span>
 
-<p>png<span class="p">(</span><span class="s">&quot;nyc-taxi-4.png&quot;</span><span class="p">,</span> w<span class="o">=</span><span class="m">600</span><span class="p">,</span> h<span class="o">=</span><span class="m">600</span><span class="p">,</span> res<span class="o">=</span><span class="m">300</span><span class="p">)</span>
+png<span class="p">(</span><span class="s">&quot;nyc-taxi-4.png&quot;</span><span class="p">,</span> w<span class="o">=</span><span class="m">600</span><span class="p">,</span> h<span class="o">=</span><span class="m">600</span><span class="p">,</span> res<span class="o">=</span><span class="m">300</span><span class="p">)</span>
 plot
-dev.off<span class="p">()</span></code></pre></figure></p>
+dev.off<span class="p">()</span></code></pre></figure>
 
 <p>results in this image, which is what we want! However there is a slight problem, and I will wrap the image in a red border to demonstrate.</p>
 
@@ -363,7 +361,7 @@ dev.off<span class="p">()</span></code></pre></figure></p>
 }
 </style></span></p>
 
-<p><span class="border"><img src="/img/nyc-ggplot2-howto/nyc-taxi-4.png" alt="" /></span></p>
+<p><span class="border"><img src="/img/nyc-ggplot2-howto/nyc-taxi-4.png" alt=""></span></p>
 
 <p>Due to <code>coord_equal()</code> enforcing the chart dimensions, the rendering device has a gap of white space at the top due to interaction with the <code>grid</code> graphics package that ggplot2 is based upon; normally not a problem for default charts, but a waste of space for visualizations with non-white backgrounds.</p>
 
@@ -385,8 +383,7 @@ dev.off<span class="p">()</span></code></pre></figure></p>
 <li>Set the chart dimensions to avoid the <code>coord_equal()</code> issue mention above.</li>
 </ul>
 
-
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">plot <span class="o">&lt;-</span> ggplot<span class="p">(</span>df <span class="o">%&gt;%</span> filter<span class="p">(</span>num_pickups <span class="o">&gt;</span> <span class="m">20</span><span class="p">),</span> aes<span class="p">(</span>x<span class="o">=</span>long<span class="p">,</span> y<span class="o">=</span>lat<span class="p">,</span> z<span class="o">=</span>total_revenue<span class="p">))</span> <span class="o">+</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">plot <span class="o">&lt;-</span> ggplot<span class="p">(</span>df <span class="o">%&gt;%</span> filter<span class="p">(</span>num_pickups <span class="o">&gt;</span> <span class="m">20</span><span class="p">),</span> aes<span class="p">(</span>x<span class="o">=</span>long<span class="p">,</span> y<span class="o">=</span>lat<span class="p">,</span> z<span class="o">=</span>total_revenue<span class="p">))</span> <span class="o">+</span>
             geom_point<span class="p">(</span>size<span class="o">=</span><span class="m">0.06</span><span class="p">,</span> color<span class="o">=</span><span class="s">&quot;#999999&quot;</span><span class="p">)</span> <span class="o">+</span>
             stat_summary_hex<span class="p">(</span>fun <span class="o">=</span> <span class="kp">sum</span><span class="p">,</span> bins<span class="o">=</span><span class="m">100</span><span class="p">,</span> alpha<span class="o">=</span><span class="m">0.7</span><span class="p">)</span> <span class="o">+</span>
             scale_x_continuous<span class="p">(</span>limits<span class="o">=</span><span class="kt">c</span><span class="p">(</span>min_long<span class="p">,</span> max_long<span class="p">))</span> <span class="o">+</span>
@@ -394,13 +391,13 @@ dev.off<span class="p">()</span></code></pre></figure></p>
             theme_map_dark<span class="p">()</span> <span class="o">+</span>
             scale_fill_gradient<span class="p">(</span>low<span class="o">=</span><span class="s">&quot;#CCCCCC&quot;</span><span class="p">,</span> high<span class="o">=</span><span class="s">&quot;#27AE60&quot;</span><span class="p">,</span> labels<span class="o">=</span>dollar<span class="p">)</span> <span class="o">+</span>
             labs<span class="p">(</span>title <span class="o">=</span> <span class="s">&quot;Total Revenue for NYC Yellow Taxis by Pickup Location, from Jan 2009 ― June 2015&quot;</span><span class="p">)</span> <span class="o">+</span>
-            coord_equal<span class="p">()</span></p>
+            coord_equal<span class="p">()</span>
 
-<p>png<span class="p">(</span><span class="s">&quot;nyc-taxi-5.png&quot;</span><span class="p">,</span> w<span class="o">=</span><span class="m">950</span><span class="p">,</span> h<span class="o">=</span><span class="m">860</span><span class="p">,</span> res<span class="o">=</span><span class="m">300</span><span class="p">)</span>
+png<span class="p">(</span><span class="s">&quot;nyc-taxi-5.png&quot;</span><span class="p">,</span> w<span class="o">=</span><span class="m">950</span><span class="p">,</span> h<span class="o">=</span><span class="m">860</span><span class="p">,</span> res<span class="o">=</span><span class="m">300</span><span class="p">)</span>
 plot
-dev.off<span class="p">()</span></code></pre></figure></p>
+dev.off<span class="p">()</span></code></pre></figure>
 
-<p><img src="/img/nyc-ggplot2-howto/nyc-taxi-5.png" alt="" /></p>
+<p><img src="/img/nyc-ggplot2-howto/nyc-taxi-5.png" alt=""></p>
 
 <p>That wasn&rsquo;t too bad. The gradient shows that <a href="https://www.google.com/maps/place/penn+station+nyc/@40.750568,-73.993519,15z">Penn Station</a> in Manhattan, along with the two airports, are the largest revenue generators.</p>
 
@@ -415,15 +412,14 @@ dev.off<span class="p">()</span></code></pre></figure></p>
 <li>Make a few more aesthetic tweaks.</li>
 </ul>
 
-
 <p>Here&rsquo;s take two:</p>
 
-<p><figure class="highlight"><pre><code class="language-r" data-lang="r">total_rev <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>x<span class="p">,</span> threshold <span class="o">=</span> <span class="m">10</span><span class="o">^</span><span class="m">5</span><span class="p">)</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r">total_rev <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>x<span class="p">,</span> threshold <span class="o">=</span> <span class="m">10</span><span class="o">^</span><span class="m">5</span><span class="p">)</span> <span class="p">{</span>
     <span class="kr">if</span> <span class="p">(</span><span class="kp">sum</span><span class="p">(</span>x<span class="p">)</span> <span class="o">&lt;</span> threshold<span class="p">)</span> <span class="p">{</span><span class="kr">return</span> <span class="p">(</span><span class="kc">NA</span><span class="p">)}</span>
     <span class="kr">else</span> <span class="p">{</span><span class="kr">return</span> <span class="p">(</span><span class="kp">sum</span><span class="p">(</span>x<span class="p">))}</span>
-<span class="p">}</span></p>
+<span class="p">}</span>
 
-<p>plot <span class="o">&lt;-</span> ggplot<span class="p">(</span>df <span class="o">%&gt;%</span> filter<span class="p">(</span>num_pickups <span class="o">&gt;</span> <span class="m">10</span><span class="p">),</span> aes<span class="p">(</span>x<span class="o">=</span>long<span class="p">,</span> y<span class="o">=</span>lat<span class="p">,</span> z<span class="o">=</span>total_revenue<span class="p">))</span> <span class="o">+</span>
+plot <span class="o">&lt;-</span> ggplot<span class="p">(</span>df <span class="o">%&gt;%</span> filter<span class="p">(</span>num_pickups <span class="o">&gt;</span> <span class="m">10</span><span class="p">),</span> aes<span class="p">(</span>x<span class="o">=</span>long<span class="p">,</span> y<span class="o">=</span>lat<span class="p">,</span> z<span class="o">=</span>total_revenue<span class="p">))</span> <span class="o">+</span>
             geom_point<span class="p">(</span>size<span class="o">=</span><span class="m">0.06</span><span class="p">,</span> color<span class="o">=</span><span class="s">&quot;#999999&quot;</span><span class="p">)</span> <span class="o">+</span>
             stat_summary_hex<span class="p">(</span>fun <span class="o">=</span> total_rev<span class="p">,</span> bins<span class="o">=</span><span class="m">100</span><span class="p">,</span> alpha<span class="o">=</span><span class="m">0.5</span><span class="p">)</span> <span class="o">+</span>
             scale_x_continuous<span class="p">(</span>limits<span class="o">=</span><span class="kt">c</span><span class="p">(</span><span class="m">-74.0224</span><span class="p">,</span> <span class="m">-73.8521</span><span class="p">))</span> <span class="o">+</span>
@@ -431,28 +427,48 @@ dev.off<span class="p">()</span></code></pre></figure></p>
             theme_map_dark<span class="p">()</span> <span class="o">+</span>
             scale_fill_gradient<span class="p">(</span>low<span class="o">=</span><span class="s">&quot;#FFFFFF&quot;</span><span class="p">,</span> high<span class="o">=</span><span class="s">&quot;#E74C3C&quot;</span><span class="p">,</span> labels<span class="o">=</span>dollar<span class="p">,</span> trans<span class="o">=</span><span class="s">&quot;log&quot;</span><span class="p">,</span> breaks<span class="o">=</span><span class="kt">c</span><span class="p">(</span><span class="m">10</span><span class="o">^</span><span class="p">(</span><span class="m">6</span><span class="o">:</span><span class="m">8</span><span class="p">)))</span> <span class="o">+</span>
             labs<span class="p">(</span>title <span class="o">=</span> <span class="s">&quot;Total Revenue for NYC Yellow Taxis by Pickup Location, from Jan 2009 ― June 2015&quot;</span><span class="p">)</span> <span class="o">+</span>
-            coord_equal<span class="p">()</span></p>
+            coord_equal<span class="p">()</span>
 
-<p>png<span class="p">(</span><span class="s">&quot;nyc-taxi-6.png&quot;</span><span class="p">,</span> w<span class="o">=</span><span class="m">900</span><span class="p">,</span> h<span class="o">=</span><span class="m">900</span><span class="p">,</span> res<span class="o">=</span><span class="m">300</span><span class="p">)</span>
+png<span class="p">(</span><span class="s">&quot;nyc-taxi-6.png&quot;</span><span class="p">,</span> w<span class="o">=</span><span class="m">900</span><span class="p">,</span> h<span class="o">=</span><span class="m">900</span><span class="p">,</span> res<span class="o">=</span><span class="m">300</span><span class="p">)</span>
 plot
-dev.off<span class="p">()</span></code></pre></figure></p>
+dev.off<span class="p">()</span></code></pre></figure>
 
-<p><img src="/img/nyc-ggplot2-howto/nyc-taxi-6.png" alt="" /></p>
+<p><img src="/img/nyc-ggplot2-howto/nyc-taxi-6.png" alt=""></p>
 
 <p>A good step forward. Revenue all through Manhattan is mostly the same except for Penn Station. Meanwhile, the hexes in LaGuardia Airport are noticeably more saturated than Penn Station.</p>
 
 <p>Hopefully, this tutorial gave you a good look into a few interesting tricks that can be accomplished with ggplot2, even though the code can be somewhat messy. If you want more orthodox methods of plotting geographic data in ggplot2, you should look into the <a href="https://cran.r-project.org/web/packages/ggmap/index.html">ggmap</a> R package, which I used to plot <a href="http://minimaxir.com/2014/04/san-francisco/">Facebook Checkin data in San Francisco</a>, and look into the <a href="https://cran.r-project.org/web/packages/maps/index.html">maps</a> R package plus shape files, which I used to plot <a href="http://minimaxir.com/2015/01/tree-time/">Instagram photo location data</a>. Unfortunately, the code may not necessarily be less messy.</p>
 
-<hr />
+<hr>
 
 <p><em>If you use the code or data visualization designs contained within this article, it would be greatly appreciated if proper attribution is given back to this article and/or myself. Thanks!</em></p>
 
+						
+            			 <div class="breadcrumbs-v5-subtitle sharing-post" style="color: #999 !important; padding-top:10px; border-top: 1px solid #eee">Share this article!
+
+
+              <span class="sharing index" style="float: right; color: #999 !important;">
+  
+		  <span class="social facebook"><a href="https://www.facebook.com/share.php?u=http://minimaxir.com/2015/11/nyc-ggplot2-howto/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data="http://minimaxir.com/2015/11/nyc-ggplot2-howto/"><i class="fa fa-facebook"></i><span class="count hidden-xs"> -</span></a></span>
+  
+		<span class="social twitter"><a href="http://twitter.com/home/?status=How to Visualize New York City Using Taxi Location Data and ggplot2 - http://minimaxir.com/2015/11/nyc-ggplot2-howto/ - via @minimaxir"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data=http://minimaxir.com/2015/11/nyc-ggplot2-howto/><i class="fa fa-twitter"></i><span class="count hidden-xs"></span></a> </span>
+
+  <span  class="social linkedin"><a href="http://www.linkedin.com/shareArticle?mini=true&title=&url=http://minimaxir.com/2015/11/nyc-ggplot2-howto/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=600');return false;" data=http://minimaxir.com/2015/11/nyc-ggplot2-howto/><i class="fa fa-linkedin"></i><span class="count hidden-xs"> -</span></a> </span>
+
+   </span>
+   </div>
 						</div>
                         <!-- End Blog Grid Content -->
+                        
+                        
+                        
                     </article>
                     <!-- End Blog Grid -->
 
- 
+ 					
 
                     <!-- Blog Comment -->
                     <div class="bg-color-white margin-b-30">
@@ -483,6 +499,8 @@ dev.off<span class="p">()</span></code></pre></figure></p>
                         </div>
                     </div>
                     <!-- End Blog Comment -->
+                    
+                    
                 </div>
 
 			                <!--========== BLOG SIDEBAR ==========-->
@@ -500,11 +518,13 @@ dev.off<span class="p">()</span></code></pre></figure></p>
                         
                         <div class="blog-sidebar-content">
                             <!-- Blog Author Bio -->
-                            <p>Max Woolf (@minimaxir) is a Software QA Engineer living and working in the San Francisco Bay Area for over 3.5 years and a 2012 Carnegie Mellon University graduate.</p>
-  
-  <p>In his spare time, Max uses <a href="https://www.python.org/">Python</a> to gather data from public APIs and <a href="http://ggplot2.org/">ggplot2</a> to make pretty charts from that data.</p>
-  
-  <p>You can learn more about Max <a href="/about">here</a>, or view his portfolio <a href="/portfolio">here</a>.
+							
+							<p><strong>Max Woolf (@minimaxir)</strong> is a Software QA Engineer living and working in the San Francisco Bay Area for over 3 years and a 2012 Carnegie Mellon University graduate in Business Administration.</p>
+
+<p>In his spare time, Max uses <a href="https://www.python.org/">Python</a> to gather data from public APIs and <a href="http://ggplot2.org/">ggplot2</a> to make pretty charts from that data.</p>
+
+<p>You can learn more about Max <a href="/about">here</a>, or view his portfolio <a href="/portfolio">here</a>. </p>
+
   
     <ul class="list-inline" style="padding-top:10px; margin-top: 20px; border-top: 1px solid #ebeef6">
                         <li class="theme-icons-wrap"><a title="Facebook" href="https://facebook.com/max.woolf" target="_blank"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-facebook"></i></a></li>
@@ -560,6 +580,13 @@ dev.off<span class="p">()</span></code></pre></figure></p>
                                 <div class="latest-tuts-content">
                                     <h5 class="latest-tuts-content-title"><a href="/2016/01/movie-revenue-ratings/">Movie Review Aggregator Ratings Have No Relationship with Box Office Success</a></h5>
                                     <small class="latest-tuts-content-time"> Jan 7, 2016</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="/2015/12/lets-code-1/">Let's Code an Analysis and Visualizations of Yelp Data using R and ggplot2</a></h5>
+                                    <small class="latest-tuts-content-time"> Dec 28, 2015</small>
                                 </div>
                         </article>
                                                 
@@ -659,22 +686,82 @@ dev.off<span class="p">()</span></code></pre></figure></p>
 
 
   
-      <!--========== FOOTER ==========-->
-    <footer id="footer" class="footer">
-        <div class="container">
-            <!-- end row -->
+      <!--========== FOOTER V8 ==========-->
+    <footer id="footer" class="footer-v8">
+        <div class="content-sm container">
+            <div class="row">
+                <!-- Logo -->
+                <div class="col-md-6">
+                    
+                    <p>You can contact through any of the following channels, although e-mail is preferred. Following me on Facebook and Twitter certainly doesn't hurt either!</p>
+                     <!-- <h2 class="footer-v8-title">Follow Me</h2> -->
+                    <!-- Theme Icons White Background -->
+                   <!-- <ul class="list-inline ul-li-lr-0">
+                        <li class="theme-icons-wrap"><a title="Facebook" href="https://facebook.com/max.woolf" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-facebook"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="Twitter" href="https://twitter.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-twitter"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="LinkedIn" href="https://linkedin.com/in/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-linkedin"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="GitHub" href="https://github.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-github"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="YouTube" href="https://youtube.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-youtube"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="E-Mail" href="mailto:max@minimaxir.com"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-envelope"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="RSS" href="/rss.xml"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-rss"></i></a></li> -->
+                    <!-- End Theme Icons White Background -->
+                </div>
+                <!-- End Logo -->
 
+                <!-- Contact Info -->
+                <div class="col-md-6">
+                    <h3 class="footer-v8-title">Contact Info</h3>
+                    <div class="footer-v8-contact-info-bg">
+                        <ul class="list-unstyled footer-v8-contact-info">
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-map-marker"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <p class="footer-v8-contact-info-text">SOMA, San Francisco, CA</p>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-facebook"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="Facebook" href="https://facebook.com/max.woolf" target="_blank">max.woolf</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-twitter"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="Twitter" href="https://twitter.com/minimaxir" target="_blank"">@minimaxir</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-linkedin"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="LinkedIn" href="https://linkedin.com/in/minimaxir" target="_blank"">minimaxir</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-envelope"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="E-Mail" href="mailto:max@minimaxir.com">max@minimaxir.com</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- End Contact Info -->
 
-            <!-- Copyright -->
-            <ul class="list-inline footer-copyright">
-                <li class="footer-copyright-item">Copyright &#169; 2016 Max Woolf. All Rights Reserved.</li>
-                <li class="footer-copyright-item">minimaxir.com is powered by Jekyll and GitHub Pages.</li>
-            </ul>
-            <!-- End Copyright -->
-
+            </div>
+            <!--// end row -->
         </div>
+
+        <!-- Copyright -->
+        <div class="footer-v8-copyright">
+            <div class="container text-center">
+				Copyright &#169; 2016 Max Woolf. All Rights Reserved. 
+                minimaxir.com is powered by Jekyll and GitHub Pages.
+            </div>
+        </div>
+        <!-- Copyright -->
     </footer>
-    <!--========== END FOOTER ==========-->
+    <!--========== END FOOTER V8 ==========-->
 </div>
 <!-- END WRAPPER -->
 
