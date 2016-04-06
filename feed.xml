@@ -5,9 +5,108 @@
     <description>A blog by Max Woolf about startups, technology, and blogging. It&#39;s so meta, even this acronym.</description>
     <link>http://minimaxir.com/</link>
     <atom:link href="http://minimaxir.com/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Sun, 03 Apr 2016 21:11:16 -0700</pubDate>
-    <lastBuildDate>Sun, 03 Apr 2016 21:11:16 -0700</lastBuildDate>
+    <pubDate>Wed, 06 Apr 2016 08:16:05 -0700</pubDate>
+    <lastBuildDate>Wed, 06 Apr 2016 08:16:05 -0700</lastBuildDate>
     <generator>Jekyll v3.1.2</generator>
+    
+      <item>
+        <title>The Importance of Sanity-Checking Datasets Before Analysis</title>
+        <description>&lt;p&gt;I&amp;rsquo;ve done some cool things with movie data using a dataset from &lt;a href=&quot;http://www.omdbapi.com&quot;&gt;OMDb API&lt;/a&gt;, which is sourced from &lt;a href=&quot;http://www.imdb.com&quot;&gt;IMDb&lt;/a&gt; and &lt;a href=&quot;http://www.rottentomatoes.com&quot;&gt;Rotten Tomatoes&lt;/a&gt; data. In my &lt;a href=&quot;http://minimaxir.com/2016/01/movie-revenue-ratings/&quot;&gt;previous article&lt;/a&gt; on the dataset, I plotted the relationship between the domestic box office revenue of movies and their Rotten Tomatoes scores.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/movie-revenue-ratings/box-office-rating-1.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;I want to take another look at domestic Box Office Revenues with aggregate statistics such as means/medians on categorical variables such as MPAA rating and release month. For this type of analysis in particular, I&amp;rsquo;ll also need to implement code in &lt;a href=&quot;https://www.r-project.org&quot;&gt;R&lt;/a&gt; for inflation adjustment.&lt;/p&gt;
+
+&lt;p&gt;However, I ran into a few unexpectedly silly issues.&lt;/p&gt;
+
+&lt;h2&gt;Seeing Double&lt;/h2&gt;
+
+&lt;p&gt;There are many similarities between data validation and the Quality Assurance process of product development, which is why this particular area appeals to me personally as a Software QA Engineer. Whenever a cool dataset is released publicly, I play around with it to look for any obvious flaws and to get a good all-around benchmark on the robustness of the data (this is a separate procedure from the traditional &amp;ldquo;data cleaning&amp;rdquo; phase necessary to begin quantification on some poorly-structured datasets).&lt;/p&gt;
+
+&lt;p&gt;Do the extreme values in the data make sense? Is the data encoded in a sane format? Are there any obvious gaps or logical contradictions in summary representations of the data, especially when compared to other canonical sources? &lt;/p&gt;
+
+&lt;p&gt;These concerns are also some of the reasons I&amp;rsquo;ve switched to the &lt;a href=&quot;http://jupyter.org&quot;&gt;Jupyter Notebook&lt;/a&gt; as my primary data science IDE. After each block of code which transforms data, I can print the data frame inline to immediately see the results of the code execution, and refer back to them if anything odd happens in the future.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s say I have a data frame of Movies using the latest data dump (3/26/16) from OMDb. This data set contains 1,160,273 movies, including both IMDb and Rotten Tomatoes data. After cleaning the data (not shown), I can use the R package &lt;code&gt;dplyr&lt;/code&gt; by Hadley Wickham to sort the data frame by Box Office Revenue descending, and print the &lt;code&gt;head&lt;/code&gt; (top) of the data.&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-R&quot; data-lang=&quot;R&quot;&gt;&lt;span class=&quot;kp&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;df &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt; select&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;imdbID&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; Title&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; Year&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; BoxOffice&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt; arrange&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;desc&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;BoxOffice&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;head&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;25&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; n &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;25&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;img src=&quot;/img/trust-but-verify/data-2.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;Those movies being the best &lt;em&gt;makes sense&lt;/em&gt;. For &lt;a href=&quot;http://www.rottentomatoes.com/m/star_wars_episode_vii_the_force_awakens/&quot;&gt;Star Wars: The Force Awakens&lt;/a&gt;, I can compare it to the Box Office reported on the corresponding Rotten Tomatoes page, which in turn matches the &lt;a href=&quot;http://www.boxofficemojo.com/movies/?id=starwars7.htm&quot;&gt;domestic Box Office Revenue&lt;/a&gt; on &lt;a href=&quot;http://www.boxofficemojo.com&quot;&gt;Box Office Mojo&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;But wait, &lt;a href=&quot;https://en.wikipedia.org/wiki/The_Dark_Knight_%28film%29&quot;&gt;The Dark Knight&lt;/a&gt; appears &lt;em&gt;twice&lt;/em&gt;? How?!&lt;/p&gt;
+
+&lt;p&gt;There&amp;rsquo;s no way I would have missed something this obvious during the sanity-check for my previous article. In order to make sure that I&amp;rsquo;m not going insane, I double-checked the December 2015 data dump I used for that post, derived the top movies with the same methodology for the modern data dump, and the duplicate movies &lt;em&gt;were not present&lt;/em&gt;. Weird.&lt;/p&gt;
+
+&lt;p&gt;There are 2 different IDs for
+The Dark Knight, and for some other movies near the top (&lt;a href=&quot;http://www.imdb.com/title/tt4817264/&quot;&gt;Inside Out&lt;/a&gt;, &amp;ldquo;&lt;a href=&quot;http://www.imdb.com/title/tt3138972/&quot;&gt;The Gravity&lt;/a&gt;&amp;rdquo;). Fortunately, duplicate data like this is easy to debug. The second data entry for The Dark Knight has a greater IMDb ID (1774602) which means it was likely added to the site later. Let&amp;rsquo;s look up the &lt;a href=&quot;http://www.imdb.com/title/tt1774602/&quot;&gt;corresponding IMDb page&lt;/a&gt;:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/trust-but-verify/dark-knight.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;Huh. Apparently someone put a filler movie entry with the same name and release year as a blockbuster movie in hopes that people search for it by accident (and since it received 50 ratings and an average score of 8.6, this tactic was successful).&lt;/p&gt;
+
+&lt;p&gt;Using the Rotten Tomatoes &lt;a href=&quot;http://developer.rottentomatoes.com/docs/read/json/v10/Movie_Alias&quot;&gt;IMDb Lookup API&lt;/a&gt;, we find that &amp;ldquo;The Dark Knight&amp;rdquo; page on Rotten Tomatoes&amp;hellip;&lt;a href=&quot;http://api.rottentomatoes.com/api/public/v1.0/movie_alias.json?type=imdb&amp;amp;id=1774602&quot;&gt;doesn&amp;rsquo;t exist&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;We can run a safe deduplicate by removing entries with the same title (excluding the &amp;ldquo;The&amp;rdquo; if present) and release year.&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;df_dup &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; df &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt; select&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;Title&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; Year&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt; mutate&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;Title &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;gsub&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;The &amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; Title&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+dup &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;duplicated&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;df_dup&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;   &lt;span class=&quot;c1&quot;&gt;# find entry indices which are duplicates&lt;/span&gt;
+&lt;span class=&quot;kp&quot;&gt;rm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;df_dup&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;   &lt;span class=&quot;c1&quot;&gt;# remove temp dataframe&lt;/span&gt;
+
+df_dedup &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; df &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt; filter&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;dup&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;   &lt;span class=&quot;c1&quot;&gt;# keep entries which are *not* dups&lt;/span&gt;
+&lt;span class=&quot;kp&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;df_dedup &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt; select&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;imdbID&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; Title&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; Year&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; BoxOffice&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt; arrange&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;desc&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;BoxOffice&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;head&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;25&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; n &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;25&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;img src=&quot;/img/trust-but-verify/data-1.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;There we go! The de-duped dataset has 1,114,431 movies, impliying that there were 45,842 of these duplicate entries.&lt;/p&gt;
+
+&lt;p&gt;I&amp;rsquo;m not sure &lt;em&gt;whose&lt;/em&gt; fault it is that duplicate movies suddenly became present in the data dump: OMDb or Rotten Tomatoes. &lt;em&gt;But it doesn&amp;rsquo;t matter&lt;/em&gt;: the wrong entries still need to be addressed, and it&amp;rsquo;s good to have a test case for the future too.&lt;/p&gt;
+
+&lt;h2&gt;Inflation Station&lt;/h2&gt;
+
+&lt;p&gt;A &lt;a href=&quot;http://stackoverflow.com/a/26068058&quot;&gt;Stack Overflow answer&lt;/a&gt; from &lt;a href=&quot;http://stackoverflow.com/users/1048757/brash-equilibrium&quot;&gt;Ben Hanowell&lt;/a&gt; has a good R implementation and rationale for implementing inflation adjustment using the &lt;a href=&quot;https://research.stlouisfed.org/fred2/data/CPIAUCSL.txt&quot;&gt;historical Consumer Price Index data&lt;/a&gt; from the &lt;a href=&quot;https://www.stlouisfed.org&quot;&gt;Federal Reserve Bank of St. Louis&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Take the index for each year (averaging each month for simplicity) and create an adjustment factor to convert historical dollar amounts into present-day dollar amounts. Much better than plugging hundreds of thousands of values into an online calculator. Here&amp;rsquo;s the SO code made &lt;code&gt;dplyr&lt;/code&gt;-friendly for this purpose, with the requisite sanity-checks.&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;inflation &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; read_csv&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;http://research.stlouisfed.org/fred2/data/CPIAUCSL.csv&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;
+                    group_by&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;Year &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;as.integer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kp&quot;&gt;substr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;DATE&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;
+                    summarize&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;Avg_Value &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;mean&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;VALUE&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;   &lt;span class=&quot;c1&quot;&gt;# average across all months&lt;/span&gt;
+                    mutate&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;Adjust &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;tail&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;Avg_Value&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; Avg_Value&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;   &lt;span class=&quot;c1&quot;&gt;# normalize by most-recent year&lt;/span&gt;
+
+&lt;span class=&quot;kp&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;inflation &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;head&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt;
+&lt;span class=&quot;kp&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;inflation &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;tail&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;img src=&quot;/img/trust-but-verify/inf.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;For example, to get the inflation-adjusted Box Office Revenue for a movie released in 1949 in 2016 dollars, we multiply the reported revenue by 10. That sounds about right (and matches closely enough to the output of the &lt;a href=&quot;http://data.bls.gov/cgi-bin/cpicalc.pl?cost1=1&amp;amp;year1=1949&amp;amp;year2=2016&quot;&gt;Bureau of Labor Statistics inflation calculator&lt;/a&gt;).&lt;/p&gt;
+
+&lt;p&gt;Now map each inflation adjustment factor to each movie by merging the two datasets (on the &lt;code&gt;Year&lt;/code&gt; column), then multiply the Box Office revenue by the adjustment factor to get the inflation-adjusted revenue. Plus another sanity-check for good measure. &lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;df_dedup_join &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; df_dedup &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt; inner_join&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;inflation&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt; mutate&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;AdjBoxOffice &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; BoxOffice &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; Adjust&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;kp&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;df_dedup_join &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt; select&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;Title&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; Year&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; AdjBoxOffice&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt; arrange&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;desc&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;AdjBoxOffice&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;head&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;25&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; n&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;25&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;img src=&quot;/img/trust-but-verify/data-3.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;Uh-oh.&lt;/p&gt;
+
+&lt;p&gt;I mean, &lt;a href=&quot;https://en.wikipedia.org/wiki/The_Lorax_(TV_special)&quot;&gt;The Lorax&lt;/a&gt; probably earned $1.2 billion in VHS sales for Earth Day education &lt;em&gt;alone&lt;/em&gt;, but the TV special was never released in theaters. There was a &lt;a href=&quot;https://en.wikipedia.org/wiki/The_Lorax_(film)&quot;&gt;CGI remake of The Lorax&lt;/a&gt; a few years ago which was reasonably popular. Could it be that someone at Rotten Tomatoes or Box Office Mojo confused the two media?&lt;/p&gt;
+
+&lt;p&gt;That is exactly what happened. On Rotten Tomatoes, The &lt;a href=&quot;http://www.rottentomatoes.com/m/the-lorax/&quot;&gt;1972 Lorax&lt;/a&gt; was encoded with similar box office revenue as the &lt;a href=&quot;http://www.rottentomatoes.com/m/the_lorax/&quot;&gt;2012 Lorax&lt;/a&gt;; then the inflation factor sextupled it. For this type of data fidelity issue, it&amp;rsquo;s considerably more obvious whose at fault.&lt;/p&gt;
+
+&lt;p&gt;Unfortunately, that&amp;rsquo;s not the end of problems with the dataset. I compared my results with &lt;a href=&quot;http://www.vox.com/2016/4/4/11351788/batman-v-superman-terrible-reviews#undefined&quot;&gt;Vox&amp;rsquo;s dataset&lt;/a&gt; on worldwide historical box office revenues. In the Top 200 Movies by inflation-adjusted revenue, there are noted historical movie omissions such as &lt;a href=&quot;http://www.rottentomatoes.com/m/jaws/&quot;&gt;Jaws&lt;/a&gt; and &lt;a href=&quot;http://www.rottentomatoes.com/m/star_wars/&quot;&gt;Star Wars: A New Hope&lt;/a&gt;. It turns out Rotten Tomatoes does not have Box Office Revenue data for these movies at all. &lt;/p&gt;
+
+&lt;p&gt;That is a very serious problem which I&amp;rsquo;ll have to think about if it blocks any analysis on aggregate box office data completely. In the end, sanity-checking third party data is important because you never know &lt;em&gt;how&lt;/em&gt; the data will surprise you, until it&amp;rsquo;s too late.&lt;/p&gt;
+
+&lt;hr&gt;
+
+&lt;p&gt;&lt;em&gt;You can view the Top 200 movies by domestic box office revenue for each of the 12/15 source dataset, the 3/16 dataset, the 3/16 deduped dataset, and the 3/16 deduced inflation-adjusted data &lt;a href=&quot;https://github.com/minimaxir/movie-data-sanity-checking&quot;&gt;in this GitHub repository&lt;/a&gt;, along with the Jupyter notebook.&lt;/em&gt;&lt;/p&gt;
+</description>
+        <pubDate>Wed, 06 Apr 2016 08:00:00 -0700</pubDate>
+        <link>http://minimaxir.com/2016/04/trust-but-verify/</link>
+        <guid isPermaLink="true">http://minimaxir.com/2016/04/trust-but-verify/</guid>
+        
+        
+        <category>Idea</category>
+        
+      </item>
     
       <item>
         <title>Unlimited Data Storage Using Image Steganography and Cat GIFs</title>
@@ -1260,149 +1359,6 @@ dev.off&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&
         <pubDate>Mon, 16 Nov 2015 08:00:00 -0800</pubDate>
         <link>http://minimaxir.com/2015/11/nyc-ggplot2-howto/</link>
         <guid isPermaLink="true">http://minimaxir.com/2015/11/nyc-ggplot2-howto/</guid>
-        
-        
-        <category>Data</category>
-        
-      </item>
-    
-      <item>
-        <title>Quantifying and Visualizing the Reddit Hivemind</title>
-        <description>&lt;p&gt;In my &lt;a href=&quot;http://minimaxir.com/2015/10/reddit-bigquery/&quot;&gt;last post on Reddit data&lt;/a&gt; (I strongly suggest you read that first if you haven&amp;rsquo;t already), I noted that analyzing the words used in Reddit submissions may be useful in quantifying the relationship of those keywords in the success of a Reddit submission. Indeed, if we can find out which topics Reddit users tend to upvote, we can identify what keywords are most attractive to the Reddit &amp;ldquo;hivemind.&amp;rdquo;&lt;/p&gt;
-
-&lt;p&gt;First, I gathered some preliminary statistics about all submissions to the top 500 subreddits on Reddit, again using the &lt;a href=&quot;https://cloud.google.com/bigquery/&quot;&gt;BigQuery&lt;/a&gt; data dump compiled by Jason Baumgartner and Felipe Hoffa, in order to establish a good base for the analysis:&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sql&quot; data-lang=&quot;sql&quot;&gt;&lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;subreddit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-  &lt;span class=&quot;k&quot;&gt;COUNT&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;AS&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;num_submissions&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-  &lt;span class=&quot;n&quot;&gt;ROUND&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;AVG&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;score&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;avg_score&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-  &lt;span class=&quot;n&quot;&gt;NTH&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;25&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;quantiles&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;score&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;AS&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lower_95&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-  &lt;span class=&quot;n&quot;&gt;NTH&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;500&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;quantiles&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;score&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;AS&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;median&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-  &lt;span class=&quot;n&quot;&gt;NTH&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;975&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;quantiles&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;score&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;AS&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;upper_95&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fh&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bigquery&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reddit_posts&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;full_corpus_201509&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;GROUP&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;BY&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;subreddit&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;ORDER&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;BY&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;num_submissions&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;DESC&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;LIMIT&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;500&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;Which results in &lt;a href=&quot;https://docs.google.com/spreadsheets/d/1lyEc7-5vkREKBV8fUreyOszICgyA0CqX2YHaK2-4ndo/edit?usp=sharing&quot;&gt;this output&lt;/a&gt;. The &amp;ldquo;lower_95&amp;rdquo; and and the &amp;ldquo;upper_95&amp;rdquo; columns represent the 2.5% and the 97.5% percentile respectively, which could be used to form a 95% confidence interval around the median. For example, &lt;a href=&quot;http://reddit.com/r/funny&quot;&gt;/r/funny&lt;/a&gt; has a 2.5% percentile of 0 points, a median of 1 point, and a 97.5% percentile of &lt;em&gt;875 points&lt;/em&gt;. However, from those values, it is clear the data is heavily skewed right, which makes running statistical tests more difficult.&lt;/p&gt;
-
-&lt;p&gt;Now we can query the top keywords for each subreddit, whose presence in a submission is related to the highest average score within that subreddit. This requires a very intricate and optimized BigQuery. Specifically, we want the query to:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Get the Top 500 subreddits, by number of submissions (an abridged verson of query above).&lt;/li&gt;
-&lt;li&gt;Get all submissions from these subreddits.&lt;/li&gt;
-&lt;li&gt;Extract the keywords from all of these submissions, using a &lt;a href=&quot;https://en.wikipedia.org/wiki/Regular_expression&quot;&gt;regular expression&lt;/a&gt; to remove most punctuation (unfortunately, the regular expression will remove punctuation &lt;em&gt;within&lt;/em&gt; words as well, resulting in some odd &amp;ldquo;words&amp;rdquo; in the final results) and flattening the resulting tokens into separate rows for aggregation.&lt;/li&gt;
-&lt;li&gt;Aggregate the keywords by both subreddit and the word itself, and obtain the # of distinct submissions the word is present in, the average score among all submissions, etc.&lt;/li&gt;
-&lt;li&gt;Keep only words which occur in atleast 1,000 distinct submissions, which is important for getting a good average.&lt;/li&gt;
-&lt;li&gt;For each subreddit, rank each remaining word by their average score, descending.&lt;/li&gt;
-&lt;li&gt;Keep only the Top 20 words for each subreddit. 500 subreddits x 20 words = 10,000 rows maximum, which the limit BigQuery allows for web download, so that works out well.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sql&quot; data-lang=&quot;sql&quot;&gt;&lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;subreddit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;word&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;num_words&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;avg_score&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lower_95&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;median&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;upper_95&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ROW_NUMBER&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;OVER&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;PARTITION&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;BY&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;subreddit&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ORDER&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;BY&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;avg_score&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;DESC&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;score_rank&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;subreddit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;word&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;COUNT&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;DISTINCT&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;AS&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;num_words&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ROUND&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;AVG&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;score&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;AS&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;avg_score&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;NTH&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;25&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;quantiles&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;score&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;AS&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lower_95&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;NTH&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;500&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;quantiles&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;score&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;AS&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;median&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;NTH&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;975&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;quantiles&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;score&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;AS&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;upper_95&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;FLATTEN&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;
-  &lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;SPLIT&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;LOWER&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;REGEXP_REPLACE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;title&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;[^\w\&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;, &amp;#39;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;)), &amp;#39;&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;word&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;subreddit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;score&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;id&lt;/span&gt;
-  &lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fh&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bigquery&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reddit_posts&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;full_corpus_201509&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
-  &lt;span class=&quot;k&quot;&gt;WHERE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;subreddit&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;IN&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;subreddit&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;subreddit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;COUNT&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;AS&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fh&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bigquery&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reddit_posts&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;full_corpus_201509&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;GROUP&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;BY&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;subreddit&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ORDER&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;BY&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;DESC&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;LIMIT&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;500&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
-  &lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;word&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;GROUP&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;EACH&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;BY&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;subreddit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;word&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;HAVING&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;num_words&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1000&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;WHERE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;score_rank&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;20&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;ORDER&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;BY&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;subreddit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;avg_score&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;DESC&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;Phew! That query results in &lt;a href=&quot;https://docs.google.com/spreadsheets/d/1MRfLR_TBO8zveKaifqVXTN0da7tf0FQOr5a2LVkZgkg/edit?usp=sharing&quot;&gt;this output&lt;/a&gt;, which we can use to plot a bar chart for each subreddit.&lt;/p&gt;
-
-&lt;h2&gt;Plotting the Words&lt;/h2&gt;
-
-&lt;p&gt;&lt;em&gt;The R code used to generate the charts is available in &lt;a href=&quot;https://github.com/minimaxir/reddit-subreddit-keywords/blob/master/reddit_subreddit_words.ipynb&quot;&gt;this Jupyter notebook&lt;/a&gt;, open-sourced on GitHub. Additionally, all 500 charts with the keyword ranks for all 500 subreddits are available in &lt;a href=&quot;https://github.com/minimaxir/reddit-subreddit-keywords/tree/master/subreddit-mean&quot;&gt;the parent repository&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;After a few R tricks, I managed to chart the Top 10 keywords for each of the Top 15 subreddits:&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://i.imgur.com/dWdCnMI.png&quot;&gt; &lt;img src=&quot;/img/reddit-topwords/subreddit-means-half.png&quot; alt=&quot;&quot;&gt; &lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;(Click on image for full-resolution)&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;As noted in the subtitle, each word appears in atleast 1,000 submissions by subreddit (which absorbs any messy outliers), and vertical line represents the true average upvotes per subreddit. One might argue that the median would be a better statistic instead of the median, due to the high skewness of the data. Thanks to the power of BigQuery, I was able to calculate the &lt;a href=&quot;http://i.imgur.com/0PBolIq.png&quot;&gt;top medians for each of the subreddits&lt;/a&gt; with a slightly-tweaked query, but the chart is not as helpful. There are still a few useful implications of the median, though, which I&amp;rsquo;ll show later. (No, I don&amp;rsquo;t need to normalize the data in the chart since I am not making an apples-to-apples comparison between the values of the words among subreddits, and no, I don&amp;rsquo;t need to remove stop words since this is visualizing an average, and not a count.)&lt;/p&gt;
-
-&lt;p&gt;When the visualization was &lt;a href=&quot;https://www.reddit.com/r/dataisbeautiful/comments/3nz3zz/average_number_of_upvotes_for_reddit_submissions/&quot;&gt;posted to Reddit&lt;/a&gt; in the &lt;a href=&quot;https://www.reddit.com/r/dataisbeautiful/&quot;&gt;/r/dataisbeautiful&lt;/a&gt; subreddit, it received over 3,500 upvotes. As many commenters on that submission correctly note, there are a few especially interesting observations for the keywords in those 15 subreddits, and when looking at the remaining subreddits, many trends in their keywords are made apparent.&lt;/p&gt;
-
-&lt;h2&gt;Politicalreddit&lt;/h2&gt;
-
-&lt;p&gt;The most notable trend with the Top 15 subreddits is in the &lt;a href=&quot;https://www.reddit.com/r/politics/&quot;&gt;/r/politics&lt;/a&gt; subreddit, which tells users to &amp;ldquo;Vote based on quality, not opinion,&amp;rdquo; but has a high affiliation for submissions specifically involving Bernie Sanders and Elizabeth Warren.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/reddit-topwords/mean-010-politics.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://www.reddit.com/r/technology/&quot;&gt;/r/technology&lt;/a&gt;, intended to be about &amp;ldquo;a broad spectrum of conversation as to the innovations, aspirations, applications and machinations,&amp;rdquo; has a high affiliation for political issues such as the net neutrality controversy involving the FCC, ISPs, and Comcast, and little affiliation for actual &lt;em&gt;technology&lt;/em&gt;.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/reddit-topwords/mean-018-technology.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;Outside the Top 15 Subreddits, the political affiliations of subreddits such as &lt;a href=&quot;http://reddit.com/r/Libertarian&quot;&gt;/r/Libertarian&lt;/a&gt; are less surprising and more funny as a result.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/reddit-topwords/mean-103-Libertarian.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;h2&gt;Storyreddit&lt;/h2&gt;
-
-&lt;p&gt;One of the rising trends in the online publication landscape is that telling a story is more effective at generating attention. (thank BuzzFeed for that)&lt;/p&gt;
-
-&lt;p&gt;The biggest offender is &lt;a href=&quot;https://www.reddit.com/r/aww/&quot;&gt;/r/aww&lt;/a&gt;, a subreddit about animals, has a high affinity for words &lt;em&gt;that aren&amp;rsquo;t animals&lt;/em&gt;, with only two animal words appearing in the Top 20.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/reddit-topwords/mean-011-aww.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;The presence of story titles is also apparent in &lt;a href=&quot;https://www.reddit.com/r/Fitness/&quot;&gt;/r/Fitness&lt;/a&gt;, which in fairness, the atmosphere of self-improvement lends itself more to stories.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/reddit-topwords/mean-054-Fitness.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;h2&gt;Metareddit&lt;/h2&gt;
-
-&lt;p&gt;The practice of upvoting submissions just because they mention a particular topic is colloquially known as &amp;ldquo;circlejerking.&amp;rdquo; &lt;a href=&quot;https://www.reddit.com/r/circlejerk/&quot;&gt;/r/circlejerk&lt;/a&gt; fits that well, with titles designed to satirize clickbaity issues in order to receive upvotes ironically.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/reddit-topwords/mean-025-circlejerk.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://www.reddit.com/r/Braveryjerk/&quot;&gt;/r/Braveryjerk&lt;/a&gt;, however, takes this practice to its logical conclusion.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/reddit-topwords/mean-486-Braveryjerk.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;h2&gt;Esotericreddit&lt;/h2&gt;
-
-&lt;p&gt;Here are a few other infamous subreddits that people have requested.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://www.reddit.com/r/conspiracy/&quot;&gt;/r/conspiracy&lt;/a&gt;, which apparently have frequent instances of &amp;ldquo;TIL&amp;rdquo; (Today, I Learned) in titles, are simultaneously very &lt;em&gt;suspicious&lt;/em&gt; of the actions in the  &lt;a href=&quot;https://www.reddit.com/r/TIL/&quot;&gt;/r/TIL&lt;/a&gt; subreddit.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/reddit-topwords/mean-064-conspiracy.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;The keywords in &lt;a href=&quot;https://www.reddit.com/r/teenagers/&quot;&gt;/r/teenagers&lt;/a&gt; captures the essence of modern social media.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/reddit-topwords/mean-072-teenagers.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;Some subreddits are just plain weird.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/reddit-topwords/mean-175-me_irl.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;That&amp;rsquo;s &lt;a href=&quot;https://www.reddit.com/r/me_irl/&quot;&gt;/r/me_irl&lt;/a&gt; for you.&lt;/p&gt;
-
-&lt;h2&gt;Looking at the Medians&lt;/h2&gt;
-
-&lt;p&gt;As shown in the linked median image earlier, the medians for most keywords are 1 or 2, which does not provide much visual information whether a keyword is more important than another.&lt;/p&gt;
-
-&lt;p&gt;There are notable exceptions, however, such as with &lt;a href=&quot;https://www.reddit.com/r/Android/&quot;&gt;/r/Android&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/reddit-topwords/median-059-Android.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;That subreddit has official threads for events; it would make sense for users to upvote that whenever it appears as it&amp;rsquo;s &lt;em&gt;important&lt;/em&gt; that it&amp;rsquo;s visible, but not necessarily as an agreement of the topic. That&amp;rsquo;s why I believe looking at the medians is a different approach than looking at the means.&lt;/p&gt;
-
-&lt;p&gt;Same thing with &lt;a href=&quot;https://www.reddit.com/r/relationships/&quot;&gt;/r/relationships&lt;/a&gt;, where an &amp;ldquo;update&amp;rdquo; is important.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/reddit-topwords/median-057-relationships.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;All in all, this is still just a first step for analyzing the importance of keywords in Reddit submission, and the impact of Reddit&amp;rsquo;s hivemind. The next step would be NLP techniques such as POS tagging and TDF-IF, but those require very significant and very expensive computing power. At the least, the good results with these simple analyses validates the idea for further research.&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;Again the R code used to generate the charts is available in &lt;a href=&quot;https://github.com/minimaxir/reddit-subreddit-keywords/blob/master/reddit_subreddit_words.ipynb&quot;&gt;this Jupyter notebook&lt;/a&gt;, open-sourced on GitHub. Additionally, all 500 charts with the keyword ranks for all 500 subreddits are available in &lt;a href=&quot;https://github.com/minimaxir/reddit-subreddit-keywords/tree/master/subreddit-mean&quot;&gt;the parent repository&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
-</description>
-        <pubDate>Fri, 09 Oct 2015 08:00:00 -0700</pubDate>
-        <link>http://minimaxir.com/2015/10/reddit-topwords/</link>
-        <guid isPermaLink="true">http://minimaxir.com/2015/10/reddit-topwords/</guid>
         
         
         <category>Data</category>

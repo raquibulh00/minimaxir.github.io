@@ -129,7 +129,7 @@ text-decoration: none;
 
 .sharing-post a, .sharing-post a:hover, .sharing-post {
 font-size: 16px;
-font-weight: 300 !important;
+font-weight: 700 !important;
 color: #999 !important;
 }
 
@@ -210,7 +210,7 @@ padding-right: 5px !important;
 
 .latest-tuts-content-title a {
 text-decoration: none;
-font-weight: 400
+font-weight: 400;
 }
 
 blockquote p {
