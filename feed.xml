@@ -5,8 +5,8 @@
     <description>A blog by Max Woolf about startups, technology, and blogging. It&#39;s so meta, even this acronym.</description>
     <link>http://minimaxir.com/</link>
     <atom:link href="http://minimaxir.com/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Wed, 13 Apr 2016 08:03:42 -0700</pubDate>
-    <lastBuildDate>Wed, 13 Apr 2016 08:03:42 -0700</lastBuildDate>
+    <pubDate>Wed, 13 Apr 2016 11:48:53 -0700</pubDate>
+    <lastBuildDate>Wed, 13 Apr 2016 11:48:53 -0700</lastBuildDate>
     <generator>Jekyll v3.1.2</generator>
     
       <item>
@@ -63,7 +63,7 @@
 
 &lt;ul&gt;
 &lt;li&gt;The &lt;a href=&quot;https://en.wikipedia.org/wiki/Kolmogorov%E2%80%93Smirnov_test&quot;&gt;Kolmogorov–Smirnov test&lt;/a&gt; for determining if two populations have the same distribution. The null hypothesis is that the two are drawn from the same distribution; the alternative hypothesis is that the distributions are different. We reject the null hypothesis at the 95% level in favor of the alternative if the p-value of the test is less than 0.05. Running the test, &lt;strong&gt;p &amp;lt; 0.01&lt;/strong&gt;, so we can say the distributions are statistically different. (the p-values are the same whether the box office revenues are log-transformed or not)&lt;/li&gt;
-&lt;li&gt;The &lt;a href=&quot;https://en.wikipedia.org/wiki/Wilcoxon_signed-rank_test&quot;&gt;Wilcoxon signed-rank test&lt;/a&gt; for determining if the means (averages) of two populations are the same (null hypothesis) or different (alternative hypothesis). This test is used instead of a &lt;em&gt;t&lt;/em&gt;-test if the populations are not Normally distributed, which is the case here. Running the test (one-sided, since only checking if a mean is greater), &lt;strong&gt;p &amp;lt; 0.01&lt;/strong&gt;, so we can say the two means are statistically different. (again, the p-values are the same whether the box office revenues are log-transformed or not)&lt;/li&gt;
+&lt;li&gt;The &lt;a href=&quot;hhttps://en.wikipedia.org/wiki/Mann%E2%80%93Whitney_U_test&quot;&gt;Wilcoxon rank-sum test&lt;/a&gt; for determining if the means (averages) of two populations are the same (null hypothesis) or different (alternative hypothesis). This test is used instead of a &lt;em&gt;t&lt;/em&gt;-test if the populations are not Normally distributed, which is the case here. Running the test (one-sided, since only checking if a mean is greater), &lt;strong&gt;p &amp;lt; 0.01&lt;/strong&gt;, so we can say the two means are statistically different. (again, the p-values are the same whether the box office revenues are log-transformed or not)&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;So we have statistical evidence that male-lead movies generate more money on average than female-led movies. But this claim is very serious, and as a result, we need even more proof.&lt;/p&gt;
@@ -102,7 +102,7 @@
 
 &lt;p&gt;There&amp;rsquo;s no obvious difference. Female-led movies are about 2% points lower on average, but the general distribution is the same (&lt;a href=&quot;https://en.wikipedia.org/wiki/Uniform_distribution_(continuous)&quot;&gt;uniform&lt;/a&gt;). Overlaying the two distributions shows as such.&lt;/p&gt;
 
-&lt;p&gt;The difference in averages is &lt;em&gt;not&lt;/em&gt; statistically significant, as both the Kolmogorov–Smirnov test and the Wilcoxon signed-rank test fail to reject the null hypothesis at the 95% level (&lt;strong&gt;p = 0.37&lt;/strong&gt; and &lt;strong&gt;p = 0.13&lt;/strong&gt; respectively).&lt;/p&gt;
+&lt;p&gt;The difference in averages is &lt;em&gt;not&lt;/em&gt; statistically significant, as both the Kolmogorov–Smirnov test and the Wilcoxon rank-sum test fail to reject the null hypothesis at the 95% level (&lt;strong&gt;p = 0.37&lt;/strong&gt; and &lt;strong&gt;p = 0.13&lt;/strong&gt; respectively).&lt;/p&gt;
 
 &lt;p&gt;How about &lt;a href=&quot;http://www.metacritic.com&quot;&gt;Metacritic&lt;/a&gt; scores?&lt;/p&gt;
 
@@ -112,7 +112,7 @@
 
 &lt;p&gt;&lt;img src=&quot;/img/movie-gender/movie-gender-9.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
 
-&lt;p&gt;Again, distributions are the same (both take on the shape of a &lt;a href=&quot;https://en.wikipedia.org/wiki/Normal_distribution&quot;&gt;Normal distribution&lt;/a&gt;, interestingly). And again, the Kolmogorov–Smirnov test and the Wilcoxon signed-rank test fail. (&lt;strong&gt;p = 0.45&lt;/strong&gt; and &lt;strong&gt;p = 0.14&lt;/strong&gt; respectively).&lt;/p&gt;
+&lt;p&gt;Again, distributions are the same (both take on the shape of a &lt;a href=&quot;https://en.wikipedia.org/wiki/Normal_distribution&quot;&gt;Normal distribution&lt;/a&gt;, interestingly). And again, the Kolmogorov–Smirnov test and the Wilcoxon rank-sum test fail. (&lt;strong&gt;p = 0.45&lt;/strong&gt; and &lt;strong&gt;p = 0.14&lt;/strong&gt; respectively).&lt;/p&gt;
 
 &lt;p&gt;The quality of a movie is independent from the gender of the lead actor in determining the financial performance of a movie.&lt;/p&gt;
 

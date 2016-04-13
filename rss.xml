@@ -4,7 +4,7 @@
   <title><![CDATA[minimaxir | Max Woolf's Blog]]></title>
   <link href="http://minimaxir.com/rss.xml" rel="self"/>
   <link href="http://minimaxir.com/"/>
-  <updated>2016-04-13T08:03:42-07:00</updated>
+  <updated>2016-04-13T11:48:53-07:00</updated>
   <id>http://minimaxir.com/</id>
   <author>
     <name><![CDATA[Max Woolf]]></name>
@@ -70,7 +70,7 @@
 
 <ul>
 <li>The <a href="https://en.wikipedia.org/wiki/Kolmogorov%E2%80%93Smirnov_test">Kolmogorov–Smirnov test</a> for determining if two populations have the same distribution. The null hypothesis is that the two are drawn from the same distribution; the alternative hypothesis is that the distributions are different. We reject the null hypothesis at the 95% level in favor of the alternative if the p-value of the test is less than 0.05. Running the test, <strong>p &lt; 0.01</strong>, so we can say the distributions are statistically different. (the p-values are the same whether the box office revenues are log-transformed or not)</li>
-<li>The <a href="https://en.wikipedia.org/wiki/Wilcoxon_signed-rank_test">Wilcoxon signed-rank test</a> for determining if the means (averages) of two populations are the same (null hypothesis) or different (alternative hypothesis). This test is used instead of a <em>t</em>-test if the populations are not Normally distributed, which is the case here. Running the test (one-sided, since only checking if a mean is greater), <strong>p &lt; 0.01</strong>, so we can say the two means are statistically different. (again, the p-values are the same whether the box office revenues are log-transformed or not)</li>
+<li>The <a href="hhttps://en.wikipedia.org/wiki/Mann%E2%80%93Whitney_U_test">Wilcoxon rank-sum test</a> for determining if the means (averages) of two populations are the same (null hypothesis) or different (alternative hypothesis). This test is used instead of a <em>t</em>-test if the populations are not Normally distributed, which is the case here. Running the test (one-sided, since only checking if a mean is greater), <strong>p &lt; 0.01</strong>, so we can say the two means are statistically different. (again, the p-values are the same whether the box office revenues are log-transformed or not)</li>
 </ul>
 
 <p>So we have statistical evidence that male-lead movies generate more money on average than female-led movies. But this claim is very serious, and as a result, we need even more proof.</p>
@@ -109,7 +109,7 @@
 
 <p>There&rsquo;s no obvious difference. Female-led movies are about 2% points lower on average, but the general distribution is the same (<a href="https://en.wikipedia.org/wiki/Uniform_distribution_(continuous)">uniform</a>). Overlaying the two distributions shows as such.</p>
 
-<p>The difference in averages is <em>not</em> statistically significant, as both the Kolmogorov–Smirnov test and the Wilcoxon signed-rank test fail to reject the null hypothesis at the 95% level (<strong>p = 0.37</strong> and <strong>p = 0.13</strong> respectively).</p>
+<p>The difference in averages is <em>not</em> statistically significant, as both the Kolmogorov–Smirnov test and the Wilcoxon rank-sum test fail to reject the null hypothesis at the 95% level (<strong>p = 0.37</strong> and <strong>p = 0.13</strong> respectively).</p>
 
 <p>How about <a href="http://www.metacritic.com">Metacritic</a> scores?</p>
 
@@ -119,7 +119,7 @@
 
 <p><img src="/img/movie-gender/movie-gender-9.png" alt=""></p>
 
-<p>Again, distributions are the same (both take on the shape of a <a href="https://en.wikipedia.org/wiki/Normal_distribution">Normal distribution</a>, interestingly). And again, the Kolmogorov–Smirnov test and the Wilcoxon signed-rank test fail. (<strong>p = 0.45</strong> and <strong>p = 0.14</strong> respectively).</p>
+<p>Again, distributions are the same (both take on the shape of a <a href="https://en.wikipedia.org/wiki/Normal_distribution">Normal distribution</a>, interestingly). And again, the Kolmogorov–Smirnov test and the Wilcoxon rank-sum test fail. (<strong>p = 0.45</strong> and <strong>p = 0.14</strong> respectively).</p>
 
 <p>The quality of a movie is independent from the gender of the lead actor in determining the financial performance of a movie.</p>
 
