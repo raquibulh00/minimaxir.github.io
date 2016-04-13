@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+
+  <!-- HEAD -->
+<head>
+<meta charset="utf-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Blockbuster Movies with Male Leads Earn More Than Those with Female Leads</title>
+<meta property="article:author" content="https://www.facebook.com/max.woolf" />
+<meta name="description" content="One of the more interesting revelations discovered during the 2014 Sony Pictures Entertainment hack was that actresses Jennifer Lawrence and Amy Adams made l...">
+<link href="/rss.xml" rel="alternate" title="minimaxir | Max Woolf's Blog" type="application/atom+xml">
+<link rel="canonical" href="http://minimaxir.com/2016/04/movie-gender/">
+
+<!-- Mobile Metas -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+ <meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@minimaxir">
+<meta name="twitter:creator" content="@minimaxir">
+
+  <meta name="twitter:title" content="Blockbuster Movies with Male Leads Earn More Than Those with Female Leads">
+
+
+  <meta name="twitter:url" content="http://minimaxir.com/2016/04/movie-gender/">
+
+
+  <meta name="twitter:description" content="On average, blockbuster movies with male leads generate 22% more domestic box office revenue, and this difference is statistically significant.">
+
+
+  <meta name="twitter:image:src" content="http://minimaxir.com/img/movie-gender-10.png">
+
+ 
+ <meta content="minimaxir | Max Woolf's Blog" property="og:site_name">
+
+  <meta content="Blockbuster Movies with Male Leads Earn More Than Those with Female Leads" property="og:title">
+
+
+  <meta content="article" property="og:type">
+
+
+  <meta content="On average, blockbuster movies with male leads generate 22% more domestic box office revenue, and this difference is statistically significant." property="og:description">
+
+
+  <meta content="http://minimaxir.com/2016/04/movie-gender/" property="og:url">
+
+
+
+  <meta content="http://minimaxir.com/img/movie-gender-10.png" property="og:image">
+
+
+  
+  <meta content="Data" property="article:section">
+  
+
+
+  
+
+
+
+      <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="white">
+    <meta name="apple-mobile-web-app-title" content="minimaxir">
+    <link rel="apple-touch-icon-precomposed" href="apple-touch-icon-precomposed.png">
+
+<link rel="apple-touch-icon" sizes="57x57" href="http://minimaxir.com/favicon/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="http://minimaxir.com/favicon/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="http://minimaxir.com/favicon/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="http://minimaxir.com/favicon/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="http://minimaxir.com/favicon/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="http://minimaxir.com/favicon/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="http://minimaxir.com/favicon/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="http://minimaxir.com/favicon/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="http://minimaxir.com/favicon/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192"  href="http://minimaxir.com/favicon/android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://minimaxir.com/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="http://minimaxir.com/favicon/favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="http://minimaxir.com/favicon/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="http://minimaxir.com/favicon/ms-icon-144x144.png">
+<meta name="theme-color" content="#ffffff">
+
+<!-- BEGIN GLOBAL MANDATORY STYLES -->
+  <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400,400italic,700' rel='stylesheet' type='text/css'>
+
+<link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+<link href="/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
+<link href="/css/minimaxir.css" rel="stylesheet" type="text/css"/>
+<!-- END GLOBAL MANDATORY STYLES -->
+
+<!-- BEGIN THEME STYLES -->
+<link href="/css/global.css" rel="stylesheet" type="text/css"/>
+<!-- END THEME STYLES -->
+
+<!-- BEGIN JQUERY -->
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<!-- END JQUERY -->
+
+
+  <script>
+   $(document).ready(function() {
+ 
+  // Facebook
+	$( ".social.facebook" ).children().each(function(index,value) {
+	var facebook_button = $(this);
+	var url = facebook_button.attr("data");
+
+  jQuery.getJSON("https://graph.facebook.com/?id="+url, function(data) {
+  if (typeof data.shares != 'undefined') facebook_button.html("<i class=\"fa fa-facebook\"></i><span class=\"count hidden-xs\"> " + data.shares + "</span>");
+  else if (typeof data.likes != 'undefined') facebook_button.html("<i class=\"fa fa-facebook\"></i><span class=\"count hidden-xs\"> " + data.likes + "</span>");
+  else facebook_button.html("<i class=\"fa fa-facebook\"></i><span class=\"count hidden-xs\"> " + " 0</span>");
+  });
+  });
+ 
+  // LinkedIn
+	$( ".social.linkedin" ).children().each(function(index,value) {
+	var linkedin_button = $(this);
+	var url = linkedin_button.attr("data");
+
+  jQuery.getJSON("http://www.linkedin.com/countserv/count/share?url="+url+"&format=jsonp&callback=?", function(data) {
+  linkedin_button.html("<i class=\"fa fa-linkedin\"></i><span class=\"count hidden-xs\"> " + data.count + "</span>");
+  });
+  });
+  });
+  </script>
+  
+</head>
+<!-- END HEAD -->
+  <!-- WRAPPER -->
+<div class="wrapper">
+    <!--========== HEADER TRANSPARENT ==========-->
+    <header class="header-transparent header-transparent-bb navbar-fixed-top header-sticky">
+        <!-- Navbar -->
+        <nav class="navbar mega-menu" role="navigation">
+            <div class="container">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="menu-container">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="toggle-icon"></span>
+                    </button>
+
+                    <!-- Navbar Actions -->
+                    <div class="navbar-actions">
+
+                    </div>
+                    <!-- End Navbar Actions -->
+
+                    <!-- Logo -->
+                    <div class="navbar-logo">
+                        <a class="navbar-logo-wrap" href="/">
+                            <img class="navbar-logo-img navbar-logo-img-white" src="/minimaxir-light.png" alt="minimaxir">
+                            <img class="navbar-logo-img navbar-logo-img-dark" src="/minimaxir-dark.png" alt="minimaxir">
+                        </a>
+                    </div>
+                    <!-- End Logo -->
+                </div>
+
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse nav-collapse">
+                    <div class="menu-container">
+                        <ul class="nav navbar-nav">
+                        
+<li class="nav-item">
+                                <a class="nav-item-child" href="/about">
+                                    About
+                                </a>
+                            </li>
+                                
+<li class="nav-item">
+                                <a class="nav-item-child" href="/portfolio">
+                                    Portfolio
+                                </a>
+                            </li>
+                        
+                        </ul>
+                    </div>
+                </div>
+                <!-- End Navbar Collapse -->
+            </div>
+            <!--// End Container-->
+        </nav>
+        <!-- Navbar -->
+    </header>
+    <!--========== END HEADER TRANSPARENT ==========-->
+    
+	    <!--========== BREADCRUMBS V5 ==========-->
+    
+    
+	
+	
+    
+    
+    
+    <section class="breadcrumbs-v5" style="background: url('/img/movie-gender-10.png') no-repeat center center; background-size: cover;">
+    
+        <div class="container">
+            <h1 class="breadcrumbs-v5-title">Blockbuster Movies with Male Leads Earn More Than Those with Female Leads</h1>
+            <span class="breadcrumbs-v5-subtitle">April 13, 2016
+            
+    
+              <span class="sharing index" style="float: right">
+  
+		  <span class="social facebook"><a href="https://www.facebook.com/share.php?u=http://minimaxir.com/2016/04/movie-gender/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data="http://minimaxir.com/2016/04/movie-gender/"><i class="fa fa-facebook"></i><span class="count hidden-xs"> -</span></a></span>
+  
+		<span class="social twitter"><a href="http://twitter.com/home/?status=Blockbuster Movies with Male Leads Earn More Than Those with Female Leads - http://minimaxir.com/2016/04/movie-gender/ - via @minimaxir"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data=http://minimaxir.com/2016/04/movie-gender/><i class="fa fa-twitter"></i><span class="count hidden-xs"></span></a> </span>
+
+  <span  class="social linkedin"><a href="http://www.linkedin.com/shareArticle?mini=true&title=&url=http://minimaxir.com/2016/04/movie-gender/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=600');return false;" data=http://minimaxir.com/2016/04/movie-gender/><i class="fa fa-linkedin"></i><span class="count hidden-xs"> -</span></a> </span>
+   
+			</span>
+            
+            </span>
+        </div>
+    </section>
+    
+    
+    <!--========== END BREADCRUMBS V5 ==========-->
+  
+  <!-- BEGIN BODY -->
+<body>
+
+  
+      <!--========== BACKGROUND COLOR SKY LIGHT ==========-->
+    <div class="bg-color-sky-light">
+        
+        <!--========== PAGE CONTENT ==========-->
+        <div class="content-sm container">
+            <div class="row">
+                <div class="col-md-9 md-margin-b-50">
+                    <!-- Blog Grid -->
+                    <article class="blog-grid margin-b-30">
+                        <!-- Image -->
+                        <!--<img class="img-responsive" src="/assets/img/1920x1080/20.jpg" alt="">-->
+                        <!-- End Image -->
+
+                        <!-- Blog Grid Content -->
+						<div class="blog-grid-content">
+						<p>One of the more interesting revelations discovered during the <a href="https://en.wikipedia.org/wiki/Sony_Pictures_Entertainment_hack">2014 Sony Pictures Entertainment hack</a> was that actresses <a href="https://en.wikipedia.org/wiki/Jennifer_Lawrence">Jennifer Lawrence</a> and <a href="https://en.wikipedia.org/wiki/Amy_Adams">Amy Adams</a> made <a href="http://www.thedailybeast.com/articles/2014/12/12/exclusive-sony-hack-reveals-jennifer-lawrence-is-paid-less-than-her-male-co-stars.html">less money than their male costars</a> for the movie <a href="http://www.imdb.com/title/tt1800241/">American Hustle</a>. Specifically, Lawrence and Adams earned 7% of the profits while their male co-stars earned 9%: a 28% increase in pay.</p>
+
+<p>That made me curious: is the discrepancy in pay between male-leads and female-leads justifiable? Do movies with male lead actors generate more box office revenue than movies with female leads? Are movies with male leads <em>better</em> than those with female leads?</p>
+
+<p>Using movie data from <a href="http://www.omdbapi.com">OMDb API</a>, which is sourced from <a href="http://www.imdb.com">IMDb</a> and <a href="http://www.rottentomatoes.com">Rotten Tomatoes</a> data, I found that on average, blockbuster movies with male leads generate 22% more domestic box office revenue than those with female leads, and that this difference is statistically significant.</p>
+
+<h2>Setting Up the Movie Data</h2>
+
+<p><img src="/img/movie-gender/movie-gender-data.png" alt=""></p>
+
+<p>I&rsquo;ve talked about processing the OMDb dataset in <a href="http://minimaxir.com/2016/04/trust-but-verify/">my previous post</a>. For this analysis, I&rsquo;ll be filtering on a specific subset of movies:</p>
+
+<ul>
+<li>Movies with <strong>at least $10 million in inflation-adjusted domestic box office revenue</strong>. My <a href="http://minimaxir.com/2016/01/movie-revenue-ratings/">first analysis</a> showed that there is a distinct cluster of movies above the $10M threshold specifically. These blockbusters are also what the public knows and best reflects the perception of the industry.</li>
+<li>Movies which were <strong>released in 2000 or later</strong>. There was <a href="http://minimaxir.com/2016/04/trust-but-verify/">missing box office revenue data</a> I had found with earlier years so I would prefer to use more robust data to be safe. Additionally, this avoids the complicated issue of <a href="https://www.reddit.com/r/dataisbeautiful/comments/4bcb6x/john_goodman_is_not_the_greatest_supporting_actor/d17y82k">20th-century gender politics in cinema</a>, which I cannot easily address statistically.</li>
+</ul>
+
+<p>After applying the filters and cleaning the data further to eliminate miscoded movies, I have created a dataset of 2,020 movies. No movies were removed as outliers in box office revenue (such as Star Wars VII and Avatar) since several tests failed to identify them as statistical outliers.</p>
+
+<p>I identified the lead actor of each movie, using the first credited actor on the IMDb cast overview (NB: this may lead to counterintuitive behavior in casts with unknown leads; the first credited actor for <a href="http://www.imdb.com/title/tt2488496/">Star Wars: The Force Awakens</a> on IMDb is Harrison Ford, who is not the lead and I corrected it to Daisy Ridley in the data). Then I determined their gender by referencing a few gender/first-name mappings (with thanks to <a href="https://twitter.com/matthew_daniels">Matt Daniels</a> and his great work on <a href="http://polygraph.cool/films/index.html">gender and film dialogue</a>).</p>
+
+<p>In all, the dataset has 467 (23%) of movies with a female lead actor, and 1,553 (77%) movies with a male lead actor. Both counts are more than enough for this analysis.</p>
+
+<p>You can view and download the final dataset <a href="https://docs.google.com/spreadsheets/d/1UMV-6yCjHBveyOcZwiilEm2DWRMjdzAbgdHutcjCn-E/edit?usp=sharing">in this Google Sheet</a>.</p>
+
+<h2>Distribution of Box Office Revenue</h2>
+
+<p>Let&rsquo;s start with simple histograms of the box office data. What are the distributions of the data for each gender?</p>
+
+<p><img src="/img/movie-gender/movie-gender-1.png" alt=""></p>
+
+<p>On average, blockbuster movies with male lead actors generate <strong>$79.8M in revenue</strong>. The distribution, even when log-scaled, is skewed right, with the median being much lower at $49.8M.</p>
+
+<p><img src="/img/movie-gender/movie-gender-2.png" alt=""></p>
+
+<p>On average, blockbuster movies with female lead actors generate <strong>$65.6M in revenue</strong>. The general shape of the distribution is the same as with male lead actors.</p>
+
+<p>Double-checking the math:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">79.8M / 65.6M = 22% increase in average box office revenue for male-lead movies
+</code></pre></div>
+<p>So it is.</p>
+
+<p>Let&rsquo;s overlay the two distributions after normalizing and smoothing with a <a href="https://en.wikipedia.org/wiki/Kernel_density_estimation">2D kernel destiny estimator</a>.</p>
+
+<p><img src="/img/movie-gender/movie-gender-3.png" alt=""></p>
+
+<p>Female movies have a clear mode near its average, but male movies have a flatter distribution, with significantly more movies making 9 figures.</p>
+
+<p>But is the difference between the two averages statistically significant? We can run two statistical tests between the box-office revenues of male-led and female-lead movies:</p>
+
+<ul>
+<li>The <a href="https://en.wikipedia.org/wiki/Kolmogorov%E2%80%93Smirnov_test">Kolmogorov–Smirnov test</a> for determining if two populations have the same distribution. The null hypothesis is that the two are drawn from the same distribution; the alternative hypothesis is that the distributions are different. We reject the null hypothesis at the 95% level in favor of the alternative if the p-value of the test is less than 0.05. Running the test, <strong>p &lt; 0.01</strong>, so we can say the distributions are statistically different. (the p-values are the same whether the box office revenues are log-transformed or not)</li>
+<li>The <a href="https://en.wikipedia.org/wiki/Wilcoxon_signed-rank_test">Wilcoxon signed-rank test</a> for determining if the means (averages) of two populations are the same (null hypothesis) or different (alternative hypothesis). This test is used instead of a <em>t</em>-test if the populations are not Normally distributed, which is the case here. Running the test (one-sided, since only checking if a mean is greater), <strong>p &lt; 0.01</strong>, so we can say the two means are statistically different. (again, the p-values are the same whether the box office revenues are log-transformed or not)</li>
+</ul>
+
+<p>So we have statistical evidence that male-lead movies generate more money on average than female-led movies. But this claim is very serious, and as a result, we need even more proof.</p>
+
+<h2>The Resampling</h2>
+
+<p>Although 2,020 movies is a fair sample size by statistical standards, some may argue that the movies were chosen too arbitrarily and that there is not enough data to support the conclusions I make above. Enter <a href="https://en.wikipedia.org/wiki/Bootstrapping_(statistics)">bootstrap resampling</a>, in which we resample the data randomly (with replacement) to generate pseudo-datasets, and then calculate aggregate statistics (e.g. the average) on that simulated dataset. Repeat a large number of times, and we can form confidence intervals for the <em>true average</em> of a given data set.</p>
+
+<p>In this case, we resample the box office revenues, calculate the average box office revenue for both male-led and female-led movies, store the result away and resample the data again, and keep repeating until satisfied.</p>
+
+<p>Here&rsquo;s an animation of the resampling of both averages as the number of trials increases. As you can see, the shape of both distributions stabilize very quickly:</p>
+
+<p><img src="/img/movie-gender/movie_frames.gif" alt=""></p>
+
+<p>And the final plot, at 10,000 repetitions:</p>
+
+<p><img src="/img/movie-gender/movie-gender-10.png" alt=""></p>
+
+<p>The dot on the bottom of each distribution represents the <em>actual</em> sample average value calculated during the analysis earlier, while the line range represents a 95% confidence interval for the true average revenue value for each gender. The distribution of male-led movie averages is more narrow than female-led movies because there are 3 times as many male-led movies in the dataset.</p>
+
+<p>As you can see, <em>the line ranges never intersect</em>. Even in the most favorable scenario at the 95% confidence level, the average  domestic box office revenue for male-led movies will be greater. Specifically, of the 10,000 trials, only 2 trials had the case where female-led movies had equal or greater average revenue than the corresponding male-led movie revenue average from the same resampling; this implies <strong>p &lt; 0.01</strong> for the statistical test on whether the means are same or different.</p>
+
+<p>Interestingly, there&rsquo;s a little overlap between in the distributions, which occurs when there are multiple instances of Star Wars VII in the resampled dataset and its high box office revenue pushes the <em>entire</em> female-lead average up very significantly.</p>
+
+<h2>Gender and Quality</h2>
+
+<p>It is also worth checking if male-led movies are <em>better in quality</em> than female-lead movies, as if that&rsquo;s the case, it might provide a more logical explanation why male-led movies make more money.</p>
+
+<p>Let&rsquo;s check out the distribution of <a href="http://www.rottentomatoes.com">Rotten Tomatoes</a> Tomatometer scores of blockbuster movies.</p>
+
+<p><img src="/img/movie-gender/movie-gender-4.png" alt=""></p>
+
+<p><img src="/img/movie-gender/movie-gender-5.png" alt=""></p>
+
+<p><img src="/img/movie-gender/movie-gender-6.png" alt=""></p>
+
+<p>There&rsquo;s no obvious difference. Female-led movies are about 2% points lower on average, but the general distribution is the same (<a href="https://en.wikipedia.org/wiki/Uniform_distribution_(continuous)">uniform</a>). Overlaying the two distributions shows as such.</p>
+
+<p>The difference in averages is <em>not</em> statistically significant, as both the Kolmogorov–Smirnov test and the Wilcoxon signed-rank test fail to reject the null hypothesis at the 95% level (<strong>p = 0.37</strong> and <strong>p = 0.13</strong> respectively).</p>
+
+<p>How about <a href="http://www.metacritic.com">Metacritic</a> scores?</p>
+
+<p><img src="/img/movie-gender/movie-gender-7.png" alt=""></p>
+
+<p><img src="/img/movie-gender/movie-gender-8.png" alt=""></p>
+
+<p><img src="/img/movie-gender/movie-gender-9.png" alt=""></p>
+
+<p>Again, distributions are the same (both take on the shape of a <a href="https://en.wikipedia.org/wiki/Normal_distribution">Normal distribution</a>, interestingly). And again, the Kolmogorov–Smirnov test and the Wilcoxon signed-rank test fail. (<strong>p = 0.45</strong> and <strong>p = 0.14</strong> respectively).</p>
+
+<p>The quality of a movie is independent from the gender of the lead actor in determining the financial performance of a movie.</p>
+
+<h2>Conclusion</h2>
+
+<p>In 2014, <a href="http://www.mpaa.org/wp-content/uploads/2015/03/MPAA-Theatrical-Market-Statistics-2014.pdf">according to the MPAA</a>, the gender breakdown of moviegoers who see blockbuster movies is about 50/50, eliminating another potential explanation for the average movie revenue discrepancy.</p>
+
+<p>Granted, there still can be more work done, such as controlling on movie Genre in addition to gender. Is the gender of the lead actor a <em>causal</em> factor in a movie&rsquo;s success? Not necessarily, and this analysis does not assert such. But there definitely is a revenue disparity that&rsquo;s worth investigating, and it&rsquo;s not just that &ldquo;male-led movies are better.&rdquo;</p>
+
+<p>There may be more movies like Star Wars Episode VII where a movie with a female lead can hit almost a billion dollars domestically (e.g. Star Wars VIII). Things are looking upward, and it would not surprise me if the 22% revenue difference decreases and disappears in the next decade.</p>
+
+<hr>
+
+<p><em>You can view the code used to process the data and generate the data visualizations <a href="https://github.com/minimaxir/movie-gender/blob/master/movie_gender.ipynb">in this Jupyter notebook</a>, <a href="https://github.com/minimaxir/movie-gender">open-sourced on GitHub</a>, or you can <a href="https://github.com/minimaxir/movie-gender/raw/master/movie_gender_pdf.pdf">view as a PDF</a> which is better if you are on a mobile device.</em></p>
+
+<p><em>You are free to use the charts from this article however you wish, but it would be greatly appreciated if proper attribution is given to this article and/or myself!</em></p>
+
+						
+            			 <div class="breadcrumbs-v5-subtitle sharing-post" style="color: #999 !important; padding-top:10px; border-top: 1px solid #eee">Share this article!
+
+
+              <span class="sharing index" style="float: right; color: #999 !important;">
+  
+		  <span class="social facebook"><a href="https://www.facebook.com/share.php?u=http://minimaxir.com/2016/04/movie-gender/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data="http://minimaxir.com/2016/04/movie-gender/"><i class="fa fa-facebook"></i><span class="count hidden-xs"> -</span></a></span>
+  
+		<span class="social twitter"><a href="http://twitter.com/home/?status=Blockbuster Movies with Male Leads Earn More Than Those with Female Leads - http://minimaxir.com/2016/04/movie-gender/ - via @minimaxir"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data=http://minimaxir.com/2016/04/movie-gender/><i class="fa fa-twitter"></i><span class="count hidden-xs"></span></a> </span>
+
+  <span  class="social linkedin"><a href="http://www.linkedin.com/shareArticle?mini=true&title=&url=http://minimaxir.com/2016/04/movie-gender/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=600');return false;" data=http://minimaxir.com/2016/04/movie-gender/><i class="fa fa-linkedin"></i><span class="count hidden-xs"> -</span></a> </span>
+
+   </span>
+   </div>
+						</div>
+                        <!-- End Blog Grid Content -->
+                        
+                        
+                        
+                    </article>
+                    <!-- End Blog Grid -->
+
+ 					
+
+                    <!-- Blog Comment -->
+                    <div class="bg-color-white margin-b-30">
+                        <div class="blog-single-post-content">
+
+						
+
+<script type="text/javascript">
+      var disqus_shortname = 'minimaxir';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://minimaxir.com/2016/04/movie-gender/';
+        var disqus_url = 'http://minimaxir.com/2016/04/movie-gender/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+<div id="disqus_thread"></div>
+
+
+
+                        </div>
+                    </div>
+                    <!-- End Blog Comment -->
+                    
+                    
+                </div>
+
+			                <!--========== BLOG SIDEBAR ==========-->
+                <div class="col-md-3">
+                
+                
+                
+                    <!-- Blog Author -->
+                    <div class="blog-sidebar margin-b-30">
+                        <div class="blog-sidebar-heading">
+                            <h4 class="blog-sidebar-heading-title">Author</h4>
+                        </div>
+                        
+                        <img src="/MaxFB.jpg" title="Stop mousing over me! I'm not a XKCD comic!" class="img-responsive hidden-xs hidden-sm"></img>
+                        
+                        <div class="blog-sidebar-content">
+                            <!-- Blog Author Bio -->
+							
+							<p><strong>Max Woolf (@minimaxir)</strong> is a Software QA Engineer living and working in the San Francisco Bay Area for over 3 years and a 2012 Carnegie Mellon University graduate in Business Administration.</p>
+
+<p>In his spare time, Max uses <a href="https://www.python.org/">Python</a> to gather data from public APIs and <a href="http://ggplot2.org/">ggplot2</a> to make pretty charts from that data.</p>
+
+<p>You can learn more about Max <a href="/about">here</a>, or view his portfolio <a href="/portfolio">here</a>. </p>
+
+  
+    <ul class="list-inline" style="padding-top:10px; margin-top: 20px; border-top: 1px solid #ebeef6">
+                        <li class="theme-icons-wrap"><a title="Facebook" href="https://facebook.com/max.woolf" target="_blank"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-facebook"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="Twitter" href="https://twitter.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-twitter"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="LinkedIn" href="https://linkedin.com/in/minimaxir" target="_blank"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-linkedin"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="GitHub" href="https://github.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-github"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="YouTube" href="https://youtube.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-youtube"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="E-Mail" href="mailto:max@minimaxir.com"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-envelope"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="RSS" href="/rss.xml"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-rss"></i></a></li>
+                    </ul>
+                            <!-- End Blog Author Bio -->
+                        </div>
+                    </div>
+                    <!-- End Blog Author -->
+                    
+                     <!-- Blog Recent Posts -->
+                    <div class="blog-sidebar margin-b-30">
+                        <div class="blog-sidebar-heading">
+                            <h4 class="blog-sidebar-heading-title">Recent Posts</h4>
+                        </div>
+                        <div class="blog-sidebar-content" style="position: relative; overflow: visible;">
+                        
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="/2016/04/movie-gender/">Blockbuster Movies with Male Leads Earn More Than Those with Female Leads</a></h5>
+                                    <small class="latest-tuts-content-time"> Apr 13, 2016</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="/2016/04/trust-but-verify/">The Importance of Sanity-Checking Datasets Before Analysis</a></h5>
+                                    <small class="latest-tuts-content-time"> Apr 6, 2016</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="/2016/03/gif-unlimited/">Unlimited Data Storage Using Image Steganography and Cat GIFs</a></h5>
+                                    <small class="latest-tuts-content-time"> Mar 29, 2016</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="/2016/02/facebook-reactions/">Facebook Reactions and the Problems With Quantifying Likes Differently</a></h5>
+                                    <small class="latest-tuts-content-time"> Feb 29, 2016</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="/2016/01/startup-haters/">You're Not Allowed to Criticize Startups, You Stupid Hater</a></h5>
+                                    <small class="latest-tuts-content-time"> Jan 25, 2016</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="/2016/01/agdq-2016/">Video Games and Charity: Analyzing Awesome Games Done Quick 2016 Donations</a></h5>
+                                    <small class="latest-tuts-content-time"> Jan 11, 2016</small>
+                                </div>
+                        </article>
+                                                
+                    </div>
+                    <!-- End Blog Recent Posts -->
+                    </div>
+                    
+                    <!-- GitHub Top Repositories -->
+                    <div class="blog-sidebar margin-b-30">
+                        <div class="blog-sidebar-heading">
+                            <h4 class="blog-sidebar-heading-title">Top GitHub Repositories</h4>
+                        </div>
+                        <div class="blog-sidebar-content" style="position: relative; overflow: visible;">
+                        
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/big-list-of-naughty-strings" target="_blank">Big List of Naughty Strings</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 11,186+</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/copy-syntax-highlight-osx" target="_blank">Copy Syntax Highlight for OS X</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 319+</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/video-to-gif-osx" target="_blank">Convert Video to GIF on OS X</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 207+</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/facebook-page-post-scraper" target="_blank">Facebook Page Post Scraper</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 96+</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/reddit-bigquery" target="_blank">Reddit Data with BigQuery Notebook</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 58+</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/get-all-hacker-news-submissions-comments" target="_blank">Get All Hacker News Submissions & Comments</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 47+</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/frames-to-gif-osx" target="_blank">Convert Frames to GIF on OS X</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 15+</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/nyc-taxi-notebook" target="_blank">NYC Yellow Taxi Visualization Notebook</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 13+</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/sf-arrests-when-where" target="_blank">Analyzing When and Where San Francisco Criminal Arrests Occur</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 10+</small>
+                                </div>
+                        </article>
+                                                
+                    </div>
+                    
+                    <!-- End GitHub Top Repositories -->
+                    
+                    
+                    
+                </div>
+                <!--========== END BLOG SIDEBAR ==========-->
+            
+			</div>
+            <!--// end row -->
+        </div>
+        <!--========== END PAGE CONTENT ==========-->
+
+    </div>
+    <!--========== END BACKGROUND COLOR SKY LIGHT ==========-->
+    
+
+
+
+  
+      <!--========== FOOTER V8 ==========-->
+    <footer id="footer" class="footer-v8">
+        <div class="content-sm container">
+            <div class="row">
+                <!-- Logo -->
+                <div class="col-md-6">
+                    
+                    <p>You can contact through any of the following channels, although e-mail is preferred. Following me on Facebook and Twitter certainly doesn't hurt either!</p>
+                     <!-- <h2 class="footer-v8-title">Follow Me</h2> -->
+                    <!-- Theme Icons White Background -->
+                   <!-- <ul class="list-inline ul-li-lr-0">
+                        <li class="theme-icons-wrap"><a title="Facebook" href="https://facebook.com/max.woolf" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-facebook"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="Twitter" href="https://twitter.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-twitter"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="LinkedIn" href="https://linkedin.com/in/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-linkedin"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="GitHub" href="https://github.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-github"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="YouTube" href="https://youtube.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-youtube"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="E-Mail" href="mailto:max@minimaxir.com"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-envelope"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="RSS" href="/rss.xml"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-rss"></i></a></li> -->
+                    <!-- End Theme Icons White Background -->
+                </div>
+                <!-- End Logo -->
+
+                <!-- Contact Info -->
+                <div class="col-md-6">
+                    <h3 class="footer-v8-title">Contact Info</h3>
+                    <div class="footer-v8-contact-info-bg">
+                        <ul class="list-unstyled footer-v8-contact-info">
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-map-marker"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <p class="footer-v8-contact-info-text">SOMA, San Francisco, CA</p>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-facebook"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="Facebook" href="https://facebook.com/max.woolf" target="_blank">max.woolf</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-twitter"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="Twitter" href="https://twitter.com/minimaxir" target="_blank"">@minimaxir</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-linkedin"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="LinkedIn" href="https://linkedin.com/in/minimaxir" target="_blank"">minimaxir</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-envelope"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="E-Mail" href="mailto:max@minimaxir.com">max@minimaxir.com</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- End Contact Info -->
+
+            </div>
+            <!--// end row -->
+        </div>
+
+        <!-- Copyright -->
+        <div class="footer-v8-copyright">
+            <div class="container text-center">
+				Copyright &#169; 2016 Max Woolf. All Rights Reserved. 
+                minimaxir.com is powered by Jekyll and GitHub Pages.
+            </div>
+        </div>
+        <!-- Copyright -->
+    </footer>
+    <!--========== END FOOTER V8 ==========-->
+</div>
+<!-- END WRAPPER -->
+
+<!-- Sidebar Content Overlay -->
+<div class="sidebar-content-overlay"></div>
+<!-- End Sidebar Content Overlay -->
+
+<!-- Back To Top -->
+<a href="javascript:void(0);" class="js-back-to-top back-to-top-theme"></a>
+<!-- End Back To Top -->
+
+<!--========== JAVASCRIPTS(Load javascripts at bottom, this will reduce page load time) ==========-->
+<!-- BEGIN CORE PLUGINS -->
+<!--[if lt IE 9]>
+<script src="/assets/plugins/html5shiv.js"></script>
+<script src="/assets/plugins/respond.min.js"></script>
+<![endif]-->
+<script type="text/javascript" src="/js/jquery.migrate.min.js"></script>
+<script type="text/javascript" src="/js/bootstrap.min.js"></script>
+<!-- END CORE PLUGINS -->
+
+<!-- BEGIN PAGE LEVEL PLUGINS -->
+<script type="text/javascript" src="/js/jquery.back-to-top.js"></script>
+<!-- END PAGE LEVEL PLUGINS -->
+
+<!-- BEGIN PAGE LEVEL SCRIPTS -->
+<script type="text/javascript" src="/js/app.min.js"></script>
+<script type="text/javascript" src="/js/header-sticky.js"></script>
+<!-- END PAGE LEVEL SCRIPTS -->
+<!--========== END JAVASCRIPTS ==========-->
+  
+</body>
+<!-- END BODY -->
+
+</html>
