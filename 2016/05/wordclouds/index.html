@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+
+  <!-- HEAD -->
+<head>
+<meta charset="utf-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Creating Stylish, High-Quality Word Clouds Using Python and Font Awesome Icons</title>
+<meta property="article:author" content="https://www.facebook.com/max.woolf" />
+<meta name="description" content="You&rsquo;ve probably seen word clouds around the internet. There are several popular free tools for creating them, such as Wordle. I myself am a fan of them...">
+<link href="/rss.xml" rel="alternate" title="minimaxir | Max Woolf's Blog" type="application/atom+xml">
+<link rel="canonical" href="http://minimaxir.com/2016/05/wordclouds/">
+
+<!-- Mobile Metas -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+ <meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@minimaxir">
+<meta name="twitter:creator" content="@minimaxir">
+
+  <meta name="twitter:title" content="Creating Stylish, High-Quality Word Clouds Using Python and Font Awesome Icons">
+
+
+  <meta name="twitter:url" content="http://minimaxir.com/2016/05/wordclouds/">
+
+
+  <meta name="twitter:description" content="Why not make a word cloud which looks like a line chart?">
+
+
+  <meta name="twitter:image:src" content="http://minimaxir.com/img/cnn_wordcloud_reactions.png">
+
+ 
+ <meta content="minimaxir | Max Woolf's Blog" property="og:site_name">
+
+  <meta content="Creating Stylish, High-Quality Word Clouds Using Python and Font Awesome Icons" property="og:title">
+
+
+  <meta content="article" property="og:type">
+
+
+  <meta content="Why not make a word cloud which looks like a line chart?" property="og:description">
+
+
+  <meta content="http://minimaxir.com/2016/05/wordclouds/" property="og:url">
+
+
+
+  <meta content="http://minimaxir.com/img/cnn_wordcloud_reactions.png" property="og:image">
+
+
+  
+  <meta content="Visualization" property="article:section">
+  
+
+
+  
+
+
+
+      <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="white">
+    <meta name="apple-mobile-web-app-title" content="minimaxir">
+    <link rel="apple-touch-icon-precomposed" href="apple-touch-icon-precomposed.png">
+
+<link rel="apple-touch-icon" sizes="57x57" href="http://minimaxir.com/favicon/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="http://minimaxir.com/favicon/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="http://minimaxir.com/favicon/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="http://minimaxir.com/favicon/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="http://minimaxir.com/favicon/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="http://minimaxir.com/favicon/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="http://minimaxir.com/favicon/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="http://minimaxir.com/favicon/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="http://minimaxir.com/favicon/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192"  href="http://minimaxir.com/favicon/android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://minimaxir.com/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="http://minimaxir.com/favicon/favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="http://minimaxir.com/favicon/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="http://minimaxir.com/favicon/ms-icon-144x144.png">
+<meta name="theme-color" content="#ffffff">
+
+<!-- BEGIN GLOBAL MANDATORY STYLES -->
+  <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400,400italic,700' rel='stylesheet' type='text/css'>
+
+<link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+<link href="/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
+<link href="/css/minimaxir.css" rel="stylesheet" type="text/css"/>
+<!-- END GLOBAL MANDATORY STYLES -->
+
+<!-- BEGIN THEME STYLES -->
+<link href="/css/global.css" rel="stylesheet" type="text/css"/>
+<!-- END THEME STYLES -->
+
+<!-- BEGIN JQUERY -->
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<!-- END JQUERY -->
+
+
+  <script>
+   $(document).ready(function() {
+ 
+  // Facebook
+	$( ".social.facebook" ).children().each(function(index,value) {
+	var facebook_button = $(this);
+	var url = facebook_button.attr("data");
+
+  jQuery.getJSON("https://graph.facebook.com/?id="+url, function(data) {
+  if (typeof data.shares != 'undefined') facebook_button.html("<i class=\"fa fa-facebook\"></i><span class=\"count hidden-xs\"> " + data.shares + "</span>");
+  else if (typeof data.likes != 'undefined') facebook_button.html("<i class=\"fa fa-facebook\"></i><span class=\"count hidden-xs\"> " + data.likes + "</span>");
+  else facebook_button.html("<i class=\"fa fa-facebook\"></i><span class=\"count hidden-xs\"> " + " 0</span>");
+  });
+  });
+ 
+  // LinkedIn
+	$( ".social.linkedin" ).children().each(function(index,value) {
+	var linkedin_button = $(this);
+	var url = linkedin_button.attr("data");
+
+  jQuery.getJSON("http://www.linkedin.com/countserv/count/share?url="+url+"&format=jsonp&callback=?", function(data) {
+  linkedin_button.html("<i class=\"fa fa-linkedin\"></i><span class=\"count hidden-xs\"> " + data.count + "</span>");
+  });
+  });
+  });
+  </script>
+  
+</head>
+<!-- END HEAD -->
+  <!-- WRAPPER -->
+<div class="wrapper">
+    <!--========== HEADER TRANSPARENT ==========-->
+    <header class="header-transparent header-transparent-bb navbar-fixed-top header-sticky">
+        <!-- Navbar -->
+        <nav class="navbar mega-menu" role="navigation">
+            <div class="container">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="menu-container">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="toggle-icon"></span>
+                    </button>
+
+                    <!-- Navbar Actions -->
+                    <div class="navbar-actions">
+
+                    </div>
+                    <!-- End Navbar Actions -->
+
+                    <!-- Logo -->
+                    <div class="navbar-logo">
+                        <a class="navbar-logo-wrap" href="/">
+                            <img class="navbar-logo-img navbar-logo-img-white" src="/minimaxir-light.png" alt="minimaxir">
+                            <img class="navbar-logo-img navbar-logo-img-dark" src="/minimaxir-dark.png" alt="minimaxir">
+                        </a>
+                    </div>
+                    <!-- End Logo -->
+                </div>
+
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse nav-collapse">
+                    <div class="menu-container">
+                        <ul class="nav navbar-nav">
+                        
+<li class="nav-item">
+                                <a class="nav-item-child" href="/about">
+                                    About
+                                </a>
+                            </li>
+                                
+<li class="nav-item">
+                                <a class="nav-item-child" href="/portfolio">
+                                    Portfolio
+                                </a>
+                            </li>
+                        
+                        </ul>
+                    </div>
+                </div>
+                <!-- End Navbar Collapse -->
+            </div>
+            <!--// End Container-->
+        </nav>
+        <!-- Navbar -->
+    </header>
+    <!--========== END HEADER TRANSPARENT ==========-->
+    
+	    <!--========== BREADCRUMBS V5 ==========-->
+    
+    
+	
+	
+    
+    
+    
+    <section class="breadcrumbs-v5" style="background: url('/img/cnn_wordcloud_reactions.png') no-repeat center center; background-size: cover;">
+    
+        <div class="container">
+            <h1 class="breadcrumbs-v5-title">Creating Stylish, High-Quality Word Clouds Using Python and Font Awesome Icons</h1>
+            <span class="breadcrumbs-v5-subtitle">May 9, 2016
+            
+    
+              <span class="sharing index" style="float: right">
+  
+		  <span class="social facebook"><a href="https://www.facebook.com/share.php?u=http://minimaxir.com/2016/05/wordclouds/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data="http://minimaxir.com/2016/05/wordclouds/"><i class="fa fa-facebook"></i><span class="count hidden-xs"> -</span></a></span>
+  
+		<span class="social twitter"><a href="http://twitter.com/home/?status=Creating Stylish, High-Quality Word Clouds Using Python and Font Awesome Icons - http://minimaxir.com/2016/05/wordclouds/ - via @minimaxir"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data=http://minimaxir.com/2016/05/wordclouds/><i class="fa fa-twitter"></i><span class="count hidden-xs"></span></a> </span>
+
+  <span  class="social linkedin"><a href="http://www.linkedin.com/shareArticle?mini=true&title=&url=http://minimaxir.com/2016/05/wordclouds/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=600');return false;" data=http://minimaxir.com/2016/05/wordclouds/><i class="fa fa-linkedin"></i><span class="count hidden-xs"> -</span></a> </span>
+   
+			</span>
+            
+            </span>
+        </div>
+    </section>
+    
+    
+    <!--========== END BREADCRUMBS V5 ==========-->
+  
+  <!-- BEGIN BODY -->
+<body>
+
+  
+      <!--========== BACKGROUND COLOR SKY LIGHT ==========-->
+    <div class="bg-color-sky-light">
+        
+        <!--========== PAGE CONTENT ==========-->
+        <div class="content-sm container">
+            <div class="row">
+                <div class="col-md-9 md-margin-b-50">
+                    <!-- Blog Grid -->
+                    <article class="blog-grid margin-b-30">
+                        <!-- Image -->
+                        <!--<img class="img-responsive" src="/assets/img/1920x1080/20.jpg" alt="">-->
+                        <!-- End Image -->
+
+                        <!-- Blog Grid Content -->
+						<div class="blog-grid-content">
+						<p>You&rsquo;ve probably seen word clouds around the internet. There are several popular free tools for creating them, such as <a href="http://www.wordle.net">Wordle</a>. I myself am a fan of them, and I have made them for previous posts using the <a href="http://www.inside-r.org/packages/cran/wordcloud/docs/wordcloud">wordcloud package</a> for R.</p>
+
+<p><img src="/img/gif-unlimited/reddit-gif-wordcloud-e.png" alt=""></p>
+
+<p>Word clouds are not the most scientific type of data visualization. However, they are a very <em>information-dense</em> representation of the frequency of all words in a given text. Word clouds are more effective than just using bar charts displaying the counts of words for large amounts of text, as the chart would be difficult to parse if there are too many bars.</p>
+
+<p>The <a href="https://github.com/amueller/word_cloud">Python word_cloud package</a> by Andreas Mueller is relatively popular. A Reddit bot <a href="https://github.com/Winneon/makeswordclouds">makeswordclouds</a> by Jesse Bryan automatically <a href="https://www.reddit.com/user/makeswordcloudsagain">generates a word cloud</a> of comments on <a href="https://www.reddit.com">Reddit</a> submissions using this package. However, when I first saw the example output on the package, I was not impressed.</p>
+
+<p><img src="/img/wordclouds/constitution.png" alt=""></p>
+
+<p>I did more research into the <a href="http://amueller.github.io/word_cloud/">package documentation</a>. I found that there are two important perks present the Python implementation:</p>
+
+<p>1) Python word_cloud allows the user to specify a mask to constrain the distribution of words.</p>
+
+<p><img src="/img/wordclouds/a_new_hope_1.png" alt=""></p>
+
+<p>2) In addition to the mask, Python word_cloud allows the user to use the original colors of the image to set the colors of the words.</p>
+
+<p><img src="/img/wordclouds/colored_2.png" alt=""></p>
+
+<p>The masks are the more interesting aspect for creating visualizations, but <em>where</em> do you get the masks? You can manually trace and extract objects from images, but that can be time consuming and the masks will likely be heavily aliased and at a low resolution (the size of the mask sets the size of the word cloud).</p>
+
+<p>Enter <a href="https://fortawesome.github.io/Font-Awesome/">Font Awesome</a>, an icon font by Dave Gandy which is <em>very</em> widely used throughout the Internet (including this website). Icon fonts contain a wide variety of shapes and are vectorized, and therefore they can scale to any size.</p>
+
+<p><img src="/img/wordclouds/fa_icons.png" alt=""></p>
+
+<p>So why not use Font Awesome icons as masks for the word cloud? The font icons need to be extracted and rasterized as an image in order to be usable with the Python word_cloud package: cue the Python script <a href="https://github.com/Pythonity/icon-font-to-png">Icon Font to PNG</a> by Pythonity which does what the name implies.</p>
+
+<p><img src="/img/wordclouds/fa_icons_finder.png" alt=""></p>
+
+<p>Now <em>every</em> Font Awesome icon can be used as a word cloud mask! And the icons can be exported at any size: for this post, I render the word clouds at <strong>2048x2048px</strong>, larger than most desktop screens! After hacking the Python scripts included with the package which were used to create the default word clouds, I managed to create a few interesting examples.</p>
+
+<h2>Reddit Data and Thematic Icons</h2>
+
+<p>Font Awesome has <a href="http://fortawesome.github.io/Font-Awesome/icon/line-chart/">icons for charts</a>, which logically appeals to me as a data person. Why not make a word cloud which looks like a line chart?</p>
+
+<p>Let&rsquo;s use the word counts of titles of submissions to the <a href="https://www.reddit.com/r/dataisbeautiful/">/r/dataisbeautiful subreddit</a> on Reddit which have scored at least 100 points (using the <a href="https://bigquery.cloud.google.com/table/fh-bigquery:reddit_posts.full_corpus_201512">Reddit data dump</a> located on <a href="https://cloud.google.com/bigquery/">BigQuery</a>).</p>
+
+<p>Additionally, we can improve on the design of the default word cloud output by forcing all-caps text and by changing the text font. For word clouds, I prefer to use condensed font families, as they can allow for more information to be displayed in the word cloud. In this example, I will be using the <a href="https://www.myfonts.com/fonts/paratype/din-condensed/">DIN Condensed</a> font, a font native to OS X and a font you&rsquo;ve likely seen in media advertisements and website logos.</p>
+
+<p>Putting it all together:</p>
+
+<p><a href="https://raw.githubusercontent.com/minimaxir/stylistic-word-clouds/master/wordclouds/dataisbeautiful_wordcloud.png"><img src="/img/wordclouds/dataisbeautiful_wordcloud.png" alt=""></a></p>
+
+<p><em>(All word clouds in this post are shrunk to 600x600px to reduce loading time: click on the image for the full 2048x2048px resolution.)</em></p>
+
+<h2>GitHub Data and Brand Icons</h2>
+
+<p>Font Awesome also contains icons representing the logos of popular internet brands, such as Facebook and Twitter.</p>
+
+<p><a href="https://github.com">GitHub</a> is another such website. I will use BigQuery again with the <a href="https://bigquery.cloud.google.com/table/githubarchive:year.2014">2014 GitHub Archive dataset</a> to gather word counts of git commit messages during that year, and use the modern GitHub logo as the mask. This time, I will incorporate the freeware condensed monospaced font <a href="https://www.fontsquirrel.com/fonts/M-1m">M+ 1m</a> in order to create a more code-like aesthetic, which creates an interesting look when juxtaposed with the negative space of GitHub&rsquo;s logo.</p>
+
+<p><a href="https://raw.githubusercontent.com/minimaxir/stylistic-word-clouds/master/wordclouds/github_wordcloud.png"><img src="/img/wordclouds/github_wordcloud.png" alt=""></a></p>
+
+<h2>Yelp Data and Sentiment Icons</h2>
+
+<p>One of the <a href="http://minimaxir.com/2014/09/one-star-five-stars/">earliest word clouds I made</a> was for the <a href="http://www.yelp.com">Yelp</a> reviews dataset from the <a href="https://www.yelp.com/dataset_challenge">Yelp Dataset Challenge</a> to compare and contrast verbiage between 1-star reviews and 5-star reviews. Let&rsquo;s remake those word clouds.</p>
+
+<p>At this point I should mention appropriate color palettes for word clouds since the  rainbows of the stereotypical word clouds can be distracting. I strongly recommend using the <a href="http://colorbrewer2.org">ColorBrewer</a> palettes, helpfully provided for this use case with the <a href="https://github.com/jiffyclub/palettable">paletteable Python library</a> by Matt Davis. I particularly like the <a href="https://jiffyclub.github.io/palettable/colorbrewer/sequential/">sequential palettes</a>, which follow a clean gradient between white and another color (or between two or three colors), although I ignore some of the lighter colors as they may not be visible against white backgrounds.</p>
+
+<p>The font choice this time is <a href="https://www.google.com/fonts/specimen/Open+Sans+Condensed">Open Sans Condensed</a>, a Google Font. <a href="https://www.google.com/fonts">Google Fonts</a> are free and open source. I strongly recommend using them for documents/websites to add some flair over default fonts.</p>
+
+<p>Using the <strong>Greens</strong> palette and a smiley-face Font Awesome icon on 5-star reviews:</p>
+
+<p><a href="https://raw.githubusercontent.com/minimaxir/stylistic-word-clouds/master/wordclouds/yelp_pos_wordcloud.png"><img src="/img/wordclouds/yelp_pos_wordcloud.png" alt=""></a></p>
+
+<p>Makes sense, although the thin lines of the smiley-face causes the font sizes to become constrained. How about the inverse: <strong>Reds</strong>, thumbs-down, and 1-star reviews?</p>
+
+<p><a href="https://raw.githubusercontent.com/minimaxir/stylistic-word-clouds/master/wordclouds/yelp_neg_wordcloud.png"><img src="/img/wordclouds/yelp_neg_wordcloud.png" alt=""></a></p>
+
+<h2>Facebook Data and Etc. Icons</h2>
+
+<p>I recently updated my <a href="https://github.com/minimaxir/facebook-page-post-scraper">Facebook Page Data Scraper</a>, which gathers public posts made by Facebook Pages, to now retrieve total Reaction counts on those posts instead of just Likes.</p>
+
+<p>Why not create a word cloud of news headlines to get a zeitgeist of popular discussion? To do this, I scraped all the public posts from <a href="https://www.facebook.com/cnn/">CNN&rsquo;s Facebook page</a>, and created a word cloud of all CNN headlines to which the posts link. Let&rsquo;s use the Google Font  <a href="https://www.google.com/fonts/specimen/Amatic+SC">Amatic SC</a> which you&rsquo;ve likely seen before in ads, and let&rsquo;s try a <a href="https://jiffyclub.github.io/palettable/colorbrewer/qualitative/">qualitative palette</a>, <strong>Dark2</strong>, to get a &ldquo;rainbow&rdquo; effect without looking gawdy.</p>
+
+<p>And use a flag icon, because why not?</p>
+
+<p><a href="https://raw.githubusercontent.com/minimaxir/stylistic-word-clouds/master/wordclouds/cnn_wordcloud.png"><img src="/img/wordclouds/cnn_wordcloud.png" alt=""></a></p>
+
+<p>Of course, CNN has had fun with the 2016 U.S. Presidential election.</p>
+
+<p>Let&rsquo;s do one more word cloud. We have not yet done a word cloud using the colors-from-original-image technique. Using the underlying <a href="http://matplotlib.org/examples/color/colormaps_reference.html">matplotlib color map</a> for the <strong>Spectral</strong> palette, we can overlay a spatial rainbow which determines the color of the words displayed at that area of the mask:</p>
+
+<p><img src="/img/wordclouds/spectral.jpg" alt=""></p>
+
+<p>Additionally, in order to estimate the importance of the presence of each word in generating Reactions, we can create a word cloud of the words where the words are sized not by count, but by the <strong>average number of Reactions</strong> on Facebook posts referencing CNN headlines containing that word (where the word is used in at least 20 headlines for some statistical correction). And let&rsquo;s try a black background.</p>
+
+<p><a href="https://raw.githubusercontent.com/minimaxir/stylistic-word-clouds/master/wordclouds/cnn_wordcloud_reactions.png"><img src="/img/wordclouds/cnn_wordcloud_reactions.png" alt=""></a></p>
+
+<p>While the word cloud cannot be output in a vectorized format using this method, creating a word cloud at a super-high resolution (even larger than 2048x2048px) is more-than-enough for making typical wall posters and t-shirts.</p>
+
+<p>Word clouds may not have as much explanatory value in the academic sense, but they have <em>persuasive</em> power, which is just as important. At the least, it&rsquo;s another visual technique in my fun bag of visualization tricks to spice up future blog posts. </p>
+
+<p>Performing postprocessing on rendered word clouds can help create especially artsy art, but that discussion best-saved for <a href="https://raw.githubusercontent.com/minimaxir/stylistic-word-clouds/master/wordclouds/starry_night_cnn_weight_12_iterations_500_smooth_5.png">another time</a>.</p>
+
+<hr>
+
+<p><em>You can view the scripts to create the word clouds in this posts in this <a href="https://github.com/minimaxir/stylistic-word-clouds">GitHub repository</a>; the code is more hacky than usual, but it should be clear enough to demonstrate how the raw data was processed in each instance and how the word clouds were rendered. In the future, I hope to create a <a href="http://flask.pocoo.org">Flask app</a> based on these scripts to streamline the creation of word clouds.</em></p>
+
+						
+            			 <div class="breadcrumbs-v5-subtitle sharing-post" style="color: #999 !important; padding-top:10px; border-top: 1px solid #eee">Share this article!
+
+
+              <span class="sharing index" style="float: right; color: #999 !important;">
+  
+		  <span class="social facebook"><a href="https://www.facebook.com/share.php?u=http://minimaxir.com/2016/05/wordclouds/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data="http://minimaxir.com/2016/05/wordclouds/"><i class="fa fa-facebook"></i><span class="count hidden-xs"> -</span></a></span>
+  
+		<span class="social twitter"><a href="http://twitter.com/home/?status=Creating Stylish, High-Quality Word Clouds Using Python and Font Awesome Icons - http://minimaxir.com/2016/05/wordclouds/ - via @minimaxir"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data=http://minimaxir.com/2016/05/wordclouds/><i class="fa fa-twitter"></i><span class="count hidden-xs"></span></a> </span>
+
+  <span  class="social linkedin"><a href="http://www.linkedin.com/shareArticle?mini=true&title=&url=http://minimaxir.com/2016/05/wordclouds/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=600');return false;" data=http://minimaxir.com/2016/05/wordclouds/><i class="fa fa-linkedin"></i><span class="count hidden-xs"> -</span></a> </span>
+
+   </span>
+   </div>
+						</div>
+                        <!-- End Blog Grid Content -->
+                        
+                        
+                        
+                    </article>
+                    <!-- End Blog Grid -->
+
+ 					
+
+                    <!-- Blog Comment -->
+                    <div class="bg-color-white margin-b-30">
+                        <div class="blog-single-post-content">
+
+						
+
+<script type="text/javascript">
+      var disqus_shortname = 'minimaxir';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://minimaxir.com/2016/05/wordclouds/';
+        var disqus_url = 'http://minimaxir.com/2016/05/wordclouds/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+<div id="disqus_thread"></div>
+
+
+
+                        </div>
+                    </div>
+                    <!-- End Blog Comment -->
+                    
+                    
+                </div>
+
+			                <!--========== BLOG SIDEBAR ==========-->
+                <div class="col-md-3">
+                
+                
+                
+                    <!-- Blog Author -->
+                    <div class="blog-sidebar margin-b-30">
+                        <div class="blog-sidebar-heading">
+                            <h4 class="blog-sidebar-heading-title">Author</h4>
+                        </div>
+                        
+                        <img src="/MaxFB.jpg" title="Stop mousing over me! I'm not a XKCD comic!" class="img-responsive hidden-xs hidden-sm"></img>
+                        
+                        <div class="blog-sidebar-content">
+                            <!-- Blog Author Bio -->
+							
+							<p><strong>Max Woolf (@minimaxir)</strong> is a Software QA Engineer living and working in the San Francisco Bay Area for over 3 years and a 2012 Carnegie Mellon University graduate in Business Administration.</p>
+
+<p>In his spare time, Max uses <a href="https://www.python.org/">Python</a> to gather data from public APIs and <a href="http://ggplot2.org/">ggplot2</a> to make pretty charts from that data.</p>
+
+<p>You can learn more about Max <a href="/about">here</a>, or view his portfolio <a href="/portfolio">here</a>. </p>
+
+  
+    <ul class="list-inline" style="padding-top:10px; margin-top: 20px; border-top: 1px solid #ebeef6">
+                        <li class="theme-icons-wrap"><a title="Facebook" href="https://facebook.com/max.woolf" target="_blank"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-facebook"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="Twitter" href="https://twitter.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-twitter"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="LinkedIn" href="https://linkedin.com/in/minimaxir" target="_blank"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-linkedin"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="GitHub" href="https://github.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-github"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="YouTube" href="https://youtube.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-youtube"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="E-Mail" href="mailto:max@minimaxir.com"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-envelope"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="RSS" href="/rss.xml"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-rss"></i></a></li>
+                    </ul>
+                            <!-- End Blog Author Bio -->
+                        </div>
+                    </div>
+                    <!-- End Blog Author -->
+                    
+                     <!-- Blog Recent Posts -->
+                    <div class="blog-sidebar margin-b-30">
+                        <div class="blog-sidebar-heading">
+                            <h4 class="blog-sidebar-heading-title">Recent Posts</h4>
+                        </div>
+                        <div class="blog-sidebar-content" style="position: relative; overflow: visible;">
+                        
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="/2016/05/wordclouds/">Creating Stylish, High-Quality Word Clouds Using Python and Font Awesome Icons</a></h5>
+                                    <small class="latest-tuts-content-time"> May 9, 2016</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="/2016/04/movie-gender/">Blockbuster Movies with Male Leads Earn More Than Those with Female Leads</a></h5>
+                                    <small class="latest-tuts-content-time"> Apr 13, 2016</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="/2016/04/trust-but-verify/">The Importance of Sanity-Checking Datasets Before Analysis</a></h5>
+                                    <small class="latest-tuts-content-time"> Apr 6, 2016</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="/2016/03/gif-unlimited/">Unlimited Data Storage Using Image Steganography and Cat GIFs</a></h5>
+                                    <small class="latest-tuts-content-time"> Mar 29, 2016</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="/2016/02/facebook-reactions/">Facebook Reactions and the Problems With Quantifying Likes Differently</a></h5>
+                                    <small class="latest-tuts-content-time"> Feb 29, 2016</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="/2016/01/startup-haters/">You're Not Allowed to Criticize Startups, You Stupid Hater</a></h5>
+                                    <small class="latest-tuts-content-time"> Jan 25, 2016</small>
+                                </div>
+                        </article>
+                                                
+                    </div>
+                    <!-- End Blog Recent Posts -->
+                    </div>
+                    
+                    <!-- GitHub Top Repositories -->
+                    <div class="blog-sidebar margin-b-30">
+                        <div class="blog-sidebar-heading">
+                            <h4 class="blog-sidebar-heading-title">Top GitHub Repositories</h4>
+                        </div>
+                        <div class="blog-sidebar-content" style="position: relative; overflow: visible;">
+                        
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/big-list-of-naughty-strings" target="_blank">Big List of Naughty Strings</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 11,186+</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/copy-syntax-highlight-osx" target="_blank">Copy Syntax Highlight for OS X</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 319+</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/video-to-gif-osx" target="_blank">Convert Video to GIF on OS X</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 207+</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/facebook-page-post-scraper" target="_blank">Facebook Page Post Scraper</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 96+</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/reddit-bigquery" target="_blank">Reddit Data with BigQuery Notebook</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 58+</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/get-all-hacker-news-submissions-comments" target="_blank">Get All Hacker News Submissions & Comments</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 47+</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/frames-to-gif-osx" target="_blank">Convert Frames to GIF on OS X</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 15+</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/nyc-taxi-notebook" target="_blank">NYC Yellow Taxi Visualization Notebook</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 13+</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/sf-arrests-when-where" target="_blank">Analyzing When and Where San Francisco Criminal Arrests Occur</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 10+</small>
+                                </div>
+                        </article>
+                                                
+                    </div>
+                    
+                    <!-- End GitHub Top Repositories -->
+                    
+                    
+                    
+                </div>
+                <!--========== END BLOG SIDEBAR ==========-->
+            
+			</div>
+            <!--// end row -->
+        </div>
+        <!--========== END PAGE CONTENT ==========-->
+
+    </div>
+    <!--========== END BACKGROUND COLOR SKY LIGHT ==========-->
+    
+
+
+
+  
+      <!--========== FOOTER V8 ==========-->
+    <footer id="footer" class="footer-v8">
+        <div class="content-sm container">
+            <div class="row">
+                <!-- Logo -->
+                <div class="col-md-6">
+                    
+                    <p>You can contact through any of the following channels, although e-mail is preferred. Following me on Facebook and Twitter certainly doesn't hurt either!</p>
+                     <!-- <h2 class="footer-v8-title">Follow Me</h2> -->
+                    <!-- Theme Icons White Background -->
+                   <!-- <ul class="list-inline ul-li-lr-0">
+                        <li class="theme-icons-wrap"><a title="Facebook" href="https://facebook.com/max.woolf" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-facebook"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="Twitter" href="https://twitter.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-twitter"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="LinkedIn" href="https://linkedin.com/in/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-linkedin"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="GitHub" href="https://github.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-github"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="YouTube" href="https://youtube.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-youtube"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="E-Mail" href="mailto:max@minimaxir.com"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-envelope"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="RSS" href="/rss.xml"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-rss"></i></a></li> -->
+                    <!-- End Theme Icons White Background -->
+                </div>
+                <!-- End Logo -->
+
+                <!-- Contact Info -->
+                <div class="col-md-6">
+                    <h3 class="footer-v8-title">Contact Info</h3>
+                    <div class="footer-v8-contact-info-bg">
+                        <ul class="list-unstyled footer-v8-contact-info">
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-map-marker"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <p class="footer-v8-contact-info-text">SOMA, San Francisco, CA</p>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-facebook"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="Facebook" href="https://facebook.com/max.woolf" target="_blank">max.woolf</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-twitter"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="Twitter" href="https://twitter.com/minimaxir" target="_blank"">@minimaxir</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-linkedin"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="LinkedIn" href="https://linkedin.com/in/minimaxir" target="_blank"">minimaxir</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-envelope"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="E-Mail" href="mailto:max@minimaxir.com">max@minimaxir.com</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- End Contact Info -->
+
+            </div>
+            <!--// end row -->
+        </div>
+
+        <!-- Copyright -->
+        <div class="footer-v8-copyright">
+            <div class="container text-center">
+				Copyright &#169; 2016 Max Woolf. All Rights Reserved. 
+                minimaxir.com is powered by Jekyll and GitHub Pages.
+            </div>
+        </div>
+        <!-- Copyright -->
+    </footer>
+    <!--========== END FOOTER V8 ==========-->
+</div>
+<!-- END WRAPPER -->
+
+<!-- Sidebar Content Overlay -->
+<div class="sidebar-content-overlay"></div>
+<!-- End Sidebar Content Overlay -->
+
+<!-- Back To Top -->
+<a href="javascript:void(0);" class="js-back-to-top back-to-top-theme"></a>
+<!-- End Back To Top -->
+
+<!--========== JAVASCRIPTS(Load javascripts at bottom, this will reduce page load time) ==========-->
+<!-- BEGIN CORE PLUGINS -->
+<!--[if lt IE 9]>
+<script src="/assets/plugins/html5shiv.js"></script>
+<script src="/assets/plugins/respond.min.js"></script>
+<![endif]-->
+<script type="text/javascript" src="/js/jquery.migrate.min.js"></script>
+<script type="text/javascript" src="/js/bootstrap.min.js"></script>
+<!-- END CORE PLUGINS -->
+
+<!-- BEGIN PAGE LEVEL PLUGINS -->
+<script type="text/javascript" src="/js/jquery.back-to-top.js"></script>
+<!-- END PAGE LEVEL PLUGINS -->
+
+<!-- BEGIN PAGE LEVEL SCRIPTS -->
+<script type="text/javascript" src="/js/app.min.js"></script>
+<script type="text/javascript" src="/js/header-sticky.js"></script>
+<!-- END PAGE LEVEL SCRIPTS -->
+<!--========== END JAVASCRIPTS ==========-->
+  
+</body>
+<!-- END BODY -->
+
+</html>

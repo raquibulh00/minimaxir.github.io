@@ -5,9 +5,120 @@
     <description>A blog by Max Woolf about startups, technology, and blogging. It&#39;s so meta, even this acronym.</description>
     <link>http://minimaxir.com/</link>
     <atom:link href="http://minimaxir.com/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Wed, 13 Apr 2016 11:48:53 -0700</pubDate>
-    <lastBuildDate>Wed, 13 Apr 2016 11:48:53 -0700</lastBuildDate>
+    <pubDate>Mon, 09 May 2016 07:45:20 -0700</pubDate>
+    <lastBuildDate>Mon, 09 May 2016 07:45:20 -0700</lastBuildDate>
     <generator>Jekyll v3.1.2</generator>
+    
+      <item>
+        <title>Creating Stylish, High-Quality Word Clouds Using Python and Font Awesome Icons</title>
+        <description>&lt;p&gt;You&amp;rsquo;ve probably seen word clouds around the internet. There are several popular free tools for creating them, such as &lt;a href=&quot;http://www.wordle.net&quot;&gt;Wordle&lt;/a&gt;. I myself am a fan of them, and I have made them for previous posts using the &lt;a href=&quot;http://www.inside-r.org/packages/cran/wordcloud/docs/wordcloud&quot;&gt;wordcloud package&lt;/a&gt; for R.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/gif-unlimited/reddit-gif-wordcloud-e.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;Word clouds are not the most scientific type of data visualization. However, they are a very &lt;em&gt;information-dense&lt;/em&gt; representation of the frequency of all words in a given text. Word clouds are more effective than just using bar charts displaying the counts of words for large amounts of text, as the chart would be difficult to parse if there are too many bars.&lt;/p&gt;
+
+&lt;p&gt;The &lt;a href=&quot;https://github.com/amueller/word_cloud&quot;&gt;Python word_cloud package&lt;/a&gt; by Andreas Mueller is relatively popular. A Reddit bot &lt;a href=&quot;https://github.com/Winneon/makeswordclouds&quot;&gt;makeswordclouds&lt;/a&gt; by Jesse Bryan automatically &lt;a href=&quot;https://www.reddit.com/user/makeswordcloudsagain&quot;&gt;generates a word cloud&lt;/a&gt; of comments on &lt;a href=&quot;https://www.reddit.com&quot;&gt;Reddit&lt;/a&gt; submissions using this package. However, when I first saw the example output on the package, I was not impressed.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/wordclouds/constitution.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;I did more research into the &lt;a href=&quot;http://amueller.github.io/word_cloud/&quot;&gt;package documentation&lt;/a&gt;. I found that there are two important perks present the Python implementation:&lt;/p&gt;
+
+&lt;p&gt;1) Python word_cloud allows the user to specify a mask to constrain the distribution of words.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/wordclouds/a_new_hope_1.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;2) In addition to the mask, Python word_cloud allows the user to use the original colors of the image to set the colors of the words.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/wordclouds/colored_2.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;The masks are the more interesting aspect for creating visualizations, but &lt;em&gt;where&lt;/em&gt; do you get the masks? You can manually trace and extract objects from images, but that can be time consuming and the masks will likely be heavily aliased and at a low resolution (the size of the mask sets the size of the word cloud).&lt;/p&gt;
+
+&lt;p&gt;Enter &lt;a href=&quot;https://fortawesome.github.io/Font-Awesome/&quot;&gt;Font Awesome&lt;/a&gt;, an icon font by Dave Gandy which is &lt;em&gt;very&lt;/em&gt; widely used throughout the Internet (including this website). Icon fonts contain a wide variety of shapes and are vectorized, and therefore they can scale to any size.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/wordclouds/fa_icons.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;So why not use Font Awesome icons as masks for the word cloud? The font icons need to be extracted and rasterized as an image in order to be usable with the Python word_cloud package: cue the Python script &lt;a href=&quot;https://github.com/Pythonity/icon-font-to-png&quot;&gt;Icon Font to PNG&lt;/a&gt; by Pythonity which does what the name implies.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/wordclouds/fa_icons_finder.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;Now &lt;em&gt;every&lt;/em&gt; Font Awesome icon can be used as a word cloud mask! And the icons can be exported at any size: for this post, I render the word clouds at &lt;strong&gt;2048x2048px&lt;/strong&gt;, larger than most desktop screens! After hacking the Python scripts included with the package which were used to create the default word clouds, I managed to create a few interesting examples.&lt;/p&gt;
+
+&lt;h2&gt;Reddit Data and Thematic Icons&lt;/h2&gt;
+
+&lt;p&gt;Font Awesome has &lt;a href=&quot;http://fortawesome.github.io/Font-Awesome/icon/line-chart/&quot;&gt;icons for charts&lt;/a&gt;, which logically appeals to me as a data person. Why not make a word cloud which looks like a line chart?&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s use the word counts of titles of submissions to the &lt;a href=&quot;https://www.reddit.com/r/dataisbeautiful/&quot;&gt;/r/dataisbeautiful subreddit&lt;/a&gt; on Reddit which have scored at least 100 points (using the &lt;a href=&quot;https://bigquery.cloud.google.com/table/fh-bigquery:reddit_posts.full_corpus_201512&quot;&gt;Reddit data dump&lt;/a&gt; located on &lt;a href=&quot;https://cloud.google.com/bigquery/&quot;&gt;BigQuery&lt;/a&gt;).&lt;/p&gt;
+
+&lt;p&gt;Additionally, we can improve on the design of the default word cloud output by forcing all-caps text and by changing the text font. For word clouds, I prefer to use condensed font families, as they can allow for more information to be displayed in the word cloud. In this example, I will be using the &lt;a href=&quot;https://www.myfonts.com/fonts/paratype/din-condensed/&quot;&gt;DIN Condensed&lt;/a&gt; font, a font native to OS X and a font you&amp;rsquo;ve likely seen in media advertisements and website logos.&lt;/p&gt;
+
+&lt;p&gt;Putting it all together:&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://raw.githubusercontent.com/minimaxir/stylistic-word-clouds/master/wordclouds/dataisbeautiful_wordcloud.png&quot;&gt;&lt;img src=&quot;/img/wordclouds/dataisbeautiful_wordcloud.png&quot; alt=&quot;&quot;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;(All word clouds in this post are shrunk to 600x600px to reduce loading time: click on the image for the full 2048x2048px resolution.)&lt;/em&gt;&lt;/p&gt;
+
+&lt;h2&gt;GitHub Data and Brand Icons&lt;/h2&gt;
+
+&lt;p&gt;Font Awesome also contains icons representing the logos of popular internet brands, such as Facebook and Twitter.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://github.com&quot;&gt;GitHub&lt;/a&gt; is another such website. I will use BigQuery again with the &lt;a href=&quot;https://bigquery.cloud.google.com/table/githubarchive:year.2014&quot;&gt;2014 GitHub Archive dataset&lt;/a&gt; to gather word counts of git commit messages during that year, and use the modern GitHub logo as the mask. This time, I will incorporate the freeware condensed monospaced font &lt;a href=&quot;https://www.fontsquirrel.com/fonts/M-1m&quot;&gt;M+ 1m&lt;/a&gt; in order to create a more code-like aesthetic, which creates an interesting look when juxtaposed with the negative space of GitHub&amp;rsquo;s logo.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://raw.githubusercontent.com/minimaxir/stylistic-word-clouds/master/wordclouds/github_wordcloud.png&quot;&gt;&lt;img src=&quot;/img/wordclouds/github_wordcloud.png&quot; alt=&quot;&quot;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2&gt;Yelp Data and Sentiment Icons&lt;/h2&gt;
+
+&lt;p&gt;One of the &lt;a href=&quot;http://minimaxir.com/2014/09/one-star-five-stars/&quot;&gt;earliest word clouds I made&lt;/a&gt; was for the &lt;a href=&quot;http://www.yelp.com&quot;&gt;Yelp&lt;/a&gt; reviews dataset from the &lt;a href=&quot;https://www.yelp.com/dataset_challenge&quot;&gt;Yelp Dataset Challenge&lt;/a&gt; to compare and contrast verbiage between 1-star reviews and 5-star reviews. Let&amp;rsquo;s remake those word clouds.&lt;/p&gt;
+
+&lt;p&gt;At this point I should mention appropriate color palettes for word clouds since the  rainbows of the stereotypical word clouds can be distracting. I strongly recommend using the &lt;a href=&quot;http://colorbrewer2.org&quot;&gt;ColorBrewer&lt;/a&gt; palettes, helpfully provided for this use case with the &lt;a href=&quot;https://github.com/jiffyclub/palettable&quot;&gt;paletteable Python library&lt;/a&gt; by Matt Davis. I particularly like the &lt;a href=&quot;https://jiffyclub.github.io/palettable/colorbrewer/sequential/&quot;&gt;sequential palettes&lt;/a&gt;, which follow a clean gradient between white and another color (or between two or three colors), although I ignore some of the lighter colors as they may not be visible against white backgrounds.&lt;/p&gt;
+
+&lt;p&gt;The font choice this time is &lt;a href=&quot;https://www.google.com/fonts/specimen/Open+Sans+Condensed&quot;&gt;Open Sans Condensed&lt;/a&gt;, a Google Font. &lt;a href=&quot;https://www.google.com/fonts&quot;&gt;Google Fonts&lt;/a&gt; are free and open source. I strongly recommend using them for documents/websites to add some flair over default fonts.&lt;/p&gt;
+
+&lt;p&gt;Using the &lt;strong&gt;Greens&lt;/strong&gt; palette and a smiley-face Font Awesome icon on 5-star reviews:&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://raw.githubusercontent.com/minimaxir/stylistic-word-clouds/master/wordclouds/yelp_pos_wordcloud.png&quot;&gt;&lt;img src=&quot;/img/wordclouds/yelp_pos_wordcloud.png&quot; alt=&quot;&quot;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Makes sense, although the thin lines of the smiley-face causes the font sizes to become constrained. How about the inverse: &lt;strong&gt;Reds&lt;/strong&gt;, thumbs-down, and 1-star reviews?&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://raw.githubusercontent.com/minimaxir/stylistic-word-clouds/master/wordclouds/yelp_neg_wordcloud.png&quot;&gt;&lt;img src=&quot;/img/wordclouds/yelp_neg_wordcloud.png&quot; alt=&quot;&quot;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2&gt;Facebook Data and Etc. Icons&lt;/h2&gt;
+
+&lt;p&gt;I recently updated my &lt;a href=&quot;https://github.com/minimaxir/facebook-page-post-scraper&quot;&gt;Facebook Page Data Scraper&lt;/a&gt;, which gathers public posts made by Facebook Pages, to now retrieve total Reaction counts on those posts instead of just Likes.&lt;/p&gt;
+
+&lt;p&gt;Why not create a word cloud of news headlines to get a zeitgeist of popular discussion? To do this, I scraped all the public posts from &lt;a href=&quot;https://www.facebook.com/cnn/&quot;&gt;CNN&amp;rsquo;s Facebook page&lt;/a&gt;, and created a word cloud of all CNN headlines to which the posts link. Let&amp;rsquo;s use the Google Font  &lt;a href=&quot;https://www.google.com/fonts/specimen/Amatic+SC&quot;&gt;Amatic SC&lt;/a&gt; which you&amp;rsquo;ve likely seen before in ads, and let&amp;rsquo;s try a &lt;a href=&quot;https://jiffyclub.github.io/palettable/colorbrewer/qualitative/&quot;&gt;qualitative palette&lt;/a&gt;, &lt;strong&gt;Dark2&lt;/strong&gt;, to get a &amp;ldquo;rainbow&amp;rdquo; effect without looking gawdy.&lt;/p&gt;
+
+&lt;p&gt;And use a flag icon, because why not?&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://raw.githubusercontent.com/minimaxir/stylistic-word-clouds/master/wordclouds/cnn_wordcloud.png&quot;&gt;&lt;img src=&quot;/img/wordclouds/cnn_wordcloud.png&quot; alt=&quot;&quot;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Of course, CNN has had fun with the 2016 U.S. Presidential election.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s do one more word cloud. We have not yet done a word cloud using the colors-from-original-image technique. Using the underlying &lt;a href=&quot;http://matplotlib.org/examples/color/colormaps_reference.html&quot;&gt;matplotlib color map&lt;/a&gt; for the &lt;strong&gt;Spectral&lt;/strong&gt; palette, we can overlay a spatial rainbow which determines the color of the words displayed at that area of the mask:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/wordclouds/spectral.jpg&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;Additionally, in order to estimate the importance of the presence of each word in generating Reactions, we can create a word cloud of the words where the words are sized not by count, but by the &lt;strong&gt;average number of Reactions&lt;/strong&gt; on Facebook posts referencing CNN headlines containing that word (where the word is used in at least 20 headlines for some statistical correction). And let&amp;rsquo;s try a black background.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://raw.githubusercontent.com/minimaxir/stylistic-word-clouds/master/wordclouds/cnn_wordcloud_reactions.png&quot;&gt;&lt;img src=&quot;/img/wordclouds/cnn_wordcloud_reactions.png&quot; alt=&quot;&quot;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;While the word cloud cannot be output in a vectorized format using this method, creating a word cloud at a super-high resolution (even larger than 2048x2048px) is more-than-enough for making typical wall posters and t-shirts.&lt;/p&gt;
+
+&lt;p&gt;Word clouds may not have as much explanatory value in the academic sense, but they have &lt;em&gt;persuasive&lt;/em&gt; power, which is just as important. At the least, it&amp;rsquo;s another visual technique in my fun bag of visualization tricks to spice up future blog posts. &lt;/p&gt;
+
+&lt;p&gt;Performing postprocessing on rendered word clouds can help create especially artsy art, but that discussion best-saved for &lt;a href=&quot;https://raw.githubusercontent.com/minimaxir/stylistic-word-clouds/master/wordclouds/starry_night_cnn_weight_12_iterations_500_smooth_5.png&quot;&gt;another time&lt;/a&gt;.&lt;/p&gt;
+
+&lt;hr&gt;
+
+&lt;p&gt;&lt;em&gt;You can view the scripts to create the word clouds in this posts in this &lt;a href=&quot;https://github.com/minimaxir/stylistic-word-clouds&quot;&gt;GitHub repository&lt;/a&gt;; the code is more hacky than usual, but it should be clear enough to demonstrate how the raw data was processed in each instance and how the word clouds were rendered. In the future, I hope to create a &lt;a href=&quot;http://flask.pocoo.org&quot;&gt;Flask app&lt;/a&gt; based on these scripts to streamline the creation of word clouds.&lt;/em&gt;&lt;/p&gt;
+</description>
+        <pubDate>Mon, 09 May 2016 08:00:00 -0700</pubDate>
+        <link>http://minimaxir.com/2016/05/wordclouds/</link>
+        <guid isPermaLink="true">http://minimaxir.com/2016/05/wordclouds/</guid>
+        
+        
+        <category>Visualization</category>
+        
+      </item>
     
       <item>
         <title>Blockbuster Movies with Male Leads Earn More Than Those with Female Leads</title>
@@ -63,7 +174,7 @@
 
 &lt;ul&gt;
 &lt;li&gt;The &lt;a href=&quot;https://en.wikipedia.org/wiki/Kolmogorov%E2%80%93Smirnov_test&quot;&gt;Kolmogorov–Smirnov test&lt;/a&gt; for determining if two populations have the same distribution. The null hypothesis is that the two are drawn from the same distribution; the alternative hypothesis is that the distributions are different. We reject the null hypothesis at the 95% level in favor of the alternative if the p-value of the test is less than 0.05. Running the test, &lt;strong&gt;p &amp;lt; 0.01&lt;/strong&gt;, so we can say the distributions are statistically different. (the p-values are the same whether the box office revenues are log-transformed or not)&lt;/li&gt;
-&lt;li&gt;The &lt;a href=&quot;hhttps://en.wikipedia.org/wiki/Mann%E2%80%93Whitney_U_test&quot;&gt;Wilcoxon rank-sum test&lt;/a&gt; for determining if the means (averages) of two populations are the same (null hypothesis) or different (alternative hypothesis). This test is used instead of a &lt;em&gt;t&lt;/em&gt;-test if the populations are not Normally distributed, which is the case here. Running the test (one-sided, since only checking if a mean is greater), &lt;strong&gt;p &amp;lt; 0.01&lt;/strong&gt;, so we can say the two means are statistically different. (again, the p-values are the same whether the box office revenues are log-transformed or not)&lt;/li&gt;
+&lt;li&gt;The &lt;a href=&quot;https://en.wikipedia.org/wiki/Mann%E2%80%93Whitney_U_test&quot;&gt;Wilcoxon rank-sum test&lt;/a&gt; for determining if the means (averages) of two populations are the same (null hypothesis) or different (alternative hypothesis). This test is used instead of a &lt;em&gt;t&lt;/em&gt;-test if the populations are not Normally distributed, which is the case here. Running the test (one-sided, since only checking if a mean is greater), &lt;strong&gt;p &amp;lt; 0.01&lt;/strong&gt;, so we can say the two means are statistically different. (again, the p-values are the same whether the box office revenues are log-transformed or not)&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;So we have statistical evidence that male-lead movies generate more money on average than female-led movies. But this claim is very serious, and as a result, we need even more proof.&lt;/p&gt;
@@ -1046,237 +1157,6 @@ plot &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; ggmap&lt;span class=
         <pubDate>Mon, 07 Dec 2015 08:00:00 -0800</pubDate>
         <link>http://minimaxir.com/2015/12/sf-arrest-maps/</link>
         <guid isPermaLink="true">http://minimaxir.com/2015/12/sf-arrest-maps/</guid>
-        
-        
-        <category>Data</category>
-        
-      </item>
-    
-      <item>
-        <title>Analyzing San Francisco Crime Data to Determine When Arrests Frequently Occur</title>
-        <description>&lt;p&gt;The &lt;a href=&quot;https://data.sfgov.org&quot;&gt;SF OpenData portal&lt;/a&gt; is a good source for detailed statistics about San Francisco. One of the most popular datasets on the portal is the &lt;a href=&quot;https://data.sfgov.org/Public-Safety/SFPD-Incidents-from-1-January-2003/tmnf-yvry&quot;&gt;SFPD Incidents dataset&lt;/a&gt;, which contains a tabular list of 1,842,050 reports (at time of writing) from 2003 to present.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/sf-arrests/incident-data.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;The data can be exported into a 377.9 MB CSV; not large enough to be considered &amp;ldquo;big data,&amp;rdquo; but still too heavy for programs like Excel to process efficiently. Let&amp;rsquo;s take a look at the data using &lt;a href=&quot;https://www.r-project.org&quot;&gt;R&lt;/a&gt; and see if there&amp;rsquo;s anything interesting.&lt;/p&gt;
-
-&lt;h2&gt;Processing the Data&lt;/h2&gt;
-
-&lt;p&gt;For this article, I&amp;rsquo;m going to do something different and illustrate the data processing step-by-step, both as a teaching tool, and to show that I am not using vague methodology to generate a narratively-convenient conclusion. &lt;em&gt;For more detailed code and output, a &lt;a href=&quot;https://github.com/minimaxir/sf-arrests-when-where/blob/master/crime_data_sf.ipynb&quot;&gt;Jupyter notebook&lt;/a&gt; containing the code and visualizations used in this article is available open-source on GitHub.&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;Loading a 1.9 million row file into R can take awhile, even on modern computers with a SSD. Enter &lt;code&gt;readr&lt;/code&gt;, &lt;a href=&quot;https://github.com/hadley/readr&quot;&gt;another R package&lt;/a&gt; by &lt;code&gt;ggplot2&lt;/code&gt; author Hadley Wickham, which grants access to a &lt;code&gt;read_csv()&lt;/code&gt; function that has nearly 10x the speed of the base &lt;code&gt;read.csv()&lt;/code&gt; R function, with more sensible defaults too.&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;path &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;~/Downloads/SFPD_Incidents_-_from_1_January_2003.csv&amp;quot;&lt;/span&gt;
-
-df &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; read_csv&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;path&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;In memory, the data set is 180.9 MB, and removing a few useless columns (e.g. IncidentNum) further reduces the size to 126.9 MB. Since there are many redundancies in the row data (e.g. only 10 distinct PdDistrict values), R can perform memory optimizations.&lt;/p&gt;
-
-&lt;p&gt;You may have noticed in the first article image that the text data in some of the columns is in ALL CAPS, which would look ugly if the text was used in a data visualization. We can create a helper function to convert a column of text values into proper case through the use of &lt;a href=&quot;http://stackoverflow.com/questions/15776732/how-to-convert-a-vector-of-strings-to-title-case&quot;&gt;regular expression shenanigans&lt;/a&gt;.&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;proper_case &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;x&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;kr&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kp&quot;&gt;gsub&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;\\b([A-Z])([A-Z]+)&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;\\U\\1\\L\\2&amp;quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; x&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; perl&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;TRUE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;Now we can do more through processing using &lt;code&gt;dplyr&lt;/code&gt;, &lt;a href=&quot;https://github.com/hadley/dplyr&quot;&gt;&lt;em&gt;another&lt;/em&gt; Hadley Wickham R package&lt;/a&gt;. dplyr is a utility that makes R easier to use: it provides a new syntax that allows data manipulation with intuitive function names, the functions can be chained using the &lt;code&gt;%&amp;gt;%&lt;/code&gt; operator for efficiency, and all data processing is &lt;em&gt;significantly&lt;/em&gt; faster due to a C++ code base. (Fun fact: before the release of dplyr, I intended to quit using R for data analysis in favor of Python. Base R syntax is &lt;em&gt;that&lt;/em&gt; difficult to use.)&lt;/p&gt;
-
-&lt;p&gt;In dplyr, &lt;code&gt;mutate&lt;/code&gt; allows the creation and transformation of columns. We will transform the text columns by running the columns through the &lt;code&gt;proper_case&lt;/code&gt; function earlier:&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;df &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; df &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt; mutate&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;Category &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; proper_case&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;Category&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
-                 Descript &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; proper_case&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;Descript&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
-                 PdDistrict &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; proper_case&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;PdDistrict&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
-                 Resolution &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; proper_case&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;Resolution&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;After all that, the data looks like:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/sf-arrests/processed-table.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;Much better!&lt;/p&gt;
-
-&lt;p&gt;However, many of the records have a &amp;ldquo;None&amp;rdquo; value for Resolution. This implies that the police appeared at the incident but did no action, which isn&amp;rsquo;t that helpful for analysis. How about we look at incidents which resulted in an arrest?&lt;/p&gt;
-
-&lt;p&gt;dplyr&amp;rsquo;s  &lt;code&gt;filter&lt;/code&gt; command does that, and we can use &lt;code&gt;grepl()&lt;/code&gt; to do a text search for each Resolution value for the presence of &amp;ldquo;Arrest&amp;rdquo;.&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;df_arrest &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; df &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt; filter&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kp&quot;&gt;grepl&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Arrest&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; Resolution&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;That&amp;rsquo;s it! There are 587,499 arrests total in the dataset.&lt;/p&gt;
-
-&lt;h2&gt;Arrests Over Time&lt;/h2&gt;
-
-&lt;p&gt;One of the most simple data visualizations is a line chart, and it&amp;rsquo;s a good starting point to use for analyzing arrests. Has the number of daily arrests been changing over time? dplyr and ggplot2 make this very easy to visualize in R.&lt;/p&gt;
-
-&lt;p&gt;First, the Date column must be formatted as a Date internally in R instead of text. Then we &lt;code&gt;group_by&lt;/code&gt; the Date, and then use &lt;code&gt;summarize&lt;/code&gt; to perform an aggregate on each group; in this case, count how many entries for the group. (&lt;code&gt;n()&lt;/code&gt; is a convenient shortcut). We can also ensure that the dates are in ascending order.&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;df_arrest_daily &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; df_arrest &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;
-                    mutate&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;Date &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;as.Date&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;Date&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;%m/%d/%Y&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;
-                    group_by&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;Date&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;
-                    summarize&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;count &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; n&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;
-                    arrange&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;Date&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/sf-arrests/date-table.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;Nifty! However, keep in mind that there are thousands of days in this dataset.&lt;/p&gt;
-
-&lt;p&gt;Now we can make a pretty line chart in ggplot2. Here&amp;rsquo;s the code, and I will explain what everything does afterward:&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;plot &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; ggplot&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;df_arrest_daily&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; aes&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;x &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; Date&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; y &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; count&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
-    geom_line&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;color &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;#F2CA27&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; size &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;0.1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
-    geom_smooth&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;color &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;#1A1A1A&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
-    fte_theme&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
-    scale_x_date&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;breaks &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; date_breaks&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;2 years&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; labels &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; date_format&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;%Y&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
-    labs&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;x &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Date of Arrest&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; y &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;# of Police Arrests&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; title &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Daily Police Arrests in San Francisco from 2003 – 2015&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;ggplot()&lt;/code&gt; sets up the base chart and axes.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;geom_line()&lt;/code&gt; creates the line for the line chart. &amp;ldquo;color&amp;rdquo; and &amp;ldquo;size&amp;rdquo; parameters do just that.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;geom_smooth()&lt;/code&gt; adds a smoothing spline on top of the chart to serve as a trendline, which is helpful since there are a lot of points.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;fte_theme()&lt;/code&gt; is my theme based on the FiveThirtyEight style.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;scale_x_date()&lt;/code&gt; explicitly sets the x-axis to scale with date values. However, there are a few extremely useful formatting parameters with this function: &amp;ldquo;breaks&amp;rdquo; lets you set the chart breaks in plain English, and &amp;ldquo;labels&amp;rdquo; lets you format the dates at this breaks; in this case, there are breaks every 2 years, and only the year will be displayed for minimalism.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;labs()&lt;/code&gt; is a quick shortcut for labeling your axes and plot (&lt;em&gt;always&lt;/em&gt; label!)&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Running the code and saving the output results in this image:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/sf-arrests/sf-arrest-when-1.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;The line chart has high variation due to the number of points (in retrospect, a 30-day moving average of arrests would work better visually). As the trendline indicates, the trend is actually &lt;em&gt;multimodal&lt;/em&gt;, with daily arrest peaks in 2009 and 2014. Definitely interesting. The number of arrests appears to be on a downward trend since then.&lt;/p&gt;
-
-&lt;p&gt;The next step is to look into possible answers for the day-by-day variation.&lt;/p&gt;
-
-&lt;h2&gt;When Do Arrests Happen?&lt;/h2&gt;
-
-&lt;p&gt;One of my go-to data visualizations is a heat map of times of week; in this case, we can find which day-of-week and time-of-day when the most Arrests occur in San Francisco, and compare that with other time slots at a glance.&lt;/p&gt;
-
-&lt;p&gt;This requires the Hour and Day-of-Week to be present in separate columns: we have a DOY column already, but we need to parse the Hour component out of the HH:MM values in the Time column.&lt;/p&gt;
-
-&lt;p&gt;This requires another helper function which uses &lt;code&gt;strsplit()&lt;/code&gt; to split a single time value to Hour and Minute components, take the first value (Hour), and convert that value to a numeric value (instead of text) For example, &amp;ldquo;09:40&amp;rdquo; input returns 9.&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;get_hour &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;x&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;kr&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kp&quot;&gt;as.numeric&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kp&quot;&gt;strsplit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;x&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;:&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)[[&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]][&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]))&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;Unfortunately, this will not work for an entire column. Using &lt;code&gt;sapply()&lt;/code&gt; applies a specified function to each element in a column, which accomplishes the same goal.&lt;/p&gt;
-
-&lt;p&gt;The goal is to count how many Arrests occur for a given day-of-week and hour combination. In dplyr, we &lt;code&gt;group_by&lt;/code&gt; both &amp;ldquo;DayOfWeek&amp;rdquo; and &amp;ldquo;Hour&amp;rdquo;, and then use &lt;code&gt;summarize&lt;/code&gt; again.&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;df_arrest_time &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; df_arrest &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;
-                    mutate&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;Hour &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;sapply&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;Time&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; get_hour&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;
-                    group_by&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;DayOfWeek&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; Hour&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;
-                    summarize&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;count &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; n&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/sf-arrests/dow-table.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;A few more tweaks are done (off camera) to convert the Hours to representations like &amp;ldquo;12 PM&amp;rdquo; and get everything in the correct order.&lt;/p&gt;
-
-&lt;p&gt;Now, it&amp;rsquo;s time to make the heatmap using &lt;code&gt;ggplot2&lt;/code&gt;. Here&amp;rsquo;s the code, and I will explain what the new functions do:&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;plot &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; ggplot&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;df_arrest_time&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; aes&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;x &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; Hour&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; y &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; DayOfWeek&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; fill &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; count&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
-    geom_tile&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
-    fte_theme&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
-    theme&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;...&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
-    labs&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;x &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Hour of Arrest (Local Time)&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; y &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Day of Week of Arrest&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; title &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;# of Police Arrests in San Francisco from 2003 – 2015, by Time of Arrest&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
-    scale_fill_gradient&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;low &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;white&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; high &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;#27AE60&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; labels &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; comma&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;geom_title()&lt;/code&gt; creates tiles. (instead of lines)&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;theme()&lt;/code&gt; is needed for a few additional theme tweaks to get the gradient bar to render (tweaks not shown)&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;scale_fill_gradient()&lt;/code&gt; tells the tiles to fill on a gradient, from white as the lowest value to a green as the highest value. The &amp;ldquo;labels = comma&amp;rdquo; parameter is a hidden helpful tip to allow any values in the legend to show with commas.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Putting it all together:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/sf-arrests/sf-arrest-when-2.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;The heatmap is an intuitive result. Arrests don&amp;rsquo;t happen in the early morning, and arrests tend to be elevated Friday and Saturday night, when everyone is out on the town.&lt;/p&gt;
-
-&lt;p&gt;However, the peak arrest time is apparently on Wednesdays at 4-5 PM. Wednesdays and the 4-5 PM timeslot in general have elevated arrest frequency, too. Why is that the case?&lt;/p&gt;
-
-&lt;p&gt;This requires further analysis.&lt;/p&gt;
-
-&lt;h2&gt;Facets of Arrest&lt;/h2&gt;
-
-&lt;p&gt;Perhaps the odd results can be explained by another lurking variable. Logically, certain types of crime, such as DUIs, should happen primarily at night. ggplot2 has tool known as faceting that makes such analysis easy by rendering a chart for each instance of another value in another variable. In this case, with only &lt;em&gt;one&lt;/em&gt; line of ggplot2 code, we can plot a heatmap for &lt;em&gt;each&lt;/em&gt; of the top types of arrests, and see if there is any significant variation in the heatmap.&lt;/p&gt;
-
-&lt;p&gt;After quickly using dplyr to aggregate and sort the top categories of arrest, by number of occurrences:&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;df_top_crimes &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; df_arrest &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;
-                    group_by&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;Category&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;
-                    summarize&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;count &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; n&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;
-                    arrange&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;desc&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;count&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/sf-arrests/top-crimes.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;&amp;ldquo;Other Offenses&amp;rdquo; is a catch-all, so we will ignore that. Filter on the top 18 types of crime excluding Other Offenses and aggregate as usual.&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;df_arrest_time_crime &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; df_arrest &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;
-                    filter&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;Category &lt;span class=&quot;o&quot;&gt;%in%&lt;/span&gt; df_top_crimes&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;Category&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;19&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;
-                    mutate&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;Hour &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;sapply&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;Time&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; get_hour&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;
-                    group_by&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;Category&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; DayOfWeek&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; Hour&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;
-                    summarize&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;count &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; n&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;Time for the heat map! The &lt;code&gt;ggplot&lt;/code&gt; code is nearly identical to the previous heatmap code, except we add &lt;code&gt;facet_wrap()&lt;/code&gt;.&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;plot &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; ggplot&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;df_arrest_time_crime&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; aes&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;x &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; Hour&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; y &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; DayOfWeek&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; fill &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; count&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
-    geom_tile&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
-    fte_theme&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
-    theme&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;...&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
-    labs&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;x &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Hour of Arrest (Local Time)&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; y &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Day of Week of Arrest&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; title &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;# of Police Arrests in San Francisco from 2003 – 2015, by Category and Time of Arrest&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
-    scale_fill_gradient&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;low &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;white&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; high &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;#2980B9&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
-    facet_wrap&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;~&lt;/span&gt; Category&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; nrow &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;6&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/sf-arrests/sf-arrest-when-3.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;Easy visualization to make, but it&amp;rsquo;s not fully correct. There can only be one scale for the whole visualization, which is why the categories with lots of arrests appear colored and others do not (however, it shows that Drugs/Narcotics arrests are a large contributor to the Wednesday emphasis of the data). We need to normalize the counts by facet. dplyr has a nice trick for normalization: group by the normalization variable (Category), then mutate to add a column based on the aggregate for each unique value.&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;df_arrest_time_crime &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; df_arrest_time_crime &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;
-                            group_by&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;Category&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;
-                            mutate&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;norm &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; count&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;kp&quot;&gt;sum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;count&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/sf-arrests/crime-norm.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;Setting the &amp;ldquo;fill&amp;rdquo; to &amp;ldquo;norm&amp;rdquo; and rerunning the heatmap code yields:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/sf-arrests/sf-arrest-when-4.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;Now things get interesting.&lt;/p&gt;
-
-&lt;p&gt;Prostitution has the most notably unique behavior, which high concentrations of arrests at night on weekdays. Drunkenness and DUIs have high concentrations at night on weekends. And Disorderly Conduct has a high concentration of arrests at 5 AM on weekdays? That&amp;rsquo;s not intuitive.&lt;/p&gt;
-
-&lt;p&gt;Notably, some offenses have relatively random times of arrests, such as Stolen Property and Vehicle Theft.&lt;/p&gt;
-
-&lt;p&gt;However, this doesn&amp;rsquo;t help explain why arrests tend to happen Wednesdays/4-5PM. Maybe faceting by another variable will provide more information.&lt;/p&gt;
-
-&lt;p&gt;Perhaps Police district? Maybe some PDs in San Francisco are more zealous than others. Since we created a code workflow earlier, we can apply it to any other variable very easily; in this case, it&amp;rsquo;s mostly just replacing instances of &amp;ldquo;Category&amp;rdquo; with &amp;ldquo;PdDistrict.&amp;rdquo;&lt;/p&gt;
-
-&lt;p&gt;Doing thus yields this heatmap.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/sf-arrests/sf-arrest-when-5.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;Which isn&amp;rsquo;t helpful. The charts are mostly identical to each other, and to the original heatmap. (Central Station (&lt;a href=&quot;http://www.sf-police.org/Modules/ShowDocument.aspx?documentID=27554&quot;&gt;coverage map&lt;/a&gt;), however, has activity correlated to Drunkenness arrests.)&lt;/p&gt;
-
-&lt;p&gt;Perhaps the frequency of arrests is correlated to the time of year? How about faceting by month?&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/sf-arrests/sf-arrest-when-6.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;Nope. Zero difference.&lt;/p&gt;
-
-&lt;p&gt;Last try. As shown in the line chart, the # of Arrests has oscillated over the years. Perhaps there&amp;rsquo;s a specific year that&amp;rsquo;s skewing the results. Let&amp;rsquo;s facet by Year.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/sf-arrests/sf-arrest-when-7.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;Nope&lt;sup&gt;2.&lt;/sup&gt; 2010-2012 have elevated Wednesday activity, but not by much.&lt;/p&gt;
-
-&lt;p&gt;This is frustrating. As of this posting, I don&amp;rsquo;t have an obvious answer for the elevated arrests Wednesdays at 4-5PM. That being said, there definitely is still more to learn from looking at SF Crime data, although that&amp;rsquo;s enough analysis for the time being.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;http://minimaxir.com/2015/12/sf-arrest-maps/&quot;&gt;My next article&lt;/a&gt; discusses how to plot arrests on a map using the &lt;code&gt;ggmap&lt;/code&gt; R library, which hopefully will provide more answers. The &lt;a href=&quot;https://github.com/minimaxir/sf-arrests-when-where&quot;&gt;GitHub repository&lt;/a&gt; contains a Jupyter notebook with code and visualizations for both for this article, and for the upcoming ggmap visualizations (if you want a sneak peek) which will show &lt;em&gt;where&lt;/em&gt; arrests in San Francisco frequently occur.&lt;/p&gt;
-
-&lt;hr&gt;
-
-&lt;p&gt;&lt;em&gt;If you use the code or data visualization designs contained within this article, it would be greatly appreciated if proper attribution is given back to this article and/or myself. Thanks!&lt;/em&gt;&lt;/p&gt;
-</description>
-        <pubDate>Fri, 04 Dec 2015 08:00:00 -0800</pubDate>
-        <link>http://minimaxir.com/2015/12/sf-arrests/</link>
-        <guid isPermaLink="true">http://minimaxir.com/2015/12/sf-arrests/</guid>
         
         
         <category>Data</category>
