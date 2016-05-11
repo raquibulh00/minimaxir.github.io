@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+
+  <!-- HEAD -->
+<head>
+<meta charset="utf-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>A Look at Dating Age Range Preferences by Analyzing OKCupid Data</title>
+<meta property="article:author" content="https://www.facebook.com/max.woolf" />
+<meta name="description" content="On Monday, University of Aarhus researcher Emil O. W. Kirkegaard and University of Aalborg researcher Julius D. Bjerrekær published a very large dataset of O...">
+<link href="/rss.xml" rel="alternate" title="minimaxir | Max Woolf's Blog" type="application/atom+xml">
+<link rel="canonical" href="http://minimaxir.com/2016/05/okc-age-range/">
+
+<!-- Mobile Metas -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+ <meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@minimaxir">
+<meta name="twitter:creator" content="@minimaxir">
+
+  <meta name="twitter:title" content="A Look at Dating Age Range Preferences by Analyzing OKCupid Data">
+
+
+  <meta name="twitter:url" content="http://minimaxir.com/2016/05/okc-age-range/">
+
+
+  <meta name="twitter:description" content="And just for fun, let's compare the age ranges with the half-your-age-plus-seven rule.">
+
+
+  <meta name="twitter:image:src" content="http://minimaxir.com/img/okc-date-range-1.png">
+
+ 
+ <meta content="minimaxir | Max Woolf's Blog" property="og:site_name">
+
+  <meta content="A Look at Dating Age Range Preferences by Analyzing OKCupid Data" property="og:title">
+
+
+  <meta content="article" property="og:type">
+
+
+  <meta content="And just for fun, let's compare the age ranges with the half-your-age-plus-seven rule." property="og:description">
+
+
+  <meta content="http://minimaxir.com/2016/05/okc-age-range/" property="og:url">
+
+
+
+  <meta content="http://minimaxir.com/img/okc-date-range-1.png" property="og:image">
+
+
+  
+  <meta content="Visualization" property="article:section">
+  
+
+
+  
+
+
+
+      <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="white">
+    <meta name="apple-mobile-web-app-title" content="minimaxir">
+    <link rel="apple-touch-icon-precomposed" href="apple-touch-icon-precomposed.png">
+
+<link rel="apple-touch-icon" sizes="57x57" href="http://minimaxir.com/favicon/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="http://minimaxir.com/favicon/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="http://minimaxir.com/favicon/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="http://minimaxir.com/favicon/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="http://minimaxir.com/favicon/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="http://minimaxir.com/favicon/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="http://minimaxir.com/favicon/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="http://minimaxir.com/favicon/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="http://minimaxir.com/favicon/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192"  href="http://minimaxir.com/favicon/android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://minimaxir.com/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="http://minimaxir.com/favicon/favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="http://minimaxir.com/favicon/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="http://minimaxir.com/favicon/ms-icon-144x144.png">
+<meta name="theme-color" content="#ffffff">
+
+<!-- BEGIN GLOBAL MANDATORY STYLES -->
+  <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400,400italic,700' rel='stylesheet' type='text/css'>
+
+<link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+<link href="/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
+<link href="/css/minimaxir.css" rel="stylesheet" type="text/css"/>
+<!-- END GLOBAL MANDATORY STYLES -->
+
+<!-- BEGIN THEME STYLES -->
+<link href="/css/global.css" rel="stylesheet" type="text/css"/>
+<!-- END THEME STYLES -->
+
+<!-- BEGIN JQUERY -->
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<!-- END JQUERY -->
+
+
+  <script>
+   $(document).ready(function() {
+ 
+  // Facebook
+	$( ".social.facebook" ).children().each(function(index,value) {
+	var facebook_button = $(this);
+	var url = facebook_button.attr("data");
+
+  jQuery.getJSON("https://graph.facebook.com/?id="+url, function(data) {
+  if (typeof data.shares != 'undefined') facebook_button.html("<i class=\"fa fa-facebook\"></i><span class=\"count hidden-xs\"> " + data.shares + "</span>");
+  else if (typeof data.likes != 'undefined') facebook_button.html("<i class=\"fa fa-facebook\"></i><span class=\"count hidden-xs\"> " + data.likes + "</span>");
+  else facebook_button.html("<i class=\"fa fa-facebook\"></i><span class=\"count hidden-xs\"> " + " 0</span>");
+  });
+  });
+ 
+  // LinkedIn
+	$( ".social.linkedin" ).children().each(function(index,value) {
+	var linkedin_button = $(this);
+	var url = linkedin_button.attr("data");
+
+  jQuery.getJSON("http://www.linkedin.com/countserv/count/share?url="+url+"&format=jsonp&callback=?", function(data) {
+  linkedin_button.html("<i class=\"fa fa-linkedin\"></i><span class=\"count hidden-xs\"> " + data.count + "</span>");
+  });
+  });
+  });
+  </script>
+  
+</head>
+<!-- END HEAD -->
+  <!-- WRAPPER -->
+<div class="wrapper">
+    <!--========== HEADER TRANSPARENT ==========-->
+    <header class="header-transparent header-transparent-bb navbar-fixed-top header-sticky">
+        <!-- Navbar -->
+        <nav class="navbar mega-menu" role="navigation">
+            <div class="container">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="menu-container">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="toggle-icon"></span>
+                    </button>
+
+                    <!-- Navbar Actions -->
+                    <div class="navbar-actions">
+
+                    </div>
+                    <!-- End Navbar Actions -->
+
+                    <!-- Logo -->
+                    <div class="navbar-logo">
+                        <a class="navbar-logo-wrap" href="/">
+                            <img class="navbar-logo-img navbar-logo-img-white" src="/minimaxir-light.png" alt="minimaxir">
+                            <img class="navbar-logo-img navbar-logo-img-dark" src="/minimaxir-dark.png" alt="minimaxir">
+                        </a>
+                    </div>
+                    <!-- End Logo -->
+                </div>
+
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse nav-collapse">
+                    <div class="menu-container">
+                        <ul class="nav navbar-nav">
+                        
+<li class="nav-item">
+                                <a class="nav-item-child" href="/about">
+                                    About
+                                </a>
+                            </li>
+                                
+<li class="nav-item">
+                                <a class="nav-item-child" href="/portfolio">
+                                    Portfolio
+                                </a>
+                            </li>
+                        
+                        </ul>
+                    </div>
+                </div>
+                <!-- End Navbar Collapse -->
+            </div>
+            <!--// End Container-->
+        </nav>
+        <!-- Navbar -->
+    </header>
+    <!--========== END HEADER TRANSPARENT ==========-->
+    
+	    <!--========== BREADCRUMBS V5 ==========-->
+    
+    
+	
+	
+    
+    
+    
+    <section class="breadcrumbs-v5" style="background: url('/img/okc-date-range-1.png') no-repeat center center; background-size: cover;">
+    
+        <div class="container">
+            <h1 class="breadcrumbs-v5-title">A Look at Dating Age Range Preferences by Analyzing OKCupid Data</h1>
+            <span class="breadcrumbs-v5-subtitle">May 11, 2016
+            
+    
+              <span class="sharing index" style="float: right">
+  
+		  <span class="social facebook"><a href="https://www.facebook.com/share.php?u=http://minimaxir.com/2016/05/okc-age-range/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data="http://minimaxir.com/2016/05/okc-age-range/"><i class="fa fa-facebook"></i><span class="count hidden-xs"> -</span></a></span>
+  
+		<span class="social twitter"><a href="http://twitter.com/home/?status=A Look at Dating Age Range Preferences by Analyzing OKCupid Data - http://minimaxir.com/2016/05/okc-age-range/ - via @minimaxir"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data=http://minimaxir.com/2016/05/okc-age-range/><i class="fa fa-twitter"></i><span class="count hidden-xs"></span></a> </span>
+
+  <span  class="social linkedin"><a href="http://www.linkedin.com/shareArticle?mini=true&title=&url=http://minimaxir.com/2016/05/okc-age-range/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=600');return false;" data=http://minimaxir.com/2016/05/okc-age-range/><i class="fa fa-linkedin"></i><span class="count hidden-xs"> -</span></a> </span>
+   
+			</span>
+            
+            </span>
+        </div>
+    </section>
+    
+    
+    <!--========== END BREADCRUMBS V5 ==========-->
+  
+  <!-- BEGIN BODY -->
+<body>
+
+  
+      <!--========== BACKGROUND COLOR SKY LIGHT ==========-->
+    <div class="bg-color-sky-light">
+        
+        <!--========== PAGE CONTENT ==========-->
+        <div class="content-sm container">
+            <div class="row">
+                <div class="col-md-9 md-margin-b-50">
+                    <!-- Blog Grid -->
+                    <article class="blog-grid margin-b-30">
+                        <!-- Image -->
+                        <!--<img class="img-responsive" src="/assets/img/1920x1080/20.jpg" alt="">-->
+                        <!-- End Image -->
+
+                        <!-- Blog Grid Content -->
+						<div class="blog-grid-content">
+						<p>On Monday, University of Aarhus researcher Emil O. W. Kirkegaard and University of Aalborg researcher Julius D. Bjerrekær <a href="https://osf.io/p9ixw/">published a very large dataset</a> of <a href="https://www.okcupid.com">OKCupid</a> profile metadata, which was scraped from the service. OKCupid, a well-known dating website, allows users to create profiles that contain information about the user&rsquo;s age, their location, their demographics, and the ages of the partners they are seeking.</p>
+
+<p><img src="/img/okc-age-range/OKCProf.png" alt=""></p>
+
+<p>Looking the age ranges of preferred dating partners relative to the user&rsquo;s own age could be interesting. At the least, analyzing the data will give me an idea if the dataset is sufficiently robust for further blog posts.</p>
+
+<p>I&rsquo;ve extracted and cleaned up the profile metadata to make it easier to process and have valid profiles for 66,365 OKCupid users, and you can view this data <a href="https://docs.google.com/spreadsheets/d/1k1kQ_nLT6_jFbu-zm9_93n2N5f3CsEvfa-dI_HC2m_Q/edit?usp=sharing">in this Google Sheet</a>.</p>
+
+<h2>Checking Ages</h2>
+
+<p>Kirkegaard and Bjerrekær noted in the paper included in the dataset release that the distribution of ages of OKCupid users is skewed toward younger users. They provided this density plot:</p>
+
+<p><img src="/img/okc-age-range/paper.png" alt=""></p>
+
+<p>The dataset contains three relevant columns: <code>d_age</code>, the user&rsquo;s provided age, <code>lf_max_age</code>, the maximum age the user is seeking for a partner, and <code>lf_min_age</code>, the minimum age. Let&rsquo;s sanity check the data by plotting user age against the maximum and minimum ages of the preferred age range, with the latter two variables colored accordingly.</p>
+
+<p><img src="/img/okc-age-range/okc-date-range-1.png" alt=""></p>
+
+<p>The sanity check was a good idea because there&rsquo;s a <em>lot</em> going on here.</p>
+
+<ul>
+<li>Both maximum age range and minimum age range are positively correlated with the user&rsquo;s current age, as you would expect.</li>
+<li>As the age distribution chart showed, there is very little data available for users older than 60, and we may have to remove that in later analysis.</li>
+<li>Users tend to set their desired age ranges <strong>to clean multiples of 5</strong> (the solid horizontal lines), which is an interesting <a href="https://en.wikipedia.org/wiki/Psychological_pricing">psychological bias</a>. Many users also set their minimum age preference to the minimum possible value of 18 years-old&hellip;</li>
+<li>&hellip;conversely, many users set their maximum age range to 99/100 years-old, essentially saying that anything-goes as far as age. Unfortunately, these are invalid values for this analysis, and users who have declared this preference must be removed.</li>
+<li>I have <strong>absolutely no idea</strong> why there is a solid perfectly linear diagonal line of maximum age values evident in the data. Perhaps that offset is the default maximum age range and users have not changed it?</li>
+</ul>
+
+<p>The chart is a bit messy for further analysis. Let&rsquo;s try another approach by normalizing the max/min age ranges relative to the user&rsquo;s age, and plotting these <strong>deltas</strong> instead. For example, if a 23 year-old OKCupid user is looking for someone with age 23-27, their <code>lf_max_delta = 27 - 23 = 4</code>, while  <code>lf_min_delta = 23 - 23 = 0</code>.</p>
+
+<p>And just for fun, let&rsquo;s compare the age ranges with the infamous <a href="https://en.wikipedia.org/wiki/Age_disparity_in_sexual_relationships#The_.22half-your-age-plus-seven.22_rule">half-your-age-plus-seven</a> rule, which is shorthand for a formula that results in minimum socially-acceptable dating partner age for a given age (for example, if a user is 30, the minimum dating age is <code>30 / 2 + 7 = 22</code>, and the corresponding delta is <code>22 - 30 = -8</code>). On the charts, this boundary will be represented with a <span style="color: #e74c3c"><strong>red line</strong></span>.</p>
+
+<p>Putting it all together:</p>
+
+<p><img src="/img/okc-age-range/okc-date-range-2.png" alt=""></p>
+
+<p>As a person gets older, the gap between maximum age of a partner they are willing to date relative to their own decreases, but the gap between the minimum age <em>increases</em>. At age 40, users begin to violate the half-age-plus-seven rule.</p>
+
+<p>There are definitely a few latent factors in play affecting the results, and let&rsquo;s see if we can identify them. </p>
+
+<h2>Gender</h2>
+
+<p>As noted in the paper, the gender breakdown of OKCupid users in the dataset is 60.6% Male, 39.1% Female, which is important as preferences of males and females in dating are very different. A <a href="http://www.scienceofrelationships.com/home/2011/10/4/the-dating-equation-your-age-7.html">2011 blog post </a> by Dr. Benjamin Le for <a href="http://www.scienceofrelationships.com">Science Of Relationships</a>, using 1992 data from Kenrick and Keefe, asserts that there is a difference due to a change in reproductive strategies, and notes that there is indeed some truth to the half-age-plus-seven rule. The visualizations he provides follow his hypothesis.</p>
+
+<p><img src="/img/okc-age-range/kenrick_keefe2.jpg" alt=""></p>
+
+<p>Let&rsquo;s try to reproduce those visualizations, although due to the dating cultural changes in the last two decades, we should not expect an exact match. As with the Science Of Relationships image, we can bucket the user ages into 20s, 30s, etc. to help consolidate the data, as reading a continuous line of highly-variable age ranges is harder to parse than just reading a line chart with a few points. For each age bucket, we can calculate the <strong>medians of the deltas</strong> for both the maximum age and the minimum age, and draw a line between the bucket points for each (we can also represent the upper bounds with upward arrows, and the lower bounds with downward arrows too).</p>
+
+<p>How do things look when the age ranges are separated by gender and separated into age buckets?</p>
+
+<p><img src="/img/okc-age-range/okc-date-range-3.png" alt=""></p>
+
+<p>There are a few similarities to the Science Of Relationships chart: the lower bound of male relationships are always below the half-age-plus-seven line, and the lower bound of female relationships are initially above the line. For males, the upper bound decreases over time, while for female, the bound stays constant over time. </p>
+
+<p>Since we have many other user attributes available with the OKCupid profiles, let&rsquo;s check socioeconomic and cultural indicators in conjunction with faceting by gender.</p>
+
+<h2>Location</h2>
+
+<p>The rules of conduct for dating vary all over the world. The places with the most number of OKCupid profiles in this particular dataset are the United Kingdom, California, New York, and Texas. Let&rsquo;s see if the shape of the age ranges vary by location.</p>
+
+<p><img src="/img/okc-age-range/okc-date-range-4.png" alt=""></p>
+
+<p>Not much difference: however, for both California and Texas, women in their 50s want to date others 30 years older! (I <a href="https://github.com/minimaxir/okc-age-range/blob/master/csv/okc-country.csv">double-checked the data</a>; the number of women in their 50s at each location is 15 in each case, which is why age bucketing and using the medians is important)</p>
+
+<h2>Ethnicity</h2>
+
+<p>Ethnicity can be a factor in relationships. Let&rsquo;s check against the four most prevalent ethnicities in the dataset: White, Black, Hispanic / Latin, and Asian:</p>
+
+<p><img src="/img/okc-age-range/okc-date-range-5.png" alt=""></p>
+
+<p><strong>Zero</strong> discernible difference in dating age preferences between the four groups.</p>
+
+<h2>Orientation</h2>
+
+<p>The &ldquo;evolutionary perspective&rdquo; argument presented in the Science of Relationships article assumes that the relationships are heterosexual, which is not always true. We should be checking every permutation of relationships: not just Male/Female and Female/Male, but Male users on OKCupid who are looking for other Male users, Female/Female, Male/Everyone, and Female/Everyone.</p>
+
+<p><img src="/img/okc-age-range/okc-date-range-6.png" alt=""></p>
+
+<p>Again, not much difference, which throws some skepticism on the reproduction argument, although it&rsquo;s worth noting that the lower bound of Female/Female and Female/Everyone relationships are slightly lower than the Female/Male bound, and overlaps the half-age-plus-seven line.</p>
+
+<p>There are other interesting attributes in OKCupid profiles, but they are self-reported (e.g. survey responses) and require additional care in order to be used. While I wasn&rsquo;t able to perform statistical testing to confirm my observations (<a href="https://en.wikipedia.org/wiki/Pearson%27s_chi-squared_test">Pearson&rsquo;s chi-square test</a> does not work easily in this case since it can only be used on frequencies), I am interested in revisiting dating age range data in the future.</p>
+
+<hr>
+
+<p><em>As always, the code for generating the visualizations used in this article is available in a <a href="https://github.com/minimaxir/okc-age-range/blob/master/okcupid_dating_age_range.ipynb">Jupyter notebook</a>, open-sourced in <a href="https://github.com/minimaxir/okc-age-range">this GitHub repository</a></em>.</p>
+
+						
+            			 <div class="breadcrumbs-v5-subtitle sharing-post" style="color: #999 !important; padding-top:10px; border-top: 1px solid #eee">Share this article!
+
+
+              <span class="sharing index" style="float: right; color: #999 !important;">
+  
+		  <span class="social facebook"><a href="https://www.facebook.com/share.php?u=http://minimaxir.com/2016/05/okc-age-range/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data="http://minimaxir.com/2016/05/okc-age-range/"><i class="fa fa-facebook"></i><span class="count hidden-xs"> -</span></a></span>
+  
+		<span class="social twitter"><a href="http://twitter.com/home/?status=A Look at Dating Age Range Preferences by Analyzing OKCupid Data - http://minimaxir.com/2016/05/okc-age-range/ - via @minimaxir"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data=http://minimaxir.com/2016/05/okc-age-range/><i class="fa fa-twitter"></i><span class="count hidden-xs"></span></a> </span>
+
+  <span  class="social linkedin"><a href="http://www.linkedin.com/shareArticle?mini=true&title=&url=http://minimaxir.com/2016/05/okc-age-range/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=600');return false;" data=http://minimaxir.com/2016/05/okc-age-range/><i class="fa fa-linkedin"></i><span class="count hidden-xs"> -</span></a> </span>
+
+   </span>
+   </div>
+						</div>
+                        <!-- End Blog Grid Content -->
+                        
+                        
+                        
+                    </article>
+                    <!-- End Blog Grid -->
+
+ 					
+
+                    <!-- Blog Comment -->
+                    <div class="bg-color-white margin-b-30">
+                        <div class="blog-single-post-content">
+
+						
+
+<script type="text/javascript">
+      var disqus_shortname = 'minimaxir';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://minimaxir.com/2016/05/okc-age-range/';
+        var disqus_url = 'http://minimaxir.com/2016/05/okc-age-range/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+<div id="disqus_thread"></div>
+
+
+
+                        </div>
+                    </div>
+                    <!-- End Blog Comment -->
+                    
+                    
+                </div>
+
+			                <!--========== BLOG SIDEBAR ==========-->
+                <div class="col-md-3">
+                
+                
+                
+                    <!-- Blog Author -->
+                    <div class="blog-sidebar margin-b-30">
+                        <div class="blog-sidebar-heading">
+                            <h4 class="blog-sidebar-heading-title">Author</h4>
+                        </div>
+                        
+                        <img src="/MaxFB.jpg" title="Stop mousing over me! I'm not a XKCD comic!" class="img-responsive hidden-xs hidden-sm"></img>
+                        
+                        <div class="blog-sidebar-content">
+                            <!-- Blog Author Bio -->
+							
+							<p><strong>Max Woolf (@minimaxir)</strong> is a Software QA Engineer living and working in the San Francisco Bay Area for over 3 years and a 2012 Carnegie Mellon University graduate in Business Administration.</p>
+
+<p>In his spare time, Max uses <a href="https://www.python.org/">Python</a> to gather data from public APIs and <a href="http://ggplot2.org/">ggplot2</a> to make pretty charts from that data.</p>
+
+<p>You can learn more about Max <a href="/about">here</a>, or view his portfolio <a href="/portfolio">here</a>. </p>
+
+  
+    <ul class="list-inline" style="padding-top:10px; margin-top: 20px; border-top: 1px solid #ebeef6">
+                        <li class="theme-icons-wrap"><a title="Facebook" href="https://facebook.com/max.woolf" target="_blank"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-facebook"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="Twitter" href="https://twitter.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-twitter"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="LinkedIn" href="https://linkedin.com/in/minimaxir" target="_blank"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-linkedin"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="GitHub" href="https://github.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-github"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="YouTube" href="https://youtube.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-youtube"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="E-Mail" href="mailto:max@minimaxir.com"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-envelope"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="RSS" href="/rss.xml"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-rss"></i></a></li>
+                    </ul>
+                            <!-- End Blog Author Bio -->
+                        </div>
+                    </div>
+                    <!-- End Blog Author -->
+                    
+                     <!-- Blog Recent Posts -->
+                    <div class="blog-sidebar margin-b-30">
+                        <div class="blog-sidebar-heading">
+                            <h4 class="blog-sidebar-heading-title">Recent Posts</h4>
+                        </div>
+                        <div class="blog-sidebar-content" style="position: relative; overflow: visible;">
+                        
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="/2016/05/okc-age-range/">A Look at Dating Age Range Preferences by Analyzing OKCupid Data</a></h5>
+                                    <small class="latest-tuts-content-time"> May 11, 2016</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="/2016/05/wordclouds/">Creating Stylish, High-Quality Word Clouds Using Python and Font Awesome Icons</a></h5>
+                                    <small class="latest-tuts-content-time"> May 9, 2016</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="/2016/04/movie-gender/">Blockbuster Movies with Male Leads Earn More Than Those with Female Leads</a></h5>
+                                    <small class="latest-tuts-content-time"> Apr 13, 2016</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="/2016/04/trust-but-verify/">The Importance of Sanity-Checking Datasets Before Analysis</a></h5>
+                                    <small class="latest-tuts-content-time"> Apr 6, 2016</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="/2016/03/gif-unlimited/">Unlimited Data Storage Using Image Steganography and Cat GIFs</a></h5>
+                                    <small class="latest-tuts-content-time"> Mar 29, 2016</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="/2016/02/facebook-reactions/">Facebook Reactions and the Problems With Quantifying Likes Differently</a></h5>
+                                    <small class="latest-tuts-content-time"> Feb 29, 2016</small>
+                                </div>
+                        </article>
+                                                
+                    </div>
+                    <!-- End Blog Recent Posts -->
+                    </div>
+                    
+                    <!-- GitHub Top Repositories -->
+                    <div class="blog-sidebar margin-b-30">
+                        <div class="blog-sidebar-heading">
+                            <h4 class="blog-sidebar-heading-title">Top GitHub Repositories</h4>
+                        </div>
+                        <div class="blog-sidebar-content" style="position: relative; overflow: visible;">
+                        
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/big-list-of-naughty-strings" target="_blank">Big List of Naughty Strings</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 11,186+</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/copy-syntax-highlight-osx" target="_blank">Copy Syntax Highlight for OS X</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 319+</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/video-to-gif-osx" target="_blank">Convert Video to GIF on OS X</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 207+</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/facebook-page-post-scraper" target="_blank">Facebook Page Post Scraper</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 96+</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/reddit-bigquery" target="_blank">Reddit Data with BigQuery Notebook</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 58+</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/get-all-hacker-news-submissions-comments" target="_blank">Get All Hacker News Submissions & Comments</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 47+</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/frames-to-gif-osx" target="_blank">Convert Frames to GIF on OS X</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 15+</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/nyc-taxi-notebook" target="_blank">NYC Yellow Taxi Visualization Notebook</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 13+</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/sf-arrests-when-where" target="_blank">Analyzing When and Where San Francisco Criminal Arrests Occur</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 10+</small>
+                                </div>
+                        </article>
+                                                
+                    </div>
+                    
+                    <!-- End GitHub Top Repositories -->
+                    
+                    
+                    
+                </div>
+                <!--========== END BLOG SIDEBAR ==========-->
+            
+			</div>
+            <!--// end row -->
+        </div>
+        <!--========== END PAGE CONTENT ==========-->
+
+    </div>
+    <!--========== END BACKGROUND COLOR SKY LIGHT ==========-->
+    
+
+
+
+  
+      <!--========== FOOTER V8 ==========-->
+    <footer id="footer" class="footer-v8">
+        <div class="content-sm container">
+            <div class="row">
+                <!-- Logo -->
+                <div class="col-md-6">
+                    
+                    <p>You can contact through any of the following channels, although e-mail is preferred. Following me on Facebook and Twitter certainly doesn't hurt either!</p>
+                     <!-- <h2 class="footer-v8-title">Follow Me</h2> -->
+                    <!-- Theme Icons White Background -->
+                   <!-- <ul class="list-inline ul-li-lr-0">
+                        <li class="theme-icons-wrap"><a title="Facebook" href="https://facebook.com/max.woolf" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-facebook"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="Twitter" href="https://twitter.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-twitter"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="LinkedIn" href="https://linkedin.com/in/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-linkedin"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="GitHub" href="https://github.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-github"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="YouTube" href="https://youtube.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-youtube"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="E-Mail" href="mailto:max@minimaxir.com"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-envelope"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="RSS" href="/rss.xml"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-rss"></i></a></li> -->
+                    <!-- End Theme Icons White Background -->
+                </div>
+                <!-- End Logo -->
+
+                <!-- Contact Info -->
+                <div class="col-md-6">
+                    <h3 class="footer-v8-title">Contact Info</h3>
+                    <div class="footer-v8-contact-info-bg">
+                        <ul class="list-unstyled footer-v8-contact-info">
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-map-marker"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <p class="footer-v8-contact-info-text">SOMA, San Francisco, CA</p>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-facebook"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="Facebook" href="https://facebook.com/max.woolf" target="_blank">max.woolf</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-twitter"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="Twitter" href="https://twitter.com/minimaxir" target="_blank"">@minimaxir</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-linkedin"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="LinkedIn" href="https://linkedin.com/in/minimaxir" target="_blank"">minimaxir</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-envelope"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="E-Mail" href="mailto:max@minimaxir.com">max@minimaxir.com</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- End Contact Info -->
+
+            </div>
+            <!--// end row -->
+        </div>
+
+        <!-- Copyright -->
+        <div class="footer-v8-copyright">
+            <div class="container text-center">
+				Copyright &#169; 2016 Max Woolf. All Rights Reserved. 
+                minimaxir.com is powered by Jekyll and GitHub Pages.
+            </div>
+        </div>
+        <!-- Copyright -->
+    </footer>
+    <!--========== END FOOTER V8 ==========-->
+</div>
+<!-- END WRAPPER -->
+
+<!-- Sidebar Content Overlay -->
+<div class="sidebar-content-overlay"></div>
+<!-- End Sidebar Content Overlay -->
+
+<!-- Back To Top -->
+<a href="javascript:void(0);" class="js-back-to-top back-to-top-theme"></a>
+<!-- End Back To Top -->
+
+<!--========== JAVASCRIPTS(Load javascripts at bottom, this will reduce page load time) ==========-->
+<!-- BEGIN CORE PLUGINS -->
+<!--[if lt IE 9]>
+<script src="/assets/plugins/html5shiv.js"></script>
+<script src="/assets/plugins/respond.min.js"></script>
+<![endif]-->
+<script type="text/javascript" src="/js/jquery.migrate.min.js"></script>
+<script type="text/javascript" src="/js/bootstrap.min.js"></script>
+<!-- END CORE PLUGINS -->
+
+<!-- BEGIN PAGE LEVEL PLUGINS -->
+<script type="text/javascript" src="/js/jquery.back-to-top.js"></script>
+<!-- END PAGE LEVEL PLUGINS -->
+
+<!-- BEGIN PAGE LEVEL SCRIPTS -->
+<script type="text/javascript" src="/js/app.min.js"></script>
+<script type="text/javascript" src="/js/header-sticky.js"></script>
+<!-- END PAGE LEVEL SCRIPTS -->
+<!--========== END JAVASCRIPTS ==========-->
+  
+</body>
+<!-- END BODY -->
+
+</html>

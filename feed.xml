@@ -5,9 +5,108 @@
     <description>A blog by Max Woolf about startups, technology, and blogging. It&#39;s so meta, even this acronym.</description>
     <link>http://minimaxir.com/</link>
     <atom:link href="http://minimaxir.com/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Mon, 09 May 2016 07:45:20 -0700</pubDate>
-    <lastBuildDate>Mon, 09 May 2016 07:45:20 -0700</lastBuildDate>
+    <pubDate>Wed, 11 May 2016 08:07:16 -0700</pubDate>
+    <lastBuildDate>Wed, 11 May 2016 08:07:16 -0700</lastBuildDate>
     <generator>Jekyll v3.1.2</generator>
+    
+      <item>
+        <title>A Look at Dating Age Range Preferences by Analyzing OKCupid Data</title>
+        <description>&lt;p&gt;On Monday, University of Aarhus researcher Emil O. W. Kirkegaard and University of Aalborg researcher Julius D. Bjerrekær &lt;a href=&quot;https://osf.io/p9ixw/&quot;&gt;published a very large dataset&lt;/a&gt; of &lt;a href=&quot;https://www.okcupid.com&quot;&gt;OKCupid&lt;/a&gt; profile metadata, which was scraped from the service. OKCupid, a well-known dating website, allows users to create profiles that contain information about the user&amp;rsquo;s age, their location, their demographics, and the ages of the partners they are seeking.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/okc-age-range/OKCProf.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;Looking the age ranges of preferred dating partners relative to the user&amp;rsquo;s own age could be interesting. At the least, analyzing the data will give me an idea if the dataset is sufficiently robust for further blog posts.&lt;/p&gt;
+
+&lt;p&gt;I&amp;rsquo;ve extracted and cleaned up the profile metadata to make it easier to process and have valid profiles for 66,365 OKCupid users, and you can view this data &lt;a href=&quot;https://docs.google.com/spreadsheets/d/1k1kQ_nLT6_jFbu-zm9_93n2N5f3CsEvfa-dI_HC2m_Q/edit?usp=sharing&quot;&gt;in this Google Sheet&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2&gt;Checking Ages&lt;/h2&gt;
+
+&lt;p&gt;Kirkegaard and Bjerrekær noted in the paper included in the dataset release that the distribution of ages of OKCupid users is skewed toward younger users. They provided this density plot:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/okc-age-range/paper.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;The dataset contains three relevant columns: &lt;code&gt;d_age&lt;/code&gt;, the user&amp;rsquo;s provided age, &lt;code&gt;lf_max_age&lt;/code&gt;, the maximum age the user is seeking for a partner, and &lt;code&gt;lf_min_age&lt;/code&gt;, the minimum age. Let&amp;rsquo;s sanity check the data by plotting user age against the maximum and minimum ages of the preferred age range, with the latter two variables colored accordingly.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/okc-age-range/okc-date-range-1.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;The sanity check was a good idea because there&amp;rsquo;s a &lt;em&gt;lot&lt;/em&gt; going on here.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Both maximum age range and minimum age range are positively correlated with the user&amp;rsquo;s current age, as you would expect.&lt;/li&gt;
+&lt;li&gt;As the age distribution chart showed, there is very little data available for users older than 60, and we may have to remove that in later analysis.&lt;/li&gt;
+&lt;li&gt;Users tend to set their desired age ranges &lt;strong&gt;to clean multiples of 5&lt;/strong&gt; (the solid horizontal lines), which is an interesting &lt;a href=&quot;https://en.wikipedia.org/wiki/Psychological_pricing&quot;&gt;psychological bias&lt;/a&gt;. Many users also set their minimum age preference to the minimum possible value of 18 years-old&amp;hellip;&lt;/li&gt;
+&lt;li&gt;&amp;hellip;conversely, many users set their maximum age range to 99/100 years-old, essentially saying that anything-goes as far as age. Unfortunately, these are invalid values for this analysis, and users who have declared this preference must be removed.&lt;/li&gt;
+&lt;li&gt;I have &lt;strong&gt;absolutely no idea&lt;/strong&gt; why there is a solid perfectly linear diagonal line of maximum age values evident in the data. Perhaps that offset is the default maximum age range and users have not changed it?&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The chart is a bit messy for further analysis. Let&amp;rsquo;s try another approach by normalizing the max/min age ranges relative to the user&amp;rsquo;s age, and plotting these &lt;strong&gt;deltas&lt;/strong&gt; instead. For example, if a 23 year-old OKCupid user is looking for someone with age 23-27, their &lt;code&gt;lf_max_delta = 27 - 23 = 4&lt;/code&gt;, while  &lt;code&gt;lf_min_delta = 23 - 23 = 0&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;And just for fun, let&amp;rsquo;s compare the age ranges with the infamous &lt;a href=&quot;https://en.wikipedia.org/wiki/Age_disparity_in_sexual_relationships#The_.22half-your-age-plus-seven.22_rule&quot;&gt;half-your-age-plus-seven&lt;/a&gt; rule, which is shorthand for a formula that results in minimum socially-acceptable dating partner age for a given age (for example, if a user is 30, the minimum dating age is &lt;code&gt;30 / 2 + 7 = 22&lt;/code&gt;, and the corresponding delta is &lt;code&gt;22 - 30 = -8&lt;/code&gt;). On the charts, this boundary will be represented with a &lt;span style=&quot;color: #e74c3c&quot;&gt;&lt;strong&gt;red line&lt;/strong&gt;&lt;/span&gt;.&lt;/p&gt;
+
+&lt;p&gt;Putting it all together:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/okc-age-range/okc-date-range-2.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;As a person gets older, the gap between maximum age of a partner they are willing to date relative to their own decreases, but the gap between the minimum age &lt;em&gt;increases&lt;/em&gt;. At age 40, users begin to violate the half-age-plus-seven rule.&lt;/p&gt;
+
+&lt;p&gt;There are definitely a few latent factors in play affecting the results, and let&amp;rsquo;s see if we can identify them. &lt;/p&gt;
+
+&lt;h2&gt;Gender&lt;/h2&gt;
+
+&lt;p&gt;As noted in the paper, the gender breakdown of OKCupid users in the dataset is 60.6% Male, 39.1% Female, which is important as preferences of males and females in dating are very different. A &lt;a href=&quot;http://www.scienceofrelationships.com/home/2011/10/4/the-dating-equation-your-age-7.html&quot;&gt;2011 blog post &lt;/a&gt; by Dr. Benjamin Le for &lt;a href=&quot;http://www.scienceofrelationships.com&quot;&gt;Science Of Relationships&lt;/a&gt;, using 1992 data from Kenrick and Keefe, asserts that there is a difference due to a change in reproductive strategies, and notes that there is indeed some truth to the half-age-plus-seven rule. The visualizations he provides follow his hypothesis.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/okc-age-range/kenrick_keefe2.jpg&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s try to reproduce those visualizations, although due to the dating cultural changes in the last two decades, we should not expect an exact match. As with the Science Of Relationships image, we can bucket the user ages into 20s, 30s, etc. to help consolidate the data, as reading a continuous line of highly-variable age ranges is harder to parse than just reading a line chart with a few points. For each age bucket, we can calculate the &lt;strong&gt;medians of the deltas&lt;/strong&gt; for both the maximum age and the minimum age, and draw a line between the bucket points for each (we can also represent the upper bounds with upward arrows, and the lower bounds with downward arrows too).&lt;/p&gt;
+
+&lt;p&gt;How do things look when the age ranges are separated by gender and separated into age buckets?&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/okc-age-range/okc-date-range-3.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;There are a few similarities to the Science Of Relationships chart: the lower bound of male relationships are always below the half-age-plus-seven line, and the lower bound of female relationships are initially above the line. For males, the upper bound decreases over time, while for female, the bound stays constant over time. &lt;/p&gt;
+
+&lt;p&gt;Since we have many other user attributes available with the OKCupid profiles, let&amp;rsquo;s check socioeconomic and cultural indicators in conjunction with faceting by gender.&lt;/p&gt;
+
+&lt;h2&gt;Location&lt;/h2&gt;
+
+&lt;p&gt;The rules of conduct for dating vary all over the world. The places with the most number of OKCupid profiles in this particular dataset are the United Kingdom, California, New York, and Texas. Let&amp;rsquo;s see if the shape of the age ranges vary by location.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/okc-age-range/okc-date-range-4.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;Not much difference: however, for both California and Texas, women in their 50s want to date others 30 years older! (I &lt;a href=&quot;https://github.com/minimaxir/okc-age-range/blob/master/csv/okc-country.csv&quot;&gt;double-checked the data&lt;/a&gt;; the number of women in their 50s at each location is 15 in each case, which is why age bucketing and using the medians is important)&lt;/p&gt;
+
+&lt;h2&gt;Ethnicity&lt;/h2&gt;
+
+&lt;p&gt;Ethnicity can be a factor in relationships. Let&amp;rsquo;s check against the four most prevalent ethnicities in the dataset: White, Black, Hispanic / Latin, and Asian:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/okc-age-range/okc-date-range-5.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Zero&lt;/strong&gt; discernible difference in dating age preferences between the four groups.&lt;/p&gt;
+
+&lt;h2&gt;Orientation&lt;/h2&gt;
+
+&lt;p&gt;The &amp;ldquo;evolutionary perspective&amp;rdquo; argument presented in the Science of Relationships article assumes that the relationships are heterosexual, which is not always true. We should be checking every permutation of relationships: not just Male/Female and Female/Male, but Male users on OKCupid who are looking for other Male users, Female/Female, Male/Everyone, and Female/Everyone.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/okc-age-range/okc-date-range-6.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;Again, not much difference, which throws some skepticism on the reproduction argument, although it&amp;rsquo;s worth noting that the lower bound of Female/Female and Female/Everyone relationships are slightly lower than the Female/Male bound, and overlaps the half-age-plus-seven line.&lt;/p&gt;
+
+&lt;p&gt;There are other interesting attributes in OKCupid profiles, but they are self-reported (e.g. survey responses) and require additional care in order to be used. While I wasn&amp;rsquo;t able to perform statistical testing to confirm my observations (&lt;a href=&quot;https://en.wikipedia.org/wiki/Pearson%27s_chi-squared_test&quot;&gt;Pearson&amp;rsquo;s chi-square test&lt;/a&gt; does not work easily in this case since it can only be used on frequencies), I am interested in revisiting dating age range data in the future.&lt;/p&gt;
+
+&lt;hr&gt;
+
+&lt;p&gt;&lt;em&gt;As always, the code for generating the visualizations used in this article is available in a &lt;a href=&quot;https://github.com/minimaxir/okc-age-range/blob/master/okcupid_dating_age_range.ipynb&quot;&gt;Jupyter notebook&lt;/a&gt;, open-sourced in &lt;a href=&quot;https://github.com/minimaxir/okc-age-range&quot;&gt;this GitHub repository&lt;/a&gt;&lt;/em&gt;.&lt;/p&gt;
+</description>
+        <pubDate>Wed, 11 May 2016 08:00:00 -0700</pubDate>
+        <link>http://minimaxir.com/2016/05/okc-age-range/</link>
+        <guid isPermaLink="true">http://minimaxir.com/2016/05/okc-age-range/</guid>
+        
+        
+        <category>Visualization</category>
+        
+        <category>Data</category>
+        
+      </item>
     
       <item>
         <title>Creating Stylish, High-Quality Word Clouds Using Python and Font Awesome Icons</title>
@@ -982,184 +1081,6 @@ df_dedup &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; df &lt;span clas
         <category>Code</category>
         
         <category>Video</category>
-        
-      </item>
-    
-      <item>
-        <title>Mapping Where Arrests Frequently Occur in San Francisco Using Crime Data</title>
-        <description>&lt;p&gt;In my previous post, &lt;a href=&quot;http://minimaxir.com/2015/12/sf-arrests/&quot;&gt;Analyzing San Francisco Crime Data to Determine When Arrests Frequently Occur&lt;/a&gt;, I found out that there are trends where SF Police arrests occur more frequently than others. By processing the &lt;a href=&quot;https://data.sfgov.org/Public-Safety/SFPD-Incidents-from-1-January-2003/tmnf-yvry&quot;&gt;SFPD Incidents dataset&lt;/a&gt; from the &lt;a href=&quot;https://data.sfgov.org&quot;&gt;SF OpenData portal&lt;/a&gt;, I found that arrests typically occur on Wednesdays at 4-5 PM, and that the type of crime is relevant to the frequency of the crime. (e.g. DUIs happen late Friday/Saturday night).&lt;/p&gt;
-
-&lt;p&gt;However, I could not understand &lt;em&gt;why&lt;/em&gt; Wednesday/4-5PM is a peak time for arrests. In addition to analyzing &lt;em&gt;when&lt;/em&gt; arrests occur, I also looked at &lt;em&gt;where&lt;/em&gt; arrests occur. For example, perhaps more crime happens as people are leaving work; in that case, we would expect to see crimes downtown.&lt;/p&gt;
-
-&lt;h2&gt;Making a Map of SF Arrests&lt;/h2&gt;
-
-&lt;p&gt;Continuing from the previous analysis, I have a data frame of all police arrests that have occurred in San Francisco from 2003 - 2015 (587,499 arrests total).&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/sf-arrest-map/arrests.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;What is the most efficient way to make a map for the data? There are too many data points for rendering each point in a tool like &lt;a href=&quot;http://www.tableau.com&quot;&gt;Tableau&lt;/a&gt; or &lt;a href=&quot;https://www.google.com/maps&quot;&gt;Google Maps&lt;/a&gt;. I can use &lt;code&gt;ggplot2&lt;/code&gt; again as I did &lt;a href=&quot;http://minimaxir.com/2015/11/nyc-ggplot2-howto/&quot;&gt;to make a map of New York City&lt;/a&gt; manually, but as noted in that article, the abstract nature of the map may hide information.&lt;/p&gt;
-
-&lt;p&gt;Enter &lt;code&gt;ggmap&lt;/code&gt;. ggmap, an &lt;a href=&quot;https://github.com/dkahle/ggmap&quot;&gt;R package by David Kahle&lt;/a&gt;, is a tool that allows the user to retrieve a map image from a number of map data providers, and integrates seamlessly with ggplot2 for simple visualization creation. Kahle and Hadley Wickham (the creator of ggplot2) &lt;a href=&quot;https://journal.r-project.org/archive/2013-1/kahle-wickham.pdf&quot;&gt;coauthored a paper&lt;/a&gt; describing practical applications of ggmap.&lt;/p&gt;
-
-&lt;p&gt;I will include most of the map generation code in-line. &lt;em&gt;For more detailed code and output, a &lt;a href=&quot;https://github.com/minimaxir/sf-arrests-when-where/blob/master/crime_data_sf.ipynb&quot;&gt;Jupyter notebook&lt;/a&gt; containing the code and visualizations used in this article is available open-source on GitHub.&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;By default, you can ask ggmap just for a location using &lt;code&gt;get_map()&lt;/code&gt;, and it will give you an approximate map around that location. You can configure the zoom level on that point as well. Optionally, if you need precise bounds for the map, you can set the bounding box manually, and the &lt;a href=&quot;http://boundingbox.klokantech.com&quot;&gt;Bounding Box Tool&lt;/a&gt; works extremely well for this purpose, with the CSV coordinate export already being in the correct format.&lt;/p&gt;
-
-&lt;p&gt;ggmap allows maps from sources such as &lt;a href=&quot;https://www.google.com/maps&quot;&gt;Google Maps&lt;/a&gt; and &lt;a href=&quot;http://www.openstreetmap.org/#map=5/51.500/-0.100&quot;&gt;OpenStreetMap&lt;/a&gt;, and the maps can be themed, such as a color map of a black-and-white map. A black-and-white minimalistic map would be best for readability. A &lt;a href=&quot;https://www.reddit.com/r/dataisbeautiful/comments/3ule41/mapping_restaurants_in_san_francisco_by_health/&quot;&gt;Reddit submission by /u/all_genes_considered&lt;/a&gt; used &lt;a href=&quot;http://maps.stamen.com/#terrain/12/37.7706/-122.3782&quot;&gt;Stamen maps&lt;/a&gt; as a source with the toner-lite theme, and that worked well.&lt;/p&gt;
-
-&lt;p&gt;Since we&amp;rsquo;ve identified the map parameters, now we can request an appropriate map:&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;bbox &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;-122.516441&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;37.702072&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;-122.37276&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;37.811818&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-
-map &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; get_map&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;location &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; bbox&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;source&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;stamen&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; maptype &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;toner-lite&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;Plotting the map by itself results in something like this:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/sf-arrest-map/sf-arrest-where-0.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;On the right track (aside from two Guerrero Streets), but obviously it&amp;rsquo;ll need some aesthetic adjustments.&lt;/p&gt;
-
-&lt;p&gt;Let&amp;rsquo;s plot all 587,499 arrests on top of the map for fun and see what happens.&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;plot &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; ggmap&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;map&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
-            geom_point&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;data &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; df_arrest&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; aes&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;x&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;X&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; y&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;Y&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; color &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;#27AE60&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; size &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;0.5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; alpha &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;0.01&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
-            fte_theme&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
-            theme&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;...&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
-            labs&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;title &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Locations of Police Arrests Made in San Francisco from 2003 – 2015&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;ggmap()&lt;/code&gt; sets up the base map.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;geom_point()&lt;/code&gt; plots points. The data for plotting is specified at this point. &amp;ldquo;color&amp;rdquo; and &amp;ldquo;size&amp;rdquo; parameters do just that. An alpha of 0.01 causes each point to be 99% transparent; therefore, addresses with a lot of points will be more opaque.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;fte_theme()&lt;/code&gt; is my theme based on the FiveThirtyEight style.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;theme()&lt;/code&gt; is needed for a few additional theme tweaks to remove the axes/margins&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;labs()&lt;/code&gt; is for labeling the plot (&lt;em&gt;always&lt;/em&gt; label!)&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Rendering the plot results in:&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;http://i.imgur.com/Xu8wXzc.png&quot; target=_blank&gt;&lt;img src=&quot;/img/sf-arrest-map/sf-arrest-where-1.png&quot; alt=&quot;&quot;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;NOTE: All maps in this article are embedded at a lower size to ensure that the article doesn&amp;rsquo;t take days to load. To load a high-resolution version of any map, click on it and it will open in a new tab.&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;Additionally, since ggmap forces plots to a fixed ratio, this results in the &amp;ldquo;random white space&amp;rdquo; problem mentioned in the NYC article, for which I still have not found a solution, but have minimized the impact.&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;It&amp;rsquo;s clear to see where arrests in the city occur. A large concentration in the Tenderloin and the Mission, along with clusters in Bayview and Fisherman&amp;rsquo;s Wharf. However, point-stacking is not helpful when comparing high-density areas, so this visualization can be optimized.&lt;/p&gt;
-
-&lt;p&gt;How about faceting by type of crime again? We can render a map of San Francisco for each type of crime, and then we can see if the clusters for a given type of crime are different from others.&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;plot &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; ggmap&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;map&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
-            geom_point&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;data &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; df_arrest &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt; filter&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;Category &lt;span class=&quot;o&quot;&gt;%in%&lt;/span&gt; df_top_crimes&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;Category&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;19&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]),&lt;/span&gt; aes&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;x&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;X&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; y&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;Y&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; color&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;Category&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; size&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;0.75&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; alpha&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;0.05&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
-            fte_theme&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
-            theme&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;...&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
-            labs&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;title &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Locations of Police Arrests Made in San Francisco from 2003 – 2015, by Type of Crime&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
-            facet_wrap&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;~&lt;/span&gt; Category&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; nrow &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;Again, only one line of new code for the facet, although the source data needs to be filtered as it was in the previous post.&lt;/p&gt;
-
-&lt;p&gt;Running the code yields:&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;http://i.imgur.com/6NgzV3k.jpg&quot; target=_blank&gt;&lt;img src=&quot;/img/sf-arrest-map/sf-arrest-where-2.png&quot; alt=&quot;&quot;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;This is certainly more interesting (and pretty). Some crimes, such as Assaults, Drugs/Narcotics, and Warrants, occur all over the city. Other crimes, such as Disorderly Conduct and Robbery, primarily have clusters in the Tenderloin and in the Mission close to the 16th Street BART stop. (Prostitution notably has a cluster in the Mission and a cluster &lt;em&gt;above&lt;/em&gt; the Tenderloin.)&lt;/p&gt;
-
-&lt;p&gt;Again, we can&amp;rsquo;t compare high-density points, so now we should probably normalize the data by facet. One way to do this is to weight each point by the reciprocal of the number of points in the facet (e.g. if there are 5,000 Fraud arrests, assign a weight of 1/5000 to each Fraud arrest), and aggregate the sums of the weights in a geographical area.&lt;/p&gt;
-
-&lt;p&gt;We can reuse the normalization code from the previous post, and the hex overlay code from my NYC taxi plot post as well:&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;sum_thresh &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;x&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; threshold &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;^&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;-3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;kr&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kp&quot;&gt;sum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;x&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; threshold&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;kr&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;NA&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)}&lt;/span&gt;
-    &lt;span class=&quot;kr&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;kr&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kp&quot;&gt;sum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;x&lt;span class=&quot;p&quot;&gt;))}&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-
-plot &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; ggmap&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;map&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
-            stat_summary_hex&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;data &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; df_arrest &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt; filter&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;Category &lt;span class=&quot;o&quot;&gt;%in%&lt;/span&gt; df_top_crimes&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;Category&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;19&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt; group_by&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;Category&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt; mutate&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;w&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;n&lt;span class=&quot;p&quot;&gt;()),&lt;/span&gt; aes&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;x&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;X&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; y&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;Y&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; z&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;w&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; fun&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;sum_thresh&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; alpha &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;0.8&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; color&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;#CCCCCC&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
-            fte_theme&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
-            theme&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;...&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
-            scale_fill_gradient&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;low &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;#DDDDDD&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; high &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;#2980B9&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
-            labs&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;title &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Locations of Police Arrests Made in San Francisco from 2003 – 2015, Normalized by Type of Crime&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
-            facet_wrap&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;~&lt;/span&gt; Category&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; nrow &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;sum_thresh()&lt;/code&gt; is a helper function that aggregates the sums of weights, but will not plot the corresponding hex if there is not enough data at that location.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;scale_fill_gradient()&lt;/code&gt; sets the gradient for the chart. If there are few arrests, the hex will be gray; if there are many arrests, it will be deep blue.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Putting it all together:&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;http://i.imgur.com/LXKPseq.jpg&quot; target=_blank&gt;&lt;img src=&quot;/img/sf-arrest-map/sf-arrest-where-3.png&quot; alt=&quot;&quot;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;This confirms the interpretations mentioned above.&lt;/p&gt;
-
-&lt;p&gt;Since the code base is already created, it is very simple to facet on any variable. So why not create a faceted map for &lt;em&gt;every conceivable variable&lt;/em&gt;?&lt;/p&gt;
-
-&lt;p&gt;How about checking arrest locations by Police Districts?&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;http://i.imgur.com/i82wsIZ.png&quot; target=_blank&gt;&lt;img src=&quot;/img/sf-arrest-map/sf-arrest-where-4.png&quot; alt=&quot;&quot;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;The map shows that the hex plotting works correctly, at the least. Notably, the Central, Northern, and Southern Police Districts end up making a large proportion of their arrests nearby the Tenderloin/Market Street instead of anywhere else in their area of perview.&lt;/p&gt;
-
-&lt;p&gt;Is the location of arrests seasonal? Does it vary by the month the arrest occured?&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;http://i.imgur.com/u2eQMZf.png&quot; target=_blank&gt;&lt;img src=&quot;/img/sf-arrest-map/sf-arrest-where-5.png&quot; alt=&quot;&quot;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Nope. Still Tenderloin and Mission.&lt;/p&gt;
-
-&lt;p&gt;Maybe the locations of arrests have changed over time, as legal polices changed. Let&amp;rsquo;s facet by year.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;http://i.imgur.com/x4SRnkU.png&quot; target=_blank&gt;&lt;img src=&quot;/img/sf-arrest-map/sf-arrest-where-6.png&quot; alt=&quot;&quot;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Here things are &lt;em&gt;slightly&lt;/em&gt; different across each facet; Tenderloin had a much higher concentration of arrests peaking in 2009-2010, and the concentration of yearly arrests in the Tenderloin has decreased relative to everywhere else in the city.&lt;/p&gt;
-
-&lt;p&gt;Does the location of arrests vary by the time of day? As noted earlier, there could be more arrests downtown during working hours.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;http://i.imgur.com/cDKo8Lt.png&quot; target=_blank&gt;&lt;img src=&quot;/img/sf-arrest-map/sf-arrest-where-7.png&quot; alt=&quot;&quot;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Higher relative concentration in Tenderlion/Mission during work hours, lesser during the night.&lt;/p&gt;
-
-&lt;p&gt;Last try. Perhaps the day of week leads to different locations, especially as people tend to go out to bars all across the city.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;http://i.imgur.com/tNBRilL.png&quot; target=_blank&gt;&lt;img src=&quot;/img/sf-arrest-map/sf-arrest-where-8.png&quot; alt=&quot;&quot;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;Zero&lt;/em&gt; difference. Eh.&lt;/p&gt;
-
-&lt;p&gt;We did learn that there is certainly a lot of arrests in the Tenderloin and 16th Street/Mission BART stop, though. However, that doesn&amp;rsquo;t necessarily mean there is more &lt;em&gt;crime&lt;/em&gt; in those areas (correlation does not imply causation), but it is something worth noting when traveling around the San Francisco.&lt;/p&gt;
-
-&lt;h2&gt;Bonus: Do Social Security payments lead to an increase in arrests?&lt;/h2&gt;
-
-&lt;p&gt;In response to my previous article, &lt;a href=&quot;https://www.reddit.com/r/sanfrancisco/comments/3vfgg2/analyzing_san_francisco_crime_data_to_determine/cxn29wd&quot;&gt;Redditor /u/NowProveIt hypothesizes&lt;/a&gt; that the spike in Wednesday arrests could be attributed to &lt;a href=&quot;https://www.ssa.gov/kc/rp_paybenefits.htm&quot;&gt;Social Security disability&lt;/a&gt; (RDSI) payments. The &lt;a href=&quot;https://www.socialsecurity.gov/pubs/EN-05-10031-2015.pdf&quot;&gt;Social Security Benefit Payments schedule&lt;/a&gt; is typically every second, third, and fourth Wednesday of a month.&lt;/p&gt;
-
-&lt;p&gt;Normally, you would expect that the arrest behavior for any Wednesday in a given month to be independent from each other. Therefore, if the arrest behavior for the &lt;em&gt;first&lt;/em&gt; Wednesday is different than that for the secord/third/fourth Wednesday (presumably, the First Wednesday has fewer arrests overall), then we might have a lead.&lt;/p&gt;
-
-&lt;p&gt;Through more &lt;code&gt;dplyr&lt;/code&gt; shenanigans, I am able to filter the dataset of arrests to Wednesday arrests only, and classify each Wednesday as the first, second, third, or fourth of the month. (there are occasionally fifth Wednesdays but no one cares about those).&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/sf-arrest-map/ordinal.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;We can plot a single line chart for each ordinal of the number of arrests over the day. We are looking to see if the First Wednesday has different behavior than the other Wednesdays.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/sf-arrest-map/ssi-crime-1.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;&amp;hellip;and it doesn&amp;rsquo;t.&lt;/p&gt;
-
-&lt;p&gt;Looking at locations data doesn&amp;rsquo;t help either.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;http://i.imgur.com/wTDKjOm.png&quot; target=_blank&gt;&lt;img src=&quot;/img/sf-arrest-map/ssi-crime-2.png&quot; alt=&quot;&quot;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Oh well, it was worth a shot.&lt;/p&gt;
-
-&lt;p&gt;As always, all the code and raw images are available &lt;a href=&quot;https://github.com/minimaxir/sf-arrests-when-where&quot;&gt;in the GitHub repository&lt;/a&gt;. Not many more questions were answered by looking at the location data of San Francisco crimes. But that&amp;rsquo;s OK. There&amp;rsquo;s certainly other cool things to do with this data. Kaggle, for instance, is creating &lt;a href=&quot;https://www.kaggle.com/c/sf-crime/scripts&quot;&gt;a repository of scripts&lt;/a&gt; which play around with the Crime Incident dataset.&lt;/p&gt;
-
-&lt;p&gt;But for now, at least I made a few pretty charts out of it.&lt;/p&gt;
-
-&lt;hr&gt;
-
-&lt;p&gt;&lt;em&gt;If you use the code or data visualization designs contained within this article, it would be greatly appreciated if proper attribution is given back to this article and/or myself. Thanks!&lt;/em&gt;&lt;/p&gt;
-</description>
-        <pubDate>Mon, 07 Dec 2015 08:00:00 -0800</pubDate>
-        <link>http://minimaxir.com/2015/12/sf-arrest-maps/</link>
-        <guid isPermaLink="true">http://minimaxir.com/2015/12/sf-arrest-maps/</guid>
-        
-        
-        <category>Data</category>
         
       </item>
     
