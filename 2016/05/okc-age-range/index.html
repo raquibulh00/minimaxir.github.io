@@ -7,7 +7,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>A Look at Dating Age Range Preferences by Analyzing OKCupid Data</title>
 <meta property="article:author" content="https://www.facebook.com/max.woolf" />
-<meta name="description" content="On Monday, University of Aarhus researcher Emil O. W. Kirkegaard and University of Aalborg researcher Julius D. Bjerrekær published a very large dataset of O...">
+<meta name="description" content="On Monday, May 9th, someone posted a dataset in the Reddit /r/datasets subreddit which contained OKCupid profile metadata that I thought was very interesting...">
 <link href="/rss.xml" rel="alternate" title="minimaxir | Max Woolf's Blog" type="application/atom+xml">
 <link rel="canonical" href="http://minimaxir.com/2016/05/okc-age-range/">
 
@@ -242,91 +242,13 @@
 
                         <!-- Blog Grid Content -->
 						<div class="blog-grid-content">
-						<p>On Monday, University of Aarhus researcher Emil O. W. Kirkegaard and University of Aalborg researcher Julius D. Bjerrekær <a href="https://osf.io/p9ixw/">published a very large dataset</a> of <a href="https://www.okcupid.com">OKCupid</a> profile metadata, which was scraped from the service. OKCupid, a well-known dating website, allows users to create profiles that contain information about the user&rsquo;s age, their location, their demographics, and the ages of the partners they are seeking.</p>
+						<p><em>On Monday, May 9th, someone <a href="https://www.reddit.com/r/datasets/comments/4ikzsu/osf_the_okcupid_dataset_a_very_large_public/">posted a dataset</a> in the Reddit /r/datasets subreddit which <a href="https://osf.io/p9ixw/">contained OKCupid profile metadata</a> that I thought was very interesting. On Wednesday, I posted this analysis on dating age range preferences which everyone seemed to like on Facebook and Twitter</em>.</p>
 
-<p><img src="/img/okc-age-range/OKCProf.png" alt=""></p>
+<p><em>On Thursday, I noticed a few comments on the Reddit post stating that the data was collected unethically. A <a href="http://www.vox.com/2016/5/12/11666116/70000-okcupid-users-data-release">Vox article</a>, which links to this very post, notes that the method in which the data was collected and disclosed by the Danish researchers violates APA and IRB standards. I was not aware of any of this at the time of posting.</em></p>
 
-<p>Looking the age ranges of preferred dating partners relative to the user&rsquo;s own age could be interesting. At the least, analyzing the data will give me an idea if the dataset is sufficiently robust for further blog posts.</p>
+<p><em>In light of this new information, I am removing this post for the time being.</em></p>
 
-<p>I&rsquo;ve extracted and cleaned up the profile metadata to make it easier to process and have valid profiles for 66,365 OKCupid users, and you can view this data <a href="https://docs.google.com/spreadsheets/d/1k1kQ_nLT6_jFbu-zm9_93n2N5f3CsEvfa-dI_HC2m_Q/edit?usp=sharing">in this Google Sheet</a>.</p>
-
-<h2>Checking Ages</h2>
-
-<p>Kirkegaard and Bjerrekær noted in the paper included in the dataset release that the distribution of ages of OKCupid users is skewed toward younger users. They provided this density plot:</p>
-
-<p><img src="/img/okc-age-range/paper.png" alt=""></p>
-
-<p>The dataset contains three relevant columns: <code>d_age</code>, the user&rsquo;s provided age, <code>lf_max_age</code>, the maximum age the user is seeking for a partner, and <code>lf_min_age</code>, the minimum age. Let&rsquo;s sanity check the data by plotting user age against the maximum and minimum ages of the preferred age range, with the latter two variables colored accordingly.</p>
-
-<p><img src="/img/okc-age-range/okc-date-range-1.png" alt=""></p>
-
-<p>The sanity check was a good idea because there&rsquo;s a <em>lot</em> going on here.</p>
-
-<ul>
-<li>Both maximum age range and minimum age range are positively correlated with the user&rsquo;s current age, as you would expect.</li>
-<li>As the age distribution chart showed, there is very little data available for users older than 60, and we may have to remove that in later analysis.</li>
-<li>Users tend to set their desired age ranges <strong>to clean multiples of 5</strong> (the solid horizontal lines), which is an interesting <a href="https://en.wikipedia.org/wiki/Psychological_pricing">psychological bias</a>. Many users also set their minimum age preference to the minimum possible value of 18 years-old&hellip;</li>
-<li>&hellip;conversely, many users set their maximum age range to 99/100 years-old, essentially saying that anything-goes as far as age. Unfortunately, these are invalid values for this analysis, and users who have declared this preference must be removed.</li>
-<li>I have <strong>absolutely no idea</strong> why there is a solid perfectly linear diagonal line of maximum age values evident in the data. Perhaps that offset is the default maximum age range and users have not changed it?</li>
-</ul>
-
-<p>The chart is a bit messy for further analysis. Let&rsquo;s try another approach by normalizing the max/min age ranges relative to the user&rsquo;s age, and plotting these <strong>deltas</strong> instead. For example, if a 23 year-old OKCupid user is looking for someone with age 23-27, their <code>lf_max_delta = 27 - 23 = 4</code>, while  <code>lf_min_delta = 23 - 23 = 0</code>.</p>
-
-<p>And just for fun, let&rsquo;s compare the age ranges with the infamous <a href="https://en.wikipedia.org/wiki/Age_disparity_in_sexual_relationships#The_.22half-your-age-plus-seven.22_rule">half-your-age-plus-seven</a> rule, which is shorthand for a formula that results in minimum socially-acceptable dating partner age for a given age (for example, if a user is 30, the minimum dating age is <code>30 / 2 + 7 = 22</code>, and the corresponding delta is <code>22 - 30 = -8</code>). On the charts, this boundary will be represented with a <span style="color: #e74c3c"><strong>red line</strong></span>.</p>
-
-<p>Putting it all together:</p>
-
-<p><img src="/img/okc-age-range/okc-date-range-2.png" alt=""></p>
-
-<p>As a person gets older, the gap between maximum age of a partner they are willing to date relative to their own decreases, but the gap between the minimum age <em>increases</em>. At age 40, users begin to violate the half-age-plus-seven rule.</p>
-
-<p>There are definitely a few latent factors in play affecting the results, and let&rsquo;s see if we can identify them. </p>
-
-<h2>Gender</h2>
-
-<p>As noted in the paper, the gender breakdown of OKCupid users in the dataset is 60.6% Male, 39.1% Female, which is important as preferences of males and females in dating are very different. A <a href="http://www.scienceofrelationships.com/home/2011/10/4/the-dating-equation-your-age-7.html">2011 blog post </a> by Dr. Benjamin Le for <a href="http://www.scienceofrelationships.com">Science Of Relationships</a>, using 1992 data from Kenrick and Keefe, asserts that there is a difference due to a change in reproductive strategies, and notes that there is indeed some truth to the half-age-plus-seven rule. The visualizations he provides follow his hypothesis.</p>
-
-<p><img src="/img/okc-age-range/kenrick_keefe2.jpg" alt=""></p>
-
-<p>Let&rsquo;s try to reproduce those visualizations, although due to the dating cultural changes in the last two decades, we should not expect an exact match. As with the Science Of Relationships image, we can bucket the user ages into 20s, 30s, etc. to help consolidate the data, as reading a continuous line of highly-variable age ranges is harder to parse than just reading a line chart with a few points. For each age bucket, we can calculate the <strong>medians of the deltas</strong> for both the maximum age and the minimum age, and draw a line between the bucket points for each (we can also represent the upper bounds with upward arrows, and the lower bounds with downward arrows too).</p>
-
-<p>How do things look when the age ranges are separated by gender and separated into age buckets?</p>
-
-<p><img src="/img/okc-age-range/okc-date-range-3.png" alt=""></p>
-
-<p>There are a few similarities to the Science Of Relationships chart: the lower bound of male relationships are always below the half-age-plus-seven line, and the lower bound of female relationships are initially above the line. For males, the upper bound decreases over time, while for female, the bound stays constant over time. </p>
-
-<p>Since we have many other user attributes available with the OKCupid profiles, let&rsquo;s check socioeconomic and cultural indicators in conjunction with faceting by gender.</p>
-
-<h2>Location</h2>
-
-<p>The rules of conduct for dating vary all over the world. The places with the most number of OKCupid profiles in this particular dataset are the United Kingdom, California, New York, and Texas. Let&rsquo;s see if the shape of the age ranges vary by location.</p>
-
-<p><img src="/img/okc-age-range/okc-date-range-4.png" alt=""></p>
-
-<p>Not much difference: however, for both California and Texas, women in their 50s want to date others 30 years older! (I <a href="https://github.com/minimaxir/okc-age-range/blob/master/csv/okc-country.csv">double-checked the data</a>; the number of women in their 50s at each location is 15 in each case, which is why age bucketing and using the medians is important)</p>
-
-<h2>Ethnicity</h2>
-
-<p>Ethnicity can be a factor in relationships. Let&rsquo;s check against the four most prevalent ethnicities in the dataset: White, Black, Hispanic / Latin, and Asian:</p>
-
-<p><img src="/img/okc-age-range/okc-date-range-5.png" alt=""></p>
-
-<p><strong>Zero</strong> discernible difference in dating age preferences between the four groups.</p>
-
-<h2>Orientation</h2>
-
-<p>The &ldquo;evolutionary perspective&rdquo; argument presented in the Science of Relationships article assumes that the relationships are heterosexual, which is not always true. We should be checking every permutation of relationships: not just Male/Female and Female/Male, but Male users on OKCupid who are looking for other Male users, Female/Female, Male/Everyone, and Female/Everyone.</p>
-
-<p><img src="/img/okc-age-range/okc-date-range-6.png" alt=""></p>
-
-<p>Again, not much difference, which throws some skepticism on the reproduction argument, although it&rsquo;s worth noting that the lower bound of Female/Female and Female/Everyone relationships are slightly lower than the Female/Male bound, and overlaps the half-age-plus-seven line.</p>
-
-<p>There are other interesting attributes in OKCupid profiles, but they are self-reported (e.g. survey responses) and require additional care in order to be used. While I wasn&rsquo;t able to perform statistical testing to confirm my observations (<a href="https://en.wikipedia.org/wiki/Pearson%27s_chi-squared_test">Pearson&rsquo;s chi-square test</a> does not work easily in this case since it can only be used on frequencies), I am interested in revisiting dating age range data in the future.</p>
-
-<hr>
-
-<p><em>As always, the code for generating the visualizations used in this article is available in a <a href="https://github.com/minimaxir/okc-age-range/blob/master/okcupid_dating_age_range.ipynb">Jupyter notebook</a>, open-sourced in <a href="https://github.com/minimaxir/okc-age-range">this GitHub repository</a></em>.</p>
+<p><em>-Max Woolf</em></p>
 
 						
             			 <div class="breadcrumbs-v5-subtitle sharing-post" style="color: #999 !important; padding-top:10px; border-top: 1px solid #eee">Share this article!
