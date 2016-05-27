@@ -4,7 +4,7 @@
   <title><![CDATA[minimaxir | Max Woolf's Blog]]></title>
   <link href="http://minimaxir.com/rss.xml" rel="self"/>
   <link href="http://minimaxir.com/"/>
-  <updated>2016-05-17T07:33:13-07:00</updated>
+  <updated>2016-05-27T08:02:26-07:00</updated>
   <id>http://minimaxir.com/</id>
   <author>
     <name><![CDATA[Max Woolf]]></name>
@@ -12,6 +12,157 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[How to Create a Network Graph Visualization of Reddit Subreddits]]></title>
+    <link href="http://minimaxir.com/2016/05/reddit-graph/"/>
+    <updated>2016-05-27T08:00:00-07:00</updated>
+    <id>http://minimaxir.com/2016/05/reddit-graph</id>
+    <content type="html"><![CDATA[<p><a href="https://en.wikipedia.org/wiki/Graph_theory">Network graphs</a> are pretty data visualizations, and I like pretty data visualizations. Recently, <a href="https://www.reddit.com">Reddit</a> user CuriousGnu <a href="http://www.curiousgnu.com/reddit-comments">posted a network graph</a> of the comment patterns of the top 50 Reddit subreddits:</p>
+
+<p><img src="/img/reddit-graph/rd_comments_net_hd.png" alt=""></p>
+
+<p>The <a href="https://www.reddit.com/r/dataisbeautiful/comments/4fsrjd/oc_redditors_who_commented_in_rx_also_commented/">visualization</a> was made with <a href="https://gephi.org">Gephi</a>, a very popular free and open-source network graph tool.</p>
+
+<p><img src="/img/reddit-graph/gephi.png" alt=""></p>
+
+<p>Gephi is <em>extremely</em> difficult to use, and most blog posts  about the software are in the form of Step 1: Gephi, Step 2: ???, Step 3: Profit. Even if you know <em>do</em> how to use it, most of the network design customizations must be done manually, which is not helped by software slowness even on high-end machines. My own attempts to use Gephi for nice-looking networks have had <a href="https://www.reddit.com/r/dataisbeautiful/comments/3z60z6/network_of_reddit_commenting_patterns_for_the_top/">mixed</a> <a href="https://www.reddit.com/r/magicTCG/comments/401hdq/graph_network_of_magic_the_gathering_creature/">results</a>.</p>
+
+<p>Additionally, there is very little discussion on how to gather the data for large-scale network graph visualizations, and how to make them in a <em>reproducible</em> manner. It is time to fix that and create a Reddit network graph visualization with many more nodes, step by step.</p>
+
+<h2>Getting Reddit Edge Data</h2>
+
+<p>Network graphs are typically formed by getting the relationship data between two entities (the edges), then extrapolating the vertices of the graph (the nodes) from that data.</p>
+
+<p>There are two common data structures for representing edge data. One is an <a href="https://en.wikipedia.org/wiki/Adjacency_matrix">adjacency matrix</a>, which is a 2D matrix where the rows/columns represent the entities, and the value at the intersection between a row/column represents the <em>weight</em> of the relationships. For the visualization above, CuriousGnu made an adjacency matrix by querying the relationships from <a href="https://cloud.google.com/bigquery/">BigQuery</a> for each subreddit manually. That requires adding a line of SQL for <em>each</em> subreddit you want to plot, which is time-consuming and I am lazy.</p>
+
+<p>Let&rsquo;s try option #2: an <a href="https://reference.wolfram.com/language/ref/EdgeList.html">edge list</a>, which is a tabular dataset where each row contains the two entities and a weight. With clever use of BigQuery, we can query the edges for <em>every single subreddit</em> at the same time. And we can query on real-time Reddit data from approximately the past 6 months using Jason Baumgartner&rsquo;s <a href="https://pushshift.io/using-bigquery-with-reddit-data/">Reddit dataset</a> on BigQuery. </p>
+
+<p>The process works like this:</p>
+
+<ol>
+<li>Determine active users of a subreddit by identifying the subreddits where a user has <strong>commented</strong> on at least <strong>5 different submissions</strong> within the past 6 months.</li>
+<li>Perform a <a href="http://stackoverflow.com/questions/3362038/what-is-self-join-and-when-would-you-use-it">self-join</a> by joining the table on itself: this will create <strong>links</strong> between all subreddits where a given user is active. (e.g. an active user of /r/askreddit, /r/pics, and /r/gifs will form 9 links: askreddit → askreddit, askreddit → pics, askreddit → gifs, pics → askreddit, etc.)</li>
+<li>Aggregate the counts of the number of links between two subreddits; this will become the edge <strong>Weight</strong>.</li>
+<li>Filter the resulting dataset by removing self-loops and reverse-edges. (e.g. since we have askreddit → pics, remove pics → askreddit). Additionally, we should only retain edges with <strong>at least 200 active users</strong> to keep the resulting dataset a manageable size for this analysis.</li>
+</ol>
+
+<p>Putting it all together results in this query:</p>
+<div class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="k">SELECT</span> <span class="n">a</span><span class="p">.</span><span class="n">l_subreddit</span> <span class="k">as</span> <span class="k">Source</span><span class="p">,</span> <span class="n">b</span><span class="p">.</span><span class="n">l_subreddit</span> <span class="k">as</span> <span class="n">Target</span><span class="p">,</span> <span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">as</span> <span class="n">Weight</span>
+<span class="k">FROM</span> <span class="p">(</span>
+  <span class="k">SELECT</span> <span class="n">author</span><span class="p">,</span> <span class="k">LOWER</span><span class="p">(</span><span class="n">subreddit</span><span class="p">)</span> <span class="k">as</span> <span class="n">l_subreddit</span><span class="p">,</span> <span class="k">COUNT</span><span class="p">(</span><span class="k">DISTINCT</span><span class="p">(</span><span class="n">link_id</span><span class="p">))</span> <span class="k">as</span> <span class="n">unique_threads</span>
+  <span class="k">FROM</span> <span class="p">[</span><span class="n">pushshift</span><span class="p">:</span><span class="n">rt_reddit</span><span class="p">.</span><span class="n">comments</span><span class="p">]</span>
+  <span class="k">GROUP</span> <span class="k">BY</span> <span class="n">author</span><span class="p">,</span> <span class="n">l_subreddit</span>
+  <span class="k">HAVING</span> <span class="n">unique_threads</span> <span class="o">&gt;=</span> <span class="mi">5</span><span class="p">)</span> <span class="n">a</span> <span class="k">JOIN</span> <span class="p">(</span>
+  <span class="k">SELECT</span> <span class="n">author</span><span class="p">,</span> <span class="k">LOWER</span><span class="p">(</span><span class="n">subreddit</span><span class="p">)</span> <span class="k">as</span> <span class="n">l_subreddit</span><span class="p">,</span> <span class="k">COUNT</span><span class="p">(</span><span class="k">DISTINCT</span><span class="p">(</span><span class="n">link_id</span><span class="p">))</span> <span class="k">as</span> <span class="n">unique_threads</span>
+  <span class="k">FROM</span> <span class="p">[</span><span class="n">pushshift</span><span class="p">:</span><span class="n">rt_reddit</span><span class="p">.</span><span class="n">comments</span><span class="p">]</span>
+  <span class="k">GROUP</span> <span class="k">BY</span> <span class="n">author</span><span class="p">,</span> <span class="n">l_subreddit</span>
+  <span class="k">HAVING</span> <span class="n">unique_threads</span> <span class="o">&gt;=</span> <span class="mi">5</span><span class="p">)</span> <span class="n">b</span> <span class="k">ON</span> <span class="n">a</span><span class="p">.</span><span class="n">author</span> <span class="o">=</span> <span class="n">b</span><span class="p">.</span><span class="n">author</span>
+<span class="k">GROUP</span> <span class="k">BY</span> <span class="k">Source</span><span class="p">,</span> <span class="n">Target</span>
+<span class="k">HAVING</span> <span class="k">Source</span> <span class="o">&lt;</span> <span class="n">Target</span> <span class="k">AND</span> <span class="n">Weight</span> <span class="o">&gt;=</span> <span class="mi">200</span>
+<span class="k">ORDER</span> <span class="k">BY</span> <span class="n">Weight</span> <span class="k">DESC</span>
+</code></pre></div>
+<p>Only 13 lines of code, with 3 of those lines repeated. Running the query only takes a few minutes. (which is actually <em>forever</em> in BigQuery time: when people talk about &ldquo;big data,&rdquo; this is <em>actually big data</em>!)</p>
+
+<p>That query (at the time of analysis) returns <a href="https://docs.google.com/spreadsheets/d/1MFHno-sYR3MkWgntnieWobWQ2e3x4CAcNUdVIFjmlQI/edit?usp=sharing">this dataset</a> of 7,498 edges; more than enough. Now for the fun part.</p>
+
+<h2>Visualizing the Reddit Data</h2>
+
+<p>The edge list linked above can actually be imported into Gephi as-is. <strong>Don&rsquo;t</strong>.</p>
+
+<p>Instead, let&rsquo;s use R and my favorite data visualization tool <code>ggplot2</code>, with a twist.</p>
+
+<p>First, we load the edge list into R, and create an undirected network graph using the <code>igraph</code> package.</p>
+<div class="highlight"><pre><code class="language-r" data-lang="r">net <span class="o">&lt;-</span> graph.data.frame<span class="p">(</span>df<span class="p">,</span> directed<span class="o">=</span><span class="bp">F</span><span class="p">)</span>
+</code></pre></div>
+<p><img src="/img/reddit-graph/igraph.png" alt=""></p>
+
+<p>The imported edge list results in a network with 1,131 nodes/subreddits. After pruning nodes with only a few neighbors and removing the subsequently-orphaned edges, we get a network of 517 nodes/subreddits with 6,732 edges.</p>
+
+<p>We can then add summary statistics for the nodes, such as the group/community each node belongs to, and the <a href="https://en.wikipedia.org/wiki/Centrality">eigenvector centrality</a> of the node.</p>
+<div class="highlight"><pre><code class="language-r" data-lang="r">V<span class="p">(</span>net<span class="p">)</span><span class="o">$</span>group <span class="o">&lt;-</span> membership<span class="p">(</span>cluster_walktrap<span class="p">(</span>net<span class="p">,</span> weights<span class="o">=</span>E<span class="p">(</span>net<span class="p">)</span><span class="o">$</span>Weight<span class="p">))</span>
+V<span class="p">(</span>net<span class="p">)</span><span class="o">$</span>centrality <span class="o">&lt;-</span> eigen_centrality<span class="p">(</span>net<span class="p">,</span> weights<span class="o">=</span>E<span class="p">(</span>net<span class="p">)</span><span class="o">$</span>Weight<span class="p">)</span><span class="o">$</span><span class="kt">vector</span>
+</code></pre></div>
+<p>Convert the network to a dataframe suitable for plotting using the <code>ggnetwork</code> library.</p>
+<div class="highlight"><pre><code class="language-r" data-lang="r">df_net <span class="o">&lt;-</span> ggnetwork<span class="p">(</span>net<span class="p">,</span> layout <span class="o">=</span> <span class="s">&quot;fruchtermanreingold&quot;</span><span class="p">,</span> weights<span class="o">=</span><span class="s">&quot;Weight&quot;</span><span class="p">,</span> niter<span class="o">=</span><span class="m">50000</span><span class="p">)</span>
+</code></pre></div>
+<p>Now time for ggplot2/ggnetwork fun. In this case, we will color the nodes whether or not they are a default subreddit (orange if default, blue otherwise) and color the lines accordingly (orange if either end is a default subreddit, blue otherwise).</p>
+
+<p>Yes, writing and optimizing all of this code is <em>significantly</em> easier than using Gephi, believe it or not.</p>
+<div class="highlight"><pre><code class="language-r" data-lang="r">default_colors<span class="o">=</span><span class="kt">c</span><span class="p">(</span><span class="s">&quot;#3498db&quot;</span><span class="p">,</span> <span class="s">&quot;#e67e22&quot;</span><span class="p">)</span>
+default_labels<span class="o">=</span><span class="kt">c</span><span class="p">(</span><span class="s">&quot;Not Default&quot;</span><span class="p">,</span> <span class="s">&quot;Default&quot;</span><span class="p">)</span>
+
+ggplot<span class="p">(</span>df_net<span class="p">,</span> aes<span class="p">(</span>x <span class="o">=</span> x<span class="p">,</span> y <span class="o">=</span> y<span class="p">,</span> xend <span class="o">=</span> xend<span class="p">,</span> yend <span class="o">=</span> yend<span class="p">,</span> size <span class="o">=</span> centrality<span class="p">))</span> <span class="o">+</span>
+    geom_edges<span class="p">(</span>aes<span class="p">(</span>color <span class="o">=</span> connectDefault<span class="p">),</span> size<span class="o">=</span><span class="m">0.05</span><span class="p">)</span> <span class="o">+</span>
+    geom_nodes<span class="p">(</span>aes<span class="p">(</span>fill <span class="o">=</span> defaultnode<span class="p">),</span> shape <span class="o">=</span> <span class="m">21</span><span class="p">,</span> stroke<span class="o">=</span><span class="m">0.2</span><span class="p">,</span> color<span class="o">=</span><span class="s">&quot;black&quot;</span><span class="p">)</span> <span class="o">+</span>
+    geom_nodelabel_repel<span class="p">(</span>data<span class="o">=</span>df_net<span class="p">,</span> aes<span class="p">(</span>color <span class="o">=</span> defaultnode<span class="p">,</span> label <span class="o">=</span> vertex.names<span class="p">),</span>
+                          fontface <span class="o">=</span> <span class="s">&quot;bold&quot;</span><span class="p">,</span> size<span class="o">=</span><span class="m">0.5</span><span class="p">,</span> box.padding <span class="o">=</span> unit<span class="p">(</span><span class="m">0.05</span><span class="p">,</span> <span class="s">&quot;lines&quot;</span><span class="p">),</span>
+                          label.padding<span class="o">=</span> unit<span class="p">(</span><span class="m">0.1</span><span class="p">,</span> <span class="s">&quot;lines&quot;</span><span class="p">),</span> segment.size<span class="o">=</span><span class="m">0.1</span><span class="p">,</span> label.size<span class="o">=</span><span class="m">0.2</span><span class="p">)</span> <span class="o">+</span>
+    scale_color_manual<span class="p">(</span>values<span class="o">=</span>default_colors<span class="p">,</span> labels<span class="o">=</span>default_labels<span class="p">,</span> guide<span class="o">=</span><span class="bp">F</span><span class="p">)</span> <span class="o">+</span>
+    scale_fill_manual<span class="p">(</span>values<span class="o">=</span>default_colors<span class="p">,</span> labels<span class="o">=</span>default_labels<span class="p">)</span> <span class="o">+</span>
+    ggtitle<span class="p">(</span><span class="s">&quot;Network Graph of Reddit Subreddits (by @minimaxir)&quot;</span><span class="p">)</span> <span class="o">+</span>
+    scale_size<span class="p">(</span>range<span class="o">=</span><span class="kt">c</span><span class="p">(</span><span class="m">0.1</span><span class="p">,</span> <span class="m">4</span><span class="p">))</span> <span class="o">+</span> 
+    theme_blank<span class="p">()</span>
+</code></pre></div>
+<p><object data="/img/reddit-graph/subreddit-1.pdf" type="application/pdf" width="100%" height="400px"></object></p>
+
+<p><span class="hidden-lg"><em>If you are on a smartphone or tablet, tap <a href="/img/reddit-graph/subreddit-1.pdf" target="_blank">this link</a> to view the network in a zoomable format.</em></span></p>
+
+<p>The large networks in the blog post are rendered as a PDF, which allows for easy pan/zooming at a very low file size (284KB!), while SVG/<a href="https://d3js.org">d3</a>/<a href="http://sigmajs.org">sigma.js</a> approaches have very poor performance at large numbers of nodes/edges.</p>
+
+<p>As we expect, the default subreddits are in the center of the network graph and have high centrality (although /r/art and /r/earthporn are oddly far separated from the other defaults). The large amounts of orange graph-wide illustrate the breadth of the defaults.</p>
+
+<p>Now let&rsquo;s color the nodes and edges by group, just as you saw in the introductory visualization:</p>
+
+<p><object data="/img/reddit-graph/subreddit-2.pdf" type="application/pdf" width="100%" height="400px"></object></p>
+
+<p><span class="hidden-lg"><em>If you are on a smartphone or tablet, tap <a href="/img/reddit-graph/subreddit-2.pdf" target="_blank">this link</a> to view the network in a zoomable format.</em></span></p>
+
+<p>If an edge links to a node of the same group, the edge is colored that group. Otherwise, the edge is colored gray. (the code that implements this is not shown because it is somewhat convoluted). This color scheme helps gauge the overall impact of the communities on Reddit. But why not look at specific groups?</p>
+
+<h2>Subgraph Surprises</h2>
+
+<p>As you can see plainly in the group-colored visualization, there is a giant green group at the center which includes the default subreddits. Analyzing that is not helpful. But we can filter the network on other specific groups and their subgraphs to see if we can define any Reddit subcultures. (note that the Group number is merely an ID; the value and order are not relevant).</p>
+
+<p>The most notable Reddit groups are gaming groups. We have two distinct groups of gamers:</p>
+
+<p><img src="/img/reddit-graph/group-006.png" alt=""></p>
+
+<p><img src="/img/reddit-graph/group-008.png" alt=""></p>
+
+<p>Plus Nintendo gamers? With a little Vita on the side?</p>
+
+<p><img src="/img/reddit-graph/group-010.png" alt=""></p>
+
+<p>Subreddits related to sports and sporting teams form a nice cluster:</p>
+
+<p><img src="/img/reddit-graph/group-001.png" alt=""></p>
+
+<p>PC-building has a distinct community:</p>
+
+<p><img src="/img/reddit-graph/group-011.png" alt=""></p>
+
+<p>The British make nice triangles!</p>
+
+<p><img src="/img/reddit-graph/group-022.png" alt=""></p>
+
+<p>Relationship and female-oriented subreddits have a relationship. </p>
+
+<p><img src="/img/reddit-graph/group-007.png" alt=""></p>
+
+<p>Lastly, DC Comics has their own sector, particularly with the corresponding CW television shows. (although some Marvel shows sneak in!)</p>
+
+<p><img src="/img/reddit-graph/group-003.png" alt=""></p>
+
+<p>Of course, Reddit itself has better data for identifying relationships between subreddits, as they can track user activity more intimately. Meanwhile, the output for this post turned out better than expected and I hope to include similar visualizations in future blog posts. Hopefully, it dispelled some of the mystery behind pretty network graphs. (if you do use the code or data visualization designs from this post, it would be greatly appreciated if proper attribution is given back to this post and/or myself. Thanks!).</p>
+
+<hr>
+
+<p><em>As always, the full code used to process the edge list and generate the visualizations is available in <a href="https://github.com/minimaxir/reddit-graph/blob/master/subreddit_network_pdf.ipynb">this Jupyter notebook</a>, open-sourced <a href="https://github.com/minimaxir/reddit-graph">on GitHub</a>.</em></p>
+
+<p><em>Additionally, thanks to Professor James P. Curley of Columbia University for providing <a href="http://curleylab.psych.columbia.edu/netviz/netviz1.html#/">helpful slides</a> which have good code samples for getting started with igraph/ggnetwork.</em></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Creating Stylish, High-Quality Word Clouds Using Python and Font Awesome Icons]]></title>
@@ -942,180 +1093,6 @@ df_dedup <span class="o">&lt;-</span> df <span class="o">%&gt;%</span> filter<sp
 <p>Microphone: <em>Shure MV5 Digital Condenser</em></p>
 
 <p>Music: <em>Various artists from the &ldquo;No Attribution Required&rdquo; section of the YouTube Audio Library</em></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Mapping Where Arrests Frequently Occur in San Francisco Using Crime Data]]></title>
-    <link href="http://minimaxir.com/2015/12/sf-arrest-maps/"/>
-    <updated>2015-12-07T08:00:00-08:00</updated>
-    <id>http://minimaxir.com/2015/12/sf-arrest-maps</id>
-    <content type="html"><![CDATA[<p>In my previous post, <a href="http://minimaxir.com/2015/12/sf-arrests/">Analyzing San Francisco Crime Data to Determine When Arrests Frequently Occur</a>, I found out that there are trends where SF Police arrests occur more frequently than others. By processing the <a href="https://data.sfgov.org/Public-Safety/SFPD-Incidents-from-1-January-2003/tmnf-yvry">SFPD Incidents dataset</a> from the <a href="https://data.sfgov.org">SF OpenData portal</a>, I found that arrests typically occur on Wednesdays at 4-5 PM, and that the type of crime is relevant to the frequency of the crime. (e.g. DUIs happen late Friday/Saturday night).</p>
-
-<p>However, I could not understand <em>why</em> Wednesday/4-5PM is a peak time for arrests. In addition to analyzing <em>when</em> arrests occur, I also looked at <em>where</em> arrests occur. For example, perhaps more crime happens as people are leaving work; in that case, we would expect to see crimes downtown.</p>
-
-<h2>Making a Map of SF Arrests</h2>
-
-<p>Continuing from the previous analysis, I have a data frame of all police arrests that have occurred in San Francisco from 2003 - 2015 (587,499 arrests total).</p>
-
-<p><img src="/img/sf-arrest-map/arrests.png" alt=""></p>
-
-<p>What is the most efficient way to make a map for the data? There are too many data points for rendering each point in a tool like <a href="http://www.tableau.com">Tableau</a> or <a href="https://www.google.com/maps">Google Maps</a>. I can use <code>ggplot2</code> again as I did <a href="http://minimaxir.com/2015/11/nyc-ggplot2-howto/">to make a map of New York City</a> manually, but as noted in that article, the abstract nature of the map may hide information.</p>
-
-<p>Enter <code>ggmap</code>. ggmap, an <a href="https://github.com/dkahle/ggmap">R package by David Kahle</a>, is a tool that allows the user to retrieve a map image from a number of map data providers, and integrates seamlessly with ggplot2 for simple visualization creation. Kahle and Hadley Wickham (the creator of ggplot2) <a href="https://journal.r-project.org/archive/2013-1/kahle-wickham.pdf">coauthored a paper</a> describing practical applications of ggmap.</p>
-
-<p>I will include most of the map generation code in-line. <em>For more detailed code and output, a <a href="https://github.com/minimaxir/sf-arrests-when-where/blob/master/crime_data_sf.ipynb">Jupyter notebook</a> containing the code and visualizations used in this article is available open-source on GitHub.</em></p>
-
-<p>By default, you can ask ggmap just for a location using <code>get_map()</code>, and it will give you an approximate map around that location. You can configure the zoom level on that point as well. Optionally, if you need precise bounds for the map, you can set the bounding box manually, and the <a href="http://boundingbox.klokantech.com">Bounding Box Tool</a> works extremely well for this purpose, with the CSV coordinate export already being in the correct format.</p>
-
-<p>ggmap allows maps from sources such as <a href="https://www.google.com/maps">Google Maps</a> and <a href="http://www.openstreetmap.org/#map=5/51.500/-0.100">OpenStreetMap</a>, and the maps can be themed, such as a color map of a black-and-white map. A black-and-white minimalistic map would be best for readability. A <a href="https://www.reddit.com/r/dataisbeautiful/comments/3ule41/mapping_restaurants_in_san_francisco_by_health/">Reddit submission by /u/all_genes_considered</a> used <a href="http://maps.stamen.com/#terrain/12/37.7706/-122.3782">Stamen maps</a> as a source with the toner-lite theme, and that worked well.</p>
-
-<p>Since we&rsquo;ve identified the map parameters, now we can request an appropriate map:</p>
-
-<figure class="highlight"><pre><code class="language-r" data-lang="r">bbox <span class="o">=</span> <span class="kt">c</span><span class="p">(</span><span class="m">-122.516441</span><span class="p">,</span><span class="m">37.702072</span><span class="p">,</span><span class="m">-122.37276</span><span class="p">,</span><span class="m">37.811818</span><span class="p">)</span>
-
-map <span class="o">&lt;-</span> get_map<span class="p">(</span>location <span class="o">=</span> bbox<span class="p">,</span> <span class="kn">source</span> <span class="o">=</span> <span class="s">&quot;stamen&quot;</span><span class="p">,</span> maptype <span class="o">=</span> <span class="s">&quot;toner-lite&quot;</span><span class="p">)</span></code></pre></figure>
-
-<p>Plotting the map by itself results in something like this:</p>
-
-<p><img src="/img/sf-arrest-map/sf-arrest-where-0.png" alt=""></p>
-
-<p>On the right track (aside from two Guerrero Streets), but obviously it&rsquo;ll need some aesthetic adjustments.</p>
-
-<p>Let&rsquo;s plot all 587,499 arrests on top of the map for fun and see what happens.</p>
-
-<figure class="highlight"><pre><code class="language-r" data-lang="r">plot <span class="o">&lt;-</span> ggmap<span class="p">(</span>map<span class="p">)</span> <span class="o">+</span>
-            geom_point<span class="p">(</span>data <span class="o">=</span> df_arrest<span class="p">,</span> aes<span class="p">(</span>x<span class="o">=</span>X<span class="p">,</span> y<span class="o">=</span>Y<span class="p">),</span> color <span class="o">=</span> <span class="s">&quot;#27AE60&quot;</span><span class="p">,</span> size <span class="o">=</span> <span class="m">0.5</span><span class="p">,</span> alpha <span class="o">=</span> <span class="m">0.01</span><span class="p">)</span> <span class="o">+</span>
-            fte_theme<span class="p">()</span> <span class="o">+</span>
-            theme<span class="p">(</span><span class="kc">...</span><span class="p">)</span> <span class="o">+</span>
-            labs<span class="p">(</span>title <span class="o">=</span> <span class="s">&quot;Locations of Police Arrests Made in San Francisco from 2003 – 2015&quot;</span><span class="p">)</span></code></pre></figure>
-
-<ul>
-<li><code>ggmap()</code> sets up the base map.</li>
-<li><code>geom_point()</code> plots points. The data for plotting is specified at this point. &ldquo;color&rdquo; and &ldquo;size&rdquo; parameters do just that. An alpha of 0.01 causes each point to be 99% transparent; therefore, addresses with a lot of points will be more opaque.</li>
-<li><code>fte_theme()</code> is my theme based on the FiveThirtyEight style.</li>
-<li><code>theme()</code> is needed for a few additional theme tweaks to remove the axes/margins</li>
-<li><code>labs()</code> is for labeling the plot (<em>always</em> label!)</li>
-</ul>
-
-<p>Rendering the plot results in:</p>
-
-<p><a href="http://i.imgur.com/Xu8wXzc.png" target=_blank><img src="/img/sf-arrest-map/sf-arrest-where-1.png" alt=""></a></p>
-
-<p><em>NOTE: All maps in this article are embedded at a lower size to ensure that the article doesn&rsquo;t take days to load. To load a high-resolution version of any map, click on it and it will open in a new tab.</em></p>
-
-<p><em>Additionally, since ggmap forces plots to a fixed ratio, this results in the &ldquo;random white space&rdquo; problem mentioned in the NYC article, for which I still have not found a solution, but have minimized the impact.</em></p>
-
-<p>It&rsquo;s clear to see where arrests in the city occur. A large concentration in the Tenderloin and the Mission, along with clusters in Bayview and Fisherman&rsquo;s Wharf. However, point-stacking is not helpful when comparing high-density areas, so this visualization can be optimized.</p>
-
-<p>How about faceting by type of crime again? We can render a map of San Francisco for each type of crime, and then we can see if the clusters for a given type of crime are different from others.</p>
-
-<figure class="highlight"><pre><code class="language-r" data-lang="r">plot <span class="o">&lt;-</span> ggmap<span class="p">(</span>map<span class="p">)</span> <span class="o">+</span>
-            geom_point<span class="p">(</span>data <span class="o">=</span> df_arrest <span class="o">%&gt;%</span> filter<span class="p">(</span>Category <span class="o">%in%</span> df_top_crimes<span class="o">$</span>Category<span class="p">[</span><span class="m">2</span><span class="o">:</span><span class="m">19</span><span class="p">]),</span> aes<span class="p">(</span>x<span class="o">=</span>X<span class="p">,</span> y<span class="o">=</span>Y<span class="p">,</span> color<span class="o">=</span>Category<span class="p">),</span> size<span class="o">=</span><span class="m">0.75</span><span class="p">,</span> alpha<span class="o">=</span><span class="m">0.05</span><span class="p">)</span> <span class="o">+</span>
-            fte_theme<span class="p">()</span> <span class="o">+</span>
-            theme<span class="p">(</span><span class="kc">...</span><span class="p">)</span> <span class="o">+</span>
-            labs<span class="p">(</span>title <span class="o">=</span> <span class="s">&quot;Locations of Police Arrests Made in San Francisco from 2003 – 2015, by Type of Crime&quot;</span><span class="p">)</span> <span class="o">+</span>
-            facet_wrap<span class="p">(</span><span class="o">~</span> Category<span class="p">,</span> nrow <span class="o">=</span> <span class="m">3</span><span class="p">)</span></code></pre></figure>
-
-<p>Again, only one line of new code for the facet, although the source data needs to be filtered as it was in the previous post.</p>
-
-<p>Running the code yields:</p>
-
-<p><a href="http://i.imgur.com/6NgzV3k.jpg" target=_blank><img src="/img/sf-arrest-map/sf-arrest-where-2.png" alt=""></a></p>
-
-<p>This is certainly more interesting (and pretty). Some crimes, such as Assaults, Drugs/Narcotics, and Warrants, occur all over the city. Other crimes, such as Disorderly Conduct and Robbery, primarily have clusters in the Tenderloin and in the Mission close to the 16th Street BART stop. (Prostitution notably has a cluster in the Mission and a cluster <em>above</em> the Tenderloin.)</p>
-
-<p>Again, we can&rsquo;t compare high-density points, so now we should probably normalize the data by facet. One way to do this is to weight each point by the reciprocal of the number of points in the facet (e.g. if there are 5,000 Fraud arrests, assign a weight of 1/5000 to each Fraud arrest), and aggregate the sums of the weights in a geographical area.</p>
-
-<p>We can reuse the normalization code from the previous post, and the hex overlay code from my NYC taxi plot post as well:</p>
-
-<figure class="highlight"><pre><code class="language-r" data-lang="r">sum_thresh <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>x<span class="p">,</span> threshold <span class="o">=</span> <span class="m">10</span><span class="o">^</span><span class="m">-3</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kr">if</span> <span class="p">(</span><span class="kp">sum</span><span class="p">(</span>x<span class="p">)</span> <span class="o">&lt;</span> threshold<span class="p">)</span> <span class="p">{</span><span class="kr">return</span> <span class="p">(</span><span class="kc">NA</span><span class="p">)}</span>
-    <span class="kr">else</span> <span class="p">{</span><span class="kr">return</span> <span class="p">(</span><span class="kp">sum</span><span class="p">(</span>x<span class="p">))}</span>
-<span class="p">}</span>
-
-plot <span class="o">&lt;-</span> ggmap<span class="p">(</span>map<span class="p">)</span> <span class="o">+</span>
-            stat_summary_hex<span class="p">(</span>data <span class="o">=</span> df_arrest <span class="o">%&gt;%</span> filter<span class="p">(</span>Category <span class="o">%in%</span> df_top_crimes<span class="o">$</span>Category<span class="p">[</span><span class="m">2</span><span class="o">:</span><span class="m">19</span><span class="p">])</span> <span class="o">%&gt;%</span> group_by<span class="p">(</span>Category<span class="p">)</span> <span class="o">%&gt;%</span> mutate<span class="p">(</span>w<span class="o">=</span><span class="m">1</span><span class="o">/</span>n<span class="p">()),</span> aes<span class="p">(</span>x<span class="o">=</span>X<span class="p">,</span> y<span class="o">=</span>Y<span class="p">,</span> z<span class="o">=</span>w<span class="p">),</span> fun<span class="o">=</span>sum_thresh<span class="p">,</span> alpha <span class="o">=</span> <span class="m">0.8</span><span class="p">,</span> color<span class="o">=</span><span class="s">&quot;#CCCCCC&quot;</span><span class="p">)</span> <span class="o">+</span>
-            fte_theme<span class="p">()</span> <span class="o">+</span>
-            theme<span class="p">(</span><span class="kc">...</span><span class="p">)</span> <span class="o">+</span>
-            scale_fill_gradient<span class="p">(</span>low <span class="o">=</span> <span class="s">&quot;#DDDDDD&quot;</span><span class="p">,</span> high <span class="o">=</span> <span class="s">&quot;#2980B9&quot;</span><span class="p">)</span> <span class="o">+</span>
-            labs<span class="p">(</span>title <span class="o">=</span> <span class="s">&quot;Locations of Police Arrests Made in San Francisco from 2003 – 2015, Normalized by Type of Crime&quot;</span><span class="p">)</span> <span class="o">+</span>
-            facet_wrap<span class="p">(</span><span class="o">~</span> Category<span class="p">,</span> nrow <span class="o">=</span> <span class="m">3</span><span class="p">)</span></code></pre></figure>
-
-<ul>
-<li><code>sum_thresh()</code> is a helper function that aggregates the sums of weights, but will not plot the corresponding hex if there is not enough data at that location.</li>
-<li><code>scale_fill_gradient()</code> sets the gradient for the chart. If there are few arrests, the hex will be gray; if there are many arrests, it will be deep blue.</li>
-</ul>
-
-<p>Putting it all together:</p>
-
-<p><a href="http://i.imgur.com/LXKPseq.jpg" target=_blank><img src="/img/sf-arrest-map/sf-arrest-where-3.png" alt=""></a></p>
-
-<p>This confirms the interpretations mentioned above.</p>
-
-<p>Since the code base is already created, it is very simple to facet on any variable. So why not create a faceted map for <em>every conceivable variable</em>?</p>
-
-<p>How about checking arrest locations by Police Districts?</p>
-
-<p><a href="http://i.imgur.com/i82wsIZ.png" target=_blank><img src="/img/sf-arrest-map/sf-arrest-where-4.png" alt=""></a></p>
-
-<p>The map shows that the hex plotting works correctly, at the least. Notably, the Central, Northern, and Southern Police Districts end up making a large proportion of their arrests nearby the Tenderloin/Market Street instead of anywhere else in their area of perview.</p>
-
-<p>Is the location of arrests seasonal? Does it vary by the month the arrest occured?</p>
-
-<p><a href="http://i.imgur.com/u2eQMZf.png" target=_blank><img src="/img/sf-arrest-map/sf-arrest-where-5.png" alt=""></a></p>
-
-<p>Nope. Still Tenderloin and Mission.</p>
-
-<p>Maybe the locations of arrests have changed over time, as legal polices changed. Let&rsquo;s facet by year.</p>
-
-<p><a href="http://i.imgur.com/x4SRnkU.png" target=_blank><img src="/img/sf-arrest-map/sf-arrest-where-6.png" alt=""></a></p>
-
-<p>Here things are <em>slightly</em> different across each facet; Tenderloin had a much higher concentration of arrests peaking in 2009-2010, and the concentration of yearly arrests in the Tenderloin has decreased relative to everywhere else in the city.</p>
-
-<p>Does the location of arrests vary by the time of day? As noted earlier, there could be more arrests downtown during working hours.</p>
-
-<p><a href="http://i.imgur.com/cDKo8Lt.png" target=_blank><img src="/img/sf-arrest-map/sf-arrest-where-7.png" alt=""></a></p>
-
-<p>Higher relative concentration in Tenderlion/Mission during work hours, lesser during the night.</p>
-
-<p>Last try. Perhaps the day of week leads to different locations, especially as people tend to go out to bars all across the city.</p>
-
-<p><a href="http://i.imgur.com/tNBRilL.png" target=_blank><img src="/img/sf-arrest-map/sf-arrest-where-8.png" alt=""></a></p>
-
-<p><em>Zero</em> difference. Eh.</p>
-
-<p>We did learn that there is certainly a lot of arrests in the Tenderloin and 16th Street/Mission BART stop, though. However, that doesn&rsquo;t necessarily mean there is more <em>crime</em> in those areas (correlation does not imply causation), but it is something worth noting when traveling around the San Francisco.</p>
-
-<h2>Bonus: Do Social Security payments lead to an increase in arrests?</h2>
-
-<p>In response to my previous article, <a href="https://www.reddit.com/r/sanfrancisco/comments/3vfgg2/analyzing_san_francisco_crime_data_to_determine/cxn29wd">Redditor /u/NowProveIt hypothesizes</a> that the spike in Wednesday arrests could be attributed to <a href="https://www.ssa.gov/kc/rp_paybenefits.htm">Social Security disability</a> (RDSI) payments. The <a href="https://www.socialsecurity.gov/pubs/EN-05-10031-2015.pdf">Social Security Benefit Payments schedule</a> is typically every second, third, and fourth Wednesday of a month.</p>
-
-<p>Normally, you would expect that the arrest behavior for any Wednesday in a given month to be independent from each other. Therefore, if the arrest behavior for the <em>first</em> Wednesday is different than that for the secord/third/fourth Wednesday (presumably, the First Wednesday has fewer arrests overall), then we might have a lead.</p>
-
-<p>Through more <code>dplyr</code> shenanigans, I am able to filter the dataset of arrests to Wednesday arrests only, and classify each Wednesday as the first, second, third, or fourth of the month. (there are occasionally fifth Wednesdays but no one cares about those).</p>
-
-<p><img src="/img/sf-arrest-map/ordinal.png" alt=""></p>
-
-<p>We can plot a single line chart for each ordinal of the number of arrests over the day. We are looking to see if the First Wednesday has different behavior than the other Wednesdays.</p>
-
-<p><img src="/img/sf-arrest-map/ssi-crime-1.png" alt=""></p>
-
-<p>&hellip;and it doesn&rsquo;t.</p>
-
-<p>Looking at locations data doesn&rsquo;t help either.</p>
-
-<p><a href="http://i.imgur.com/wTDKjOm.png" target=_blank><img src="/img/sf-arrest-map/ssi-crime-2.png" alt=""></a></p>
-
-<p>Oh well, it was worth a shot.</p>
-
-<p>As always, all the code and raw images are available <a href="https://github.com/minimaxir/sf-arrests-when-where">in the GitHub repository</a>. Not many more questions were answered by looking at the location data of San Francisco crimes. But that&rsquo;s OK. There&rsquo;s certainly other cool things to do with this data. Kaggle, for instance, is creating <a href="https://www.kaggle.com/c/sf-crime/scripts">a repository of scripts</a> which play around with the Crime Incident dataset.</p>
-
-<p>But for now, at least I made a few pretty charts out of it.</p>
-
-<hr>
-
-<p><em>If you use the code or data visualization designs contained within this article, it would be greatly appreciated if proper attribution is given back to this article and/or myself. Thanks!</em></p>
 ]]></content>
   </entry>
   

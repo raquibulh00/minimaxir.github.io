@@ -5,9 +5,168 @@
     <description>A blog by Max Woolf about startups, technology, and blogging. It&#39;s so meta, even this acronym.</description>
     <link>http://minimaxir.com/</link>
     <atom:link href="http://minimaxir.com/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Tue, 17 May 2016 07:33:13 -0700</pubDate>
-    <lastBuildDate>Tue, 17 May 2016 07:33:13 -0700</lastBuildDate>
+    <pubDate>Fri, 27 May 2016 08:02:26 -0700</pubDate>
+    <lastBuildDate>Fri, 27 May 2016 08:02:26 -0700</lastBuildDate>
     <generator>Jekyll v3.1.2</generator>
+    
+      <item>
+        <title>How to Create a Network Graph Visualization of Reddit Subreddits</title>
+        <description>&lt;p&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Graph_theory&quot;&gt;Network graphs&lt;/a&gt; are pretty data visualizations, and I like pretty data visualizations. Recently, &lt;a href=&quot;https://www.reddit.com&quot;&gt;Reddit&lt;/a&gt; user CuriousGnu &lt;a href=&quot;http://www.curiousgnu.com/reddit-comments&quot;&gt;posted a network graph&lt;/a&gt; of the comment patterns of the top 50 Reddit subreddits:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/reddit-graph/rd_comments_net_hd.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;The &lt;a href=&quot;https://www.reddit.com/r/dataisbeautiful/comments/4fsrjd/oc_redditors_who_commented_in_rx_also_commented/&quot;&gt;visualization&lt;/a&gt; was made with &lt;a href=&quot;https://gephi.org&quot;&gt;Gephi&lt;/a&gt;, a very popular free and open-source network graph tool.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/reddit-graph/gephi.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;Gephi is &lt;em&gt;extremely&lt;/em&gt; difficult to use, and most blog posts  about the software are in the form of Step 1: Gephi, Step 2: ???, Step 3: Profit. Even if you know &lt;em&gt;do&lt;/em&gt; how to use it, most of the network design customizations must be done manually, which is not helped by software slowness even on high-end machines. My own attempts to use Gephi for nice-looking networks have had &lt;a href=&quot;https://www.reddit.com/r/dataisbeautiful/comments/3z60z6/network_of_reddit_commenting_patterns_for_the_top/&quot;&gt;mixed&lt;/a&gt; &lt;a href=&quot;https://www.reddit.com/r/magicTCG/comments/401hdq/graph_network_of_magic_the_gathering_creature/&quot;&gt;results&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Additionally, there is very little discussion on how to gather the data for large-scale network graph visualizations, and how to make them in a &lt;em&gt;reproducible&lt;/em&gt; manner. It is time to fix that and create a Reddit network graph visualization with many more nodes, step by step.&lt;/p&gt;
+
+&lt;h2&gt;Getting Reddit Edge Data&lt;/h2&gt;
+
+&lt;p&gt;Network graphs are typically formed by getting the relationship data between two entities (the edges), then extrapolating the vertices of the graph (the nodes) from that data.&lt;/p&gt;
+
+&lt;p&gt;There are two common data structures for representing edge data. One is an &lt;a href=&quot;https://en.wikipedia.org/wiki/Adjacency_matrix&quot;&gt;adjacency matrix&lt;/a&gt;, which is a 2D matrix where the rows/columns represent the entities, and the value at the intersection between a row/column represents the &lt;em&gt;weight&lt;/em&gt; of the relationships. For the visualization above, CuriousGnu made an adjacency matrix by querying the relationships from &lt;a href=&quot;https://cloud.google.com/bigquery/&quot;&gt;BigQuery&lt;/a&gt; for each subreddit manually. That requires adding a line of SQL for &lt;em&gt;each&lt;/em&gt; subreddit you want to plot, which is time-consuming and I am lazy.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s try option #2: an &lt;a href=&quot;https://reference.wolfram.com/language/ref/EdgeList.html&quot;&gt;edge list&lt;/a&gt;, which is a tabular dataset where each row contains the two entities and a weight. With clever use of BigQuery, we can query the edges for &lt;em&gt;every single subreddit&lt;/em&gt; at the same time. And we can query on real-time Reddit data from approximately the past 6 months using Jason Baumgartner&amp;rsquo;s &lt;a href=&quot;https://pushshift.io/using-bigquery-with-reddit-data/&quot;&gt;Reddit dataset&lt;/a&gt; on BigQuery. &lt;/p&gt;
+
+&lt;p&gt;The process works like this:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Determine active users of a subreddit by identifying the subreddits where a user has &lt;strong&gt;commented&lt;/strong&gt; on at least &lt;strong&gt;5 different submissions&lt;/strong&gt; within the past 6 months.&lt;/li&gt;
+&lt;li&gt;Perform a &lt;a href=&quot;http://stackoverflow.com/questions/3362038/what-is-self-join-and-when-would-you-use-it&quot;&gt;self-join&lt;/a&gt; by joining the table on itself: this will create &lt;strong&gt;links&lt;/strong&gt; between all subreddits where a given user is active. (e.g. an active user of /r/askreddit, /r/pics, and /r/gifs will form 9 links: askreddit → askreddit, askreddit → pics, askreddit → gifs, pics → askreddit, etc.)&lt;/li&gt;
+&lt;li&gt;Aggregate the counts of the number of links between two subreddits; this will become the edge &lt;strong&gt;Weight&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;Filter the resulting dataset by removing self-loops and reverse-edges. (e.g. since we have askreddit → pics, remove pics → askreddit). Additionally, we should only retain edges with &lt;strong&gt;at least 200 active users&lt;/strong&gt; to keep the resulting dataset a manageable size for this analysis.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Putting it all together results in this query:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sql&quot; data-lang=&quot;sql&quot;&gt;&lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;l_subreddit&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;Source&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;l_subreddit&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Target&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;COUNT&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Weight&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;author&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;LOWER&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;subreddit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;l_subreddit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;COUNT&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;DISTINCT&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;link_id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;unique_threads&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pushshift&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rt_reddit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;comments&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;GROUP&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;BY&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;author&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;l_subreddit&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;HAVING&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;unique_threads&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;JOIN&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;author&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;LOWER&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;subreddit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;l_subreddit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;COUNT&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;DISTINCT&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;link_id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;unique_threads&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pushshift&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rt_reddit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;comments&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;GROUP&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;BY&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;author&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;l_subreddit&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;HAVING&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;unique_threads&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ON&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;author&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;author&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;GROUP&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;BY&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;Source&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Target&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;HAVING&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;Source&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Target&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;AND&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Weight&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;200&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;ORDER&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;BY&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Weight&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;DESC&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Only 13 lines of code, with 3 of those lines repeated. Running the query only takes a few minutes. (which is actually &lt;em&gt;forever&lt;/em&gt; in BigQuery time: when people talk about &amp;ldquo;big data,&amp;rdquo; this is &lt;em&gt;actually big data&lt;/em&gt;!)&lt;/p&gt;
+
+&lt;p&gt;That query (at the time of analysis) returns &lt;a href=&quot;https://docs.google.com/spreadsheets/d/1MFHno-sYR3MkWgntnieWobWQ2e3x4CAcNUdVIFjmlQI/edit?usp=sharing&quot;&gt;this dataset&lt;/a&gt; of 7,498 edges; more than enough. Now for the fun part.&lt;/p&gt;
+
+&lt;h2&gt;Visualizing the Reddit Data&lt;/h2&gt;
+
+&lt;p&gt;The edge list linked above can actually be imported into Gephi as-is. &lt;strong&gt;Don&amp;rsquo;t&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;Instead, let&amp;rsquo;s use R and my favorite data visualization tool &lt;code&gt;ggplot2&lt;/code&gt;, with a twist.&lt;/p&gt;
+
+&lt;p&gt;First, we load the edge list into R, and create an undirected network graph using the &lt;code&gt;igraph&lt;/code&gt; package.&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;net &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; graph.data.frame&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;df&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; directed&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;F&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;img src=&quot;/img/reddit-graph/igraph.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;The imported edge list results in a network with 1,131 nodes/subreddits. After pruning nodes with only a few neighbors and removing the subsequently-orphaned edges, we get a network of 517 nodes/subreddits with 6,732 edges.&lt;/p&gt;
+
+&lt;p&gt;We can then add summary statistics for the nodes, such as the group/community each node belongs to, and the &lt;a href=&quot;https://en.wikipedia.org/wiki/Centrality&quot;&gt;eigenvector centrality&lt;/a&gt; of the node.&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;V&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;net&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;group &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; membership&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;cluster_walktrap&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;net&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; weights&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;E&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;net&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;Weight&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+V&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;net&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;centrality &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; eigen_centrality&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;net&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; weights&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;E&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;net&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;Weight&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;vector&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Convert the network to a dataframe suitable for plotting using the &lt;code&gt;ggnetwork&lt;/code&gt; library.&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;df_net &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; ggnetwork&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;net&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; layout &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;fruchtermanreingold&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; weights&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Weight&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; niter&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;50000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Now time for ggplot2/ggnetwork fun. In this case, we will color the nodes whether or not they are a default subreddit (orange if default, blue otherwise) and color the lines accordingly (orange if either end is a default subreddit, blue otherwise).&lt;/p&gt;
+
+&lt;p&gt;Yes, writing and optimizing all of this code is &lt;em&gt;significantly&lt;/em&gt; easier than using Gephi, believe it or not.&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;default_colors&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;#3498db&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;#e67e22&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+default_labels&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Not Default&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Default&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+ggplot&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;df_net&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; aes&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;x &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; x&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; y &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; y&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; xend &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; xend&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; yend &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; yend&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; size &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; centrality&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
+    geom_edges&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;aes&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;color &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; connectDefault&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; size&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;0.05&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
+    geom_nodes&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;aes&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;fill &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; defaultnode&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; shape &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;21&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; stroke&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;0.2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; color&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;black&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
+    geom_nodelabel_repel&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;data&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;df_net&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; aes&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;color &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; defaultnode&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; label &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; vertex.names&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+                          fontface &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;bold&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; size&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;0.5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; box.padding &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; unit&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;0.05&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;lines&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+                          label.padding&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; unit&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;0.1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;lines&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; segment.size&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;0.1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; label.size&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;0.2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
+    scale_color_manual&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;values&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;default_colors&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; labels&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;default_labels&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; guide&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;F&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
+    scale_fill_manual&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;values&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;default_colors&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; labels&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;default_labels&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
+    ggtitle&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Network Graph of Reddit Subreddits (by @minimaxir)&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
+    scale_size&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;range&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;0.1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; 
+    theme_blank&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;object data=&quot;/img/reddit-graph/subreddit-1.pdf&quot; type=&quot;application/pdf&quot; width=&quot;100%&quot; height=&quot;400px&quot;&gt;&lt;/object&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;span class=&quot;hidden-lg&quot;&gt;&lt;em&gt;If you are on a smartphone or tablet, tap &lt;a href=&quot;/img/reddit-graph/subreddit-1.pdf&quot; target=&quot;_blank&quot;&gt;this link&lt;/a&gt; to view the network in a zoomable format.&lt;/em&gt;&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;The large networks in the blog post are rendered as a PDF, which allows for easy pan/zooming at a very low file size (284KB!), while SVG/&lt;a href=&quot;https://d3js.org&quot;&gt;d3&lt;/a&gt;/&lt;a href=&quot;http://sigmajs.org&quot;&gt;sigma.js&lt;/a&gt; approaches have very poor performance at large numbers of nodes/edges.&lt;/p&gt;
+
+&lt;p&gt;As we expect, the default subreddits are in the center of the network graph and have high centrality (although /r/art and /r/earthporn are oddly far separated from the other defaults). The large amounts of orange graph-wide illustrate the breadth of the defaults.&lt;/p&gt;
+
+&lt;p&gt;Now let&amp;rsquo;s color the nodes and edges by group, just as you saw in the introductory visualization:&lt;/p&gt;
+
+&lt;p&gt;&lt;object data=&quot;/img/reddit-graph/subreddit-2.pdf&quot; type=&quot;application/pdf&quot; width=&quot;100%&quot; height=&quot;400px&quot;&gt;&lt;/object&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;span class=&quot;hidden-lg&quot;&gt;&lt;em&gt;If you are on a smartphone or tablet, tap &lt;a href=&quot;/img/reddit-graph/subreddit-2.pdf&quot; target=&quot;_blank&quot;&gt;this link&lt;/a&gt; to view the network in a zoomable format.&lt;/em&gt;&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;If an edge links to a node of the same group, the edge is colored that group. Otherwise, the edge is colored gray. (the code that implements this is not shown because it is somewhat convoluted). This color scheme helps gauge the overall impact of the communities on Reddit. But why not look at specific groups?&lt;/p&gt;
+
+&lt;h2&gt;Subgraph Surprises&lt;/h2&gt;
+
+&lt;p&gt;As you can see plainly in the group-colored visualization, there is a giant green group at the center which includes the default subreddits. Analyzing that is not helpful. But we can filter the network on other specific groups and their subgraphs to see if we can define any Reddit subcultures. (note that the Group number is merely an ID; the value and order are not relevant).&lt;/p&gt;
+
+&lt;p&gt;The most notable Reddit groups are gaming groups. We have two distinct groups of gamers:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/reddit-graph/group-006.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/reddit-graph/group-008.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;Plus Nintendo gamers? With a little Vita on the side?&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/reddit-graph/group-010.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;Subreddits related to sports and sporting teams form a nice cluster:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/reddit-graph/group-001.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;PC-building has a distinct community:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/reddit-graph/group-011.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;The British make nice triangles!&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/reddit-graph/group-022.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;Relationship and female-oriented subreddits have a relationship. &lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/reddit-graph/group-007.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;Lastly, DC Comics has their own sector, particularly with the corresponding CW television shows. (although some Marvel shows sneak in!)&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/reddit-graph/group-003.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;Of course, Reddit itself has better data for identifying relationships between subreddits, as they can track user activity more intimately. Meanwhile, the output for this post turned out better than expected and I hope to include similar visualizations in future blog posts. Hopefully, it dispelled some of the mystery behind pretty network graphs. (if you do use the code or data visualization designs from this post, it would be greatly appreciated if proper attribution is given back to this post and/or myself. Thanks!).&lt;/p&gt;
+
+&lt;hr&gt;
+
+&lt;p&gt;&lt;em&gt;As always, the full code used to process the edge list and generate the visualizations is available in &lt;a href=&quot;https://github.com/minimaxir/reddit-graph/blob/master/subreddit_network_pdf.ipynb&quot;&gt;this Jupyter notebook&lt;/a&gt;, open-sourced &lt;a href=&quot;https://github.com/minimaxir/reddit-graph&quot;&gt;on GitHub&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Additionally, thanks to Professor James P. Curley of Columbia University for providing &lt;a href=&quot;http://curleylab.psych.columbia.edu/netviz/netviz1.html#/&quot;&gt;helpful slides&lt;/a&gt; which have good code samples for getting started with igraph/ggnetwork.&lt;/em&gt;&lt;/p&gt;
+</description>
+        <pubDate>Fri, 27 May 2016 08:00:00 -0700</pubDate>
+        <link>http://minimaxir.com/2016/05/reddit-graph/</link>
+        <guid isPermaLink="true">http://minimaxir.com/2016/05/reddit-graph/</guid>
+        
+        
+        <category>Visualization</category>
+        
+        <category>Data</category>
+        
+        <category>Interactive</category>
+        
+      </item>
     
       <item>
         <title>Creating Stylish, High-Quality Word Clouds Using Python and Font Awesome Icons</title>
@@ -982,184 +1141,6 @@ df_dedup &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; df &lt;span clas
         <category>Code</category>
         
         <category>Video</category>
-        
-      </item>
-    
-      <item>
-        <title>Mapping Where Arrests Frequently Occur in San Francisco Using Crime Data</title>
-        <description>&lt;p&gt;In my previous post, &lt;a href=&quot;http://minimaxir.com/2015/12/sf-arrests/&quot;&gt;Analyzing San Francisco Crime Data to Determine When Arrests Frequently Occur&lt;/a&gt;, I found out that there are trends where SF Police arrests occur more frequently than others. By processing the &lt;a href=&quot;https://data.sfgov.org/Public-Safety/SFPD-Incidents-from-1-January-2003/tmnf-yvry&quot;&gt;SFPD Incidents dataset&lt;/a&gt; from the &lt;a href=&quot;https://data.sfgov.org&quot;&gt;SF OpenData portal&lt;/a&gt;, I found that arrests typically occur on Wednesdays at 4-5 PM, and that the type of crime is relevant to the frequency of the crime. (e.g. DUIs happen late Friday/Saturday night).&lt;/p&gt;
-
-&lt;p&gt;However, I could not understand &lt;em&gt;why&lt;/em&gt; Wednesday/4-5PM is a peak time for arrests. In addition to analyzing &lt;em&gt;when&lt;/em&gt; arrests occur, I also looked at &lt;em&gt;where&lt;/em&gt; arrests occur. For example, perhaps more crime happens as people are leaving work; in that case, we would expect to see crimes downtown.&lt;/p&gt;
-
-&lt;h2&gt;Making a Map of SF Arrests&lt;/h2&gt;
-
-&lt;p&gt;Continuing from the previous analysis, I have a data frame of all police arrests that have occurred in San Francisco from 2003 - 2015 (587,499 arrests total).&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/sf-arrest-map/arrests.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;What is the most efficient way to make a map for the data? There are too many data points for rendering each point in a tool like &lt;a href=&quot;http://www.tableau.com&quot;&gt;Tableau&lt;/a&gt; or &lt;a href=&quot;https://www.google.com/maps&quot;&gt;Google Maps&lt;/a&gt;. I can use &lt;code&gt;ggplot2&lt;/code&gt; again as I did &lt;a href=&quot;http://minimaxir.com/2015/11/nyc-ggplot2-howto/&quot;&gt;to make a map of New York City&lt;/a&gt; manually, but as noted in that article, the abstract nature of the map may hide information.&lt;/p&gt;
-
-&lt;p&gt;Enter &lt;code&gt;ggmap&lt;/code&gt;. ggmap, an &lt;a href=&quot;https://github.com/dkahle/ggmap&quot;&gt;R package by David Kahle&lt;/a&gt;, is a tool that allows the user to retrieve a map image from a number of map data providers, and integrates seamlessly with ggplot2 for simple visualization creation. Kahle and Hadley Wickham (the creator of ggplot2) &lt;a href=&quot;https://journal.r-project.org/archive/2013-1/kahle-wickham.pdf&quot;&gt;coauthored a paper&lt;/a&gt; describing practical applications of ggmap.&lt;/p&gt;
-
-&lt;p&gt;I will include most of the map generation code in-line. &lt;em&gt;For more detailed code and output, a &lt;a href=&quot;https://github.com/minimaxir/sf-arrests-when-where/blob/master/crime_data_sf.ipynb&quot;&gt;Jupyter notebook&lt;/a&gt; containing the code and visualizations used in this article is available open-source on GitHub.&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;By default, you can ask ggmap just for a location using &lt;code&gt;get_map()&lt;/code&gt;, and it will give you an approximate map around that location. You can configure the zoom level on that point as well. Optionally, if you need precise bounds for the map, you can set the bounding box manually, and the &lt;a href=&quot;http://boundingbox.klokantech.com&quot;&gt;Bounding Box Tool&lt;/a&gt; works extremely well for this purpose, with the CSV coordinate export already being in the correct format.&lt;/p&gt;
-
-&lt;p&gt;ggmap allows maps from sources such as &lt;a href=&quot;https://www.google.com/maps&quot;&gt;Google Maps&lt;/a&gt; and &lt;a href=&quot;http://www.openstreetmap.org/#map=5/51.500/-0.100&quot;&gt;OpenStreetMap&lt;/a&gt;, and the maps can be themed, such as a color map of a black-and-white map. A black-and-white minimalistic map would be best for readability. A &lt;a href=&quot;https://www.reddit.com/r/dataisbeautiful/comments/3ule41/mapping_restaurants_in_san_francisco_by_health/&quot;&gt;Reddit submission by /u/all_genes_considered&lt;/a&gt; used &lt;a href=&quot;http://maps.stamen.com/#terrain/12/37.7706/-122.3782&quot;&gt;Stamen maps&lt;/a&gt; as a source with the toner-lite theme, and that worked well.&lt;/p&gt;
-
-&lt;p&gt;Since we&amp;rsquo;ve identified the map parameters, now we can request an appropriate map:&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;bbox &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;-122.516441&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;37.702072&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;-122.37276&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;37.811818&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-
-map &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; get_map&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;location &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; bbox&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;source&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;stamen&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; maptype &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;toner-lite&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;Plotting the map by itself results in something like this:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/sf-arrest-map/sf-arrest-where-0.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;On the right track (aside from two Guerrero Streets), but obviously it&amp;rsquo;ll need some aesthetic adjustments.&lt;/p&gt;
-
-&lt;p&gt;Let&amp;rsquo;s plot all 587,499 arrests on top of the map for fun and see what happens.&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;plot &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; ggmap&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;map&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
-            geom_point&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;data &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; df_arrest&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; aes&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;x&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;X&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; y&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;Y&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; color &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;#27AE60&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; size &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;0.5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; alpha &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;0.01&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
-            fte_theme&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
-            theme&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;...&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
-            labs&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;title &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Locations of Police Arrests Made in San Francisco from 2003 – 2015&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;ggmap()&lt;/code&gt; sets up the base map.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;geom_point()&lt;/code&gt; plots points. The data for plotting is specified at this point. &amp;ldquo;color&amp;rdquo; and &amp;ldquo;size&amp;rdquo; parameters do just that. An alpha of 0.01 causes each point to be 99% transparent; therefore, addresses with a lot of points will be more opaque.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;fte_theme()&lt;/code&gt; is my theme based on the FiveThirtyEight style.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;theme()&lt;/code&gt; is needed for a few additional theme tweaks to remove the axes/margins&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;labs()&lt;/code&gt; is for labeling the plot (&lt;em&gt;always&lt;/em&gt; label!)&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Rendering the plot results in:&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;http://i.imgur.com/Xu8wXzc.png&quot; target=_blank&gt;&lt;img src=&quot;/img/sf-arrest-map/sf-arrest-where-1.png&quot; alt=&quot;&quot;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;NOTE: All maps in this article are embedded at a lower size to ensure that the article doesn&amp;rsquo;t take days to load. To load a high-resolution version of any map, click on it and it will open in a new tab.&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;Additionally, since ggmap forces plots to a fixed ratio, this results in the &amp;ldquo;random white space&amp;rdquo; problem mentioned in the NYC article, for which I still have not found a solution, but have minimized the impact.&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;It&amp;rsquo;s clear to see where arrests in the city occur. A large concentration in the Tenderloin and the Mission, along with clusters in Bayview and Fisherman&amp;rsquo;s Wharf. However, point-stacking is not helpful when comparing high-density areas, so this visualization can be optimized.&lt;/p&gt;
-
-&lt;p&gt;How about faceting by type of crime again? We can render a map of San Francisco for each type of crime, and then we can see if the clusters for a given type of crime are different from others.&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;plot &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; ggmap&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;map&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
-            geom_point&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;data &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; df_arrest &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt; filter&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;Category &lt;span class=&quot;o&quot;&gt;%in%&lt;/span&gt; df_top_crimes&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;Category&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;19&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]),&lt;/span&gt; aes&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;x&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;X&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; y&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;Y&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; color&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;Category&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; size&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;0.75&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; alpha&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;0.05&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
-            fte_theme&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
-            theme&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;...&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
-            labs&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;title &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Locations of Police Arrests Made in San Francisco from 2003 – 2015, by Type of Crime&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
-            facet_wrap&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;~&lt;/span&gt; Category&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; nrow &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;Again, only one line of new code for the facet, although the source data needs to be filtered as it was in the previous post.&lt;/p&gt;
-
-&lt;p&gt;Running the code yields:&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;http://i.imgur.com/6NgzV3k.jpg&quot; target=_blank&gt;&lt;img src=&quot;/img/sf-arrest-map/sf-arrest-where-2.png&quot; alt=&quot;&quot;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;This is certainly more interesting (and pretty). Some crimes, such as Assaults, Drugs/Narcotics, and Warrants, occur all over the city. Other crimes, such as Disorderly Conduct and Robbery, primarily have clusters in the Tenderloin and in the Mission close to the 16th Street BART stop. (Prostitution notably has a cluster in the Mission and a cluster &lt;em&gt;above&lt;/em&gt; the Tenderloin.)&lt;/p&gt;
-
-&lt;p&gt;Again, we can&amp;rsquo;t compare high-density points, so now we should probably normalize the data by facet. One way to do this is to weight each point by the reciprocal of the number of points in the facet (e.g. if there are 5,000 Fraud arrests, assign a weight of 1/5000 to each Fraud arrest), and aggregate the sums of the weights in a geographical area.&lt;/p&gt;
-
-&lt;p&gt;We can reuse the normalization code from the previous post, and the hex overlay code from my NYC taxi plot post as well:&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;sum_thresh &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;x&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; threshold &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;^&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;-3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;kr&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kp&quot;&gt;sum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;x&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; threshold&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;kr&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;NA&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)}&lt;/span&gt;
-    &lt;span class=&quot;kr&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;kr&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kp&quot;&gt;sum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;x&lt;span class=&quot;p&quot;&gt;))}&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-
-plot &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; ggmap&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;map&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
-            stat_summary_hex&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;data &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; df_arrest &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt; filter&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;Category &lt;span class=&quot;o&quot;&gt;%in%&lt;/span&gt; df_top_crimes&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;Category&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;19&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt; group_by&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;Category&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt; mutate&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;w&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;n&lt;span class=&quot;p&quot;&gt;()),&lt;/span&gt; aes&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;x&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;X&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; y&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;Y&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; z&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;w&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; fun&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;sum_thresh&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; alpha &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;0.8&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; color&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;#CCCCCC&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
-            fte_theme&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
-            theme&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;...&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
-            scale_fill_gradient&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;low &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;#DDDDDD&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; high &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;#2980B9&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
-            labs&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;title &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Locations of Police Arrests Made in San Francisco from 2003 – 2015, Normalized by Type of Crime&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
-            facet_wrap&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;~&lt;/span&gt; Category&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; nrow &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;sum_thresh()&lt;/code&gt; is a helper function that aggregates the sums of weights, but will not plot the corresponding hex if there is not enough data at that location.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;scale_fill_gradient()&lt;/code&gt; sets the gradient for the chart. If there are few arrests, the hex will be gray; if there are many arrests, it will be deep blue.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Putting it all together:&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;http://i.imgur.com/LXKPseq.jpg&quot; target=_blank&gt;&lt;img src=&quot;/img/sf-arrest-map/sf-arrest-where-3.png&quot; alt=&quot;&quot;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;This confirms the interpretations mentioned above.&lt;/p&gt;
-
-&lt;p&gt;Since the code base is already created, it is very simple to facet on any variable. So why not create a faceted map for &lt;em&gt;every conceivable variable&lt;/em&gt;?&lt;/p&gt;
-
-&lt;p&gt;How about checking arrest locations by Police Districts?&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;http://i.imgur.com/i82wsIZ.png&quot; target=_blank&gt;&lt;img src=&quot;/img/sf-arrest-map/sf-arrest-where-4.png&quot; alt=&quot;&quot;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;The map shows that the hex plotting works correctly, at the least. Notably, the Central, Northern, and Southern Police Districts end up making a large proportion of their arrests nearby the Tenderloin/Market Street instead of anywhere else in their area of perview.&lt;/p&gt;
-
-&lt;p&gt;Is the location of arrests seasonal? Does it vary by the month the arrest occured?&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;http://i.imgur.com/u2eQMZf.png&quot; target=_blank&gt;&lt;img src=&quot;/img/sf-arrest-map/sf-arrest-where-5.png&quot; alt=&quot;&quot;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Nope. Still Tenderloin and Mission.&lt;/p&gt;
-
-&lt;p&gt;Maybe the locations of arrests have changed over time, as legal polices changed. Let&amp;rsquo;s facet by year.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;http://i.imgur.com/x4SRnkU.png&quot; target=_blank&gt;&lt;img src=&quot;/img/sf-arrest-map/sf-arrest-where-6.png&quot; alt=&quot;&quot;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Here things are &lt;em&gt;slightly&lt;/em&gt; different across each facet; Tenderloin had a much higher concentration of arrests peaking in 2009-2010, and the concentration of yearly arrests in the Tenderloin has decreased relative to everywhere else in the city.&lt;/p&gt;
-
-&lt;p&gt;Does the location of arrests vary by the time of day? As noted earlier, there could be more arrests downtown during working hours.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;http://i.imgur.com/cDKo8Lt.png&quot; target=_blank&gt;&lt;img src=&quot;/img/sf-arrest-map/sf-arrest-where-7.png&quot; alt=&quot;&quot;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Higher relative concentration in Tenderlion/Mission during work hours, lesser during the night.&lt;/p&gt;
-
-&lt;p&gt;Last try. Perhaps the day of week leads to different locations, especially as people tend to go out to bars all across the city.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;http://i.imgur.com/tNBRilL.png&quot; target=_blank&gt;&lt;img src=&quot;/img/sf-arrest-map/sf-arrest-where-8.png&quot; alt=&quot;&quot;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;Zero&lt;/em&gt; difference. Eh.&lt;/p&gt;
-
-&lt;p&gt;We did learn that there is certainly a lot of arrests in the Tenderloin and 16th Street/Mission BART stop, though. However, that doesn&amp;rsquo;t necessarily mean there is more &lt;em&gt;crime&lt;/em&gt; in those areas (correlation does not imply causation), but it is something worth noting when traveling around the San Francisco.&lt;/p&gt;
-
-&lt;h2&gt;Bonus: Do Social Security payments lead to an increase in arrests?&lt;/h2&gt;
-
-&lt;p&gt;In response to my previous article, &lt;a href=&quot;https://www.reddit.com/r/sanfrancisco/comments/3vfgg2/analyzing_san_francisco_crime_data_to_determine/cxn29wd&quot;&gt;Redditor /u/NowProveIt hypothesizes&lt;/a&gt; that the spike in Wednesday arrests could be attributed to &lt;a href=&quot;https://www.ssa.gov/kc/rp_paybenefits.htm&quot;&gt;Social Security disability&lt;/a&gt; (RDSI) payments. The &lt;a href=&quot;https://www.socialsecurity.gov/pubs/EN-05-10031-2015.pdf&quot;&gt;Social Security Benefit Payments schedule&lt;/a&gt; is typically every second, third, and fourth Wednesday of a month.&lt;/p&gt;
-
-&lt;p&gt;Normally, you would expect that the arrest behavior for any Wednesday in a given month to be independent from each other. Therefore, if the arrest behavior for the &lt;em&gt;first&lt;/em&gt; Wednesday is different than that for the secord/third/fourth Wednesday (presumably, the First Wednesday has fewer arrests overall), then we might have a lead.&lt;/p&gt;
-
-&lt;p&gt;Through more &lt;code&gt;dplyr&lt;/code&gt; shenanigans, I am able to filter the dataset of arrests to Wednesday arrests only, and classify each Wednesday as the first, second, third, or fourth of the month. (there are occasionally fifth Wednesdays but no one cares about those).&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/sf-arrest-map/ordinal.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;We can plot a single line chart for each ordinal of the number of arrests over the day. We are looking to see if the First Wednesday has different behavior than the other Wednesdays.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/sf-arrest-map/ssi-crime-1.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;&amp;hellip;and it doesn&amp;rsquo;t.&lt;/p&gt;
-
-&lt;p&gt;Looking at locations data doesn&amp;rsquo;t help either.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;http://i.imgur.com/wTDKjOm.png&quot; target=_blank&gt;&lt;img src=&quot;/img/sf-arrest-map/ssi-crime-2.png&quot; alt=&quot;&quot;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Oh well, it was worth a shot.&lt;/p&gt;
-
-&lt;p&gt;As always, all the code and raw images are available &lt;a href=&quot;https://github.com/minimaxir/sf-arrests-when-where&quot;&gt;in the GitHub repository&lt;/a&gt;. Not many more questions were answered by looking at the location data of San Francisco crimes. But that&amp;rsquo;s OK. There&amp;rsquo;s certainly other cool things to do with this data. Kaggle, for instance, is creating &lt;a href=&quot;https://www.kaggle.com/c/sf-crime/scripts&quot;&gt;a repository of scripts&lt;/a&gt; which play around with the Crime Incident dataset.&lt;/p&gt;
-
-&lt;p&gt;But for now, at least I made a few pretty charts out of it.&lt;/p&gt;
-
-&lt;hr&gt;
-
-&lt;p&gt;&lt;em&gt;If you use the code or data visualization designs contained within this article, it would be greatly appreciated if proper attribution is given back to this article and/or myself. Thanks!&lt;/em&gt;&lt;/p&gt;
-</description>
-        <pubDate>Mon, 07 Dec 2015 08:00:00 -0800</pubDate>
-        <link>http://minimaxir.com/2015/12/sf-arrest-maps/</link>
-        <guid isPermaLink="true">http://minimaxir.com/2015/12/sf-arrest-maps/</guid>
-        
-        
-        <category>Data</category>
         
       </item>
     

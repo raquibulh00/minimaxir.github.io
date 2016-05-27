@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+
+  <!-- HEAD -->
+<head>
+<meta charset="utf-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>How to Create a Network Graph Visualization of Reddit Subreddits</title>
+<meta property="article:author" content="https://www.facebook.com/max.woolf" />
+<meta name="description" content="Network graphs are pretty data visualizations, and I like pretty data visualizations. Recently, Reddit user CuriousGnu posted a network graph of the comment ...">
+<link href="/rss.xml" rel="alternate" title="minimaxir | Max Woolf's Blog" type="application/atom+xml">
+<link rel="canonical" href="http://minimaxir.com/2016/05/reddit-graph/">
+
+<!-- Mobile Metas -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+ <meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@minimaxir">
+<meta name="twitter:creator" content="@minimaxir">
+
+  <meta name="twitter:title" content="How to Create a Network Graph Visualization of Reddit Subreddits">
+
+
+  <meta name="twitter:url" content="http://minimaxir.com/2016/05/reddit-graph/">
+
+
+  <meta name="twitter:description" content="There is very little discussion on how to gather the data for large-scale network graph visualizations, and how to make them. It is time to fix that.">
+
+
+  <meta name="twitter:image:src" content="http://minimaxir.com/img/group-08.png">
+
+ 
+ <meta content="minimaxir | Max Woolf's Blog" property="og:site_name">
+
+  <meta content="How to Create a Network Graph Visualization of Reddit Subreddits" property="og:title">
+
+
+  <meta content="article" property="og:type">
+
+
+  <meta content="There is very little discussion on how to gather the data for large-scale network graph visualizations, and how to make them. It is time to fix that." property="og:description">
+
+
+  <meta content="http://minimaxir.com/2016/05/reddit-graph/" property="og:url">
+
+
+
+  <meta content="http://minimaxir.com/img/group-08.png" property="og:image">
+
+
+  
+  <meta content="Visualization" property="article:section">
+  
+
+
+  
+
+
+
+      <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="white">
+    <meta name="apple-mobile-web-app-title" content="minimaxir">
+    <link rel="apple-touch-icon-precomposed" href="apple-touch-icon-precomposed.png">
+
+<link rel="apple-touch-icon" sizes="57x57" href="http://minimaxir.com/favicon/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="http://minimaxir.com/favicon/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="http://minimaxir.com/favicon/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="http://minimaxir.com/favicon/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="http://minimaxir.com/favicon/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="http://minimaxir.com/favicon/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="http://minimaxir.com/favicon/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="http://minimaxir.com/favicon/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="http://minimaxir.com/favicon/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192"  href="http://minimaxir.com/favicon/android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://minimaxir.com/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="http://minimaxir.com/favicon/favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="http://minimaxir.com/favicon/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="http://minimaxir.com/favicon/ms-icon-144x144.png">
+<meta name="theme-color" content="#ffffff">
+
+<!-- BEGIN GLOBAL MANDATORY STYLES -->
+  <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400,400italic,700' rel='stylesheet' type='text/css'>
+
+<link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+<link href="/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
+<link href="/css/minimaxir.css" rel="stylesheet" type="text/css"/>
+<!-- END GLOBAL MANDATORY STYLES -->
+
+<!-- BEGIN THEME STYLES -->
+<link href="/css/global.css" rel="stylesheet" type="text/css"/>
+<!-- END THEME STYLES -->
+
+<!-- BEGIN JQUERY -->
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<!-- END JQUERY -->
+
+
+  <script>
+   $(document).ready(function() {
+ 
+  // Facebook
+	$( ".social.facebook" ).children().each(function(index,value) {
+	var facebook_button = $(this);
+	var url = facebook_button.attr("data");
+
+  jQuery.getJSON("https://graph.facebook.com/?id="+url, function(data) {
+  if (typeof data.shares != 'undefined') facebook_button.html("<i class=\"fa fa-facebook\"></i><span class=\"count hidden-xs\"> " + data.shares + "</span>");
+  else if (typeof data.likes != 'undefined') facebook_button.html("<i class=\"fa fa-facebook\"></i><span class=\"count hidden-xs\"> " + data.likes + "</span>");
+  else facebook_button.html("<i class=\"fa fa-facebook\"></i><span class=\"count hidden-xs\"> " + " 0</span>");
+  });
+  });
+ 
+  // LinkedIn
+	$( ".social.linkedin" ).children().each(function(index,value) {
+	var linkedin_button = $(this);
+	var url = linkedin_button.attr("data");
+
+  jQuery.getJSON("http://www.linkedin.com/countserv/count/share?url="+url+"&format=jsonp&callback=?", function(data) {
+  linkedin_button.html("<i class=\"fa fa-linkedin\"></i><span class=\"count hidden-xs\"> " + data.count + "</span>");
+  });
+  });
+  });
+  </script>
+  
+</head>
+<!-- END HEAD -->
+  <!-- WRAPPER -->
+<div class="wrapper">
+    <!--========== HEADER TRANSPARENT ==========-->
+    <header class="header-transparent header-transparent-bb navbar-fixed-top header-sticky">
+        <!-- Navbar -->
+        <nav class="navbar mega-menu" role="navigation">
+            <div class="container">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="menu-container">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="toggle-icon"></span>
+                    </button>
+
+                    <!-- Navbar Actions -->
+                    <div class="navbar-actions">
+
+                    </div>
+                    <!-- End Navbar Actions -->
+
+                    <!-- Logo -->
+                    <div class="navbar-logo">
+                        <a class="navbar-logo-wrap" href="/">
+                            <img class="navbar-logo-img navbar-logo-img-white" src="/minimaxir-light.png" alt="minimaxir">
+                            <img class="navbar-logo-img navbar-logo-img-dark" src="/minimaxir-dark.png" alt="minimaxir">
+                        </a>
+                    </div>
+                    <!-- End Logo -->
+                </div>
+
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse nav-collapse">
+                    <div class="menu-container">
+                        <ul class="nav navbar-nav">
+                        
+<li class="nav-item">
+                                <a class="nav-item-child" href="/about">
+                                    About
+                                </a>
+                            </li>
+                                
+<li class="nav-item">
+                                <a class="nav-item-child" href="/portfolio">
+                                    Portfolio
+                                </a>
+                            </li>
+                        
+                        </ul>
+                    </div>
+                </div>
+                <!-- End Navbar Collapse -->
+            </div>
+            <!--// End Container-->
+        </nav>
+        <!-- Navbar -->
+    </header>
+    <!--========== END HEADER TRANSPARENT ==========-->
+    
+	    <!--========== BREADCRUMBS V5 ==========-->
+    
+    
+	
+	
+    
+    
+    
+    <section class="breadcrumbs-v5" style="background: url('/img/group-08.png') no-repeat center center; background-size: cover;">
+    
+        <div class="container">
+            <h1 class="breadcrumbs-v5-title">How to Create a Network Graph Visualization of Reddit Subreddits</h1>
+            <span class="breadcrumbs-v5-subtitle">May 27, 2016
+            
+    
+              <span class="sharing index" style="float: right">
+  
+		  <span class="social facebook"><a href="https://www.facebook.com/share.php?u=http://minimaxir.com/2016/05/reddit-graph/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data="http://minimaxir.com/2016/05/reddit-graph/"><i class="fa fa-facebook"></i><span class="count hidden-xs"> -</span></a></span>
+  
+		<span class="social twitter"><a href="http://twitter.com/home/?status=How to Create a Network Graph Visualization of Reddit Subreddits - http://minimaxir.com/2016/05/reddit-graph/ - via @minimaxir"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data=http://minimaxir.com/2016/05/reddit-graph/><i class="fa fa-twitter"></i><span class="count hidden-xs"></span></a> </span>
+
+  <span  class="social linkedin"><a href="http://www.linkedin.com/shareArticle?mini=true&title=&url=http://minimaxir.com/2016/05/reddit-graph/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=600');return false;" data=http://minimaxir.com/2016/05/reddit-graph/><i class="fa fa-linkedin"></i><span class="count hidden-xs"> -</span></a> </span>
+   
+			</span>
+            
+            </span>
+        </div>
+    </section>
+    
+    
+    <!--========== END BREADCRUMBS V5 ==========-->
+  
+  <!-- BEGIN BODY -->
+<body>
+
+  
+      <!--========== BACKGROUND COLOR SKY LIGHT ==========-->
+    <div class="bg-color-sky-light">
+
+        
+        <!--========== PAGE CONTENT ==========-->
+        <div class="content-sm container">
+        
+            
+			<div class="row">
+			<div class="col-md-12 md-margin-b-50">
+			<object data="/img/reddit-graph/subreddit-2.pdf" type="application/pdf" width="100%" height="400px"></object>
+
+<div class="heading-v1 text-center margin-b-40  margin-t-40">
+            <h3 class="heading-v1-title">Node size represents eigenvector centrality. Node color represents the group of the node.</h3>
+            <h3 class="heading-v1-title">Network is best-viewed on a desktop computer.</h3>
+</div>
+			</div>
+			</div>
+			
+		
+        
+            <div class="row">
+                <div class="col-md-9 md-margin-b-50">
+                    <!-- Blog Grid -->
+                    <article class="blog-grid margin-b-30">
+                        <!-- Image -->
+                        <!--<img class="img-responsive" src="/assets/img/1920x1080/20.jpg" alt="">-->
+                        <!-- End Image -->
+
+                        <!-- Blog Grid Content -->
+						<div class="blog-grid-content">
+						<p><a href="https://en.wikipedia.org/wiki/Graph_theory">Network graphs</a> are pretty data visualizations, and I like pretty data visualizations. Recently, <a href="https://www.reddit.com">Reddit</a> user CuriousGnu <a href="http://www.curiousgnu.com/reddit-comments">posted a network graph</a> of the comment patterns of the top 50 Reddit subreddits:</p>
+
+<p><img src="/img/reddit-graph/rd_comments_net_hd.png" alt=""></p>
+
+<p>The <a href="https://www.reddit.com/r/dataisbeautiful/comments/4fsrjd/oc_redditors_who_commented_in_rx_also_commented/">visualization</a> was made with <a href="https://gephi.org">Gephi</a>, a very popular free and open-source network graph tool.</p>
+
+<p><img src="/img/reddit-graph/gephi.png" alt=""></p>
+
+<p>Gephi is <em>extremely</em> difficult to use, and most blog posts  about the software are in the form of Step 1: Gephi, Step 2: ???, Step 3: Profit. Even if you know <em>do</em> how to use it, most of the network design customizations must be done manually, which is not helped by software slowness even on high-end machines. My own attempts to use Gephi for nice-looking networks have had <a href="https://www.reddit.com/r/dataisbeautiful/comments/3z60z6/network_of_reddit_commenting_patterns_for_the_top/">mixed</a> <a href="https://www.reddit.com/r/magicTCG/comments/401hdq/graph_network_of_magic_the_gathering_creature/">results</a>.</p>
+
+<p>Additionally, there is very little discussion on how to gather the data for large-scale network graph visualizations, and how to make them in a <em>reproducible</em> manner. It is time to fix that and create a Reddit network graph visualization with many more nodes, step by step.</p>
+
+<h2>Getting Reddit Edge Data</h2>
+
+<p>Network graphs are typically formed by getting the relationship data between two entities (the edges), then extrapolating the vertices of the graph (the nodes) from that data.</p>
+
+<p>There are two common data structures for representing edge data. One is an <a href="https://en.wikipedia.org/wiki/Adjacency_matrix">adjacency matrix</a>, which is a 2D matrix where the rows/columns represent the entities, and the value at the intersection between a row/column represents the <em>weight</em> of the relationships. For the visualization above, CuriousGnu made an adjacency matrix by querying the relationships from <a href="https://cloud.google.com/bigquery/">BigQuery</a> for each subreddit manually. That requires adding a line of SQL for <em>each</em> subreddit you want to plot, which is time-consuming and I am lazy.</p>
+
+<p>Let&rsquo;s try option #2: an <a href="https://reference.wolfram.com/language/ref/EdgeList.html">edge list</a>, which is a tabular dataset where each row contains the two entities and a weight. With clever use of BigQuery, we can query the edges for <em>every single subreddit</em> at the same time. And we can query on real-time Reddit data from approximately the past 6 months using Jason Baumgartner&rsquo;s <a href="https://pushshift.io/using-bigquery-with-reddit-data/">Reddit dataset</a> on BigQuery. </p>
+
+<p>The process works like this:</p>
+
+<ol>
+<li>Determine active users of a subreddit by identifying the subreddits where a user has <strong>commented</strong> on at least <strong>5 different submissions</strong> within the past 6 months.</li>
+<li>Perform a <a href="http://stackoverflow.com/questions/3362038/what-is-self-join-and-when-would-you-use-it">self-join</a> by joining the table on itself: this will create <strong>links</strong> between all subreddits where a given user is active. (e.g. an active user of /r/askreddit, /r/pics, and /r/gifs will form 9 links: askreddit → askreddit, askreddit → pics, askreddit → gifs, pics → askreddit, etc.)</li>
+<li>Aggregate the counts of the number of links between two subreddits; this will become the edge <strong>Weight</strong>.</li>
+<li>Filter the resulting dataset by removing self-loops and reverse-edges. (e.g. since we have askreddit → pics, remove pics → askreddit). Additionally, we should only retain edges with <strong>at least 200 active users</strong> to keep the resulting dataset a manageable size for this analysis.</li>
+</ol>
+
+<p>Putting it all together results in this query:</p>
+<div class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="k">SELECT</span> <span class="n">a</span><span class="p">.</span><span class="n">l_subreddit</span> <span class="k">as</span> <span class="k">Source</span><span class="p">,</span> <span class="n">b</span><span class="p">.</span><span class="n">l_subreddit</span> <span class="k">as</span> <span class="n">Target</span><span class="p">,</span> <span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">as</span> <span class="n">Weight</span>
+<span class="k">FROM</span> <span class="p">(</span>
+  <span class="k">SELECT</span> <span class="n">author</span><span class="p">,</span> <span class="k">LOWER</span><span class="p">(</span><span class="n">subreddit</span><span class="p">)</span> <span class="k">as</span> <span class="n">l_subreddit</span><span class="p">,</span> <span class="k">COUNT</span><span class="p">(</span><span class="k">DISTINCT</span><span class="p">(</span><span class="n">link_id</span><span class="p">))</span> <span class="k">as</span> <span class="n">unique_threads</span>
+  <span class="k">FROM</span> <span class="p">[</span><span class="n">pushshift</span><span class="p">:</span><span class="n">rt_reddit</span><span class="p">.</span><span class="n">comments</span><span class="p">]</span>
+  <span class="k">GROUP</span> <span class="k">BY</span> <span class="n">author</span><span class="p">,</span> <span class="n">l_subreddit</span>
+  <span class="k">HAVING</span> <span class="n">unique_threads</span> <span class="o">&gt;=</span> <span class="mi">5</span><span class="p">)</span> <span class="n">a</span> <span class="k">JOIN</span> <span class="p">(</span>
+  <span class="k">SELECT</span> <span class="n">author</span><span class="p">,</span> <span class="k">LOWER</span><span class="p">(</span><span class="n">subreddit</span><span class="p">)</span> <span class="k">as</span> <span class="n">l_subreddit</span><span class="p">,</span> <span class="k">COUNT</span><span class="p">(</span><span class="k">DISTINCT</span><span class="p">(</span><span class="n">link_id</span><span class="p">))</span> <span class="k">as</span> <span class="n">unique_threads</span>
+  <span class="k">FROM</span> <span class="p">[</span><span class="n">pushshift</span><span class="p">:</span><span class="n">rt_reddit</span><span class="p">.</span><span class="n">comments</span><span class="p">]</span>
+  <span class="k">GROUP</span> <span class="k">BY</span> <span class="n">author</span><span class="p">,</span> <span class="n">l_subreddit</span>
+  <span class="k">HAVING</span> <span class="n">unique_threads</span> <span class="o">&gt;=</span> <span class="mi">5</span><span class="p">)</span> <span class="n">b</span> <span class="k">ON</span> <span class="n">a</span><span class="p">.</span><span class="n">author</span> <span class="o">=</span> <span class="n">b</span><span class="p">.</span><span class="n">author</span>
+<span class="k">GROUP</span> <span class="k">BY</span> <span class="k">Source</span><span class="p">,</span> <span class="n">Target</span>
+<span class="k">HAVING</span> <span class="k">Source</span> <span class="o">&lt;</span> <span class="n">Target</span> <span class="k">AND</span> <span class="n">Weight</span> <span class="o">&gt;=</span> <span class="mi">200</span>
+<span class="k">ORDER</span> <span class="k">BY</span> <span class="n">Weight</span> <span class="k">DESC</span>
+</code></pre></div>
+<p>Only 13 lines of code, with 3 of those lines repeated. Running the query only takes a few minutes. (which is actually <em>forever</em> in BigQuery time: when people talk about &ldquo;big data,&rdquo; this is <em>actually big data</em>!)</p>
+
+<p>That query (at the time of analysis) returns <a href="https://docs.google.com/spreadsheets/d/1MFHno-sYR3MkWgntnieWobWQ2e3x4CAcNUdVIFjmlQI/edit?usp=sharing">this dataset</a> of 7,498 edges; more than enough. Now for the fun part.</p>
+
+<h2>Visualizing the Reddit Data</h2>
+
+<p>The edge list linked above can actually be imported into Gephi as-is. <strong>Don&rsquo;t</strong>.</p>
+
+<p>Instead, let&rsquo;s use R and my favorite data visualization tool <code>ggplot2</code>, with a twist.</p>
+
+<p>First, we load the edge list into R, and create an undirected network graph using the <code>igraph</code> package.</p>
+<div class="highlight"><pre><code class="language-r" data-lang="r">net <span class="o">&lt;-</span> graph.data.frame<span class="p">(</span>df<span class="p">,</span> directed<span class="o">=</span><span class="bp">F</span><span class="p">)</span>
+</code></pre></div>
+<p><img src="/img/reddit-graph/igraph.png" alt=""></p>
+
+<p>The imported edge list results in a network with 1,131 nodes/subreddits. After pruning nodes with only a few neighbors and removing the subsequently-orphaned edges, we get a network of 517 nodes/subreddits with 6,732 edges.</p>
+
+<p>We can then add summary statistics for the nodes, such as the group/community each node belongs to, and the <a href="https://en.wikipedia.org/wiki/Centrality">eigenvector centrality</a> of the node.</p>
+<div class="highlight"><pre><code class="language-r" data-lang="r">V<span class="p">(</span>net<span class="p">)</span><span class="o">$</span>group <span class="o">&lt;-</span> membership<span class="p">(</span>cluster_walktrap<span class="p">(</span>net<span class="p">,</span> weights<span class="o">=</span>E<span class="p">(</span>net<span class="p">)</span><span class="o">$</span>Weight<span class="p">))</span>
+V<span class="p">(</span>net<span class="p">)</span><span class="o">$</span>centrality <span class="o">&lt;-</span> eigen_centrality<span class="p">(</span>net<span class="p">,</span> weights<span class="o">=</span>E<span class="p">(</span>net<span class="p">)</span><span class="o">$</span>Weight<span class="p">)</span><span class="o">$</span><span class="kt">vector</span>
+</code></pre></div>
+<p>Convert the network to a dataframe suitable for plotting using the <code>ggnetwork</code> library.</p>
+<div class="highlight"><pre><code class="language-r" data-lang="r">df_net <span class="o">&lt;-</span> ggnetwork<span class="p">(</span>net<span class="p">,</span> layout <span class="o">=</span> <span class="s">&quot;fruchtermanreingold&quot;</span><span class="p">,</span> weights<span class="o">=</span><span class="s">&quot;Weight&quot;</span><span class="p">,</span> niter<span class="o">=</span><span class="m">50000</span><span class="p">)</span>
+</code></pre></div>
+<p>Now time for ggplot2/ggnetwork fun. In this case, we will color the nodes whether or not they are a default subreddit (orange if default, blue otherwise) and color the lines accordingly (orange if either end is a default subreddit, blue otherwise).</p>
+
+<p>Yes, writing and optimizing all of this code is <em>significantly</em> easier than using Gephi, believe it or not.</p>
+<div class="highlight"><pre><code class="language-r" data-lang="r">default_colors<span class="o">=</span><span class="kt">c</span><span class="p">(</span><span class="s">&quot;#3498db&quot;</span><span class="p">,</span> <span class="s">&quot;#e67e22&quot;</span><span class="p">)</span>
+default_labels<span class="o">=</span><span class="kt">c</span><span class="p">(</span><span class="s">&quot;Not Default&quot;</span><span class="p">,</span> <span class="s">&quot;Default&quot;</span><span class="p">)</span>
+
+ggplot<span class="p">(</span>df_net<span class="p">,</span> aes<span class="p">(</span>x <span class="o">=</span> x<span class="p">,</span> y <span class="o">=</span> y<span class="p">,</span> xend <span class="o">=</span> xend<span class="p">,</span> yend <span class="o">=</span> yend<span class="p">,</span> size <span class="o">=</span> centrality<span class="p">))</span> <span class="o">+</span>
+    geom_edges<span class="p">(</span>aes<span class="p">(</span>color <span class="o">=</span> connectDefault<span class="p">),</span> size<span class="o">=</span><span class="m">0.05</span><span class="p">)</span> <span class="o">+</span>
+    geom_nodes<span class="p">(</span>aes<span class="p">(</span>fill <span class="o">=</span> defaultnode<span class="p">),</span> shape <span class="o">=</span> <span class="m">21</span><span class="p">,</span> stroke<span class="o">=</span><span class="m">0.2</span><span class="p">,</span> color<span class="o">=</span><span class="s">&quot;black&quot;</span><span class="p">)</span> <span class="o">+</span>
+    geom_nodelabel_repel<span class="p">(</span>data<span class="o">=</span>df_net<span class="p">,</span> aes<span class="p">(</span>color <span class="o">=</span> defaultnode<span class="p">,</span> label <span class="o">=</span> vertex.names<span class="p">),</span>
+                          fontface <span class="o">=</span> <span class="s">&quot;bold&quot;</span><span class="p">,</span> size<span class="o">=</span><span class="m">0.5</span><span class="p">,</span> box.padding <span class="o">=</span> unit<span class="p">(</span><span class="m">0.05</span><span class="p">,</span> <span class="s">&quot;lines&quot;</span><span class="p">),</span>
+                          label.padding<span class="o">=</span> unit<span class="p">(</span><span class="m">0.1</span><span class="p">,</span> <span class="s">&quot;lines&quot;</span><span class="p">),</span> segment.size<span class="o">=</span><span class="m">0.1</span><span class="p">,</span> label.size<span class="o">=</span><span class="m">0.2</span><span class="p">)</span> <span class="o">+</span>
+    scale_color_manual<span class="p">(</span>values<span class="o">=</span>default_colors<span class="p">,</span> labels<span class="o">=</span>default_labels<span class="p">,</span> guide<span class="o">=</span><span class="bp">F</span><span class="p">)</span> <span class="o">+</span>
+    scale_fill_manual<span class="p">(</span>values<span class="o">=</span>default_colors<span class="p">,</span> labels<span class="o">=</span>default_labels<span class="p">)</span> <span class="o">+</span>
+    ggtitle<span class="p">(</span><span class="s">&quot;Network Graph of Reddit Subreddits (by @minimaxir)&quot;</span><span class="p">)</span> <span class="o">+</span>
+    scale_size<span class="p">(</span>range<span class="o">=</span><span class="kt">c</span><span class="p">(</span><span class="m">0.1</span><span class="p">,</span> <span class="m">4</span><span class="p">))</span> <span class="o">+</span> 
+    theme_blank<span class="p">()</span>
+</code></pre></div>
+<p><object data="/img/reddit-graph/subreddit-1.pdf" type="application/pdf" width="100%" height="400px"></object></p>
+
+<p><span class="hidden-lg"><em>If you are on a smartphone or tablet, tap <a href="/img/reddit-graph/subreddit-1.pdf" target="_blank">this link</a> to view the network in a zoomable format.</em></span></p>
+
+<p>The large networks in the blog post are rendered as a PDF, which allows for easy pan/zooming at a very low file size (284KB!), while SVG/<a href="https://d3js.org">d3</a>/<a href="http://sigmajs.org">sigma.js</a> approaches have very poor performance at large numbers of nodes/edges.</p>
+
+<p>As we expect, the default subreddits are in the center of the network graph and have high centrality (although /r/art and /r/earthporn are oddly far separated from the other defaults). The large amounts of orange graph-wide illustrate the breadth of the defaults.</p>
+
+<p>Now let&rsquo;s color the nodes and edges by group, just as you saw in the introductory visualization:</p>
+
+<p><object data="/img/reddit-graph/subreddit-2.pdf" type="application/pdf" width="100%" height="400px"></object></p>
+
+<p><span class="hidden-lg"><em>If you are on a smartphone or tablet, tap <a href="/img/reddit-graph/subreddit-2.pdf" target="_blank">this link</a> to view the network in a zoomable format.</em></span></p>
+
+<p>If an edge links to a node of the same group, the edge is colored that group. Otherwise, the edge is colored gray. (the code that implements this is not shown because it is somewhat convoluted). This color scheme helps gauge the overall impact of the communities on Reddit. But why not look at specific groups?</p>
+
+<h2>Subgraph Surprises</h2>
+
+<p>As you can see plainly in the group-colored visualization, there is a giant green group at the center which includes the default subreddits. Analyzing that is not helpful. But we can filter the network on other specific groups and their subgraphs to see if we can define any Reddit subcultures. (note that the Group number is merely an ID; the value and order are not relevant).</p>
+
+<p>The most notable Reddit groups are gaming groups. We have two distinct groups of gamers:</p>
+
+<p><img src="/img/reddit-graph/group-006.png" alt=""></p>
+
+<p><img src="/img/reddit-graph/group-008.png" alt=""></p>
+
+<p>Plus Nintendo gamers? With a little Vita on the side?</p>
+
+<p><img src="/img/reddit-graph/group-010.png" alt=""></p>
+
+<p>Subreddits related to sports and sporting teams form a nice cluster:</p>
+
+<p><img src="/img/reddit-graph/group-001.png" alt=""></p>
+
+<p>PC-building has a distinct community:</p>
+
+<p><img src="/img/reddit-graph/group-011.png" alt=""></p>
+
+<p>The British make nice triangles!</p>
+
+<p><img src="/img/reddit-graph/group-022.png" alt=""></p>
+
+<p>Relationship and female-oriented subreddits have a relationship. </p>
+
+<p><img src="/img/reddit-graph/group-007.png" alt=""></p>
+
+<p>Lastly, DC Comics has their own sector, particularly with the corresponding CW television shows. (although some Marvel shows sneak in!)</p>
+
+<p><img src="/img/reddit-graph/group-003.png" alt=""></p>
+
+<p>Of course, Reddit itself has better data for identifying relationships between subreddits, as they can track user activity more intimately. Meanwhile, the output for this post turned out better than expected and I hope to include similar visualizations in future blog posts. Hopefully, it dispelled some of the mystery behind pretty network graphs. (if you do use the code or data visualization designs from this post, it would be greatly appreciated if proper attribution is given back to this post and/or myself. Thanks!).</p>
+
+<hr>
+
+<p><em>As always, the full code used to process the edge list and generate the visualizations is available in <a href="https://github.com/minimaxir/reddit-graph/blob/master/subreddit_network_pdf.ipynb">this Jupyter notebook</a>, open-sourced <a href="https://github.com/minimaxir/reddit-graph">on GitHub</a>.</em></p>
+
+<p><em>Additionally, thanks to Professor James P. Curley of Columbia University for providing <a href="http://curleylab.psych.columbia.edu/netviz/netviz1.html#/">helpful slides</a> which have good code samples for getting started with igraph/ggnetwork.</em></p>
+
+						
+            			 <div class="breadcrumbs-v5-subtitle sharing-post" style="color: #999 !important; padding-top:10px; border-top: 1px solid #eee">Share this article!
+
+
+              <span class="sharing index" style="float: right; color: #999 !important;">
+  
+		  <span class="social facebook"><a href="https://www.facebook.com/share.php?u=http://minimaxir.com/2016/05/reddit-graph/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data="http://minimaxir.com/2016/05/reddit-graph/"><i class="fa fa-facebook"></i><span class="count hidden-xs"> -</span></a></span>
+  
+		<span class="social twitter"><a href="http://twitter.com/home/?status=How to Create a Network Graph Visualization of Reddit Subreddits - http://minimaxir.com/2016/05/reddit-graph/ - via @minimaxir"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data=http://minimaxir.com/2016/05/reddit-graph/><i class="fa fa-twitter"></i><span class="count hidden-xs"></span></a> </span>
+
+  <span  class="social linkedin"><a href="http://www.linkedin.com/shareArticle?mini=true&title=&url=http://minimaxir.com/2016/05/reddit-graph/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=600');return false;" data=http://minimaxir.com/2016/05/reddit-graph/><i class="fa fa-linkedin"></i><span class="count hidden-xs"> -</span></a> </span>
+
+   </span>
+   </div>
+						</div>
+                        <!-- End Blog Grid Content -->
+                        
+                        
+                        
+                    </article>
+                    <!-- End Blog Grid -->
+
+ 					
+
+                    <!-- Blog Comment -->
+                    <div class="bg-color-white margin-b-30">
+                        <div class="blog-single-post-content">
+
+						
+
+<script type="text/javascript">
+      var disqus_shortname = 'minimaxir';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://minimaxir.com/2016/05/reddit-graph/';
+        var disqus_url = 'http://minimaxir.com/2016/05/reddit-graph/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+<div id="disqus_thread"></div>
+
+
+
+                        </div>
+                    </div>
+                    <!-- End Blog Comment -->
+                    
+                    
+                </div>
+
+			                <!--========== BLOG SIDEBAR ==========-->
+                <div class="col-md-3">
+                
+                
+                
+                    <!-- Blog Author -->
+                    <div class="blog-sidebar margin-b-30">
+                        <div class="blog-sidebar-heading">
+                            <h4 class="blog-sidebar-heading-title">Author</h4>
+                        </div>
+                        
+                        <img src="/MaxFB.jpg" title="Stop mousing over me! I'm not a XKCD comic!" class="img-responsive hidden-xs hidden-sm"></img>
+                        
+                        <div class="blog-sidebar-content">
+                            <!-- Blog Author Bio -->
+							
+							<p><strong>Max Woolf (@minimaxir)</strong> is a Software QA Engineer living and working in the San Francisco Bay Area for over 3 years and a 2012 Carnegie Mellon University graduate in Business Administration.</p>
+
+<p>In his spare time, Max uses <a href="https://www.python.org/">Python</a> to gather data from public APIs and <a href="http://ggplot2.org/">ggplot2</a> to make pretty charts from that data.</p>
+
+<p>You can learn more about Max <a href="/about">here</a>, or view his portfolio <a href="/portfolio">here</a>. </p>
+
+  
+    <ul class="list-inline" style="padding-top:10px; margin-top: 20px; border-top: 1px solid #ebeef6">
+                        <li class="theme-icons-wrap"><a title="Facebook" href="https://facebook.com/max.woolf" target="_blank"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-facebook"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="Twitter" href="https://twitter.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-twitter"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="LinkedIn" href="https://linkedin.com/in/minimaxir" target="_blank"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-linkedin"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="GitHub" href="https://github.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-github"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="YouTube" href="https://youtube.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-youtube"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="E-Mail" href="mailto:max@minimaxir.com"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-envelope"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="RSS" href="/rss.xml"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-rss"></i></a></li>
+                    </ul>
+                            <!-- End Blog Author Bio -->
+                        </div>
+                    </div>
+                    <!-- End Blog Author -->
+                    
+                     <!-- Blog Recent Posts -->
+                    <div class="blog-sidebar margin-b-30">
+                        <div class="blog-sidebar-heading">
+                            <h4 class="blog-sidebar-heading-title">Recent Posts</h4>
+                        </div>
+                        <div class="blog-sidebar-content" style="position: relative; overflow: visible;">
+                        
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="/2016/05/reddit-graph/">How to Create a Network Graph Visualization of Reddit Subreddits</a></h5>
+                                    <small class="latest-tuts-content-time"> May 27, 2016</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="/2016/05/wordclouds/">Creating Stylish, High-Quality Word Clouds Using Python and Font Awesome Icons</a></h5>
+                                    <small class="latest-tuts-content-time"> May 9, 2016</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="/2016/04/movie-gender/">Blockbuster Movies with Male Leads Earn More Than Those with Female Leads</a></h5>
+                                    <small class="latest-tuts-content-time"> Apr 13, 2016</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="/2016/04/trust-but-verify/">The Importance of Sanity-Checking Datasets Before Analysis</a></h5>
+                                    <small class="latest-tuts-content-time"> Apr 6, 2016</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="/2016/03/gif-unlimited/">Unlimited Data Storage Using Image Steganography and Cat GIFs</a></h5>
+                                    <small class="latest-tuts-content-time"> Mar 29, 2016</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="/2016/02/facebook-reactions/">Facebook Reactions and the Problems With Quantifying Likes Differently</a></h5>
+                                    <small class="latest-tuts-content-time"> Feb 29, 2016</small>
+                                </div>
+                        </article>
+                                                
+                    </div>
+                    <!-- End Blog Recent Posts -->
+                    </div>
+                    
+                    <!-- GitHub Top Repositories -->
+                    <div class="blog-sidebar margin-b-30">
+                        <div class="blog-sidebar-heading">
+                            <h4 class="blog-sidebar-heading-title">Top GitHub Repositories</h4>
+                        </div>
+                        <div class="blog-sidebar-content" style="position: relative; overflow: visible;">
+                        
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/big-list-of-naughty-strings" target="_blank">Big List of Naughty Strings</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 11,186+</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/copy-syntax-highlight-osx" target="_blank">Copy Syntax Highlight for OS X</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 319+</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/video-to-gif-osx" target="_blank">Convert Video to GIF on OS X</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 207+</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/facebook-page-post-scraper" target="_blank">Facebook Page Post Scraper</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 96+</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/reddit-bigquery" target="_blank">Reddit Data with BigQuery Notebook</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 58+</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/get-all-hacker-news-submissions-comments" target="_blank">Get All Hacker News Submissions & Comments</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 47+</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/frames-to-gif-osx" target="_blank">Convert Frames to GIF on OS X</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 15+</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/nyc-taxi-notebook" target="_blank">NYC Yellow Taxi Visualization Notebook</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 13+</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/sf-arrests-when-where" target="_blank">Analyzing When and Where San Francisco Criminal Arrests Occur</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 10+</small>
+                                </div>
+                        </article>
+                                                
+                    </div>
+                    
+                    <!-- End GitHub Top Repositories -->
+                    
+                    
+                    
+                </div>
+                <!--========== END BLOG SIDEBAR ==========-->
+            
+			</div>
+            <!--// end row -->
+        </div>
+        <!--========== END PAGE CONTENT ==========-->
+
+    </div>
+    <!--========== END BACKGROUND COLOR SKY LIGHT ==========-->
+    
+
+
+
+  
+      <!--========== FOOTER V8 ==========-->
+    <footer id="footer" class="footer-v8">
+        <div class="content-sm container">
+            <div class="row">
+                <!-- Logo -->
+                <div class="col-md-6">
+                    
+                    <p>You can contact through any of the following channels, although e-mail is preferred. Following me on Facebook and Twitter certainly doesn't hurt either!</p>
+                     <!-- <h2 class="footer-v8-title">Follow Me</h2> -->
+                    <!-- Theme Icons White Background -->
+                   <!-- <ul class="list-inline ul-li-lr-0">
+                        <li class="theme-icons-wrap"><a title="Facebook" href="https://facebook.com/max.woolf" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-facebook"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="Twitter" href="https://twitter.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-twitter"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="LinkedIn" href="https://linkedin.com/in/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-linkedin"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="GitHub" href="https://github.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-github"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="YouTube" href="https://youtube.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-youtube"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="E-Mail" href="mailto:max@minimaxir.com"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-envelope"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="RSS" href="/rss.xml"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-rss"></i></a></li> -->
+                    <!-- End Theme Icons White Background -->
+                </div>
+                <!-- End Logo -->
+
+                <!-- Contact Info -->
+                <div class="col-md-6">
+                    <h3 class="footer-v8-title">Contact Info</h3>
+                    <div class="footer-v8-contact-info-bg">
+                        <ul class="list-unstyled footer-v8-contact-info">
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-map-marker"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <p class="footer-v8-contact-info-text">SOMA, San Francisco, CA</p>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-facebook"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="Facebook" href="https://facebook.com/max.woolf" target="_blank">max.woolf</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-twitter"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="Twitter" href="https://twitter.com/minimaxir" target="_blank"">@minimaxir</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-linkedin"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="LinkedIn" href="https://linkedin.com/in/minimaxir" target="_blank"">minimaxir</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-envelope"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="E-Mail" href="mailto:max@minimaxir.com">max@minimaxir.com</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- End Contact Info -->
+
+            </div>
+            <!--// end row -->
+        </div>
+
+        <!-- Copyright -->
+        <div class="footer-v8-copyright">
+            <div class="container text-center">
+				Copyright &#169; 2016 Max Woolf. All Rights Reserved. 
+                minimaxir.com is powered by Jekyll and GitHub Pages.
+            </div>
+        </div>
+        <!-- Copyright -->
+    </footer>
+    <!--========== END FOOTER V8 ==========-->
+</div>
+<!-- END WRAPPER -->
+
+<!-- Sidebar Content Overlay -->
+<div class="sidebar-content-overlay"></div>
+<!-- End Sidebar Content Overlay -->
+
+<!-- Back To Top -->
+<a href="javascript:void(0);" class="js-back-to-top back-to-top-theme"></a>
+<!-- End Back To Top -->
+
+<!--========== JAVASCRIPTS(Load javascripts at bottom, this will reduce page load time) ==========-->
+<!-- BEGIN CORE PLUGINS -->
+<!--[if lt IE 9]>
+<script src="/assets/plugins/html5shiv.js"></script>
+<script src="/assets/plugins/respond.min.js"></script>
+<![endif]-->
+<script type="text/javascript" src="/js/jquery.migrate.min.js"></script>
+<script type="text/javascript" src="/js/bootstrap.min.js"></script>
+<!-- END CORE PLUGINS -->
+
+<!-- BEGIN PAGE LEVEL PLUGINS -->
+<script type="text/javascript" src="/js/jquery.back-to-top.js"></script>
+<!-- END PAGE LEVEL PLUGINS -->
+
+<!-- BEGIN PAGE LEVEL SCRIPTS -->
+<script type="text/javascript" src="/js/app.min.js"></script>
+<script type="text/javascript" src="/js/header-sticky.js"></script>
+<!-- END PAGE LEVEL SCRIPTS -->
+<!--========== END JAVASCRIPTS ==========-->
+  
+</body>
+<!-- END BODY -->
+
+</html>
