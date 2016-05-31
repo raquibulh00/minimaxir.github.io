@@ -94,7 +94,6 @@
 <script type="text/javascript" src="/js/jquery.min.js"></script>
 <!-- END JQUERY -->
 
-
   <script>
    $(document).ready(function() {
  
@@ -199,7 +198,7 @@
         <div class="container">
             <div class="row hero-index">
             <div class="col-sm-6 sm-margin-b-30 hidden-xs">
-                <img src="/MaxFBInvert.png" title="Stop mousing over me! I'm not a XKCD comic!" class="img-responsive" style="border-radius: 30px"></img>
+                <img src="/MaxFBInvert.png" title="Stop mousing over me! I'm not a XKCD comic!" class="img-responsive" style="border-radius: 30px; margin: 0 auto; max-height: 400px"></img>
             </div>
             <div class="col-sm-6 col-xs-12">
 
@@ -247,7 +246,35 @@
             
             
             
-			                <div class="col-md-4 md-margin-b-30">
+			                <div class="col-md-6 md-margin-b-30">
+                    <!-- Blog Classic -->
+                    <article class="blog-classic">
+                        <img class="img-responsive" src="/img/sf-arrest-when-2.png" alt="">
+                        <div class="blog-classic-body">
+                        	
+                            <h2 class="blog-classic-title">Analyzing San Francisco Crime Data to Determine When Arrests Frequently Occur</h2>
+                            <span class="blog-classic-subtitle">Spoilers: Most arrests in San Francisco happen Wednesdays at 4-5 PM. For some reason.</span>
+                            <p class="blog-classic-paragraph">Dec 4, 2015</p>
+                        </div>
+                        <div class="blog-classic-overlay">
+                            <div class="blog-classic-hover">
+                                <img class="blog-classic-hover-img" src="/img/sf-arrest-when-2.png" alt="">
+                            </div>
+                            <div class="blog-classic-overlay-body">
+                                <h2 class="blog-classic-title">Analyzing San Francisco Crime Data to Determine When Arrests Frequently Occur</h2>
+                                <span class="blog-classic-subtitle">Spoilers: Most arrests in San Francisco happen Wednesdays at 4-5 PM. For some reason.</span>
+                                <a class="blog-classic-paragraph" href="/2015/12/sf-arrests/">Dec 4, 2015</a>
+                            </div>
+                        </div>
+                        <a href="/2015/12/sf-arrests/" class="blog-classic-link"></a>
+                    </article>
+                    <!-- End Blog Classic -->
+                </div>
+                
+                
+            
+            
+			                <div class="col-md-6 md-margin-b-30">
                     <!-- Blog Classic -->
                     <article class="blog-classic">
                         <img class="img-responsive" src="/img/nyc-taxi-6.png" alt="">
@@ -274,8 +301,15 @@
                 
                 
             
+
+            <!--// end row -->
+            </div>       
+        
+            <div class="row margin-b-30">
             
-			                <div class="col-md-4 md-margin-b-30">
+            
+            
+			                <div class="col-md-6 md-margin-b-30">
                     <!-- Blog Classic -->
                     <article class="blog-classic">
                         <img class="img-responsive" src="/img/mean-010-politics.png" alt="">
@@ -300,10 +334,10 @@
                     <!-- End Blog Classic -->
                 </div>
                 
-                
+			
             
             
-			                <div class="col-md-4 md-margin-b-30">
+			                <div class="col-md-6 md-margin-b-30">
                     <!-- Blog Classic -->
                     <article class="blog-classic">
                         <img class="img-responsive" src="/img/reddit-bigquery-3.png" alt="">
@@ -328,17 +362,18 @@
                     <!-- End Blog Classic -->
                 </div>
                 
-                
+			
             
 
             <!--// end row -->
-            </div>       
+
+        </div>
         
-            <div class="row margin-b-30">
+                    <div class="row margin-b-30">
             
             
             
-			                <div class="col-md-4 md-margin-b-30">
+			                <div class="col-md-6 md-margin-b-30">
                     <!-- Blog Classic -->
                     <article class="blog-classic">
                         <img class="img-responsive" src="/img/bi_one.png" alt="">
@@ -366,7 +401,7 @@
 			
             
             
-			                <div class="col-md-4 md-margin-b-30">
+			                <div class="col-md-6 md-margin-b-30">
                     <!-- Blog Classic -->
                     <article class="blog-classic">
                         <img class="img-responsive" src="/img/code_3.png" alt="">
@@ -387,34 +422,6 @@
                             </div>
                         </div>
                         <a href="/2015/09/code-of-plagiarism/" class="blog-classic-link"></a>
-                    </article>
-                    <!-- End Blog Classic -->
-                </div>
-                
-			
-            
-            
-			                <div class="col-md-4 md-margin-b-30">
-                    <!-- Blog Classic -->
-                    <article class="blog-classic">
-                        <img class="img-responsive" src="/img/service.png" alt="">
-                        <div class="blog-classic-body">
-                        	
-                            <h2 class="blog-classic-title">Making a Video-to-GIF Right-Click Menu Item in OS X</h2>
-                            <span class="blog-classic-subtitle">The terminal commands for making GIFs are very generic. What if I could easily automate these steps for any video on my Mac?</span>
-                            <p class="blog-classic-paragraph">Aug 13, 2015</p>
-                        </div>
-                        <div class="blog-classic-overlay">
-                            <div class="blog-classic-hover">
-                                <img class="blog-classic-hover-img" src="/img/service.png" alt="">
-                            </div>
-                            <div class="blog-classic-overlay-body">
-                                <h2 class="blog-classic-title">Making a Video-to-GIF Right-Click Menu Item in OS X</h2>
-                                <span class="blog-classic-subtitle">The terminal commands for making GIFs are very generic. What if I could easily automate these steps for any video on my Mac?</span>
-                                <a class="blog-classic-paragraph" href="/2015/08/gif-to-video-osx/">Aug 13, 2015</a>
-                            </div>
-                        </div>
-                        <a href="/2015/08/gif-to-video-osx/" class="blog-classic-link"></a>
                     </article>
                     <!-- End Blog Classic -->
                 </div>
@@ -546,6 +553,8 @@
 <script type="text/javascript" src="/js/app.min.js"></script>
 <script type="text/javascript" src="/js/header-sticky.js"></script>
 <!-- END PAGE LEVEL SCRIPTS -->
+
+
 <!--========== END JAVASCRIPTS ==========-->
   
 </body>

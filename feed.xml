@@ -5,9 +5,57 @@
     <description>A blog by Max Woolf about startups, technology, and blogging. It&#39;s so meta, even this acronym.</description>
     <link>http://minimaxir.com/</link>
     <atom:link href="http://minimaxir.com/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Fri, 27 May 2016 08:02:26 -0700</pubDate>
-    <lastBuildDate>Fri, 27 May 2016 08:02:26 -0700</lastBuildDate>
+    <pubDate>Tue, 31 May 2016 07:44:47 -0700</pubDate>
+    <lastBuildDate>Tue, 31 May 2016 07:44:47 -0700</lastBuildDate>
     <generator>Jekyll v3.1.2</generator>
+    
+      <item>
+        <title>Interactive Salary/Equity Chart for Jobs Offered in the San Francisco Bay Area</title>
+        <description>&lt;p&gt;There has been a lot of talk about the high salaries paid to engineers in Silicon Valley and the San Francisco Bay Area. Why not take a quick look at the amount of money being offered to prospective employees?&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://angel.co&quot;&gt;AngelList&lt;/a&gt; is a social network for startups and startup employees to network professionally. There is &lt;a href=&quot;https://angel.co/jobs&quot;&gt;also a section&lt;/a&gt; where startups can &lt;a href=&quot;https://angel.co/david-174/jobs/72943-engineer&quot;&gt;make job postings&lt;/a&gt;:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/sfba-compensation/senior.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;Unusually for job sites, AngelList requires posting compensation information for jobs, with a range of offered salary and equity for the position. (Note: due to their cash-strapped nature, early-stage startups may underpay candidates relative to market/experience).&lt;/p&gt;
+
+&lt;p&gt;Using the &lt;a href=&quot;https://angel.co/api&quot;&gt;AngelList API&lt;/a&gt;, I scraped all publicly-available full-time jobs located in the San Francisco Bay Area. I retrieved 5,941 jobs total, with half of those for Engineer/Developer positions.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s plot Salary vs. Equity to get a 2D range of the different types compensation (by inferring a coordinate by taking the midpoint of each offered range; e.g. for an $80k—$125k salary offer, we plot Y=$102.5k). We can also control on Engineers vs. Non-Engineers since those salaries will likely be different in distribution.&lt;/p&gt;
+
+&lt;p&gt;Putting it all together:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/sfba-compensation/engineer-sfba-1.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;This is the same chart as the interactive one at the beginning of the article; if you haven&amp;rsquo;t, navigate around that chart, particularly looking at the  changes in job titles as you move upward with increasing salary/equity for a given facet.&lt;/p&gt;
+
+&lt;p&gt;A few quick observations:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;The black horizontal lines represent the &lt;strong&gt;median salary&lt;/strong&gt; offered for each facet. For Engineers, the median salary offered is &lt;strong&gt;$115k&lt;/strong&gt;, and for Non-Engineers, the median salary offered is &lt;strong&gt;$90k&lt;/strong&gt;. (as mentioned before, early-stage startups pay lower and are more prominent on AngelList, so these results may be affected by selection bias).&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Median equity&lt;/strong&gt;, on the other hand, is negligible and not worth plotting (&lt;strong&gt;0.10%&lt;/strong&gt; for Engineers, &lt;strong&gt;0.02%&lt;/strong&gt; for Non-Engineers).&lt;/li&gt;
+&lt;li&gt;Speaking of equity, startups do not give much, with the distribution topping out at about 1.0% in both cases. (Engineers appear to get a little more equity, though).&lt;/li&gt;
+&lt;li&gt;However, for serious roles, 7.5% equity (from offering 0%—15% or 5%—10%) is a figure that appears relatively often.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr&gt;
+
+&lt;p&gt;&lt;em&gt;As always, the code used to create the visualizations is available in &lt;a href=&quot;https://github.com/minimaxir/sfba-compensation/blob/master/angelist_sfbayarea_jobs.ipynb&quot;&gt;this Jupyter notebook&lt;/a&gt;, and the code used to scrape the AngelList data is open-sourced &lt;a href=&quot;https://github.com/minimaxir/sfba-compensation&quot;&gt;on GitHub&lt;/a&gt;. This post is my first test of using &lt;a href=&quot;https://plot.ly&quot;&gt;plot.ly&lt;/a&gt; to &lt;a href=&quot;http://moderndata.plot.ly/ggplot2-docs-completely-remade-in-d3-js/&quot;&gt;automatically convert ggplot2 plots&lt;/a&gt; into fully-interactive &lt;a href=&quot;https://d3js.org&quot;&gt;D3.js&lt;/a&gt; charts. The results were better than I expected (aside from the font-size issues specific to faceting), so expect to see more interactive charts in my future posts!&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;If you do find any other interesting trends in the chart and write about it, it would be greatly appreciated if proper attribution is given back to this post and/or myself. Thanks!&lt;/em&gt;&lt;/p&gt;
+</description>
+        <pubDate>Tue, 31 May 2016 08:00:00 -0700</pubDate>
+        <link>http://minimaxir.com/2016/05/sfba-compensation/</link>
+        <guid isPermaLink="true">http://minimaxir.com/2016/05/sfba-compensation/</guid>
+        
+        
+        <category>Visualization</category>
+        
+        <category>Data</category>
+        
+        <category>Interactive</category>
+        
+      </item>
     
       <item>
         <title>How to Create a Network Graph Visualization of Reddit Subreddits</title>
@@ -943,199 +991,6 @@ df_dedup &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; df &lt;span clas
         <pubDate>Thu, 07 Jan 2016 08:30:00 -0800</pubDate>
         <link>http://minimaxir.com/2016/01/movie-revenue-ratings/</link>
         <guid isPermaLink="true">http://minimaxir.com/2016/01/movie-revenue-ratings/</guid>
-        
-        
-        <category>Code</category>
-        
-        <category>Video</category>
-        
-      </item>
-    
-      <item>
-        <title>Let&#39;s Code an Analysis and Visualizations of Yelp Data using R and ggplot2</title>
-        <description>&lt;p&gt;One of the reasons I have open-sourced the code for my complicated data visualizations is transparency for the creation process. 2015 was a &lt;a href=&quot;http://qz.com/580859/the-most-misleading-charts-of-2015-fixed/&quot;&gt;year of misleading and incorrect data visualizations&lt;/a&gt;, and I don&amp;rsquo;t want to help contribute to the misconception that data can be used for trickery. &amp;ldquo;Big data&amp;rdquo; in particular is a area where the steps to reproduce results are rarely released publicly in a step-by-step manner, often in an attempt to make the resulting analysis unimpeachable.&lt;/p&gt;
-
-&lt;p&gt;It&amp;rsquo;s time to take things to the next level of transparency by recording &lt;a href=&quot;https://en.wikipedia.org/wiki/Screencast&quot;&gt;screencasts&lt;/a&gt; of my data analysis and visualizations.&lt;/p&gt;
-
-&lt;p&gt;Last week, ggplot2 author Hadley Wickham released &lt;a href=&quot;http://blog.rstudio.org/2015/12/21/ggplot2-2-0-0/&quot;&gt;a surprise update&lt;/a&gt; for my favorite R package, bumping the version to 2.0.0. Why not celebrate by playing around with ggplot2 and making some pretty charts?&lt;/p&gt;
-
-&lt;h2&gt;Let&amp;rsquo;s Code!&lt;/h2&gt;
-
-&lt;p&gt;I have recorded a screencast of myself coding in R to play around with data from &lt;a href=&quot;http://www.yelp.com/dataset_challenge&quot;&gt;Yelp Dataset Challenge&lt;/a&gt; and &lt;a href=&quot;https://www.youtube.com/watch?v=Emt9bn0D5ZI&quot;&gt;uploaded it to YouTube&lt;/a&gt;. Additionally, the video can be played at an unusually high quality for screencasting: 1440p on supported browsers, at 60 frames per second.&lt;/p&gt;
-
-&lt;div class=&quot;responsive-video&quot;&gt;&lt;iframe src=&quot;http://www.youtube.com/embed/Emt9bn0D5ZI &quot; style=&quot;width: 100%; height: 100%; border: none; padding-bottom: 20px&quot; allowfullscreen&gt;&lt;/iframe&gt;&lt;/div&gt;
-
-&lt;p&gt;This particular screencast is also my first significant attempt at working with audio/video editing and voice-over. Feel free to provide suggestions for future videos.&lt;/p&gt;
-
-&lt;p&gt;Since the screencast is 40 minutes long (inadvertently!), I&amp;rsquo;ve written an abridged summary of the screencast, along with some clarification of points made.&lt;/p&gt;
-
-&lt;h2&gt;Yelp Data v2&lt;/h2&gt;
-
-&lt;p&gt;A year ago I made a &lt;a href=&quot;http://minimaxir.com/2014/09/one-star-five-stars/&quot;&gt;blog post analyzing the same Yelp data&lt;/a&gt;. Now that the data set contains 1.6 million reviews (as opposed to just 1.1 million back then), it might be interesting to look at it again to see if anything has changed. The data is formatted as by-line JSON: I wrote a pair of Python scripts to convert it to CSV for easy import into R.&lt;/p&gt;
-
-&lt;p&gt;The screencast centralizes on three R packages: readr, dplyr, and ggplot2. (all authored by Hadley Wickham)&lt;/p&gt;
-
-&lt;p&gt;Loading the dataset into R is easy and fast with &lt;code&gt;read_csv&lt;/code&gt;.&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;df_reviews &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; read_csv&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;yelp_reviews.csv&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;Since dplyr was loaded beforehand, read_csv loads the data into a tbl_df instead of a normal data.frame. When you call a normal data.frame by itself, &lt;em&gt;all data is printed to console&lt;/em&gt;, which is a problem when you have 1.6M rows (yes, that happened during a test recording). Calling a tbl_df results in a very descriptive overview of the data:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/lets-code-1/overview.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;Most columns are self-explanatory. &lt;code&gt;review_length&lt;/code&gt; is approximate number of words in the review, &lt;code&gt;pos_words&lt;/code&gt; is the number of positive words in the review, &lt;code&gt;neg_words&lt;/code&gt; is what you expect, &lt;code&gt;net_sentiment&lt;/code&gt; is pos_words - neg_words.&lt;/p&gt;
-
-&lt;p&gt;A quick way to analyze the distribution of numerical data is to perform a summary on the data frame, which returns a by-column &lt;a href=&quot;https://en.wikipedia.org/wiki/Five-number_summary&quot;&gt;five-number summary&lt;/a&gt; + mean:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/lets-code-1/summary.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;Ratings are biased toward 4 and 5 star reviews. There is a lot of skew for review length.&lt;/p&gt;
-
-&lt;p&gt;dplyr makes it easy to add columns in-line with the &lt;code&gt;mutate&lt;/code&gt; command. Let&amp;rsquo;s normalize the pos_words column:&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;df_reviews &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; df_reviews &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt; mutate&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;pos_norm &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; pos_words &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; review_length&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;And we could do similar steps for the neg_words column too. Or use mutate to transform the data of an existing column.&lt;/p&gt;
-
-&lt;p&gt;Onto ggplot2. If you want a quick histogram of univariate data, qplot does just that. Let&amp;rsquo;s visualize the distribution of stars.&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;qplot&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;data&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;df_reviews&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; stars&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/lets-code-1/lc1-qplot-1.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;Definitely a skew toward 4 and 5 star reviews.&lt;/p&gt;
-
-&lt;p&gt;We can do that for other variables too, like review length.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/lets-code-1/lc1-qplot-2.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;What about bivariate data? If you give two variables to qplot, it will create a scatter plot. Perhaps there is a relationship between the number of stars and the number of positive words?&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;qplot&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;data&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;df_reviews&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; stars&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; pos_words&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;&amp;hellip;and then we run into a problem. In this case, ggplot2 has to plot 1.6M points to screen, which can take awhile, especially if you are simultaneously using your GPU for video recording. Eventually, we get this:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/lets-code-1/lc1-qplot-3.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;At first glance, there appears to be a positive correlation between star rating and number of positive words, but that&amp;rsquo;s misleading: since we don&amp;rsquo;t have alpha transparency on the points, the density is ambiguous. (fixing it requires working outside of a qplot).&lt;/p&gt;
-
-&lt;h2&gt;Serious Business Data&lt;/h2&gt;
-
-&lt;p&gt;We load the Yelp Businesses data into R through the same way as the reviews data. Here&amp;rsquo;s an overview of the data:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/lets-code-1/businesses.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;Both data frames have a &lt;code&gt;business_id&lt;/code&gt; column. We can merge them with a &lt;code&gt;left_join&lt;/code&gt;, a la SQL. If both data frames have a column with the same name, it will merge on that column by default.&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;df_reviews &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; df_reviews &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt; left_join&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;df_businesses&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;Then the R console helpfully points out that both dataframes also have a &amp;ldquo;stars&amp;rdquo; column. Uh-oh.&lt;/p&gt;
-
-&lt;p&gt;We reset the df_reviews data frame from scratch and merge again, explicitly stating the &amp;ldquo;by&amp;rdquo; column for merging. Now we know &lt;em&gt;where&lt;/em&gt; reviews were made, and that might provide helpful information.&lt;/p&gt;
-
-&lt;h2&gt;Aggregation Station&lt;/h2&gt;
-
-&lt;p&gt;It might be interesting to know the average star rating by city. dplyr allows for &lt;code&gt;group_by&lt;/code&gt; and &lt;code&gt;summarize&lt;/code&gt; operations in a similar manner as SQL.&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;df_cities &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; df_reviews &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt; group_by&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;city&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt; summarize&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;avg_stars &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;mean&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;stars.x&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/lets-code-1/cities.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;&amp;hellip;that&amp;rsquo;s not good. The original Yelp Dataset Challenge page mentioned that the dataset is only from specific cities, not &amp;ldquo;1023 E Frye Rd.&amp;rdquo;&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/lets-code-1/Dataset_Map.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;Hmrph.&lt;/p&gt;
-
-&lt;p&gt;From the map, it appears there is no overlap between any of the cities with geographic states, so let&amp;rsquo;s use &lt;code&gt;state&lt;/code&gt; instead. Additionally, we can add a count of reviews from that state, and sort by that count descending.&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;df_states &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; df_reviews &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt; group_by&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;state&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt; summarize&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;avg_stars &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;mean&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;stars.x&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; count&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;n&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt; arrange&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;desc&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;count&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/lets-code-1/states.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;Looks good enough, but that&amp;rsquo;s tempting fate.&lt;/p&gt;
-
-&lt;h2&gt;ggplot All the Things&lt;/h2&gt;
-
-&lt;p&gt;We can plot state vs. avg_stars with ggplot2. Setting it up is easy:&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;ggplot&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;data&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;df_states&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; aes&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;state&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; avg_stars&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/lets-code-1/lc1-ggplot-1.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;The blank plot is actually new to 2.0.0: running the code without any layers would normally throw an error. The axis values appear valid. Let&amp;rsquo;s add columns via &lt;code&gt;geom_bar&lt;/code&gt;:&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;ggplot&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;data&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;df_states&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; aes&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;state&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; avg_stars&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; geom_bar&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;&amp;hellip;and this results in an error. geom_bar by itself does histograms on raw values, as shown in the qplots. The correct fix is to add a &lt;code&gt;stat=&amp;quot;identity&amp;quot;&lt;/code&gt; parameter to geom_bar, which tells it to scale the bars by the given value of the aesthetic.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/lets-code-1/lc1-ggplot-2.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;Better. But the x-axis is cluttered and the States would look better on the y-axis. Time for a &lt;code&gt;coord_flip&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/lets-code-1/lc1-ggplot-3.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;Better. Now time to fix the order. You may notice that the order of the states is alphabetical going from the bottom of the axis to the top, and R will always set this order for any character vector. We want the sort the labels by their average star rating, descending. To do that we change the internal factor labels of state volume to the specified order.&lt;/p&gt;
-
-&lt;p&gt;In the recording, this took awhile due to several brain farts (which happen often when dealing with factor ordering). First, we need to remove a few states with few reviews using a filter The easiest way to do this is to sort the original data frame by avg_stars descending, then set the factor order by using the new state order &lt;em&gt;in reverse&lt;/em&gt;. (Ok, ok, it might be easier to just sort ascending and not reverse, but it makes the overview harder to visualize)&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;df_states &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; df_states &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt; arrange&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;desc&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;avg_stars&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt; filter&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;count &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;2000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt; mutate&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;state &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;factor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;state&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; levels&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;kp&quot;&gt;rev&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;state&lt;span class=&quot;p&quot;&gt;)))&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/lets-code-1/states-2.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;Rerunning the plot code afterward yields:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/lets-code-1/lc1-ggplot-4.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;Good! Why not add labels for each point? This can be done with geom_text, along with adding &lt;code&gt;hjust=1&lt;/code&gt; to offset the label, changing the size, and setting the text to white. We can round the avg_star values to 2 decimal places as well.&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;ggplot&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;data&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;df_states&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; aes&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;state&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; avg_stars&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; geom_bar&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;stat&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;identity&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; coord_flip&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; geom_text&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;aes&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;label&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;kp&quot;&gt;round&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;avg_stars&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)),&lt;/span&gt; hjust&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; color&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;white&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/lets-code-1/lc1-ggplot-5.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;The &amp;ldquo;3.7&amp;rdquo; label requires using the &lt;code&gt;sprintf&lt;/code&gt; function instead of &lt;code&gt;round&lt;/code&gt; to print &amp;ldquo;3.70&amp;rdquo;, which is not fun. Otherwise, these labels are nice so far. Why not add a theme and axis labels?&lt;/p&gt;
-
-&lt;p&gt;I go to my &lt;a href=&quot;http://minimaxir.com/2015/02/ggplot-tutorial/&quot;&gt;previous ggplot2 tutorial&lt;/a&gt; and copy-paste the FiveThirtyEight-inspired theme from there because I am efficient. (The theme required loading the RColorBrewer package, though). The axis labels are added through the &lt;code&gt;labs&lt;/code&gt; function. (note that since the axes are flipped, the labels must be flipped too!)&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;ggplot&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;data&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;df_states&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; aes&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;state&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; avg_stars&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; geom_bar&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;stat&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;identity&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; coord_flip&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; geom_text&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;aes&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;label&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;kp&quot;&gt;round&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;avg_stars&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)),&lt;/span&gt; hjust&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; size&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; color&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;white&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; fte_theme&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; labs&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;y&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Average Star Rating by State&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; x&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;State&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; title&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Average Yelp Review Star Ratings by State&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/lets-code-1/lc1-ggplot-6.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;Why not add 95% confidence intervals for each average? (Note that the normality assumptions for the confidence interval may not be entirely valid). We can calculate the standard error of the mean and rebuild the dataframe and reorder factors again.&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;df_states &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; df_reviews &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt; group_by&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;state&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt; summarize&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;avg_stars &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;mean&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;stars.x&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; count&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;n&lt;span class=&quot;p&quot;&gt;(),&lt;/span&gt; se_mean&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;sd&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;stars.x&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;kp&quot;&gt;sqrt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;count&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt; arrange&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;desc&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;avg_stars&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt; filter&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;count &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;2000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt; mutate&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;state &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;factor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;state&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; levels&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;kp&quot;&gt;rev&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;state&lt;span class=&quot;p&quot;&gt;)))&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;Time to add a &lt;code&gt;geom_errorbar&lt;/code&gt; (not a &lt;code&gt;geom_crossbar&lt;/code&gt;!)&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;ggplot&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;data&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;df_states&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; aes&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;state&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; avg_stars&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; geom_bar&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;stat&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;identity&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; coord_flip&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; geom_text&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;aes&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;label&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;kp&quot;&gt;round&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;avg_stars&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)),&lt;/span&gt; hjust&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; size&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; color&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;white&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; fte_theme&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; labs&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;y&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Average Star Rating by State&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; x&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;State&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; title&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Average Yelp Review Star Ratings by State&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; geom_errorbar&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;aes&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;ymin&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;avg_stars &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;1.96&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; se_mean&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; ymax&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;avg_stars &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;1.96&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; se_mean&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/lets-code-1/lc1-ggplot-7.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;Averages are very stable for all cities due to the large sample size.&lt;/p&gt;
-
-&lt;p&gt;At this point I realized the recording is too long and I end it there. For a normal blog post, I&amp;rsquo;d add more theming, adjust colors so they don&amp;rsquo;t clash, and add annotations, such as a line representing the true review average from the population. And ideally, performing statistical tests to determine if any averages are different from the population average.&lt;/p&gt;
-
-&lt;p&gt;Hopefully this gives some insight into the mechanical process of creating simple data visualizations with R and ggplot2 (the &amp;ldquo;abridged summary&amp;rdquo; ended up being as long as a typical blog post!). As my screencast shows, programming is a recurring process of saying &amp;ldquo;this is easy to do!&amp;rdquo; then failing miserably for stupid reasons. Even after the 40 minute screencast, there&amp;rsquo;s still much, much more polish needed for the data visualization. My blog posts take a very long time to produce for those reasons; the clear, clean code from the finished product is not indicative of the unexpected errors that occur when writing it.&lt;/p&gt;
-
-&lt;p&gt;I did this recording &amp;ldquo;blind&amp;rdquo; to test whether or not it&amp;rsquo;s feasible for me to &lt;em&gt;stream&lt;/em&gt; the coding of data visualization on services like &lt;a href=&quot;http://www.twitch.tv&quot;&gt;Twitch&lt;/a&gt;. It&amp;rsquo;s definitely possible, but has more logistical challenges. (namely, that &lt;a href=&quot;https://obsproject.com&quot;&gt;OBS&lt;/a&gt; is fussy outside of Windows and I still need to figure out how to configure it optimally). I admit the code in this screencast may not be the highest-quality code (in retrospect I should have put the code in an editor instead of directly in the console, and reuse dataframe/ggplot objects), but the transparent process for coding data visualizations is important. If there is enough interest, I may revisit Yelp data again, or even more advanced datasets.&lt;/p&gt;
-
-&lt;hr&gt;
-
-&lt;p&gt;&lt;em&gt;You can access the R code used for the data visualizations and the Python scripts used to process the raw Yelp dataset &lt;a href=&quot;https://github.com/minimaxir/lets-code-1&quot;&gt;in this GitHub repository&lt;/a&gt;. However, the raw data itself cannot be redistributed.&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;For those wondering what I used for recording the screencast:&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;Computer: &lt;em&gt;Late 2013 13&amp;quot; Retina MacBook Pro running OS X 10.11.2&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;Recording Software: &lt;em&gt;Screenflow 4.5&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;Microphone: &lt;em&gt;Shure MV5 Digital Condenser&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;Music: &lt;em&gt;Various artists from the &amp;ldquo;No Attribution Required&amp;rdquo; section of the YouTube Audio Library&lt;/em&gt;&lt;/p&gt;
-</description>
-        <pubDate>Mon, 28 Dec 2015 09:00:00 -0800</pubDate>
-        <link>http://minimaxir.com/2015/12/lets-code-1/</link>
-        <guid isPermaLink="true">http://minimaxir.com/2015/12/lets-code-1/</guid>
         
         
         <category>Code</category>
