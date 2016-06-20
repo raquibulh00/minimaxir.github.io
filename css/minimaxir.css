@@ -167,6 +167,12 @@ max-height: 400px;
 padding: 140px 0 40px !important;
 }
 
+@media (max-width: 992px) {
+.breadcrumbs-v5 {
+padding: 40px 0 40px !important;
+}
+}
+
 .breadcrumbs-v5:before {
 background: rgba(52, 52, 60, 0.75) !important; 
 }
@@ -220,4 +226,8 @@ font-weight: 400;
 blockquote p {
 color: #666 !important;
 margin: 0px !important;
+}
+
+.blog-grid, .blog-sidebar, .blog-comments, .blog-classic {
+border: 1px solid #eaeaea;
 }

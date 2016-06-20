@@ -7,7 +7,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>How to Scrape Data From Facebook Page Posts for Statistical Analysis</title>
 <meta property="article:author" content="https://www.facebook.com/max.woolf" />
-<meta name="description" content="One of the first data scrapers I wrote for the purpose of statistical analysis was a Facebook Graph API scraper, in order to determine which words are the mo...">
+<meta name="description" content="UPDATE June 2016: The script has been massively updated and now includes the ability to scrape Facebook Reactions. Most of the material in this article is st...">
 <link href="/rss.xml" rel="alternate" title="minimaxir | Max Woolf's Blog" type="application/atom+xml">
 <link rel="canonical" href="http://minimaxir.com/2015/07/facebook-scraper/">
 
@@ -246,7 +246,9 @@
 
                         <!-- Blog Grid Content -->
 						<div class="blog-grid-content">
-						<p>One of the first data scrapers I wrote for the purpose of statistical analysis was a Facebook Graph API scraper, in order to determine <a href="http://minimaxir.com/2013/06/big-social-data/">which words are the most important</a> in a Facebook Page status update. However, the v2.0 update to the Facebook API unsurprisingly broke the scraper.</p>
+						<p><em>UPDATE June 2016: The script has been massively updated and now includes the ability to scrape Facebook Reactions. Most of the material in this article is still valid, though.</em></p>
+
+<p>One of the first data scrapers I wrote for the purpose of statistical analysis was a Facebook Graph API scraper, in order to determine <a href="http://minimaxir.com/2013/06/big-social-data/">which words are the most important</a> in a Facebook Page status update. However, the v2.0 update to the Facebook API unsurprisingly broke the scraper.</p>
 
 <p>Now that <a href="https://developers.facebook.com/blog/post/2015/07/08/graph-api-v2.4/">v2.4 of the Graph API is released</a>, I gave the Facebook Graph API another look. Turns out, it&rsquo;s pretty easy to scrape and make into a spreadsheet for easy analysis, although like with any other scrapers, there are a large number of gotchas.</p>
 
@@ -270,7 +272,7 @@
 
 <p><img src="/img/facebook-scraper/def_test.png"  ></p>
 
-<p><em>I have created an <a href="https://github.com/minimaxir/facebook-page-post-scraper/blob/master/how_to_build_facebook_scraper.ipynb">IPython notebook hosted on GitHub</a> with detailed code, code comments, and sample output for each step of the scraper development. I strongly recommend giving it a look.</em></p>
+<p><em>I have created an <a href="https://github.com/minimaxir/facebook-page-post-scraper/blob/master/examples/how_to_build_facebook_scraper.ipynb">IPython notebook hosted on GitHub</a> with detailed code, code comments, and sample output for each step of the scraper development. I strongly recommend giving it a look.</em></p>
 
 <p>First, we need to see how to actually access the API. It&rsquo;s no longer a public API, and it requires user authentication via <a href="https://developers.facebook.com/docs/facebook-login/access-tokens">access tokens</a>. Users can get Short-Term tokens, but as their name suggests, they expire quickly, so they are not recommended. The Graph API allows a neat trick; by concatenating the App ID from a user-created App and the App Secret, you create an access token which never expires. Of course, this is a major security risk, so create a separate app for the sole purpose of scraping, and reset your API Secret if it becomes known.</p>
 
@@ -393,7 +395,7 @@
  					
 
                     <!-- Blog Comment -->
-                    <div class="bg-color-white margin-b-30">
+                    <div class="blog-comments bg-color-white margin-b-30">
                         <div class="blog-single-post-content">
 
 						
@@ -472,6 +474,13 @@
                         
                         <article class="latest-tuts">
                                 <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="/2016/06/reddit-related-subreddits/">Methods for Finding Related Reddit Subreddits with Simple Set Theory</a></h5>
+                                    <small class="latest-tuts-content-time"> Jun 20, 2016</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
                                     <h5 class="latest-tuts-content-title"><a href="/2016/05/sfba-compensation/">Interactive Salary/Equity Chart for Jobs Offered in the San Francisco Bay Area</a></h5>
                                     <small class="latest-tuts-content-time"> May 31, 2016</small>
                                 </div>
@@ -504,13 +513,6 @@
                                     <small class="latest-tuts-content-time"> Apr 6, 2016</small>
                                 </div>
                         </article>
-                        
-                        <article class="latest-tuts">
-                                <div class="latest-tuts-content">
-                                    <h5 class="latest-tuts-content-title"><a href="/2016/03/gif-unlimited/">Unlimited Data Storage Using Image Steganography and Cat GIFs</a></h5>
-                                    <small class="latest-tuts-content-time"> Mar 29, 2016</small>
-                                </div>
-                        </article>
                                                 
                     </div>
                     <!-- End Blog Recent Posts -->
@@ -527,49 +529,56 @@
                         <article class="latest-tuts">
                                 <div class="latest-tuts-content">
                                     <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/big-list-of-naughty-strings" target="_blank">Big List of Naughty Strings</a></h5>
-                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 11,186+</small>
-                                </div>
-                        </article>
-                        
-                        <article class="latest-tuts">
-                                <div class="latest-tuts-content">
-                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/copy-syntax-highlight-osx" target="_blank">Copy Syntax Highlight for OS X</a></h5>
-                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 319+</small>
-                                </div>
-                        </article>
-                        
-                        <article class="latest-tuts">
-                                <div class="latest-tuts-content">
-                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/video-to-gif-osx" target="_blank">Convert Video to GIF on OS X</a></h5>
-                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 207+</small>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 11,554+</small>
                                 </div>
                         </article>
                         
                         <article class="latest-tuts">
                                 <div class="latest-tuts-content">
                                     <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/facebook-page-post-scraper" target="_blank">Facebook Page Post Scraper</a></h5>
-                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 96+</small>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 475+</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/copy-syntax-highlight-osx" target="_blank">Copy Syntax Highlight for OS X</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 327+</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/video-to-gif-osx" target="_blank">Convert Video to GIF on OS X</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 223+</small>
                                 </div>
                         </article>
                         
                         <article class="latest-tuts">
                                 <div class="latest-tuts-content">
                                     <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/reddit-bigquery" target="_blank">Reddit Data with BigQuery Notebook</a></h5>
-                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 58+</small>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 64+</small>
                                 </div>
                         </article>
                         
                         <article class="latest-tuts">
                                 <div class="latest-tuts-content">
                                     <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/get-all-hacker-news-submissions-comments" target="_blank">Get All Hacker News Submissions & Comments</a></h5>
-                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 47+</small>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 54+</small>
                                 </div>
                         </article>
                         
                         <article class="latest-tuts">
                                 <div class="latest-tuts-content">
                                     <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/frames-to-gif-osx" target="_blank">Convert Frames to GIF on OS X</a></h5>
-                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 15+</small>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 16+</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/sf-arrests-when-where" target="_blank">Analyzing When and Where San Francisco Criminal Arrests Occur</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 16+</small>
                                 </div>
                         </article>
                         
@@ -577,13 +586,6 @@
                                 <div class="latest-tuts-content">
                                     <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/nyc-taxi-notebook" target="_blank">NYC Yellow Taxi Visualization Notebook</a></h5>
                                     <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 13+</small>
-                                </div>
-                        </article>
-                        
-                        <article class="latest-tuts">
-                                <div class="latest-tuts-content">
-                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/sf-arrests-when-where" target="_blank">Analyzing When and Where San Francisco Criminal Arrests Occur</a></h5>
-                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 10+</small>
                                 </div>
                         </article>
                                                 

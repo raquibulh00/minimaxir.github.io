@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+
+  <!-- HEAD -->
+<head>
+<meta charset="utf-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Methods for Finding Related Reddit Subreddits with Simple Set Theory</title>
+<meta property="article:author" content="https://www.facebook.com/max.woolf" />
+<meta name="description" content="I recently wrote a post on how to visualize network graphs of Reddit subreddits.">
+<link href="/rss.xml" rel="alternate" title="minimaxir | Max Woolf's Blog" type="application/atom+xml">
+<link rel="canonical" href="http://minimaxir.com/2016/06/reddit-related-subreddits/">
+
+<!-- Mobile Metas -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+ <meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@minimaxir">
+<meta name="twitter:creator" content="@minimaxir">
+
+  <meta name="twitter:title" content="Methods for Finding Related Reddit Subreddits with Simple Set Theory">
+
+
+  <meta name="twitter:url" content="http://minimaxir.com/2016/06/reddit-related-subreddits/">
+
+
+  <meta name="twitter:description" content="Fancy machine learning approaches may not be required to help Redditors discover new things.">
+
+
+  <meta name="twitter:image:src" content="http://minimaxir.com/img/programming-jaccard-nondefault.png">
+
+ 
+ <meta content="minimaxir | Max Woolf's Blog" property="og:site_name">
+
+  <meta content="Methods for Finding Related Reddit Subreddits with Simple Set Theory" property="og:title">
+
+
+  <meta content="article" property="og:type">
+
+
+  <meta content="Fancy machine learning approaches may not be required to help Redditors discover new things." property="og:description">
+
+
+  <meta content="http://minimaxir.com/2016/06/reddit-related-subreddits/" property="og:url">
+
+
+
+  <meta content="http://minimaxir.com/img/programming-jaccard-nondefault.png" property="og:image">
+
+
+  
+  <meta content="Visualization" property="article:section">
+  
+
+
+  
+
+
+
+      <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="white">
+    <meta name="apple-mobile-web-app-title" content="minimaxir">
+    <link rel="apple-touch-icon-precomposed" href="apple-touch-icon-precomposed.png">
+
+<link rel="apple-touch-icon" sizes="57x57" href="http://minimaxir.com/favicon/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="http://minimaxir.com/favicon/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="http://minimaxir.com/favicon/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="http://minimaxir.com/favicon/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="http://minimaxir.com/favicon/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="http://minimaxir.com/favicon/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="http://minimaxir.com/favicon/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="http://minimaxir.com/favicon/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="http://minimaxir.com/favicon/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192"  href="http://minimaxir.com/favicon/android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://minimaxir.com/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="http://minimaxir.com/favicon/favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="http://minimaxir.com/favicon/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="http://minimaxir.com/favicon/ms-icon-144x144.png">
+<meta name="theme-color" content="#ffffff">
+
+<!-- BEGIN GLOBAL MANDATORY STYLES -->
+  <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400,400italic,700' rel='stylesheet' type='text/css'>
+
+<link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+<link href="/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
+<link href="/css/minimaxir.css" rel="stylesheet" type="text/css"/>
+<!-- END GLOBAL MANDATORY STYLES -->
+
+<!-- BEGIN THEME STYLES -->
+<link href="/css/global.css" rel="stylesheet" type="text/css"/>
+<!-- END THEME STYLES -->
+
+<!-- BEGIN JQUERY -->
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<!-- END JQUERY -->
+
+  <script>
+   $(document).ready(function() {
+ 
+  // Facebook
+	$( ".social.facebook" ).children().each(function(index,value) {
+	var facebook_button = $(this);
+	var url = facebook_button.attr("data");
+
+  jQuery.getJSON("https://graph.facebook.com/?id="+url, function(data) {
+  if (typeof data.shares != 'undefined') facebook_button.html("<i class=\"fa fa-facebook\"></i><span class=\"count hidden-xs\"> " + data.shares + "</span>");
+  else if (typeof data.likes != 'undefined') facebook_button.html("<i class=\"fa fa-facebook\"></i><span class=\"count hidden-xs\"> " + data.likes + "</span>");
+  else facebook_button.html("<i class=\"fa fa-facebook\"></i><span class=\"count hidden-xs\"> " + " 0</span>");
+  });
+  });
+ 
+  // LinkedIn
+	$( ".social.linkedin" ).children().each(function(index,value) {
+	var linkedin_button = $(this);
+	var url = linkedin_button.attr("data");
+
+  jQuery.getJSON("http://www.linkedin.com/countserv/count/share?url="+url+"&format=jsonp&callback=?", function(data) {
+  linkedin_button.html("<i class=\"fa fa-linkedin\"></i><span class=\"count hidden-xs\"> " + data.count + "</span>");
+  });
+  });
+  });
+  </script>
+  
+</head>
+<!-- END HEAD -->
+  <!-- WRAPPER -->
+<div class="wrapper">
+    <!--========== HEADER TRANSPARENT ==========-->
+    <header class="header-transparent header-transparent-bb navbar-fixed-top header-sticky">
+        <!-- Navbar -->
+        <nav class="navbar mega-menu" role="navigation">
+            <div class="container">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="menu-container">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="toggle-icon"></span>
+                    </button>
+
+                    <!-- Navbar Actions -->
+                    <div class="navbar-actions">
+
+                    </div>
+                    <!-- End Navbar Actions -->
+
+                    <!-- Logo -->
+                    <div class="navbar-logo">
+                        <a class="navbar-logo-wrap" href="/">
+                            <img class="navbar-logo-img navbar-logo-img-white" src="/minimaxir-light.png" alt="minimaxir">
+                            <img class="navbar-logo-img navbar-logo-img-dark" src="/minimaxir-dark.png" alt="minimaxir">
+                        </a>
+                    </div>
+                    <!-- End Logo -->
+                </div>
+
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse nav-collapse">
+                    <div class="menu-container">
+                        <ul class="nav navbar-nav">
+                        
+<li class="nav-item">
+                                <a class="nav-item-child" href="/about">
+                                    About
+                                </a>
+                            </li>
+                                
+<li class="nav-item">
+                                <a class="nav-item-child" href="/portfolio">
+                                    Portfolio
+                                </a>
+                            </li>
+                        
+                        </ul>
+                    </div>
+                </div>
+                <!-- End Navbar Collapse -->
+            </div>
+            <!--// End Container-->
+        </nav>
+        <!-- Navbar -->
+    </header>
+    <!--========== END HEADER TRANSPARENT ==========-->
+    
+	    <!--========== BREADCRUMBS V5 ==========-->
+    
+    
+	
+	
+    
+    
+    
+    <section class="breadcrumbs-v5" style="background: url('/img/programming-jaccard-nondefault.png') no-repeat center center; background-size: cover;">
+    
+        <div class="container">
+            <h1 class="breadcrumbs-v5-title">Methods for Finding Related Reddit Subreddits with Simple Set Theory</h1>
+            <span class="breadcrumbs-v5-subtitle">June 20, 2016
+            
+    
+              <span class="sharing index" style="float: right">
+  
+		  <span class="social facebook"><a href="https://www.facebook.com/share.php?u=http://minimaxir.com/2016/06/reddit-related-subreddits/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data="http://minimaxir.com/2016/06/reddit-related-subreddits/"><i class="fa fa-facebook"></i><span class="count hidden-xs"> -</span></a></span>
+  
+		<span class="social twitter"><a href="http://twitter.com/home/?status=Methods for Finding Related Reddit Subreddits with Simple Set Theory - http://minimaxir.com/2016/06/reddit-related-subreddits/ - via @minimaxir"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data=http://minimaxir.com/2016/06/reddit-related-subreddits/><i class="fa fa-twitter"></i><span class="count hidden-xs"></span></a> </span>
+
+  <span  class="social linkedin"><a href="http://www.linkedin.com/shareArticle?mini=true&title=&url=http://minimaxir.com/2016/06/reddit-related-subreddits/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=600');return false;" data=http://minimaxir.com/2016/06/reddit-related-subreddits/><i class="fa fa-linkedin"></i><span class="count hidden-xs"> -</span></a> </span>
+   
+			</span>
+            
+            </span>
+        </div>
+    </section>
+    
+    
+    <!--========== END BREADCRUMBS V5 ==========-->
+  
+  <!-- BEGIN BODY -->
+<body>
+
+  
+      <!--========== BACKGROUND COLOR SKY LIGHT ==========-->
+    <div class="bg-color-sky-light">
+
+        
+        <!--========== PAGE CONTENT ==========-->
+        <div class="content-sm container">
+        
+            
+		
+        
+            <div class="row">
+                <div class="col-md-9 md-margin-b-50">
+                    <!-- Blog Grid -->
+                    <article class="blog-grid margin-b-30">
+                        <!-- Image -->
+                        <!--<img class="img-responsive" src="/assets/img/1920x1080/20.jpg" alt="">-->
+                        <!-- End Image -->
+
+                        <!-- Blog Grid Content -->
+						<div class="blog-grid-content">
+						<p>I recently <a href="http://minimaxir.com/2016/05/reddit-graph/">wrote a post</a> on how to visualize <a href="https://en.wikipedia.org/wiki/Graph_theory">network graphs</a> of <a href="https://www.reddit.com">Reddit</a> subreddits.</p>
+
+<p><img src="/img/reddit-graph/group-001.png" alt=""></p>
+
+<p>One of the reasons I&rsquo;ve been researching the topic is to find a good way to facilitate discovery of lesser-known subreddits, as Reddit is doing a terrible job at it (although they have been trying a <a href="https://www.reddit.com/r/changelog/comments/4o4qjh/more_small_tests_to_improve_user_experience_live/d49leyu?context=2">few new experiments</a> <em>very recently</em>). As it turns out, invoking graph theory is overkill. Even fancy machine learning approaches like <a href="https://en.wikipedia.org/wiki/Collaborative_filtering">collaborative filtering</a>, while powerful, may not be required to help Redditors discover new things.</p>
+
+<h2>Finding Related Subreddits</h2>
+
+<p>Let&rsquo;s say we have two sets: Set <em>A</em>, where <em>A</em> represents the number of active users in a given subreddit, and set <em>B</em>, where <em>B</em> is the set of active users in a subreddit. The intersection of Sets <em>A</em> and <em>B</em> (A ∩ B) represents users who are active in <em>both</em> subreddits.</p>
+
+<p>Using <a href="https://cloud.google.com/bigquery/">BigQuery</a>, I can get the comment data from <strong>ALL</strong> public Reddit subreddits, as otherwise this technique would not work well using any smaller subset. The network graph edgelist conveniently gives (A ∩ B), obtained <a href="http://minimaxir.com/2016/05/reddit-graph/">as described in my previous post</a>, which calculates the number of active users for all pairs of subreddits (defining &ldquo;active users&rdquo; as users who have made a comment in at least 5 unique threads in a given subreddit within the past 6 months).</p>
+
+<p><img src="/img/reddit-related-subreddits/active-edge.png" alt=""></p>
+
+<p>In this case, we can filter the edgelist to only allow intersections where there are at least 10 active users; this prevents including dead and personal subreddits.</p>
+
+<p>We can run another similar query to get the number of active users for each subreddit.</p>
+
+<p><img src="/img/reddit-related-subreddits/active-users.png" alt=""></p>
+
+<p>After that, for a given subreddit <em>A</em>, find:</p>
+
+<p>(A ∩ B) / (B)</p>
+
+<p>for all subreddits <em>B</em> where (A ∩ B) &gt; 0 (i.e. only neighbors of <em>A</em>). This computation takes less than a second. Additionally, the output is always a percentage between 0% and 100%. For the visualizations, we plot the Top 15 subreddits with the highest overlap of the specified subreddit <em>A</em> (and color the bars with a nice <a href="https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html">viridis palette</a> to provide another easy way to perceive relative magnitude of relatedness).</p>
+
+<p>The methodology may sound arbitrary, but the results are very interesting. Here&rsquo;s a chart of the top related subreddits for <a href="https://www.reddit.com/r/aww">/r/aww</a>, one of the most popular places on the internet for cat pictures.</p>
+
+<p><img src="/img/reddit-related-subreddits/aww-related.png" alt=""></p>
+
+<p>I have honestly <em>never</em> heard of any of these subreddits before. But yet, by analyzing public user activity alone, I found a few new places to get more cute pics.</p>
+
+<p>This methodology is excellent for finding subreddit-specific subsubreddits which may not be documented. The related subreddits for <a href="https://www.reddit.com/r/buildapc">/r/buildapc</a> offer more places to get PC building advice.</p>
+
+<p><img src="/img/reddit-related-subreddits/buildapc-related.png" alt=""></p>
+
+<p>Related subreddits for sport-specific subreddits, like <a href="https://www.reddit.com/r/cfb">/r/cfb</a> (college football) include the corresponding teams.</p>
+
+<p><img src="/img/reddit-related-subreddits/cfb-related.png" alt=""></p>
+
+<p><a href="https://www.reddit.com/r/food">/r/food</a> related subreddits list a surprising number of subreddits dedicated to specific foods.</p>
+
+<p><img src="/img/reddit-related-subreddits/food-related.png" alt=""></p>
+
+<p>There is a surprising amount of depth to the <a href="https://www.reddit.com/r/me_irl">/r/me_irl</a> network.</p>
+
+<p><img src="/img/reddit-related-subreddits/me_irl-related.png" alt=""></p>
+
+<p>The chart for <a href="https://www.reddit.com/r/programming">/r/programming</a> can tell you which subreddits exist for specific programming languages and technologies.</p>
+
+<p><img src="/img/reddit-related-subreddits/programming-related.png" alt=""></p>
+
+<p>The methodology can also reveal a <em>lack</em> of related subreddits, by the large contrast between subreddits with high relatedness and low relatedness. For example, while /r/cfb may have large numbers of obviously-related subreddits as a sports subreddit, <a href="https://www.reddit.com/r/golf">/r/golf</a> has only 2.</p>
+
+<p><img src="/img/reddit-related-subreddits/golf-related.png" alt=""></p>
+
+<p>You can view Related Subreddit charts for the Top 200 Subreddits <a href="https://github.com/minimaxir/subreddit-related/tree/master/related">in this GitHub repository</a>.</p>
+
+<h2>Finding Similar Subreddits</h2>
+
+<p>Another method for finding related subreddits would be to find subreddits with similar communities. An academic approach to finding similarity between sets is the <a href="https://en.wikipedia.org/wiki/Jaccard_index">Jaccard Index</a>. Using the same set A and set B definitions above, the formula now becomes:</p>
+
+<p>(A ∩ B) / [(A) + (B) - (A ∩ B)]</p>
+
+<p>which outputs the Jaccard Index, between 0 and 1. This formula only requires a few tweaks to the original code. The results from this computation tell a different story.</p>
+
+<p>Here are the most-similar subreddits to /r/aww:</p>
+
+<p><img src="/img/reddit-related-subreddits/aww-jaccard-nondefault.png" alt=""></p>
+
+<p>In this implementation, the <a href="https://www.reddit.com/r/defaults/comments/4l3svc/list_of_default_subreddits_usa_26_may_2016/">default Reddit subreddits</a> must be removed from the results, as the communities of default subreddits are largely similar to most others by design. Even former defaults like <a href="https://www.reddit.com/r/adviceanimals">/r/adviceanimals</a> and <a href="https://www.reddit.com/r/technology">/r/technology</a> still have large amounts of holdout users which skew the results. As <a href="https://www.reddit.com/r/aww">/r/aww</a> is a mass-appeal subreddit, it makes sense that the communities are similar to other mass-appeal subreddits. </p>
+
+<p>The magnitude of the Jaccard Index measures the strength of the similarity. Most subreddit relationships have a low Jaccard Index, but the relative magnitude between all subreddit neighbors illustrate comparisons for potential related subreddits regardless (this is also the reason why the x-axis is not fixed across plots). The subreddit relationship with the highest absolute similarity is <a href="https://www.reddit.com/r/arrow">/r/arrow</a> and <a href="https://www.reddit.com/r/flashtv">/r/flashtv</a> at 0.345, which make sense given the massive overlap between the two CW television shows.</p>
+
+<p><img src="/img/reddit-related-subreddits/arrow-jaccard-nondefault.png" alt=""></p>
+
+<p>The Jaccard Index is more useful for finding similar subreddits to niche subreddits. Let&rsquo;s try a few of the subreddits mentioned previously and see how the results changed.</p>
+
+<p>/r/buildapc is a niche, and the output identifies well-established subreddits, unlike with the previous related-subreddit methodology.</p>
+
+<p><img src="/img/reddit-related-subreddits/buildapc-jaccard-nondefault.png" alt=""></p>
+
+<p>The subreddit most similar to /r/cfb (college football) is <a href="https://www.reddit.com/r/collegebasketball">/r/collegebasketball</a>!</p>
+
+<p><img src="/img/reddit-related-subreddits/cfb-jaccard-nondefault.png" alt=""></p>
+
+<p>The subreddit most similar to /r/food is <a href="https://www.reddit.com/r/cooking">/r/cooking</a>!</p>
+
+<p><img src="/img/reddit-related-subreddits/food-jaccard-nondefault.png" alt=""></p>
+
+<p>The subreddit most similar to /r/programming is <a href="https://www.reddit.com/r/linux">/r/linux</a>! (of course)</p>
+
+<p><img src="/img/reddit-related-subreddits/programming-jaccard-nondefault.png" alt=""></p>
+
+<p>You can view the Similar Subreddit charts for the Top 200 Subreddits <a href="https://github.com/minimaxir/subreddit-related/tree/master/similar">in this GitHub repository</a>.</p>
+
+<p>Again, Reddit has significantly better internal data for identifying user activity between subreddits, such as voting patterns and clickthrough tracking. But the results shown using these two set methodologies are pretty good for using public data. In fact, these two set approaches can theoretically work with <em>any</em> set of categorized, settable data, which may give me a few ideas for new blog posts in the future.</p>
+
+<p>And there&rsquo;s still the fancy machine learning approaches to try.</p>
+
+<hr>
+
+<p><em>As always, the full code used to process the comment data and generate the visualizations is available in <a href="https://github.com/minimaxir/subreddit-related/blob/master/find_related_subreddits.ipynb">this Jupyter notebook</a>, open-sourced <a href="https://github.com/minimaxir/subreddit-related">on GitHub</a>.</em></p>
+
+<p><em>If you do find any other interesting trends in the related/similar charts of other subreddits and write about it, it would be greatly appreciated if proper attribution is given back to this post and/or myself. Thanks!</em></p>
+
+						
+            			 <div class="breadcrumbs-v5-subtitle sharing-post" style="color: #999 !important; padding-top:10px; border-top: 1px solid #eee">Share this article!
+
+
+              <span class="sharing index" style="float: right; color: #999 !important;">
+  
+		  <span class="social facebook"><a href="https://www.facebook.com/share.php?u=http://minimaxir.com/2016/06/reddit-related-subreddits/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data="http://minimaxir.com/2016/06/reddit-related-subreddits/"><i class="fa fa-facebook"></i><span class="count hidden-xs"> -</span></a></span>
+  
+		<span class="social twitter"><a href="http://twitter.com/home/?status=Methods for Finding Related Reddit Subreddits with Simple Set Theory - http://minimaxir.com/2016/06/reddit-related-subreddits/ - via @minimaxir"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data=http://minimaxir.com/2016/06/reddit-related-subreddits/><i class="fa fa-twitter"></i><span class="count hidden-xs"></span></a> </span>
+
+  <span  class="social linkedin"><a href="http://www.linkedin.com/shareArticle?mini=true&title=&url=http://minimaxir.com/2016/06/reddit-related-subreddits/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=600');return false;" data=http://minimaxir.com/2016/06/reddit-related-subreddits/><i class="fa fa-linkedin"></i><span class="count hidden-xs"> -</span></a> </span>
+
+   </span>
+   </div>
+						</div>
+                        <!-- End Blog Grid Content -->
+                        
+                        
+                        
+                    </article>
+                    <!-- End Blog Grid -->
+
+ 					
+
+                    <!-- Blog Comment -->
+                    <div class="blog-comments bg-color-white margin-b-30">
+                        <div class="blog-single-post-content">
+
+						
+
+<script type="text/javascript">
+      var disqus_shortname = 'minimaxir';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://minimaxir.com/2016/06/reddit-related-subreddits/';
+        var disqus_url = 'http://minimaxir.com/2016/06/reddit-related-subreddits/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+<div id="disqus_thread"></div>
+
+
+
+                        </div>
+                    </div>
+                    <!-- End Blog Comment -->
+                    
+                    
+                </div>
+
+			                <!--========== BLOG SIDEBAR ==========-->
+                <div class="col-md-3">
+                
+                
+                
+                    <!-- Blog Author -->
+                    <div class="blog-sidebar margin-b-30">
+                        <div class="blog-sidebar-heading">
+                            <h4 class="blog-sidebar-heading-title">Author</h4>
+                        </div>
+                        
+                        <img src="/MaxFB.jpg" title="Stop mousing over me! I'm not a XKCD comic!" class="img-responsive hidden-xs hidden-sm"></img>
+                        
+                        <div class="blog-sidebar-content">
+                            <!-- Blog Author Bio -->
+							
+							<p><strong>Max Woolf (@minimaxir)</strong> is a Software QA Engineer living and working in the San Francisco Bay Area for over 3 years and a 2012 Carnegie Mellon University graduate in Business Administration.</p>
+
+<p>In his spare time, Max uses <a href="https://www.python.org/">Python</a> to gather data from public APIs and <a href="http://ggplot2.org/">ggplot2</a> to make pretty charts from that data.</p>
+
+<p>You can learn more about Max <a href="/about">here</a>, or view his portfolio <a href="/portfolio">here</a>. </p>
+
+  
+    <ul class="list-inline" style="padding-top:10px; margin-top: 20px; border-top: 1px solid #ebeef6">
+                        <li class="theme-icons-wrap"><a title="Facebook" href="https://facebook.com/max.woolf" target="_blank"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-facebook"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="Twitter" href="https://twitter.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-twitter"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="LinkedIn" href="https://linkedin.com/in/minimaxir" target="_blank"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-linkedin"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="GitHub" href="https://github.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-github"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="YouTube" href="https://youtube.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-youtube"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="E-Mail" href="mailto:max@minimaxir.com"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-envelope"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="RSS" href="/rss.xml"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-rss"></i></a></li>
+                    </ul>
+                            <!-- End Blog Author Bio -->
+                        </div>
+                    </div>
+                    <!-- End Blog Author -->
+                    
+                     <!-- Blog Recent Posts -->
+                    <div class="blog-sidebar margin-b-30">
+                        <div class="blog-sidebar-heading">
+                            <h4 class="blog-sidebar-heading-title">Recent Posts</h4>
+                        </div>
+                        <div class="blog-sidebar-content" style="position: relative; overflow: visible;">
+                        
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="/2016/06/reddit-related-subreddits/">Methods for Finding Related Reddit Subreddits with Simple Set Theory</a></h5>
+                                    <small class="latest-tuts-content-time"> Jun 20, 2016</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="/2016/05/sfba-compensation/">Interactive Salary/Equity Chart for Jobs Offered in the San Francisco Bay Area</a></h5>
+                                    <small class="latest-tuts-content-time"> May 31, 2016</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="/2016/05/reddit-graph/">How to Create a Network Graph Visualization of Reddit Subreddits</a></h5>
+                                    <small class="latest-tuts-content-time"> May 27, 2016</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="/2016/05/wordclouds/">Creating Stylish, High-Quality Word Clouds Using Python and Font Awesome Icons</a></h5>
+                                    <small class="latest-tuts-content-time"> May 9, 2016</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="/2016/04/movie-gender/">Blockbuster Movies with Male Leads Earn More Than Those with Female Leads</a></h5>
+                                    <small class="latest-tuts-content-time"> Apr 13, 2016</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="/2016/04/trust-but-verify/">The Importance of Sanity-Checking Datasets Before Analysis</a></h5>
+                                    <small class="latest-tuts-content-time"> Apr 6, 2016</small>
+                                </div>
+                        </article>
+                                                
+                    </div>
+                    <!-- End Blog Recent Posts -->
+                    </div>
+                    
+                    <!-- GitHub Top Repositories -->
+                    <div class="blog-sidebar margin-b-30">
+                        <div class="blog-sidebar-heading">
+                            <h4 class="blog-sidebar-heading-title">Top GitHub Repositories</h4>
+                        </div>
+                        <div class="blog-sidebar-content" style="position: relative; overflow: visible;">
+                        
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/big-list-of-naughty-strings" target="_blank">Big List of Naughty Strings</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 11,554+</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/facebook-page-post-scraper" target="_blank">Facebook Page Post Scraper</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 475+</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/copy-syntax-highlight-osx" target="_blank">Copy Syntax Highlight for OS X</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 327+</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/video-to-gif-osx" target="_blank">Convert Video to GIF on OS X</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 223+</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/reddit-bigquery" target="_blank">Reddit Data with BigQuery Notebook</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 64+</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/get-all-hacker-news-submissions-comments" target="_blank">Get All Hacker News Submissions & Comments</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 54+</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/frames-to-gif-osx" target="_blank">Convert Frames to GIF on OS X</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 16+</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/sf-arrests-when-where" target="_blank">Analyzing When and Where San Francisco Criminal Arrests Occur</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 16+</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/nyc-taxi-notebook" target="_blank">NYC Yellow Taxi Visualization Notebook</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 13+</small>
+                                </div>
+                        </article>
+                                                
+                    </div>
+                    
+                    <!-- End GitHub Top Repositories -->
+                    
+                    
+                    
+                </div>
+                <!--========== END BLOG SIDEBAR ==========-->
+            
+			</div>
+            <!--// end row -->
+        </div>
+        <!--========== END PAGE CONTENT ==========-->
+
+    </div>
+    <!--========== END BACKGROUND COLOR SKY LIGHT ==========-->
+    
+
+
+
+  
+      <!--========== FOOTER V8 ==========-->
+    <footer id="footer" class="footer-v8">
+        <div class="content-sm container">
+            <div class="row">
+                <!-- Logo -->
+                <div class="col-md-6">
+                    
+                    <p>You can contact through any of the following channels, although e-mail is preferred. Following me on Facebook and Twitter certainly doesn't hurt either!</p>
+                     <!-- <h2 class="footer-v8-title">Follow Me</h2> -->
+                    <!-- Theme Icons White Background -->
+                   <!-- <ul class="list-inline ul-li-lr-0">
+                        <li class="theme-icons-wrap"><a title="Facebook" href="https://facebook.com/max.woolf" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-facebook"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="Twitter" href="https://twitter.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-twitter"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="LinkedIn" href="https://linkedin.com/in/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-linkedin"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="GitHub" href="https://github.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-github"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="YouTube" href="https://youtube.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-youtube"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="E-Mail" href="mailto:max@minimaxir.com"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-envelope"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="RSS" href="/rss.xml"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-rss"></i></a></li> -->
+                    <!-- End Theme Icons White Background -->
+                </div>
+                <!-- End Logo -->
+
+                <!-- Contact Info -->
+                <div class="col-md-6">
+                    <h3 class="footer-v8-title">Contact Info</h3>
+                    <div class="footer-v8-contact-info-bg">
+                        <ul class="list-unstyled footer-v8-contact-info">
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-map-marker"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <p class="footer-v8-contact-info-text">SOMA, San Francisco, CA</p>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-facebook"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="Facebook" href="https://facebook.com/max.woolf" target="_blank">max.woolf</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-twitter"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="Twitter" href="https://twitter.com/minimaxir" target="_blank"">@minimaxir</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-linkedin"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="LinkedIn" href="https://linkedin.com/in/minimaxir" target="_blank"">minimaxir</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-envelope"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="E-Mail" href="mailto:max@minimaxir.com">max@minimaxir.com</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- End Contact Info -->
+
+            </div>
+            <!--// end row -->
+        </div>
+
+        <!-- Copyright -->
+        <div class="footer-v8-copyright">
+            <div class="container text-center">
+				Copyright &#169; 2016 Max Woolf. All Rights Reserved. 
+                minimaxir.com is powered by Jekyll and GitHub Pages.
+            </div>
+        </div>
+        <!-- Copyright -->
+    </footer>
+    <!--========== END FOOTER V8 ==========-->
+</div>
+<!-- END WRAPPER -->
+
+<!-- Sidebar Content Overlay -->
+<div class="sidebar-content-overlay"></div>
+<!-- End Sidebar Content Overlay -->
+
+<!-- Back To Top -->
+<a href="javascript:void(0);" class="js-back-to-top back-to-top-theme"></a>
+<!-- End Back To Top -->
+
+<!--========== JAVASCRIPTS(Load javascripts at bottom, this will reduce page load time) ==========-->
+<!-- BEGIN CORE PLUGINS -->
+<!--[if lt IE 9]>
+<script src="/assets/plugins/html5shiv.js"></script>
+<script src="/assets/plugins/respond.min.js"></script>
+<![endif]-->
+<script type="text/javascript" src="/js/jquery.migrate.min.js"></script>
+<script type="text/javascript" src="/js/bootstrap.min.js"></script>
+<!-- END CORE PLUGINS -->
+
+<!-- BEGIN PAGE LEVEL PLUGINS -->
+<script type="text/javascript" src="/js/jquery.back-to-top.js"></script>
+<!-- END PAGE LEVEL PLUGINS -->
+
+<!-- BEGIN PAGE LEVEL SCRIPTS -->
+<script type="text/javascript" src="/js/app.min.js"></script>
+<script type="text/javascript" src="/js/header-sticky.js"></script>
+<!-- END PAGE LEVEL SCRIPTS -->
+
+
+<!--========== END JAVASCRIPTS ==========-->
+  
+</body>
+<!-- END BODY -->
+
+</html>
