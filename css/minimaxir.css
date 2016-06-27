@@ -99,6 +99,17 @@ font-family: 'Source Sans Pro', sans-serif !important;
 text-decoration: underline;
 }
 
+.blog-grid-content h2, .blog-sidebar-heading h4 {
+	text-transform: uppercase;
+	color: #2c3e50 !important;
+	letter-spacing: 0.1em;
+}
+
+.blog-grid-content h2 {
+	margin-top: 40px;
+}
+
+
 
 
 em, li, li a, p {
@@ -212,6 +223,10 @@ padding: 0 10px;
 
 .blog-single-post-content {
 padding: 20px 20px 20px !important;
+}
+
+.blog-grid-content #htmlwidget_container {
+margin: 40px 0 !important;
 }
 
 .latest-tuts-content-time i {
