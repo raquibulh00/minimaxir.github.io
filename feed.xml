@@ -5,9 +5,92 @@
     <description>A blog by Max Woolf about startups, technology, and blogging. It&#39;s so meta, even this acronym.</description>
     <link>http://minimaxir.com/</link>
     <atom:link href="http://minimaxir.com/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Mon, 27 Jun 2016 08:07:30 -0700</pubDate>
-    <lastBuildDate>Mon, 27 Jun 2016 08:07:30 -0700</lastBuildDate>
+    <pubDate>Thu, 21 Jul 2016 06:35:38 -0700</pubDate>
+    <lastBuildDate>Thu, 21 Jul 2016 06:35:38 -0700</lastBuildDate>
     <generator>Jekyll v3.1.2</generator>
+    
+      <item>
+        <title>Visualizing How Developers Rate Their Own Programming Skills</title>
+        <description>&lt;p&gt;&lt;a href=&quot;http://stackoverflow.com&quot;&gt;Stack Overflow&lt;/a&gt;, the favorite destination for software developers when something breaks for no apparent reason, recently released their &lt;a href=&quot;http://stackoverflow.com/research/developer-survey-2016&quot;&gt;2016 Stack Overflow Survey Results&lt;/a&gt; with responses to the questions of &amp;ldquo;where they work, what they build, and who they are.&amp;rdquo; You can download the released dataset containing all 56,030 cleaned responses &lt;a href=&quot;http://stackoverflow.com/research&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;One variable present in the dataset but surprisingly unaddressed in the official Stack Overflow analysis is the &lt;code&gt;programming_ability&lt;/code&gt; field — &lt;em&gt;On a scale of 1-10, how would you rate your programming ability?&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;I took a look at the 46,982 users who identified their programming ability in the survey. On average, developers rate themselves 7.09 / 10. And like most 1-10 rating scales, the distribution of self-assessments is unimodal around 7 and 8, with relatively rare 9&amp;rsquo;s and 10&amp;rsquo;s.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/stack-overflow/so-programming-0.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;We can aggregate the programming ability data by other relevant metrics in the Stack Overflow dataset, such as experience and commit activity, and hopefully find interesting trends.&lt;/p&gt;
+
+&lt;h2&gt;Sanity Checking&lt;/h2&gt;
+
+&lt;p&gt;I normally dislike working with survey data since there is a high possibility of &lt;a href=&quot;https://en.wikipedia.org/wiki/Selection_bias&quot;&gt;selection bias&lt;/a&gt; among the respondents. In Stack Overflow&amp;rsquo;s case, their marketing of the survey on Facebook and Twitter may cause a high proportion of social-media savvy respondents and discount the insight of developers who are not likely to use those services. For this reason, I will show &lt;a href=&quot;https://en.wikipedia.org/wiki/Confidence_interval&quot;&gt;confidence intervals&lt;/a&gt; whenever possible to reflect the proportionate uncertainty for groupings with insufficient data, and to also account for possibility that a minority of respondents may be dishonest and nudge their programming ability a few points higher than the truth.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s compare programming skill to the developer&amp;rsquo;s experience in the field. In the survey, the user could classify their IT / programming experience as a range, from &amp;ldquo;Less than 1 year&amp;rdquo;, &amp;ldquo;1 - 2 years&amp;rdquo;, &amp;ldquo;2 - 5 years&amp;rdquo;, &amp;ldquo;6 - 10 years&amp;rdquo;, and &amp;ldquo;11+ years.&amp;rdquo; Since we would expect a positive correlation between skill and experience, identifying such a positive correlation visually gives a quick indication that the analysis is on the right track.&lt;/p&gt;
+
+&lt;p&gt;We can plot the average programming-ability rating for developers which fall into each of those five groups, and a confidence interval for that average. Additionally, we can make a &lt;a href=&quot;https://en.wikipedia.org/wiki/Violin_plot&quot;&gt;violin plot&lt;/a&gt; of each group to give a sense of the underlying distribution of ratings.&lt;/p&gt;
+
+&lt;p&gt;Putting it all together:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/stack-overflow/so-programming-5.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;The color dot for each group represents the average rating from the sample which the developers in the group give to themselves. The black error bars on the dot represent a 95% confidence interval for the true value of the average, obtained via &lt;a href=&quot;http://minimaxir.com/2015/09/bootstrap-resample/&quot;&gt;percentile bootstrap&lt;/a&gt; with 10,000 resamples of the dataset with replacement (since there is a large amount of source data, the confidence intervals end up being very narrow in most cases; this is one legitimate advantage of big data).&lt;/p&gt;
+
+&lt;p&gt;The violin plot for each group represents the normalized overall distribution of ratings. The narrowness of the per-value ratings reflect the amount of data available for that group: the more data available, the more narrow/precise the kernel smoothing is. Overall flat plots represent a wide selection of self-ratings, while an overall narrow plot represents a more-constrained selection (for the plot above, you can easily see the distribution shift to the right as the experience range increases).&lt;/p&gt;
+
+&lt;p&gt;Also, keep in mind that these groupings alone do not imply a &lt;strong&gt;causal relationship&lt;/strong&gt; between the two variables. Employing traditional &lt;a href=&quot;https://en.wikipedia.org/wiki/Regression_analysis&quot;&gt;regression analysis&lt;/a&gt; to build a model for predicting programming ability would be tricky: does having more experience cause programming skill to improve, or does having strong innate technical skill cause developers to remain in the industry and grow?&lt;/p&gt;
+
+&lt;p&gt;Back to the plot at hand. We can easily confirm that a positive correlation exists between programming activity and experience, with newbie developers rating their skills 5.02 / 10 on average, and extremely experienced developers rating their skills three whole ranks higher at 8.13 / 10. What&amp;rsquo;s also notable is the range of values selected: for developers with &lt;strong&gt;less than 1 years&lt;/strong&gt; of experience, the distribution is almost completely flat between 1-7, showing that they are more honest with the self-assessment of their programming skills. Inversely, developers with &lt;strong&gt;11+ years&lt;/strong&gt; of experience select 9 and 10 ratings almost as much as 7 and 8 ratings.&lt;/p&gt;
+
+&lt;p&gt;It&amp;rsquo;s a good start. We can also compare developer skill to their age, which by construction (older developers have more experience) should have parallel behavior to experience levels.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/stack-overflow/so-programming-4.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;Yes, the plot is indeed similar, with average ratings ranging from 6 to about 8. What&amp;rsquo;s interesting is the behavior for &lt;strong&gt;&amp;gt; 60&lt;/strong&gt; vs. &lt;strong&gt;50-59&lt;/strong&gt; is that the &amp;gt; 60 age programmers occasionally rate their skills at the low end of the scale, which is why the confidence interval is larger and the average is lower for that group.&lt;/p&gt;
+
+&lt;p&gt;Lastly, we can look at the salary the developer is paid (in USD) as a validation of skill. This particular chart will only focus on developers in the United States (n = 13,539), so that the salary follows expected behavior with the specified currency and cost-of-living. In this case, there are many more groups, but that makes the distribution shift more apparent, and more interesting.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/stack-overflow/so-programming-6.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;The large amount of &amp;gt;$100k earners in the dataset shows how the Stack Overflow demographic can skew toward Silicon Valley engineers. The $90k—$100k group serves as a convenient inflection point on how the distribution of self-ratings becomes a &lt;a href=&quot;http://tvtropes.org/pmwiki/pmwiki.php/Main/FourPointScale&quot;&gt;Four Point Scale&lt;/a&gt; between 7 and 10 for those who earn more than $100k.&lt;/p&gt;
+
+&lt;h2&gt;Do better developers rate themselves better?&lt;/h2&gt;
+
+&lt;p&gt;So far, the data is internally consistent. There are a few other developer-relevant statistics are available in the dataset which can easily be aggregated. A good one is the &lt;em&gt;type&lt;/em&gt; of employment. For example, do &lt;strong&gt;freelance / contract&lt;/strong&gt; developers believe they are better programmers than &lt;strong&gt;full-time&lt;/strong&gt; developers?&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/stack-overflow/so-programming-7.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;As it turns out, that guess is indeed the case, albeit it&amp;rsquo;s only a slight difference (7.53 / 10 for &lt;strong&gt;freelance / contract&lt;/strong&gt; vs. 7.29 / 10 for &lt;strong&gt;full-time&lt;/strong&gt;).&lt;/p&gt;
+
+&lt;p&gt;What about repository commit activity by developers? Are developers who commit more better? One could argue that a developer who commits code often is either vigilant with accounting for functional code changes, or polluting the codebase in an attempt to show productivity.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/stack-overflow/so-programming-8.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;Yes, developers who commit lots of code rate themselves better.&lt;/p&gt;
+
+&lt;p&gt;Lastly, let&amp;rsquo;s remember that the source of data is Stack Overflow. Are developers who use Stack Overflow as a resource better developers who know how to properly use external references in times of crisis, or are they developers who use it as a crutch to compensate for weak coding skills?&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/stack-overflow/so-programming-9.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;As it turns out, there is &lt;strong&gt;no correlation between programming ability and and the frequency of Stack Overflow visits&lt;/strong&gt;, as the averages and distributions are virtually identical across all groups.&lt;/p&gt;
+
+&lt;p&gt;There are many, many other answers available in the dataset; some allow multiple responses and are harder to parse, while others have zero correlation with programming ability as with the Stack Overflow visits, and therefore do not provide much additional insight. Although we cannot establish causal relationships with this methodology, there may be other important insights obtainable from aggregating programming ability data, but the charts presented in this post are a good start.&lt;/p&gt;
+
+&lt;hr&gt;
+
+&lt;p&gt;&lt;em&gt;As always, the full code used to process the comment data and generate the visualizations is available in &lt;a href=&quot;https://github.com/minimaxir/stack-overflow-survey/blob/master/stack_overflow_dev_survey.ipynb&quot;&gt;this Jupyter notebook&lt;/a&gt;, open-sourced &lt;a href=&quot;https://github.com/minimaxir/stack-overflow-survey&quot;&gt;on GitHub&lt;/a&gt;. The repository also contains a few unused bonus charts!&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;You are free to use the charts from this article however you wish, but it would be greatly appreciated if proper attribution is given to this article and/or myself!&lt;/em&gt;&lt;/p&gt;
+</description>
+        <pubDate>Thu, 21 Jul 2016 06:30:00 -0700</pubDate>
+        <link>http://minimaxir.com/2016/07/stack-overflow/</link>
+        <guid isPermaLink="true">http://minimaxir.com/2016/07/stack-overflow/</guid>
+        
+        
+        <category>Visualization</category>
+        
+        <category>Data</category>
+        
+      </item>
     
       <item>
         <title>Classifying the Emotions of Facebook Posts Using Reactions Data</title>
@@ -1032,73 +1115,6 @@ df_dedup &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; df &lt;span clas
         <pubDate>Mon, 29 Feb 2016 08:00:00 -0800</pubDate>
         <link>http://minimaxir.com/2016/02/facebook-reactions/</link>
         <guid isPermaLink="true">http://minimaxir.com/2016/02/facebook-reactions/</guid>
-        
-        
-        <category>Rant</category>
-        
-      </item>
-    
-      <item>
-        <title>You&#39;re Not Allowed to Criticize Startups, You Stupid Hater</title>
-        <description>&lt;p&gt;A couple weeks ago, &lt;a href=&quot;https://itunes.apple.com/us/app/peach-a-space-for-friends/id1067891186?mt=8&quot;&gt;Peach&lt;/a&gt;, a messaging app, was released on iOS. Not only did Peach trend on Twitter on the day of release, but there was also an &lt;em&gt;unusual&lt;/em&gt; amount of media coverage for app, with both &lt;a href=&quot;http://techcrunch.com/2016/01/08/peach-is-a-slick-new-messaging-app-from-the-founder-of-vine/&quot;&gt;TechCrunch&lt;/a&gt; and &lt;a href=&quot;http://www.buzzfeed.com/katienotopoulos/do-i-dare-to-post-on-peach&quot;&gt;BuzzFeed&lt;/a&gt; posting glowing reviews for it, noting that the app is &amp;ldquo;slick&amp;rdquo; and &amp;ldquo;blowing up&amp;rdquo; respectively (commenters in the BuzzFeed article thought it was paid advertising). Usually, reports for apps from both sites are more neutral, which made me curious.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/startup-haters/peach-1.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;There are &lt;em&gt;already&lt;/em&gt; an absurd amount of messaging apps out there, and as a result, product differentiation is the primary value proposition. (e.g. security and &lt;a href=&quot;https://itunes.apple.com/us/app/telegram-messenger/id686449807?mt=8&quot;&gt;Telegram Messenger&lt;/a&gt;) What is Peach&amp;rsquo;s differentiation? &amp;ldquo;Magic Words&amp;rdquo;, apparently, which let you perform contextual actions with words! These Magic Words are implemented in a manner similar to a &lt;a href=&quot;https://en.wikipedia.org/wiki/Command-line_interface&quot;&gt;command-line interface&lt;/a&gt; (CLI). &lt;a href=&quot;http://nymag.com/following/2016/01/how-the-command-line-became-mainstream-again.html&quot;&gt;NYMag&lt;/a&gt; goes into extreme detail about the feature. Nerds love CLIs, so you can tell the product was made by smart people!&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/startup-haters/peach-2.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;The &lt;a href=&quot;https://news.ycombinator.com/item?id=10883698&quot;&gt;Hacker News thread&lt;/a&gt; about the NYMag article was interesting. One commenter (jobu) that the Magic Words are similar to those of &lt;a href=&quot;https://slack.com&quot;&gt;Slack&lt;/a&gt;, which allow for &amp;ldquo;/&amp;rdquo; commands (again, messaging app differentiation). A HN user (pbreit) argued in response:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;You&amp;rsquo;re missing the whole thing. For starters, Slack is for work and Peach is for personal. But I think before you dismiss something as &amp;ldquo;isn&amp;rsquo;t it just x plus y?&amp;rdquo; you need to take a little bit more time and thinking to try and figure out what the product designers are trying to achieve and how.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Wait, what? Are the users of Peach supposed to be mind readers? Are people stupid for not understanding the purpose of Peach?&lt;/p&gt;
-
-&lt;p&gt;Another user (thwarted) replied to that response with such:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;Maybe the product designers and product providers should be more explicit about how their product should be used and who their target demographic is, if they want a successful product, rather than making everyone &amp;ldquo;figure out&amp;rdquo; what they are trying to achieve and how.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;pbreit replied:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;&amp;ldquo;Figuring it out&amp;rdquo; might be the point. You do realize that you are referring to some of the very few people who have actually already built an amazingly successful product.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;I should have mentioned earlier that Peach was made by &lt;a href=&quot;http://byte.co&quot;&gt;Byte&lt;/a&gt;, which is ran by &lt;a href=&quot;https://twitter.com/dhof&quot;&gt;Dom Hofmann&lt;/a&gt;, a founder of Vine which was purchased by Twitter before launch (it also appears Peach is a pivot from the failed Byte app; something left out by the blog articles). Yes, if a founder has had a previously successful startup, the previous success implies a higher probability for future startup success than for a startup run by an unknown founder. However, it&amp;rsquo;s still not a 100% guarantee, and startups should not be immune to criticism because of asymmetric information between the users and the startup itself. Peach is impeachable. (pun intended)&lt;/p&gt;
-
-&lt;p&gt;TechCrunch did a &lt;a href=&quot;http://techcrunch.com/2016/01/11/hype-or-not-peach-hit-the-top-10-social-networking-app-list-fast/&quot;&gt;follow-up article&lt;/a&gt; three days after release stating (paraphrased) &amp;ldquo;Peach is #9 in the App Store in the Social Networking category, despite the haters! Now they will be a success! Haters gonna hate!&amp;rdquo; Social networking is a double-edged sword in terms of network effects: they can grow incredibly fast as friends-of-friends register, and they can &lt;em&gt;die&lt;/em&gt; incredibly fast once they all realize the app is a fad. As of publishing, Peach is ranked #110 in the Social Networking category, and off-the-charts in Overall. And &lt;a href=&quot;https://www.appannie.com/apps/ios/app/peach-a-space-for-friends/rank-history/&quot;&gt;still dropping&lt;/a&gt;, with no apparent recovery.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/startup-haters/peach-3.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;I seriously wish the tech media would admit they were wrong, but they never will. The startup world is in dire need of cautionary tales as valuations inflate to absurd levels.&lt;/p&gt;
-
-&lt;p&gt;But hey, isn&amp;rsquo;t any startup ran by a previously-funded founder a sure thing? They know what it takes to create a company, even if it&amp;rsquo;s in a different and highly competitive environment years later than their first success! One success is all a founder needs.&lt;/p&gt;
-
-&lt;p&gt;A startup&amp;rsquo;s release is unpolished and buggy? It&amp;rsquo;s just an MVP, and startups are expected to have issues out of the gate, so you have to forgive them! They don&amp;rsquo;t need QA engineers.&lt;/p&gt;
-
-&lt;p&gt;A startup uses growth hacking to get early traction? It&amp;rsquo;s hustle, and they should be applauded for their creativity! Whoever complains is just in the minority, anyways.&lt;/p&gt;
-
-&lt;p&gt;A startup gets a lot of points on Product Hunt? That&amp;rsquo;s validation, especially since it was submitted by one of the friends/investors of the startup for all their network to see and upvote! A strong personal network is the only thing you need for business success.&lt;/p&gt;
-
-&lt;p&gt;A startup raises a Series A? That means venture capitalists did due diligence, and if the idea sucked, they would not have invested! Millions of dollars is a lot of money to those people.&lt;/p&gt;
-
-&lt;p&gt;A startup loses traction and buzz? It&amp;rsquo;s not dead, it can come back as long as it has money in the bank! Your lack of faith demotivates entrepreneurs.&lt;/p&gt;
-
-&lt;p&gt;A startup &lt;em&gt;dies&lt;/em&gt;? They can just try again! It was bad luck anyways and they likely did nothing wrong.&lt;/p&gt;
-
-&lt;p&gt;A startup is mercy-killed through an acquisition/acquihire? Just another step in their incredible journey! The founders still win, and now they have the &amp;ldquo;exited&amp;rdquo; label to leverage for future employment.&lt;/p&gt;
-
-&lt;p&gt;Sarcastic rhetorical questions aside, it is very annoying that it is considered socially unacceptable in Silicon Valley to criticize a startup. Even though the majority of startups fail, actually &lt;em&gt;saying so&lt;/em&gt; is sacrilegious. In Peach&amp;rsquo;s particular case, the fact that the app is from a previous exited founder should invite &lt;em&gt;more&lt;/em&gt; scrutiny instead of giving it a free pass.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;EDIT&lt;/strong&gt;: Fixed joke so that it is funny.&lt;/p&gt;
-</description>
-        <pubDate>Mon, 25 Jan 2016 08:00:00 -0800</pubDate>
-        <link>http://minimaxir.com/2016/01/startup-haters/</link>
-        <guid isPermaLink="true">http://minimaxir.com/2016/01/startup-haters/</guid>
         
         
         <category>Rant</category>
