@@ -5,9 +5,103 @@
     <description>A blog by Max Woolf about startups, technology, and blogging. It&#39;s so meta, even this acronym.</description>
     <link>http://minimaxir.com/</link>
     <atom:link href="http://minimaxir.com/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Thu, 21 Jul 2016 06:35:38 -0700</pubDate>
-    <lastBuildDate>Thu, 21 Jul 2016 06:35:38 -0700</lastBuildDate>
+    <pubDate>Wed, 03 Aug 2016 06:17:20 -0700</pubDate>
+    <lastBuildDate>Wed, 03 Aug 2016 06:17:20 -0700</lastBuildDate>
     <generator>Jekyll v3.1.2</generator>
+    
+      <item>
+        <title>Interactive 3D Clusters of all 721 Pokémon Using Spark and Plotly</title>
+        <description>&lt;p&gt;There has been a lot of talk lately about &lt;a href=&quot;http://www.pokemon.com/us/&quot;&gt;Pokémon&lt;/a&gt; due to the runaway success of &lt;a href=&quot;http://www.pokemongo.com&quot;&gt;Pokémon GO&lt;/a&gt; (I myself am Trainer Level 18 and on &lt;span style=&quot;color: #e74c3c&quot;&gt;Team Valor&lt;/span&gt;). Players revel in the nostalgia of 1996 by now having the ability catching the original 151 Pokémon in real life.&lt;/p&gt;
+
+&lt;p&gt;However, while players most-fondly remember the first generation, Pokémon is currently on its &lt;em&gt;sixth&lt;/em&gt; generation, with the seventh generation beginning later this year with &lt;a href=&quot;http://www.pokemon-sunmoon.com/en-us/&quot;&gt;Pokémon Sun and Moon&lt;/a&gt;. As of now, there are &lt;em&gt;721&lt;/em&gt; total Pokémon &lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_National_Pok%C3%A9dex_number&quot;&gt;in the Pokédex&lt;/a&gt;, from &lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Bulbasaur_(Pok%C3%A9mon)&quot;&gt;Bulbasaur&lt;/a&gt; to &lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Volcanion_(Pok%C3%A9mon)&quot;&gt;Volcanion&lt;/a&gt;, not counting alternate Forms of several Pokémon such as &lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Mega_Evolution&quot;&gt;Mega Evolutions&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;In the meantime, I&amp;rsquo;ve seen a few interesting data visualizations which capitalize on the frenzy. A &lt;a href=&quot;https://www.reddit.com/r/dataisbeautiful/comments/4uumqs/gotta_plot_em_all_the_height_versus_weight_of/&quot;&gt;highly-upvoted post&lt;/a&gt; on the Reddit subreddit /r/dataisbeautiful by &lt;a href=&quot;https://www.reddit.com/user/nvvknvvk&quot;&gt;/u/nvvknvvk&lt;/a&gt; charts the Height vs. Weight of the original 151 Pokémon. Anh Le of Duke University posted a &lt;a href=&quot;http://people.duke.edu/%7Eaql3/gotta-plot-them-all/&quot;&gt;cluster analysis&lt;/a&gt; of the original 151 Pokémon using &lt;a href=&quot;https://en.wikipedia.org/wiki/Principal_component_analysis&quot;&gt;principal component analysis&lt;/a&gt; (PCA), by compressing the 6 primary Pokémon stats into 2 dimensions.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/pokemon-3d/pokemon-2d.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;However, those visualizations think too small, and only on a small subset of Pokémon. Why not capture &lt;em&gt;every single aspect&lt;/em&gt; of &lt;em&gt;every Pokémon&lt;/em&gt; and violently crush that data into &lt;em&gt;three&lt;/em&gt; dimensions?&lt;/p&gt;
+
+&lt;h2&gt;Spark (30% chance of paralyzing the target)&lt;/h2&gt;
+
+&lt;p&gt;Last week, &lt;a href=&quot;http://spark.apache.org&quot;&gt;Apache Spark 2.0.0&lt;/a&gt; was released, a major milestone in big data analysis. Spark 2.0 is potentially &lt;a href=&quot;https://databricks.com/blog/2016/05/11/apache-spark-2-0-technical-preview-easier-faster-and-smarter.html&quot;&gt;10x as fast&lt;/a&gt; as the previous 1.6 version, with much improved APIs and documentation (you can actually import CSVs now!). The Python interface (which I use for this post), &lt;a href=&quot;http://spark.apache.org/docs/latest/api/python/&quot;&gt;PySpark&lt;/a&gt;, is now almost as functionally capable as the leading &lt;a href=&quot;http://scikit-learn.org/stable/&quot;&gt;scikit-learn&lt;/a&gt; machine learning tool, but with the ability to scale to terabyte-size datasets. &lt;/p&gt;
+
+&lt;p&gt;The data source of both visualizations above is the &lt;a href=&quot;https://pokeapi.co&quot;&gt;PokéAPI&lt;/a&gt;, whose data is open-source and &lt;a href=&quot;https://github.com/PokeAPI/pokeapi/tree/master/data/v2/csv&quot;&gt;available as CSVs&lt;/a&gt; on GitHub, and &lt;em&gt;unusually&lt;/em&gt; clean with proper normalization. The dump is thorough, with full coverage of all the up-to-date  Pokémon information available in the games up to the current generation.&lt;/p&gt;
+
+&lt;p&gt;The PokéAPI data includes numerical variables representing each Pokémon, including the six primary Pokémon stats (HP, Attack, Defense, Special Attack, Special Defense, Speed) and Height/Weight. We can aggregate those variables for all Pokémon and normalize them so that they are within [&lt;strong&gt;0.0&lt;/strong&gt;, &lt;strong&gt;1.0&lt;/strong&gt;] for easier computation when the data is eventually reduced into 3 dimensions. &lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/pokemon-3d/height-weight.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;But a tool like Spark is overkill for just normalization. What Spark &lt;em&gt;isn&amp;rsquo;t&lt;/em&gt; overkill for is working with categorical variables. Something we can do is encode variables as &lt;a href=&quot;https://en.wikipedia.org/wiki/Dummy_variable_(statistics)&quot;&gt;dummy variables&lt;/a&gt;, as Spark has a few tools especially helpful for that workflow. For example, let&amp;rsquo;s say we want to encode a Pokémon&amp;rsquo;s type(s) as binary variables.&lt;/p&gt;
+
+&lt;p&gt;There are currently 18 &lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Type&quot;&gt;different types&lt;/a&gt; of Pokémon, and a Pokémon can have either 1 or 2 types. We can encode a Pokémon&amp;rsquo;s type(s) in the field by setting a &lt;strong&gt;1.0&lt;/strong&gt; in columns which represent a given&amp;rsquo;s Pokémon&amp;rsquo;s type, and &lt;strong&gt;0.0&lt;/strong&gt; in all other columns. Bulbasaur, for example, is a Grass/Poison type. We set &lt;strong&gt;1.0&lt;/strong&gt; to the column representing Grass for Bulbasaur, and &lt;strong&gt;1.0&lt;/strong&gt; to the column representing Poison, and 16 total &lt;strong&gt;0.0&lt;/strong&gt; for all other columns (in the end, the data representing a Pokémon&amp;rsquo;s type is a 721x18 matrix). This approach is similar to the &lt;a href=&quot;https://en.wikipedia.org/wiki/One-hot&quot;&gt;one-hot encoding&lt;/a&gt; technique used for high-level data analysis. Spark allows the use of sparse data structures, so Spark does not have to store each &lt;strong&gt;0.0&lt;/strong&gt; in memory; just the indices of each &lt;strong&gt;1.0&lt;/strong&gt; and the size of the vector itself. Printing the table confirms that data structure.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/pokemon-3d/sparse.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;Here are the other Pokémon attributes present in the PokéAPI data dump that we can encode as binary columns:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Pokémon &lt;strong&gt;moves&lt;/strong&gt;, including all moves the Pokémon is capable of learning via leveling up/TMs/egg moves in any version of the game. This variable results in 613 added columns.&lt;/li&gt;
+&lt;li&gt;Pokémon &lt;strong&gt;abilities&lt;/strong&gt;, which are passive effects, and each Pokémon can have one of up to 3 unique abilities (adds 191 columns)&lt;/li&gt;
+&lt;li&gt;Pokémon &lt;strong&gt;color&lt;/strong&gt;, which is just as it sounds (10 columns)&lt;/li&gt;
+&lt;li&gt;Pokémon &lt;strong&gt;shape&lt;/strong&gt;, which apparently includes classifications such as &amp;ldquo;ball,&amp;rdquo; &amp;ldquo;quadruped,&amp;rdquo; and &amp;ldquo;squiggle&amp;rdquo;? (14 columns)&lt;/li&gt;
+&lt;li&gt;Pokémon &lt;strong&gt;habitat&lt;/strong&gt; where the Pokémon can generally be found (or &lt;em&gt;not&lt;/em&gt; found in the case of Event Pokémon) (10 columns)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Combining all the sparse vectors with special Spark functions, we have a dataframe of 863 features. Using PCA, we reduce the dimensionality that data from 863 dimensions to 50 dimensions (we&amp;rsquo;re not going down to 3 dimensions &lt;em&gt;just&lt;/em&gt; yet)&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/pokemon-3d/pca.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;The top 3 principal components of this 50D model explain only 12.8% of the data variance in the 3D space, which means that clusters would likely not be apparent if plotted as-is. A smart thing to do would be to use a clustering algorithm. t-SNE is a &lt;a href=&quot;https://lvdmaaten.github.io/tsne/&quot;&gt;relatively new algorithm&lt;/a&gt; by Laurens van der Maaten that is surprisingly effective at clustering high-dimensional data into low-dimensional space, without causing high amounts of blending between points (unfortunately, it can be computationally intensive, which is one of the reason I reduced the dimensionality of the data to 50D first). Most academic papers focus on 2D representations of the data resulting from t-SNE, but there&amp;rsquo;s nothing preventing users from projecting the data to 3D!&lt;/p&gt;
+
+&lt;p&gt;Running &lt;a href=&quot;https://github.com/danielfrg/tsne&quot;&gt;a Python wrapper&lt;/a&gt; of t-SNE on the PCA-reduced dataset results in magic.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/pokemon-3d/t-sne.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;As you can see, the Pokémon along the same evolutionary track have very close [x,y,z] values, which indicates that the clustering algorithm accurately placed them close together. Notably, it classified the preevolutions of the common bug Pokémon all together (&lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Caterpie_(Pok%C3%A9mon)&quot;&gt;Caterpie&lt;/a&gt;/&lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Metapod_(Pok%C3%A9mon)&quot;&gt;Metapod&lt;/a&gt;/&lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Weedle_(Pok%C3%A9mon)&quot;&gt;Weedle&lt;/a&gt;/&lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Kakuna_(Pok%C3%A9mon)&quot;&gt;Kakuna&lt;/a&gt;) even though they are of different evolutionary lines, but have similar attributes/movesets. The final evolutions of these Bug Pokémon, &lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Butterfree_(Pok%C3%A9mon)&quot;&gt;Butterfree&lt;/a&gt; and &lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Beedrill_(Pok%C3%A9mon)&quot;&gt;Beedrill&lt;/a&gt;, are clustered much differently than their pre-evolution stages, because the preevolutions are statistically useless while Butterfree/Beedrill are not as useless.&lt;/p&gt;
+
+&lt;p&gt;How do you best visualize these clusters? That&amp;rsquo;s where Plotly comes in.&lt;/p&gt;
+
+&lt;h2&gt;Nasty Plotly (Sharply raises Special Attack)&lt;/h2&gt;
+
+&lt;p&gt;Plotly is a data visualization tool, now open-source, which allows users to create interactive visualizations with a robust API. I previously used it for &lt;a href=&quot;http://minimaxir.com/2016/06/interactive-reactions/&quot;&gt;visualizations with R&lt;/a&gt;, but as it turns out, the Python API to Plotly is much more powerful. Simply plotting a static 3D chart using something like &lt;a href=&quot;http://matplotlib.org&quot;&gt;matplotlib&lt;/a&gt; with the default settings is not insightful.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/pokemon-3d/pokemon_pca_test.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;In this case, the ability to manipulate the perspective of the data is very important. And so with a little bit of Plotly documentation-delving, I managed to create the 3D chart that you  hopefully saw at the top of this page.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/pokemon-3d.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;Each dot is colored by the Pokémon&amp;rsquo;s type in the first slot for simplicity (one exception is Normal/Flying Pokémon like &lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Pidgey_(Pok%C3%A9mon)&quot;&gt;Pidgey&lt;/a&gt;; I manually converted their displayed type to Flying because the omission was notable due to Game Freak&amp;rsquo;s addiction to that particular pairing in the early generations). This gives a surprisingly coherent visualization of the groups of Pokémon types present. But it&amp;rsquo;s also important to note the groups &lt;em&gt;outside&lt;/em&gt; the clusters, in order to identify incorrect clusters, or to identify Pokémon which have been clusters as &lt;em&gt;especially&lt;/em&gt; unique.&lt;/p&gt;
+
+&lt;p&gt;A few interesting observations I&amp;rsquo;ve noted:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;There are two far-away colocated clusters for Pokémon which are useless: gimmick Pokémon with limited movesets like &lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Wobbuffet_(Pok%C3%A9mon)&quot;&gt;Wobbuffet&lt;/a&gt;, &lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Ditto_(Pok%C3%A9mon)&quot;&gt;Ditto&lt;/a&gt;, &lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Smeargle_(Pok%C3%A9mon)&quot;&gt;Smeargle&lt;/a&gt;, and &lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Magikarp_(Pok%C3%A9mon)&quot;&gt;Magikarp&lt;/a&gt;, and &lt;em&gt;Bug&lt;/em&gt; Pokémon with limited movesets, as mentioned before, like &lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Burmy_(Pok%C3%A9mon)&quot;&gt;Burmy&lt;/a&gt; and &lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Kricketot_(Pok%C3%A9mon)&quot;&gt;Kricketot&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;There are often close clusters for Legendary Pokémon trios (&lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Articuno_(Pok%C3%A9mon)&quot;&gt;Articuno&lt;/a&gt;, &lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Zapdos_(Pok%C3%A9mon)&quot;&gt;Zapdos&lt;/a&gt;, &lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Moltres_(Pok%C3%A9mon)&quot;&gt;Moltres&lt;/a&gt;; the Pokémon which represent the teams in Pokémon GO) due to similar stats/moves.&lt;/li&gt;
+&lt;li&gt;The Flying cluster is interesting due to the presence of other Types of Pokémon which have a different first type, but the location correctly implies that they are closer to their Flying secondary type (&lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Zubat_(Pok%C3%A9mon)&quot;&gt;Zubat&lt;/a&gt;, &lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Murkrow_(Pok%C3%A9mon)&quot;&gt;Murkrow&lt;/a&gt;, &lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Xatu_(Pok%C3%A9mon)&quot;&gt;Xatu&lt;/a&gt;, &lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Wingull_(Pok%C3%A9mon)&quot;&gt;Wingull&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;Lastly, the Pokémon God &lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Arceus_(Pok%C3%A9mon)&quot;&gt;Arceus&lt;/a&gt;, which has the highest stat total of the base Pokémon, is located in its own cluster alongside similarly-statistically-powerful Pokémon such as &lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Dialga_(Pok%C3%A9mon)&quot;&gt;Dialga&lt;/a&gt;, &lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Dragonite_(Pok%C3%A9mon)&quot;&gt;Dragonite&lt;/a&gt;, and &lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Gyarados_(Pok%C3%A9mon)&quot;&gt;Gyarados&lt;/a&gt;. &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Interactive 3D was definitely a good idea for this type of visualization, as a 2D visualization would be difficult to read, and even more difficult to discern the clusters. And this project was a good reason to test out the capabilities of Spark 2.0 and prototype code for future data analysis projects (the next dataset I use will be &lt;em&gt;much&lt;/em&gt; larger, I promise). I do have a few ideas for improvements to the 3D chart in the pipeline, but maybe I&amp;rsquo;ll save them for when the seventh generation is fully released.&lt;/p&gt;
+
+&lt;hr&gt;
+
+&lt;p&gt;&lt;em&gt;The full code used to process the Pokémon data using Spark is available in &lt;a href=&quot;https://github.com/minimaxir/pokemon-3d/blob/master/pokemon_spark_pca.ipynb&quot;&gt;this Jupyter notebook&lt;/a&gt;, and the code used to generate the Plotly visualizations is available in &lt;a href=&quot;https://github.com/minimaxir/pokemon-3d/blob/master/pokemon_3d_plotly.ipynb&quot;&gt;this Jupyter notebook&lt;/a&gt;, both open-sourced &lt;a href=&quot;https://github.com/minimaxir/pokemon-3d&quot;&gt;on GitHub&lt;/a&gt;.  In the GitHub repository, you can download standalone, offline versions of the 3D chart; including an extra chart with cluster meshes, which was unused for this post due to performance issues.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;You are free to use the data visualizations from this article however you wish, but it would be greatly appreciated if proper attribution is given to this article and/or myself!&lt;/em&gt;&lt;/p&gt;
+</description>
+        <pubDate>Wed, 03 Aug 2016 06:30:00 -0700</pubDate>
+        <link>http://minimaxir.com/2016/08/pokemon-3d/</link>
+        <guid isPermaLink="true">http://minimaxir.com/2016/08/pokemon-3d/</guid>
+        
+        
+        <category>Visualization</category>
+        
+        <category>Data</category>
+        
+        <category>Interactive</category>
+        
+      </item>
     
       <item>
         <title>Visualizing How Developers Rate Their Own Programming Skills</title>
@@ -1037,87 +1131,6 @@ df_dedup &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; df &lt;span clas
         <category>Comedy</category>
         
         <category>Genius</category>
-        
-      </item>
-    
-      <item>
-        <title>Facebook Reactions and the Problems With Quantifying Likes Differently</title>
-        <description>&lt;p&gt;Facebook added &lt;a href=&quot;http://newsroom.fb.com/news/2016/02/reactions-now-available-globally/&quot;&gt;Facebook Reactions&lt;/a&gt;, allowing users to do more than just &amp;ldquo;Like&amp;rdquo; posts and statuses as they have done for the past decade. Likes were the universal symbol of approval on social media. Now, Facebook users can apply more granular responses, from positive emotions like &lt;strong&gt;Love&lt;/strong&gt;, to negative emotions such as &lt;strong&gt;Angry&lt;/strong&gt;. This was widely believed to be Facebook&amp;rsquo;s compromise instead of adding a Dislike button.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/facebook-reactions/facebook_react.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;Of course, there&amp;rsquo;s an ulterior motive. The use of reactions provides organic data on the sentiment of a status, which is helpful for numerous marketing and statistical applications. As &lt;a href=&quot;http://www.buzzfeed.com/alexkantrowitz/facebook-reactions-launch-today&quot;&gt;BuzzFeed notes&lt;/a&gt;, Facebook ads may be able &amp;ldquo;to write one product message for someone who mostly uses &lt;strong&gt;Sad&lt;/strong&gt; and another who mostly uses &lt;strong&gt;Wow&lt;/strong&gt; or &lt;strong&gt;Love.&lt;/strong&gt;&amp;rdquo;&lt;/p&gt;
-
-&lt;p&gt;However, this isn&amp;rsquo;t the first time a big social network has tried implementing reactions alongside Likes/Dislikes. Four years ago, YouTube added &lt;a href=&quot;http://googlesystem.blogspot.com/2011/06/youtube-reactions.html&quot;&gt;Reaction buttons&lt;/a&gt; to their comments section:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/facebook-reactions/youtube-reactions.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;&amp;hellip;and removed them sometime after without fanfare, replacing it with the simple Like/Dislike bar.&lt;/p&gt;
-
-&lt;p&gt;Presumably, YouTube implemented the buttons for the similar reason as Facebook. What makes things different now, if anything?&lt;/p&gt;
-
-&lt;h2&gt;A Quantitative Approach to Feeling&lt;/h2&gt;
-
-&lt;p&gt;Even after YouTube&amp;rsquo;s failure, another data-driven website implemented reaction buttons: BuzzFeed (who else?). At the end of each article (in most categories), registered users can select a quirky reaction to indicate how they felt about the article.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/facebook-reactions/buzzfeedreactions.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;The heart represents &lt;strong&gt;Love&lt;/strong&gt; internally and is by-far the most-used reaction on BuzzFeed posts. When I started scraping BuzzFeed data in 2014 &lt;a href=&quot;http://minimaxir.com/2015/01/linkbait/&quot;&gt;to analyze clickbait&lt;/a&gt;, I made sure to grab the reaction data of other reactions as well to see if there are any interesting trends or correlations between reactions. A cursory glance at the scraped reaction data revealed a problem that forced me to disregard it.&lt;/p&gt;
-
-&lt;p&gt;An important part of variable selection for analysis and modeling is avoiding &lt;em&gt;redundant&lt;/em&gt; features, as that can cause issues such as &lt;a href=&quot;https://en.wikipedia.org/wiki/Multicollinearity&quot;&gt;multicollinearity&lt;/a&gt; and &lt;a href=&quot;https://en.wikipedia.org/wiki/Overfitting&quot;&gt;overfitting&lt;/a&gt;. For Facebook, avoiding adding redundant Reactions was an &lt;a href=&quot;https://medium.com/facebook-design/reactions-not-everything-in-life-is-likable-5c403de72a3f&quot;&gt;explicit design goal&lt;/a&gt; of the feature, but the positive emotions such as &lt;strong&gt;Like&lt;/strong&gt; and &lt;strong&gt;Wow&lt;/strong&gt; might be overly similar regardless (I believe it fair to compare the behavior of BuzzFeed users with the average Facebook user, given that they hit the same demographics). Do BuzzFeed readers use specific positive reactions differently? Did they use specific negative reactions?&lt;/p&gt;
-
-&lt;p&gt;I rechecked my 2014 data in light of Facebook Reactions. The scraped dataset contains reaction data from 9,883 BuzzFeed articles in the Celebrity, Animals, Books, Longform, and Business categories. From that, I made a &lt;a href=&quot;http://vita.had.co.nz/papers/gpp.pdf&quot;&gt;pairs plot&lt;/a&gt; for the counts of all the &lt;em&gt;positive&lt;/em&gt; reactions on the articles to illustrate all bivariate relationships:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;The lower half of the pairs plot is a scatterplot for the two reactions; the axes represent the number of votes for a given reaction on a BuzzFeed article (both axes are scaled logarithmically), color intensity indicates the number of articles at that X/Y combo, and the line is a linear trendline of least-squares.&lt;/li&gt;
-&lt;li&gt;The diagonal of the pairs plot represents the density distribution of reaction vote counts for that reaction. (also logarithmically scaled on the X axis)&lt;/li&gt;
-&lt;li&gt;The upper half of the pairs plot illustrates the Pearson correlation between the non-log quantities of the two reaction variables. The stars represent statistical significance of the correlation test; since the data set is large, all correlations are statistically significant (rejection of null hypothesis of no correlation) at p &amp;lt; 0.001.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/facebook-reactions/buzzfeed-pos.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;All of the bivariate correlations of positive reactions are &lt;em&gt;moderately or strongly positively correlated&lt;/em&gt;, which is problematic for analysis (except one: apparently, there is little statistical relationship between things that are cute and things that make you go YAAASS). So why not just use the &lt;strong&gt;Love&lt;/strong&gt; reaction, since articles tend to get about 100 Loves, while other reactions get around 10?&lt;/p&gt;
-
-&lt;p&gt;Does the same hold for negative reactions? Relatedly, we would also expect a negative correlation between the number of &lt;strong&gt;Love&lt;/strong&gt; reactions and negative reactions, right?&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/facebook-reactions/buzzfeed-neg.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;All negative reactions are positively correlated, as expected, but there is a weak &lt;em&gt;positive&lt;/em&gt; correlation between &lt;strong&gt;Love&lt;/strong&gt; and &lt;strong&gt;Hate&lt;/strong&gt;, which is definitely not right. There isn&amp;rsquo;t an ideal &amp;ldquo;negative&amp;rdquo; reaction, since all have similar distributions.&lt;/p&gt;
-
-&lt;p&gt;Why does Facebook have 6 different responses to gauge positivity or negativity when one reaction for each would be both more accurate and more intuitive for the user?&lt;/p&gt;
-
-&lt;h2&gt;Conceal, Don&amp;rsquo;t Feel&lt;/h2&gt;
-
-&lt;p&gt;There are other qualitative issues with Facebook&amp;rsquo;s current implementation of Reactions. Apparently, Likes and Reactions are treated &lt;em&gt;differently internally&lt;/em&gt;. As a result, you get separate notifications for Likes and Reactions.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/facebook-reactions/facebook_react2.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;Why? No idea. There is enough Notification spam on Facebook, I don&amp;rsquo;t need &lt;em&gt;double notifications&lt;/em&gt; in my Notification feed for every status I make.&lt;/p&gt;
-
-&lt;p&gt;What&amp;rsquo;s important to note is that a user cannot both Like and React to a status; only one or the other. As a result, the number of Likes on statuses overall will drop, and this is a &lt;em&gt;major&lt;/em&gt; problem for businesses who are dependent on measuring the number of Likes for engagement.&lt;/p&gt;
-
-&lt;p&gt;I took a look at the Facebook Graph API endpoint for &lt;a href=&quot;https://developers.facebook.com/docs/graph-api/reference/v2.5/post&quot;&gt;Facebook Page Posts&lt;/a&gt; (same endpoint I use for my &lt;a href=&quot;https://github.com/minimaxir/facebook-page-post-scraper&quot;&gt;Facebook Page Data Scraper&lt;/a&gt;), and I can confirm that the API can only report the number of Likes on a status; not the number of Likes + Reactions, or number of Likes + number of each Reaction.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/facebook-reactions/cnn_fb.jpg&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;There is no way currently to automate the retrieval of Reactions data from Facebook posts, which is an unfortunate oversight (especially considering how Twitter &lt;a href=&quot;https://blog.twitter.com/2015/hearts-for-developers&quot;&gt;handled the transition&lt;/a&gt; from Favorites to Likes easily).&lt;/p&gt;
-
-&lt;p&gt;The example &lt;a href=&quot;https://www.facebook.com/cnn/posts/10154506885211509&quot;&gt;CNN story&lt;/a&gt; I used for that screenshot is anecdotally one of the very few examples I&amp;rsquo;ve noticed where the number of Likes is &lt;em&gt;almost equal&lt;/em&gt; to negative emotions, a relationship which should be weakly correlated and therefore this knowledge may be useful to isolate the story as unusual (and serve ads accordingly). At Facebook&amp;rsquo;s immense scale, identifying a relatively small proportion of unusual stories might be enough to justify adding Reactions.&lt;/p&gt;
-
-&lt;p&gt;Or maybe this feature is just the harbinger of a new generation of emotionally-charged linkbait. Perhaps there is more to this Facebook Reactions data than what meets the eye, and I&amp;rsquo;ll update my scripts and do further statistical analysis when able. But given what has happened with Reactions data before with YouTube, I am unconvinced and I still believe the functionality as a whole is a usability regression that won&amp;rsquo;t last.&lt;/p&gt;
-
-&lt;p&gt;A Dislike button would have been better, just saying.&lt;/p&gt;
-
-&lt;hr&gt;
-
-&lt;p&gt;&lt;em&gt;You can view the code and data used to generate the BuzzFeed Reaction data visualizations &lt;a href=&quot;https://github.com/minimaxir/facebook-reactions/blob/master/buzzfeed_reactions.ipynb&quot;&gt;in this Jupyter notebook&lt;/a&gt;, &lt;a href=&quot;https://github.com/minimaxir/facebook-reactions&quot;&gt;open-sourced on GitHub&lt;/a&gt;, or you can &lt;a href=&quot;https://github.com/minimaxir/facebook-reactions/raw/master/reactions_pdf.pdf&quot;&gt;view as a PDF&lt;/a&gt;, which is better if you are on a mobile device.&lt;/em&gt;&lt;/p&gt;
-</description>
-        <pubDate>Mon, 29 Feb 2016 08:00:00 -0800</pubDate>
-        <link>http://minimaxir.com/2016/02/facebook-reactions/</link>
-        <guid isPermaLink="true">http://minimaxir.com/2016/02/facebook-reactions/</guid>
-        
-        
-        <category>Rant</category>
         
       </item>
     
