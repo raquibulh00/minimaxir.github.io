@@ -4,7 +4,7 @@
   <title><![CDATA[minimaxir | Max Woolf's Blog]]></title>
   <link href="http://minimaxir.com/rss.xml" rel="self"/>
   <link href="http://minimaxir.com/"/>
-  <updated>2016-08-03T06:17:20-07:00</updated>
+  <updated>2016-08-16T06:33:51-07:00</updated>
   <id>http://minimaxir.com/</id>
   <author>
     <name><![CDATA[Max Woolf]]></name>
@@ -12,6 +12,118 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Visualizing Clusters of Clickbait Headlines Using Spark, Word2vec, and Plotly]]></title>
+    <link href="http://minimaxir.com/2016/08/clickbait-cluster/"/>
+    <updated>2016-08-16T06:30:00-07:00</updated>
+    <id>http://minimaxir.com/2016/08/clickbait-cluster</id>
+    <content type="html"><![CDATA[<p>Facebook <a href="http://newsroom.fb.com/news/2016/08/news-feed-fyi-further-reducing-clickbait-in-feed/">recently announced</a> that they will punish Facebook Posts which link to articles using clickbait headlines by limiting their exposure on the News Feed. They also announced that they have a large team manually classifying what is and isn’t linkbait. From <a href="http://minimaxir.com/2015/01/linkbait/">my analysis of BuzzFeed headlines</a> last year, I found that clickbait typically follows very specific tropes with phrases such as &ldquo;The [X] Most&rdquo; or &ldquo;You Should Do.&rdquo; It shouldn&rsquo;t be <em>that</em> difficult to identify clickbait using heuristics/machine learning.</p>
+
+<p>Relatedly, I recently read <a href="http://blog.yhat.com/posts/words2map.html">a blog post</a> by Lance Legel describing <a href="https://github.com/overlap-ai/words2map">words2map</a>, a project which takes in keywords and converts Google News articles representing those keywords into numerical vector representations, clusters them together in 2D, and plots those on a chart.</p>
+
+<p><img src="/img/clickbait-cluster/words2map-1.png" alt=""></p>
+
+<p>Why not combine the two ideas? Let&rsquo;s deconstruct thousands of news headlines into numeric representations and cluster them together to see if we can isolate submissions which intrinsincly  hit those clickbait tropes.</p>
+
+<h2>5 Big Data Processing Techniques You Should Know</h2>
+
+<p>Using a modified version of my <a href="https://github.com/minimaxir/facebook-page-post-scraper">Facebook Page Post Scraper</a>, I downloaded <em>all</em> Facebook Posts by the Facebook Pages representing news publications <a href="https://www.facebook.com/cnn">CNN</a>, <a href="https://www.facebook.com/nytimes">NYTimes</a>, <a href="https://www.facebook.com/BuzzFeed/">BuzzFeed</a>, and <a href="https://www.facebook.com/Upworthy/">Upworthy</a>, and stored the headlines of each linked article if present. <a href="http://www.cnn.com/">CNN</a> and <a href="http://www.nytimes.com/">NYTimes</a> represent traditional media whose headlines tend to follow <a href="https://owl.english.purdue.edu/owl/resource/735/02/">AP Style guidelines</a>, while <a href="https://www.buzzfeed.com/">BuzzFeed</a> and <a href="https://www.upworthy.com/">Upworthy</a> are more known for their clickbait headlines. </p>
+
+<p>However, those are not absolute rules; BuzzFeed occasionally has more-serious headlines, and CNN occasionally has more-gimmicky headlines. <strong>That&rsquo;s okay.</strong> If my hypothesis is correct, the nonappropriate headlines will be clustered with other headlines of the same style.</p>
+
+<p>First, I load the four datasets into the hip new big data tool <a href="https://spark.apache.org">Apache Spark</a> 2.0, (via the Python interface, <a href="http://spark.apache.org/docs/latest/api/python/">PySpark</a>), and combine them all into a single DataFrame, with a little extra post-processing to remove invalid entries.</p>
+<div class="highlight"><pre><code class="language-Python" data-lang="Python"><span class="n">df_cnn</span> <span class="o">=</span> <span class="n">read_tsv</span><span class="p">(</span><span class="s">&quot;fb_headlines/CNN_fb.tsv&quot;</span><span class="p">)</span>
+<span class="n">df_nytimes</span> <span class="o">=</span> <span class="n">read_tsv</span><span class="p">(</span><span class="s">&quot;fb_headlines/NYTimes_fb.tsv&quot;</span><span class="p">)</span>
+<span class="n">df_buzzfeed</span> <span class="o">=</span> <span class="n">read_tsv</span><span class="p">(</span><span class="s">&quot;fb_headlines/BuzzFeed_fb.tsv&quot;</span><span class="p">)</span>
+<span class="n">df_upworthy</span> <span class="o">=</span> <span class="n">read_tsv</span><span class="p">(</span><span class="s">&quot;fb_headlines/Upworthy_fb.tsv&quot;</span><span class="p">)</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">df_cnn</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">df_nytimes</span><span class="p">)</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">df_buzzfeed</span><span class="p">)</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">df_upworthy</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">process_df</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">cache</span><span class="p">()</span>
+</code></pre></div>
+<p><img src="/img/clickbait-cluster/cc-1.png" alt=""></p>
+
+<p>In all, I had 102,267 valid news headlines to analyze; not &ldquo;big data,&rdquo; but enough data that it&rsquo;s worth optimizing the analysis code as much as possible, especially in this case where the computation can be intensive.</p>
+
+<p>Once the data is loaded, we convert the headlines to an array of tokens representing each word from the headline, all lowercase and with punctuation stripped. This task can normally be difficult and have poor performance on large datasets, however Spark has a RegexTokenizer that quickly executes all the necessary tasks in one fell swoop.</p>
+<div class="highlight"><pre><code class="language-Python" data-lang="Python"><span class="n">tokenizer</span> <span class="o">=</span> <span class="n">RegexTokenizer</span><span class="p">(</span><span class="n">pattern</span><span class="o">=</span><span class="s">&quot;[^\w]&quot;</span><span class="p">,</span> <span class="n">inputCol</span><span class="o">=</span><span class="s">&quot;text&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s">&quot;words&quot;</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</code></pre></div>
+<p><img src="/img/clickbait-cluster/cc-2.png" alt=""></p>
+
+<p>Most analyses would remove <a href="https://en.wikipedia.org/wiki/Stop_words">stop words</a> as their high frequency can cause noise in the subsequent analysis. In this case, we should <em>not</em> remove them as many stop words  are critical components of the clickbait tropes (e.g. &ldquo;I Am&rdquo; and &ldquo;The [X] Most&rdquo;).</p>
+
+<p>Now that the tokens are created, we can apply <a href="https://en.wikipedia.org/wiki/Word2vec">Word2vec</a>, an algorithm which converts a collection of words into a dictionary of multidimensional numerical representations. Once the dictionary is created, we can average all the word vectors for a given headline to get the numeric representation of the headline itself. Again, Spark has convenient functions for those actions, setting a randomness seed for reproducibility:</p>
+<div class="highlight"><pre><code class="language-Python" data-lang="Python"><span class="n">word2Vec</span> <span class="o">=</span> <span class="n">Word2Vec</span><span class="p">(</span><span class="n">vectorSize</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="n">inputCol</span><span class="o">=</span><span class="s">&quot;words&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s">&quot;vectors&quot;</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">word2Vec</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</code></pre></div>
+<p><img src="/img/clickbait-cluster/cc-3.png" alt=""></p>
+
+<p>In this case, each word and phrase are converted into a 50-dimension vector for speed later; usually, the word vectors from Word2vec are between 100 and 1,000 dimensions.</p>
+
+<p>Another step to add context to the data is to add features representing the page that posted the status. This takes two steps in Spark; first, use a StringIndexer to covert the names of the four Facebook Pages into numerical 0-indexed representations, then use a <a href="https://en.wikipedia.org/wiki/One-hot">OneHotEncoder</a> to convert the data into <a href="https://en.wikipedia.org/wiki/Dummy_variable_(statistics)">dummy variables</a>.</p>
+<div class="highlight"><pre><code class="language-Python" data-lang="Python"><span class="n">stringIndexer</span> <span class="o">=</span> <span class="n">StringIndexer</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s">&quot;page_id&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s">&quot;indexed&quot;</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">stringIndexer</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="n">encoder</span> <span class="o">=</span> <span class="n">OneHotEncoder</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s">&quot;indexed&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s">&quot;page_ohe&quot;</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">encoder</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</code></pre></div>
+<p><img src="/img/clickbait-cluster/cc-5.png" alt=""></p>
+
+<p>This adds 3 columns, where the column containing the 1.0 represents the corresponding page. (the 4th page is represented by none of the 3 columns containing 1.0)</p>
+
+<p>Lastly, combine the 3D page numeric vectors and the 50D word numeric vectors with a VectorAssembler:</p>
+<div class="highlight"><pre><code class="language-Python" data-lang="Python"><span class="n">model</span> <span class="o">=</span> <span class="n">VectorAssembler</span><span class="p">(</span><span class="n">inputCols</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;page_ohe&#39;</span><span class="p">,</span> <span class="s">&#39;vectors&#39;</span><span class="p">],</span> <span class="n">outputCol</span><span class="o">=</span><span class="s">&quot;merged_vectors&quot;</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</code></pre></div>
+<p><img src="/img/clickbait-cluster/cc-7.png" alt=""></p>
+
+<p>That&rsquo;s it! And these code blocks could be combined into a <a href="http://spark.apache.org/docs/latest/ml-pipeline.html">Spark Pipeline</a> and be used on datasets hundreds or thousands times as large with just <em>two lines of code</em>, something which will help me make interesting blog posts in the future.</p>
+
+<h2>This Chart Literally Just Totes Made Me Can&rsquo;t Even</h2>
+
+<p>To keep comparisons between news sources apples-to-apples with respect to current events (and there have been a <em>lot</em> of events in the past couple months!), we will only look at headlines from <strong>June 1st, 2016 to August 12</strong> among the four pages; 9,500 headlines total. That&rsquo;s a fair maximum sample size, both because all the points need to be loaded onto this webpage, and because the clustering algorithm is slow.</p>
+
+<p>Speaking of clustering, I load the 53D vectors created above for this subset into <a href="https://www.r-project.org/about.html">R</a> and apply the <a href="https://lvdmaaten.github.io/tsne/">t-SNE</a> algorithm to project and cluster each point into 2 dimensions. (since the algorithm performance scales quadratically with sample size and is single-threaded, calculating the projected points took <em>over 8 hours</em>!)</p>
+<div class="highlight"><pre><code class="language-R" data-lang="R">cluster_coords <span class="o">&lt;-</span> tsne<span class="p">(</span><span class="kt">matrix</span><span class="p">,</span> initial_dims<span class="o">=</span><span class="m">53</span><span class="p">,</span> perplexity<span class="o">=</span><span class="m">50</span><span class="p">,</span> epoch<span class="o">=</span><span class="m">50</span><span class="p">)</span>
+</code></pre></div>
+<p><img src="/img/clickbait-cluster/cc-6.png" alt=""></p>
+
+<p>Prototyping the plot extremely quickly in <a href="http://docs.ggplot2.org/current/">ggplot2</a>:</p>
+<div class="highlight"><pre><code class="language-R" data-lang="R">ggplot<span class="p">(</span>df_plot<span class="p">,</span> aes<span class="p">(</span>x<span class="o">=</span>x<span class="p">,</span> y<span class="o">=</span>y<span class="p">,</span> color<span class="o">=</span>page_id<span class="p">))</span> <span class="o">+</span>
+    geom_point<span class="p">(</span>alpha<span class="o">=</span><span class="m">0.75</span><span class="p">,</span> stroke<span class="o">=</span><span class="m">0</span><span class="p">)</span> <span class="o">+</span> 
+    theme_bw<span class="p">()</span>
+</code></pre></div>
+<p><img src="/img/clickbait-cluster/fb-headlines-cluster-test-53D.png" alt=""></p>
+
+<p>Gives us a map close to what we want. Hooray, my crazy clustering idea was not completely crazy!</p>
+
+<p>However, for this visualization, it is extremely important to be able to determine which point corresponds to which headline. A static image opens up further questions on what causes points to be spatially located where. Therefore, I plot the chart interactively using <a href="https://plot.ly/">Plotly</a>, specifically with its <a href="https://plot.ly/r/webgl-vs-svg/">WebGL</a> interface, as rendering 9,500 points in the browser with the typical <a href="https://d3js.org/">d3</a>/SVG without hitting massive slowdown is difficult. The speed of WebGL also allows users to scan the headlines rapidly.</p>
+
+<p><img src="/img/clickbait-cluster/cnn-clickbait.png" alt=""></p>
+
+<p>As you&rsquo;ve seen from the visualizations above, all four Facebook pages have their own clusters, thanks to the added identifier feature. The left side of the 2D representation represents the more serious headlines, while the right side represents the more silly headlines. There is a little overlap between the NYTimes/CNN/BuzzFeed articles; notably, the NYTimes/CNN articles close to the BuzzFeed cluster tend to be more linkbaity, as shown in the image above. Upworthy is in its own little bubble with little similarity to the other news publications (the Upworthy headlines are much more verbose, which is likely causing more entropy and dissimilarity with the other, more concise headlines).</p>
+
+<p>Something particularly interesting is the formation of natural subclusters outside of the main clusters. These clusters are based around keywords in the headlines, which is significant since the input data is a linear combination of that keyword and many other words, without using explicit word-importance statistical tools such as <a href="https://en.wikipedia.org/wiki/Tf%E2%80%93idf">tf-idf</a>:</p>
+
+<ul>
+<li>The <strong>top clusters</strong> are based around pop-culture keywords: Taylor Swift, Harry Potter/J.K. Rowling, Pokémon Go, and Game of Thrones.</li>
+<li>The <strong>bottom clusters</strong> are based around political keywords, including Bernie Sanders, Hillary Clinton, Donald Trump, and the U.S. itself.</li>
+<li>The <strong>cluster between BuzzFeed and Upworthy</strong> contains headlines with the &ldquo;[X]-year-old&rdquo; trope from all pages.</li>
+</ul>
+
+<p>As you may have noticed playing around with the interactive chart, this methodology is not perfect. Some linkbait headlines are present in the center of CNN/NYTimes clusters, and some serious headlines are present in the center of the BuzzFeed cluster. The more academic method of identifying clickbait in an unsupervised manner using machine learning would be to incorporate other inherent attributes of words and phrases, such as using <a href="https://en.wikipedia.org/wiki/Bigram">bigrams</a>, <a href="https://en.wikipedia.org/wiki/Part-of-speech_tagging">part-of-speech tagging</a>, bag-of-words/tf-idf, and <a href="http://karpathy.github.io/2015/05/21/rnn-effectiveness/">character-level language models</a>.</p>
+
+<p>Coincidentally around the same time Facebook announced their anticlickbait initiative, Facebook open-sourced their <a href="https://github.com/facebookresearch/fastText">fasttext</a> project, which can quickly build models to classify text using some of the above example techniques. <strong>Hmmmmmm&hellip;</strong></p>
+
+<hr>
+
+<p><em>The full code used to process the Facebook Page data using Spark is available in <a href="https://github.com/minimaxir/clickbait-cluster/blob/master/fb_news_53D_spark.ipynb">this Jupyter notebook</a>, and the code used to generate the Plotly visualizations in R is available in <a href="https://github.com/minimaxir/clickbait-cluster/blob/master/fb_news_53D_plotly.ipynb">this Jupyter notebook</a>, both open-sourced <a href="https://github.com/minimaxir/clickbait-cluster">on GitHub</a>.  In the GitHub repository, you can download a standalone, offline version of the interactive WebGL chart.</em></p>
+
+<p><em>You are free to use the data visualizations from this article however you wish, but it would be greatly appreciated if proper attribution is given to this article and/or myself!</em></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Interactive 3D Clusters of all 721 Pokémon Using Spark and Plotly]]></title>
@@ -986,91 +1098,6 @@ df_dedup <span class="o">&lt;-</span> df <span class="o">%&gt;%</span> filter<sp
 <hr>
 
 <p><em>You can view the Top 200 movies by domestic box office revenue for each of the 12/15 source dataset, the 3/16 dataset, the 3/16 deduped dataset, and the 3/16 deduced inflation-adjusted data <a href="https://github.com/minimaxir/movie-data-sanity-checking">in this GitHub repository</a>, along with the Jupyter notebook.</em></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Unlimited Data Storage Using Image Steganography and Cat GIFs]]></title>
-    <link href="http://minimaxir.com/2016/03/gif-unlimited/"/>
-    <updated>2016-03-29T08:00:00-07:00</updated>
-    <id>http://minimaxir.com/2016/03/gif-unlimited</id>
-    <content type="html"><![CDATA[<p><span><style>
-.suspicious-pregnant-pause {
-  padding: 60px 0;
-}
-</style></span></p>
-
-<p>In 2016, animated GIFs are absurdly popular. <a href="https://www.messenger.com">Facebook Messenger</a>, <a href="https://twitter.com">Twitter</a>, and <a href="https://slack.com">Slack</a> now natively support GIF sharing, and startups which help facilitate GIF sharing such as <a href="http://giphy.com">Giphy</a> and <a href="https://www.riffsy.com">Riffsy</a> have received <a href="https://www.crunchbase.com/organization/giphy"><em>tens of millions</em> of dollars</a> in venture capital. I even built my own tool to <a href="https://github.com/minimaxir/video-to-gif-osx">convert a video to a GIF</a> on OSX because <a href="http://minimaxir.com/2015/08/gif-to-video-osx/">I wanted to be cool</a> too.</p>
-
-<p>On <a href="https://www.reddit.com">Reddit</a>, GIFs are also popular for reactions, often containing submission titles with the phrase MRW (&ldquo;my reaction when&rdquo;). Here is a wordcloud of the titles of all GIF submissions to Reddit in 2015:</p>
-
-<p><img src="/img/gif-unlimited/reddit-gif-wordcloud-e.png" alt=""></p>
-
-<p>Completely unrelated, <a href="https://en.wikipedia.org/wiki/Steganography">image steganography</a> is a technique that allows the embedding of messages into the pixels of images themselves, allowing for the transmission of secret messages. Image steganography was popular on the internet in the early 2000&rsquo;s, but died out before image-sharing between peers was commonplace and information encryption became a hot political issue.</p>
-
-<h2>It&rsquo;s a Secret to Everybody</h2>
-
-<p>In 2012, Zach Oakes created <a href="https://sekao.net/pixeljihad/">PixelJihad</a>, an <a href="https://github.com/oakes/PixelJihad">open-source</a>, client-side tool for image steganography using JavaScript and the HTML5 Canvas. This implementation embeds text messages by converting them into raw binary and modifying the least-significant bit (Aaron Miller wrote <a href="http://www.aaronmiller.in/thesis/">an informative paper</a> on LSB encoding) of the red, blue, and green binary pixel values of the specified image to match the message (e.g. a white pixel with red, blue, and green values of <code>[255, 255, 255]</code> can be represented in binary form as <code>[11111111, 11111111, 11111111]</code>; LSB encoding changes the right-most bit to 0 or 1 for each pixel channel). Changing the last bit of a color channel will not result in a detectable visual change by the human eye.</p>
-
-<p>The image pixels to-be-modified during encoding are selected according to a semirandom schedule. The message can then be decoded by reading the LSB of the changed pixels from the schedule and reconstructing the binary message, then converting back into text.</p>
-
-<p>Since we can set 3 bits per physical pixel, the maximum amount of data (in bytes) that can be stored is equivalent to the width of an image (in pixels) multiplied by the height times 3, divided by 8.</p>
-
-<p>Take the Reddit GIF wordcloud I posted above. If you download the image and load it into PixelJihad, you can see I hid a secret message showing how to get the Reddit word data using <a href="https://cloud.google.com/bigquery/">BigQuery</a>. The visualization is 600px by 400px, therefore it can store up to:</p>
-<div class="highlight"><pre><code class="language-text" data-lang="text">600 * 400 * 3 bits / 8 = 90000 Bytes / 1000 = 90 kB
-</code></pre></div>
-<p>The image itself is 257 kB, but a bonus 35% in data storage isn&rsquo;t bad.</p>
-
-<p>PixelJihad only supports text messages with an artificial limit of 1,000 characters (~1 kB) for <em>sanity</em>, but I&rsquo;m not fond of being sane. There is <em>nothing</em> from a technical perspective stopping users from encoding larger text messages, or even raw file data as pure binary into images.</p>
-
-<p>But embedding data into a <em>static</em> image is boring. What happens when you embed data into <em>each frame of a GIF</em>? Just a thought.</p>
-
-<h2>Meow!</h2>
-
-<p>Now, back to what you&rsquo;re reading this article for, who cares about all this stegosaurus crap. Here is a cute cat GIF <a href="https://www.reddit.com/r/gifs/comments/256bir/abduction_cat_re_flying_cat_re_so_big/">from Reddit</a>. Look at its cuteness.</p>
-
-<p><img src="/img/gif-unlimited/aliencat.gif" alt=""></p>
-
-<p>Aww.</p>
-
-<p>The GIF file size is 2.44 MB (sorry, readers on mobile devices!). The dimensions of the GIF are 300px by 399px. But if you open the GIF in Preview on OSX, you can see that the GIF is comprised of 72 frames.</p>
-
-<p><img src="/img/gif-unlimited/gif-finder-17.png" alt=""></p>
-
-<p>Performing the same math:</p>
-<div class="highlight"><pre><code class="language-text" data-lang="text">300 * 399 * 72 frames * 3 / 8 = 3231900 / 1000000 = 3.23 MB
-</code></pre></div>
-<p>The potential amount of encodable data is larger than the file size of the image itself! Screw secret messages, we&rsquo;re literally <em>creating</em> data storage out of nothing!</p>
-
-<p>You know what this means? We can <em>embed the cat GIF into itself</em> steganographically by splitting it over all 72 frames, and get 780 kB left over to store whatever we want.</p>
-
-<p>And then we can <em>do it again</em> to the newly-embedded image.</p>
-
-<p>Infinitely.</p>
-
-<p>780 kB free with each iteration.</p>
-
-<p>Cat GIF recursion.</p>
-
-<h2>Purrcursion</h2>
-
-<p>Let&rsquo;s say we want to embed a 10 MB music file into a GIF. Since 10000 kB / 780 kB = 12.82, we re-embed the cat GIF 13 times, including 1/13th of the music file as sidecar data with each iteration. And now we have a cat GIF that contains some pretty sweet tunes!</p>
-
-<p>And not only do we have a magical cat GIF, the data is completely portable; you can simply e-mail the cat GIF to your friend and they can decode the high-fidelity music file out of the GIF using an app that implements this schema. Or you can post the cat GIF w/ music to Reddit for <em>double</em> meaningless internet points.</p>
-
-<p>The only limitation to the &ldquo;infinitely&rdquo; part is the increasing amount of CPU processing power for each decoding, but that&rsquo;s fixable since it&rsquo;s 2016 and smartphones have quad-core processors. Worth every ounce of battery life, in my opinion.</p>
-
-<p>*<em>tl;dr *</em> I was bored and decided to create infinite data in a way that makes people feel fuzzy inside. No big deal. Of course, I can&rsquo;t show <em>you</em> a proof-of-concept of how this works. That would be silly. But if you&rsquo;re a venture capitalist who wants to invest more tens of millions of dollars into a clearly-sustainable GIF startup, feel free to email me at <a href="mailto:max@minimaxir.com">max@minimaxir.com</a>.</p>
-
-<div class="suspicious-pregnant-pause">&hellip;</div>
-
-<div class="suspicious-pregnant-pause">&hellip;</div>
-
-<div class="suspicious-pregnant-pause">&hellip;</div>
-
-<p>Yeah, infinite data via image steganography doesn&rsquo;t actually work. But the reasons it doesn&rsquo;t work are not obvious unless you have deep knowledge of how image compression reduces the file size of images, and conversely, how modifying images could cause them to become <em>larger</em> in file size  (I may or may not have spent several hours forking PixelJihad and adding modern features before realizing that I am not a data storage magician).</p>
-
-<p>I will write a follow-up post soon detailing the steganographic gotchas. Until then, keep in mind that there is no such thing as a free cat GIF.</p>
 ]]></content>
   </entry>
   
