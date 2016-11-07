@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+
+  <!-- HEAD -->
+<head>
+<meta charset="utf-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>What Percent of the Top-Voted Comments in Reddit Threads Were Also 1st Comment?</title>
+<meta property="article:author" content="https://www.facebook.com/max.woolf" />
+<meta name="description" content="Reddit threads can be a crowded place. In popular subreddits such as /r/AskReddit and /r/pics, Reddit submissions can receive hundreds, even thousands of uni...">
+<link href="/rss.xml" rel="alternate" title="minimaxir | Max Woolf's Blog" type="application/atom+xml">
+<link rel="canonical" href="http://minimaxir.com/2016/11/first-comment/">
+
+<!-- Mobile Metas -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+ <meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@minimaxir">
+<meta name="twitter:creator" content="@minimaxir">
+
+  <meta name="twitter:title" content="What Percent of the Top-Voted Comments in Reddit Threads Were Also 1st Comment?">
+
+
+  <meta name="twitter:url" content="http://minimaxir.com/2016/11/first-comment/">
+
+
+  <meta name="twitter:description" content="Are commenters "late to this thread" indeed late?">
+
+
+  <meta name="twitter:image:src" content="http://minimaxir.com/img/reddit-first-2a.png">
+
+ 
+ <meta content="minimaxir | Max Woolf's Blog" property="og:site_name">
+
+  <meta content="What Percent of the Top-Voted Comments in Reddit Threads Were Also 1st Comment?" property="og:title">
+
+
+  <meta content="article" property="og:type">
+
+
+  <meta content="Are commenters "late to this thread" indeed late?" property="og:description">
+
+
+  <meta content="http://minimaxir.com/2016/11/first-comment/" property="og:url">
+
+
+
+  <meta content="http://minimaxir.com/img/reddit-first-2a.png" property="og:image">
+
+
+  
+  <meta content="Visualization" property="article:section">
+  
+
+
+  
+
+
+
+      <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="white">
+    <meta name="apple-mobile-web-app-title" content="minimaxir">
+    <link rel="apple-touch-icon-precomposed" href="apple-touch-icon-precomposed.png">
+
+<link rel="apple-touch-icon" sizes="57x57" href="http://minimaxir.com/favicon/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="http://minimaxir.com/favicon/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="http://minimaxir.com/favicon/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="http://minimaxir.com/favicon/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="http://minimaxir.com/favicon/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="http://minimaxir.com/favicon/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="http://minimaxir.com/favicon/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="http://minimaxir.com/favicon/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="http://minimaxir.com/favicon/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192"  href="http://minimaxir.com/favicon/android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://minimaxir.com/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="http://minimaxir.com/favicon/favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="http://minimaxir.com/favicon/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="http://minimaxir.com/favicon/ms-icon-144x144.png">
+<meta name="theme-color" content="#ffffff">
+
+<!-- BEGIN GLOBAL MANDATORY STYLES -->
+  <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400,400italic,700' rel='stylesheet' type='text/css'>
+
+<link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+<link href="/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
+<link href="/css/minimaxir.css" rel="stylesheet" type="text/css"/>
+<!-- END GLOBAL MANDATORY STYLES -->
+
+<!-- BEGIN THEME STYLES -->
+<link href="/css/global.css" rel="stylesheet" type="text/css"/>
+<!-- END THEME STYLES -->
+
+<!-- BEGIN JQUERY -->
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<!-- END JQUERY -->
+
+
+
+  <script>
+   $(document).ready(function() {
+ 
+  // LinkedIn
+	$( ".social.linkedin" ).children().each(function(index,value) {
+	var linkedin_button = $(this);
+	var url = linkedin_button.attr("data");
+
+  jQuery.getJSON("http://www.linkedin.com/countserv/count/share?url="+url+"&format=jsonp&callback=?", function(data) {
+  linkedin_button.html("<i class=\"fa fa-linkedin\"></i><span class=\"count hidden-xs\"> " + data.count + "</span>");
+  });
+  });
+  });
+  </script>
+  
+</head>
+<!-- END HEAD -->
+  <!-- WRAPPER -->
+<div class="wrapper">
+    <!--========== HEADER TRANSPARENT ==========-->
+    <header class="header-transparent header-transparent-bb navbar-fixed-top header-sticky">
+        <!-- Navbar -->
+        <nav class="navbar mega-menu" role="navigation">
+            <div class="container">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="menu-container">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="toggle-icon"></span>
+                    </button>
+
+                    <!-- Navbar Actions -->
+                    <div class="navbar-actions">
+
+                    </div>
+                    <!-- End Navbar Actions -->
+
+                    <!-- Logo -->
+                    <div class="navbar-logo">
+                        <a class="navbar-logo-wrap" href="/">
+                            <img class="navbar-logo-img navbar-logo-img-white" src="/minimaxir-light.png" alt="minimaxir">
+                            <img class="navbar-logo-img navbar-logo-img-dark" src="/minimaxir-dark.png" alt="minimaxir">
+                        </a>
+                    </div>
+                    <!-- End Logo -->
+                </div>
+
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse nav-collapse">
+                    <div class="menu-container">
+                        <ul class="nav navbar-nav">
+                        
+<li class="nav-item">
+                                <a class="nav-item-child" href="/about">
+                                    About
+                                </a>
+                            </li>
+                                
+<li class="nav-item">
+                                <a class="nav-item-child" href="/portfolio">
+                                    Portfolio
+                                </a>
+                            </li>
+                        
+                        </ul>
+                    </div>
+                </div>
+                <!-- End Navbar Collapse -->
+            </div>
+            <!--// End Container-->
+        </nav>
+        <!-- Navbar -->
+    </header>
+    <!--========== END HEADER TRANSPARENT ==========-->
+    
+	    <!--========== BREADCRUMBS V5 ==========-->
+    
+    
+	
+	
+    
+    
+    
+    <section class="breadcrumbs-v5" style="background: url('/img/reddit-first-2a.png') no-repeat center center; background-size: cover;">
+    
+        <div class="container">
+            <h1 class="breadcrumbs-v5-title">What Percent of the Top-Voted Comments in Reddit Threads Were Also 1st Comment?</h1>
+            <span class="breadcrumbs-v5-subtitle">November 7, 2016
+            
+    
+              <span class="sharing index" style="float: right">
+  
+		  <span class="social facebook"><a href="https://www.facebook.com/share.php?u=http://minimaxir.com/2016/11/first-comment/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data="http://minimaxir.com/2016/11/first-comment/"><i class="fa fa-facebook"></i><span class="count hidden-xs"></span></a></span>
+  
+		<span class="social twitter"><a href="http://twitter.com/home/?status=What Percent of the Top-Voted Comments in Reddit Threads Were Also 1st Comment? - http://minimaxir.com/2016/11/first-comment/ - via @minimaxir"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data=http://minimaxir.com/2016/11/first-comment/><i class="fa fa-twitter"></i><span class="count hidden-xs"></span></a> </span>
+
+  <span  class="social linkedin"><a href="http://www.linkedin.com/shareArticle?mini=true&title=&url=http://minimaxir.com/2016/11/first-comment/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=600');return false;" data=http://minimaxir.com/2016/11/first-comment/><i class="fa fa-linkedin"></i><span class="count hidden-xs"> -</span></a> </span>
+   
+			</span>
+            
+            </span>
+        </div>
+    </section>
+    
+    
+    <!--========== END BREADCRUMBS V5 ==========-->
+  
+  <!-- BEGIN BODY -->
+<body>
+
+  
+      <!--========== BACKGROUND COLOR SKY LIGHT ==========-->
+    <div class="bg-color-sky-light">
+
+        
+        <!--========== PAGE CONTENT ==========-->
+        <div class="content-sm container">
+        
+            
+			<div class="row">
+			<div class="col-md-12 md-margin-b-50">
+			
+    <div style="row">
+        <div class="col-sm-8 col-sm-offset-2 col-xs-12 col-xs-offset-0 margin-b-20">
+            <img src="/img/first-comment/reddit-first-4.png" width="100%" style="border: 1px solid #eaeaea;"></img>
+        </div>
+    </div>
+
+			</div>
+			</div>
+			
+		
+        
+            <div class="row">
+                <div class="col-md-9 md-margin-b-50">
+                    <!-- Blog Grid -->
+                    <article class="blog-grid margin-b-30">
+                        <!-- Image -->
+                        <!--<img class="img-responsive" src="/assets/img/1920x1080/20.jpg" alt="">-->
+                        <!-- End Image -->
+
+                        <!-- Blog Grid Content -->
+						<div class="blog-grid-content">
+						<p><a href="https://www.reddit.com">Reddit</a> threads can be a crowded place. In popular subreddits such as <a href="https://www.reddit.com/r/AskReddit/">/r/AskReddit</a> and <a href="https://www.reddit.com/r/pics/">/r/pics</a>, Reddit submissions can receive hundreds, even <em>thousands</em> of unique comments. Some comments inevitably become lost in the noise. Reddit&rsquo;s <a href="https://redditblog.com/2009/10/15/reddits-new-comment-sorting-system/">ranking algorithm</a> attempts to rectify this by determining comment ranking using both time and community voting; comments in a thread, by default, are ordered based on the <strong>points score</strong> (upvotes - downvotes) the comment receives, subject to a rank decay based on the age of the comment.</p>
+
+<p><img src="/img/first-comment/reddit_askreddit.png" alt=""></p>
+
+<p>In theory, this system should allow comments that posted later in the thread&rsquo;s lifetime to rank much higher temporarily, then Redditors can vote on the new comment; if the new comment is good, it can now rise to the top and therefore the content which would otherwise be buried is now surfaced. Anecdotally, that doesn&rsquo;t be the case with Reddit&rsquo;s modern algorithm; comments made late in the thread appear at the bottom, where they likely will not receive any upvotes (this led to a minor &ldquo;<a href="https://www.google.com/#q=site:reddit.com+%22late+to+this+thread%22">I know I&rsquo;m late to this thread but&hellip;</a>&rdquo; meme).</p>
+
+<p>I, of course, am not satisfied with anecdotes. A month ago, a Redditor asked &ldquo;<a href="https://www.reddit.com/r/TheoryOfReddit/comments/53d5ep/what_percentage_of_the_top_comment_in_threads/">What percentage of the top comment in threads were also the first comment?</a>&rdquo; Why not calculate it <em>exactly</em> using big data?</p>
+
+<h2>Getting the Reddit Data</h2>
+
+<p><em>You can view all the <a href="https://www.r-project.org">R</a> and <a href="http://ggplot2.org">ggplot2</a> code used to query, analyze, and visualize the Reddit data in <a href="http://minimaxir.com/notebooks/first-comment/">this R Notebook</a>.</em></p>
+
+<p>In order to process a great amount of Reddit data, I turned to <a href="https://cloud.google.com/bigquery/">BigQuery</a>, which now has data for <a href="https://www.reddit.com/r/datasets/comments/590re2/updated_reddit_comments_and_posts_updated_on/">all Reddit comments</a> until September 2016.</p>
+
+<p>For this analysis, I will only look at the <strong>top-level comments</strong> (i.e. comments which are not replies to other comments), since those are the ones most affected by the ordering and submission of new comments. Additionally I will only look at comments within Reddit threads with <strong>atleast 30 top-level comments</strong> to ensure I only look at threads with sufficient discussion and where late posts are more likely to become hidden. It also mirrors the &ldquo;late to this thread&rdquo; meme: can posts be <em>too</em> late?</p>
+
+<p>The queried data will be all comments posted from January 2015 to September 2016: this give a good balance of sample size and foundation around the modern comment ranking algorithms. The total number of Reddit comments analyzed, after filtering on threads with sufficient conversation and limiting the scope to the first 100 comments of a thread scoring within the Top 100, is <strong>n = 86,561,476</strong>.</p>
+
+<p>With clever use of BigQuery window functions, I obtained the aggregate data, counting the number of comments from the filtered Reddit threads at each voting rank and created rank.</p>
+
+<p><img src="/img/first-comment/data.png" alt=""></p>
+
+<h2>Visualizing the Discussion</h2>
+
+<p>Filtering on the top-voted comments (<code>score_rank = 1</code>) only, <em>what percent of the top-voted comments in Reddit threads were also 1st Comment?</em></p>
+
+<p><img src="/img/first-comment/reddit-first-4.png" alt=""></p>
+
+<p>The answer is <strong>17.24%</strong> of all top-voted comments! That&rsquo;s certainly more than what I expected! Additionally, 56% of the top-voted comments were posted within the first 5 comments, and 77% within the first 10 comments. The chart follows a <a href="https://en.wikipedia.org/wiki/Power_law">power-law distribution</a>.</p>
+
+<p>Let&rsquo;s invert it: filtering on only the first comments (<code>created_rank = 1</code>) made in comment threads, <em>what percentage of the 1st Comments in Reddit threads were also the top-voted comment?</em></p>
+
+<p><img src="/img/first-comment/reddit-first-3.png" alt=""></p>
+
+<p>By construction, the answer is the same as before (17.24%), however the followup proportions are slightly different, with the first comment ranking within the Top 5 comments 46% of the time, and within the Top 10 comments 62% of the time.</p>
+
+<p>It may be worth it to visualize both dimensions at the same time using a heatmap, with the created rank on one axis, score rank on the other, and a z-axis representing the number of comments at each rank pairing. We can also add a faint contour line to help visualize clusters of the data. Putting it together:</p>
+
+<p><img src="/img/first-comment/reddit-first-2.png" alt=""></p>
+
+<p>Woah, most of the values are constrained between the semisquare constrained by the first 5 comments and the top 5 comments! But it&rsquo;s harder to see trends, so let&rsquo;s try applying a logarithmic base-10 scaling on the comment count:</p>
+
+<p><img src="/img/first-comment/reddit-first-2a.png" alt=""></p>
+
+<p>Much better! We can see a grouping of the 5x5 semisquare, but also smaller groupings of a 30x30 shape (this may possibly be due to the 30 comment filter threshold), a faint 60x60 shape, and <em>voids</em> in the upper-left and lower-right corners.</p>
+
+<p>From the 2D heatmap, there appears to be a <strong>positive correlation</strong> between the rank of the comment and the time it was submitted. Ideally, if Reddit&rsquo;s algorithm correctly cycled posts so that each comment gets a fair chance at going viral, then there should be <strong>no correlation</strong> between score rank and time posted.</p>
+
+<h2>Analysis by Subreddit</h2>
+
+<p>When working with Reddit data, it is always important to facet the analysis by subreddit, as subreddits can have idiosyncratic behaviors which deviate from general Reddit behavior. As noted in the original Reddit thread with the initial question, it is possible that the percentage of first comments becoming top comment is &ldquo;higher in lighter subs (funny, pics, videos) than more serious subs (askscience, history, etc).&rdquo;</p>
+
+<p>I tweaked the BigQuery above to retrieve the same data for each of the Top 100 subreddits (determined by unique commenter count over the same time period). Afterward, via scripting, I created a 1D proportion-of-first-comments-by-score-rank and 2D heatmaps for each subreddit. You can view and download the 1D charts <a href="https://github.com/minimaxir/first-comment/tree/master/img-1d">here</a>, and the 2D heatmaps <a href="https://github.com/minimaxir/first-comment/tree/master/img-2d">here</a>.</p>
+
+<p>For example, here&rsquo;s the chart of first-comment-rankings for <a href="https://www.reddit.com/r/IAmA/">/r/IAmA</a>, one of Reddit&rsquo;s biggest subreddits where normal Redditors can ask celebrities any question they want.</p>
+
+<p><img src="/img/first-comment/IAmA-1d.png" alt=""></p>
+
+<p>Unlike the all-Reddit chart, the distribution of first-comment proportions is more uniform instead of following a power law. It makes sense in theory; people would likely upvote top-level questions which the original poster replied to, so there should be less of a bias toward the first top-level comment.</p>
+
+<p>What does the 2D heatmap show?</p>
+
+<p><img src="/img/first-comment/IAmA-2d.png" alt=""></p>
+
+<p>Damn it.</p>
+
+<p>While the 1D behavior is different, the overall 2D behavior is the same albeit with larger voids (indeed, in the heatmap, you can see at <code>created_rank = 1</code>, the vertical strip doesn&rsquo;t fit the pattern).</p>
+
+<p>It turns out that most /r/IAmA threads have this comment:</p>
+
+<p><img src="/img/first-comment/automoderator.png" alt=""></p>
+
+<p>As it&rsquo;s made by a robot, it&rsquo;s always the first comment, and it gets ignored/downvoted in normal circumstances. Other subreddits with the same pattern of 1D irregularities, 2D regularities, and AutoModerator usage are <a href="https://www.reddit.com/r/gameofthrones/">/r/gameofthrones</a>, <a href="https://www.reddit.com/r/photoshopbattles/">/r/photoshopbattles</a>, and <a href="https://www.reddit.com/r/WritingPrompts/">/r/WritingPrompts</a>.</p>
+
+<p>Some subreddits have more uniformity than typical Reddit rank behavior. In <a href="https://www.reddit.com/r/funny/">/r/funny</a>, <a href="https://www.reddit.com/r/leagueoflegends/">/r/leagueoflegends</a>, <a href="https://www.reddit.com/r/pics/">/r/pics</a>, <a href="https://www.reddit.com/r/todayilearned/">/r/todayilearned</a>, and <a href="https://www.reddit.com/r/video/">/r/videos</a> (i.e. many default subreddits), there is no upper-left void (early comments can be poorly ranked) and the bottom-right void is minimized but still present.</p>
+
+<p><img src="/img/first-comment/funny-2d.png" alt=""></p>
+
+<p><img src="/img/first-comment/leagueoflegends-2d.png" alt=""></p>
+
+<p>Inversely, there are subreddits where the correlation is obvious. <a href="https://www.reddit.com/r/pcmasterrace/">/r/pcmasterrace</a> and /r/gonewild both exhibit very straight lines, and are subreddits where the comments themselves are not very constructive, so whatever gets posted gets upvoted anyways.</p>
+
+<p><img src="/img/first-comment/pcmasterrace-2d.png" alt=""></p>
+
+<p><img src="/img/first-comment/gonewild-2d.png" alt=""></p>
+
+<p>Rushing to say <strong>FIRST!!1!11!</strong> in a comments section of a blog post or forum thread is a meme that long predates Reddit. However, rushing to make the first comment in a Reddit thread may have strategic merit if you want to get your voice heard.</p>
+
+<p>Even in the most optimistic circumstances, comments that are late to a thread have a very, very low probability of becoming one of the top comments. In fairness, it&rsquo;s hard to determine with public Reddit data if tweaking the ranking algorithm such that new comments will always rank at the top initially will actually improve the Reddit user experience as a whole. On the other hand, this behavior presents an opportunity: if there is a <a href="https://en.wikipedia.org/wiki/Long_tail">long tail</a> of Reddit content that is unjustifiably being buried due to lack of attention, then perhaps there is a <em>business opportunity</em> in creating a service to discover and resurface quality comments&hellip;</p>
+
+<hr>
+
+<p><em>You can view all the <a href="https://www.r-project.org">R</a> and <a href="http://ggplot2.org">ggplot2</a> code used to query, analyze, and visualize the Reddit data in <a href="http://minimaxir.com/notebooks/first-comment/">this R Notebook</a>. You can also view the images/data used for this post in <a href="https://github.com/minimaxir/first-comment">this GitHub repository</a></em>.</p>
+
+<p><em>You are free to use the data visualizations from this article however you wish, but it would be greatly appreciated if proper attribution is given to this article and/or myself!</em></p>
+
+						
+            			 <div class="breadcrumbs-v5-subtitle sharing-post" style="color: #999 !important; padding-top:10px; border-top: 1px solid #eee">Share this article!
+
+
+              <span class="sharing index" style="float: right; color: #999 !important;">
+  
+		  <span class="social facebook"><a href="https://www.facebook.com/share.php?u=http://minimaxir.com/2016/11/first-comment/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data="http://minimaxir.com/2016/11/first-comment/"><i class="fa fa-facebook"></i><span class="count hidden-xs"></span></a></span>
+  
+		<span class="social twitter"><a href="http://twitter.com/home/?status=What Percent of the Top-Voted Comments in Reddit Threads Were Also 1st Comment? - http://minimaxir.com/2016/11/first-comment/ - via @minimaxir"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data=http://minimaxir.com/2016/11/first-comment/><i class="fa fa-twitter"></i><span class="count hidden-xs"></span></a> </span>
+
+  <span  class="social linkedin"><a href="http://www.linkedin.com/shareArticle?mini=true&title=&url=http://minimaxir.com/2016/11/first-comment/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=600');return false;" data=http://minimaxir.com/2016/11/first-comment/><i class="fa fa-linkedin"></i><span class="count hidden-xs"> -</span></a> </span>
+
+   </span>
+   </div>
+						</div>
+                        <!-- End Blog Grid Content -->
+                        
+                        
+                        
+                    </article>
+                    <!-- End Blog Grid -->
+
+ 					
+
+                    <!-- Blog Comment -->
+                    <div class="blog-comments bg-color-white margin-b-30">
+                        <div class="blog-single-post-content">
+
+						
+
+<script type="text/javascript">
+      var disqus_shortname = 'minimaxir';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://minimaxir.com/2016/11/first-comment/';
+        var disqus_url = 'http://minimaxir.com/2016/11/first-comment/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+<div id="disqus_thread"></div>
+
+
+
+                        </div>
+                    </div>
+                    <!-- End Blog Comment -->
+                    
+                    
+                </div>
+
+			                <!--========== BLOG SIDEBAR ==========-->
+                <div class="col-md-3">
+                
+                
+                
+                    <!-- Blog Author -->
+                    <div class="blog-sidebar margin-b-30">
+                        <div class="blog-sidebar-heading">
+                            <h4 class="blog-sidebar-heading-title">Author</h4>
+                        </div>
+                        
+                        <img src="/MaxFB.jpg" title="Stop mousing over me! I'm not a XKCD comic!" class="img-responsive hidden-xs hidden-sm"></img>
+                        
+                        <div class="blog-sidebar-content">
+                            <!-- Blog Author Bio -->
+							
+							<p><strong>Max Woolf (@minimaxir)</strong> is a Software QA Engineer living and working in the San Francisco Bay Area for over 4 years and a 2012 Carnegie Mellon University graduate in Business Administration.</p>
+
+<p>In his spare time, Max uses <a href="https://www.python.org/">Python</a> to gather data from public APIs and <a href="http://ggplot2.org/">ggplot2</a> to make pretty charts from that data.</p>
+
+<p>You can learn more about Max <a href="/about">here</a>, or view his portfolio <a href="/portfolio">here</a>. </p>
+
+  
+    <ul class="list-inline" style="padding-top:10px; margin-top: 20px; border-top: 1px solid #ebeef6">
+                        <li class="theme-icons-wrap"><a title="Facebook" href="https://facebook.com/max.woolf" target="_blank"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-facebook"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="Twitter" href="https://twitter.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-twitter"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="LinkedIn" href="https://linkedin.com/in/minimaxir" target="_blank"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-linkedin"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="GitHub" href="https://github.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-github"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="YouTube" href="https://youtube.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-youtube"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="E-Mail" href="mailto:max@minimaxir.com"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-envelope"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="RSS" href="/rss.xml"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-rss"></i></a></li>
+                    </ul>
+                            <!-- End Blog Author Bio -->
+                        </div>
+                    </div>
+                    <!-- End Blog Author -->
+                    
+                     <!-- Blog Recent Posts -->
+                    <div class="blog-sidebar margin-b-30">
+                        <div class="blog-sidebar-heading">
+                            <h4 class="blog-sidebar-heading-title">Recent Posts</h4>
+                        </div>
+                        <div class="blog-sidebar-content" style="position: relative; overflow: visible;">
+                        
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="/2016/11/first-comment/">What Percent of the Top-Voted Comments in Reddit Threads Were Also 1st Comment?</a></h5>
+                                    <small class="latest-tuts-content-time"> Nov 7, 2016</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="/2016/08/clickbait-cluster/">Visualizing Clusters of Clickbait Headlines Using Spark, Word2vec, and Plotly</a></h5>
+                                    <small class="latest-tuts-content-time"> Aug 16, 2016</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="/2016/08/pokemon-3d/">Interactive 3D Clusters of all 721 Pokémon Using Spark and Plotly</a></h5>
+                                    <small class="latest-tuts-content-time"> Aug 3, 2016</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="/2016/07/stack-overflow/">Visualizing How Developers Rate Their Own Programming Skills</a></h5>
+                                    <small class="latest-tuts-content-time"> Jul 21, 2016</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="/2016/06/interactive-reactions/">Classifying the Emotions of Facebook Posts Using Reactions Data</a></h5>
+                                    <small class="latest-tuts-content-time"> Jun 27, 2016</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="/2016/06/reddit-related-subreddits/">Methods for Finding Related Reddit Subreddits with Simple Set Theory</a></h5>
+                                    <small class="latest-tuts-content-time"> Jun 20, 2016</small>
+                                </div>
+                        </article>
+                                                
+                    </div>
+                    <!-- End Blog Recent Posts -->
+                    </div>
+                    
+                    <!-- GitHub Top Repositories -->
+                    <div class="blog-sidebar margin-b-30">
+                        <div class="blog-sidebar-heading">
+                            <h4 class="blog-sidebar-heading-title">Top GitHub Repositories</h4>
+                        </div>
+                        <div class="blog-sidebar-content" style="position: relative; overflow: visible;">
+                        
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/big-list-of-naughty-strings" target="_blank">Big List of Naughty Strings</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 11,554+</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/facebook-page-post-scraper" target="_blank">Facebook Page Post Scraper</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 475+</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/copy-syntax-highlight-osx" target="_blank">Copy Syntax Highlight for OS X</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 327+</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/video-to-gif-osx" target="_blank">Convert Video to GIF on OS X</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 223+</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/reddit-bigquery" target="_blank">Reddit Data with BigQuery Notebook</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 64+</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/get-all-hacker-news-submissions-comments" target="_blank">Get All Hacker News Submissions & Comments</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 54+</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/frames-to-gif-osx" target="_blank">Convert Frames to GIF on OS X</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 16+</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/sf-arrests-when-where" target="_blank">Analyzing When and Where San Francisco Criminal Arrests Occur</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 16+</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/nyc-taxi-notebook" target="_blank">NYC Yellow Taxi Visualization Notebook</a></h5>
+                                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 13+</small>
+                                </div>
+                        </article>
+                                                
+                    </div>
+                    
+                    <!-- End GitHub Top Repositories -->
+                    
+                    
+                    
+                </div>
+                <!--========== END BLOG SIDEBAR ==========-->
+            
+			</div>
+            <!--// end row -->
+        </div>
+        <!--========== END PAGE CONTENT ==========-->
+
+    </div>
+    <!--========== END BACKGROUND COLOR SKY LIGHT ==========-->
+    
+
+
+
+  
+      <!--========== FOOTER V8 ==========-->
+    <footer id="footer" class="footer-v8">
+        <div class="content-sm container">
+            <div class="row">
+                <!-- Logo -->
+                <div class="col-md-6">
+                    
+                    <p>You can contact through any of the following channels, although e-mail is preferred. Following me on Facebook and Twitter certainly doesn't hurt either!</p>
+                     <!-- <h2 class="footer-v8-title">Follow Me</h2> -->
+                    <!-- Theme Icons White Background -->
+                   <!-- <ul class="list-inline ul-li-lr-0">
+                        <li class="theme-icons-wrap"><a title="Facebook" href="https://facebook.com/max.woolf" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-facebook"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="Twitter" href="https://twitter.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-twitter"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="LinkedIn" href="https://linkedin.com/in/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-linkedin"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="GitHub" href="https://github.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-github"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="YouTube" href="https://youtube.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-youtube"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="E-Mail" href="mailto:max@minimaxir.com"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-envelope"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="RSS" href="/rss.xml"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-rss"></i></a></li> -->
+                    <!-- End Theme Icons White Background -->
+                </div>
+                <!-- End Logo -->
+
+                <!-- Contact Info -->
+                <div class="col-md-6">
+                    <h3 class="footer-v8-title">Contact Info</h3>
+                    <div class="footer-v8-contact-info-bg">
+                        <ul class="list-unstyled footer-v8-contact-info">
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-map-marker"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <p class="footer-v8-contact-info-text">SOMA, San Francisco, CA</p>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-facebook"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="Facebook" href="https://facebook.com/max.woolf" target="_blank">max.woolf</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-twitter"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="Twitter" href="https://twitter.com/minimaxir" target="_blank"">@minimaxir</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-linkedin"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="LinkedIn" href="https://linkedin.com/in/minimaxir" target="_blank"">minimaxir</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-envelope"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="E-Mail" href="mailto:max@minimaxir.com">max@minimaxir.com</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- End Contact Info -->
+
+            </div>
+            <!--// end row -->
+        </div>
+
+        <!-- Copyright -->
+        <div class="footer-v8-copyright">
+            <div class="container text-center">
+				Copyright &#169; 2016 Max Woolf. All Rights Reserved. 
+                minimaxir.com is powered by Jekyll and GitHub Pages.
+            </div>
+        </div>
+        <!-- Copyright -->
+    </footer>
+    <!--========== END FOOTER V8 ==========-->
+</div>
+<!-- END WRAPPER -->
+
+<!-- Sidebar Content Overlay -->
+<div class="sidebar-content-overlay"></div>
+<!-- End Sidebar Content Overlay -->
+
+<!-- Back To Top -->
+<a href="javascript:void(0);" class="js-back-to-top back-to-top-theme"></a>
+<!-- End Back To Top -->
+
+<!--========== JAVASCRIPTS(Load javascripts at bottom, this will reduce page load time) ==========-->
+<!-- BEGIN CORE PLUGINS -->
+<!--[if lt IE 9]>
+<script src="/assets/plugins/html5shiv.js"></script>
+<script src="/assets/plugins/respond.min.js"></script>
+<![endif]-->
+<script type="text/javascript" src="/js/jquery.migrate.min.js"></script>
+<script type="text/javascript" src="/js/bootstrap.min.js"></script>
+<!-- END CORE PLUGINS -->
+
+<!-- BEGIN PAGE LEVEL PLUGINS -->
+<script type="text/javascript" src="/js/jquery.back-to-top.js"></script>
+<!-- END PAGE LEVEL PLUGINS -->
+
+<!-- BEGIN PAGE LEVEL SCRIPTS -->
+<script type="text/javascript" src="/js/app.min.js"></script>
+<script type="text/javascript" src="/js/header-sticky.js"></script>
+<!-- END PAGE LEVEL SCRIPTS -->
+
+
+<!--========== END JAVASCRIPTS ==========-->
+  
+</body>
+<!-- END BODY -->
+
+</html>

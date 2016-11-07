@@ -99,18 +99,6 @@
   <script>
    $(document).ready(function() {
  
-  // Facebook
-	$( ".social.facebook" ).children().each(function(index,value) {
-	var facebook_button = $(this);
-	var url = facebook_button.attr("data");
-
-  jQuery.getJSON("https://graph.facebook.com/?id="+url, function(data) {
-  if (typeof data.shares != 'undefined') facebook_button.html("<i class=\"fa fa-facebook\"></i><span class=\"count hidden-xs\"> " + data.shares + "</span>");
-  else if (typeof data.likes != 'undefined') facebook_button.html("<i class=\"fa fa-facebook\"></i><span class=\"count hidden-xs\"> " + data.likes + "</span>");
-  else facebook_button.html("<i class=\"fa fa-facebook\"></i><span class=\"count hidden-xs\"> " + " 0</span>");
-  });
-  });
- 
   // LinkedIn
 	$( ".social.linkedin" ).children().each(function(index,value) {
 	var linkedin_button = $(this);
@@ -251,6 +239,34 @@
 			                <div class="col-md-6 md-margin-b-30">
                     <!-- Blog Classic -->
                     <article class="blog-classic">
+                        <img class="img-responsive" src="/img/facebook_react2.png" alt="">
+                        <div class="blog-classic-body">
+                        	
+                            <h2 class="blog-classic-title">Facebook Reactions and the Problems With Quantifying Likes Differently</h2>
+                            <span class="blog-classic-subtitle">Apparently, there is little statistical relationship between things that are cute and things that make you go YAAASS.</span>
+                            <p class="blog-classic-paragraph">Feb 29, 2016</p>
+                        </div>
+                        <div class="blog-classic-overlay">
+                            <div class="blog-classic-hover">
+                                <img class="blog-classic-hover-img" src="/img/facebook_react2.png" alt="">
+                            </div>
+                            <div class="blog-classic-overlay-body">
+                                <h2 class="blog-classic-title">Facebook Reactions and the Problems With Quantifying Likes Differently</h2>
+                                <span class="blog-classic-subtitle">Apparently, there is little statistical relationship between things that are cute and things that make you go YAAASS.</span>
+                                <a class="blog-classic-paragraph" href="/2016/02/facebook-reactions/">Feb 29, 2016</a>
+                            </div>
+                        </div>
+                        <a href="/2016/02/facebook-reactions/" class="blog-classic-link"></a>
+                    </article>
+                    <!-- End Blog Classic -->
+                </div>
+                
+                
+            
+            
+			                <div class="col-md-6 md-margin-b-30">
+                    <!-- Blog Classic -->
+                    <article class="blog-classic">
                         <img class="img-responsive" src="/img/peach-1.png" alt="">
                         <div class="blog-classic-body">
                         	
@@ -274,6 +290,13 @@
                 </div>
                 
                 
+            
+
+            <!--// end row -->
+            </div>       
+        
+            <div class="row margin-b-30">
+            
             
             
 			                <div class="col-md-6 md-margin-b-30">
@@ -301,14 +324,7 @@
                     <!-- End Blog Classic -->
                 </div>
                 
-                
-            
-
-            <!--// end row -->
-            </div>       
-        
-            <div class="row margin-b-30">
-            
+			
             
             
 			                <div class="col-md-6 md-margin-b-30">
@@ -340,6 +356,14 @@
                 
 			
             
+
+            <!--// end row -->
+
+        </div>
+        
+                    <div class="row margin-b-30">
+            
+            
             
 			                <div class="col-md-6 md-margin-b-30">
                     <!-- Blog Classic -->
@@ -370,14 +394,6 @@
                 
 			
             
-
-            <!--// end row -->
-
-        </div>
-        
-                    <div class="row margin-b-30">
-            
-            
             
 			                <div class="col-md-6 md-margin-b-30">
                     <!-- Blog Classic -->
@@ -400,34 +416,6 @@
                             </div>
                         </div>
                         <a href="/2015/12/sf-arrest-maps/" class="blog-classic-link"></a>
-                    </article>
-                    <!-- End Blog Classic -->
-                </div>
-                
-			
-            
-            
-			                <div class="col-md-6 md-margin-b-30">
-                    <!-- Blog Classic -->
-                    <article class="blog-classic">
-                        <img class="img-responsive" src="/img/sf-arrest-when-2.png" alt="">
-                        <div class="blog-classic-body">
-                        	
-                            <h2 class="blog-classic-title">Analyzing San Francisco Crime Data to Determine When Arrests Frequently Occur</h2>
-                            <span class="blog-classic-subtitle">Spoilers: Most arrests in San Francisco happen Wednesdays at 4-5 PM. For some reason.</span>
-                            <p class="blog-classic-paragraph">Dec 4, 2015</p>
-                        </div>
-                        <div class="blog-classic-overlay">
-                            <div class="blog-classic-hover">
-                                <img class="blog-classic-hover-img" src="/img/sf-arrest-when-2.png" alt="">
-                            </div>
-                            <div class="blog-classic-overlay-body">
-                                <h2 class="blog-classic-title">Analyzing San Francisco Crime Data to Determine When Arrests Frequently Occur</h2>
-                                <span class="blog-classic-subtitle">Spoilers: Most arrests in San Francisco happen Wednesdays at 4-5 PM. For some reason.</span>
-                                <a class="blog-classic-paragraph" href="/2015/12/sf-arrests/">Dec 4, 2015</a>
-                            </div>
-                        </div>
-                        <a href="/2015/12/sf-arrests/" class="blog-classic-link"></a>
                     </article>
                     <!-- End Blog Classic -->
                 </div>

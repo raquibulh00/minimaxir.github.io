@@ -1,6 +1,7 @@
 code {
 color: #2c3e50;
 background-color: #f1f5f9;
+font-size: 16px !important;
 }
 
 
@@ -110,17 +111,16 @@ text-decoration: underline;
 }
 
 
-
-
 em, li, li a, p {
 font-weight: 400 !important;
 font-family: Source Sans Pro, sans-serif !important;
-font-size: 17px !important;
+font-size: 19px !important;
 }
 
 p {
-margin: 0 0 20px !important;
+margin: 0 0 40px !important;
 color: #34343c !important;
+line-height: 1.8 !important;
 }
 
 .breadcrumbs-v5 .breadcrumbs-v5-title, .breadcrumbs-v5 .breadcrumbs-v5-subtitle {
@@ -208,8 +208,8 @@ color: white;
 }
 
 pre p {
-font-size: 13px !important;
-margin: 0px!important;
+font-size: 13px;
+margin: none;
 font-family: Menlo, Monaco, Consolas, "Courier New", monospace !important;
 }
 
@@ -225,17 +225,13 @@ padding: 0 10px;
 padding: 20px 20px 20px !important;
 }
 
-.blog-grid-content #htmlwidget_container {
-margin: 40px 0 !important;
-}
-
 .latest-tuts-content-time i {
 padding-right: 5px !important;
 }
 
 .latest-tuts-content-title a {
 text-decoration: none;
-font-weight: 400;
+font-weight: 400
 }
 
 blockquote p {

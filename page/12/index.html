@@ -99,18 +99,6 @@
   <script>
    $(document).ready(function() {
  
-  // Facebook
-	$( ".social.facebook" ).children().each(function(index,value) {
-	var facebook_button = $(this);
-	var url = facebook_button.attr("data");
-
-  jQuery.getJSON("https://graph.facebook.com/?id="+url, function(data) {
-  if (typeof data.shares != 'undefined') facebook_button.html("<i class=\"fa fa-facebook\"></i><span class=\"count hidden-xs\"> " + data.shares + "</span>");
-  else if (typeof data.likes != 'undefined') facebook_button.html("<i class=\"fa fa-facebook\"></i><span class=\"count hidden-xs\"> " + data.likes + "</span>");
-  else facebook_button.html("<i class=\"fa fa-facebook\"></i><span class=\"count hidden-xs\"> " + " 0</span>");
-  });
-  });
- 
   // LinkedIn
 	$( ".social.linkedin" ).children().each(function(index,value) {
 	var linkedin_button = $(this);
@@ -251,6 +239,34 @@
 			                <div class="col-md-6 md-margin-b-30">
                     <!-- Blog Classic -->
                     <article class="blog-classic">
+                        <img class="img-responsive" src="/img/liveFyreSync.png" alt="">
+                        <div class="blog-classic-body">
+                        	
+                            <h2 class="blog-classic-title">A Blog Comment System That Steals Comments From Facebook</h2>
+                            <span class="blog-classic-subtitle">Those comments become LiveFyre comments. And the Facebook user has no input, nor any notification that their comments are being used this way.</span>
+                            <p class="blog-classic-paragraph">May 4, 2013</p>
+                        </div>
+                        <div class="blog-classic-overlay">
+                            <div class="blog-classic-hover">
+                                <img class="blog-classic-hover-img" src="/img/liveFyreSync.png" alt="">
+                            </div>
+                            <div class="blog-classic-overlay-body">
+                                <h2 class="blog-classic-title">A Blog Comment System That Steals Comments From Facebook</h2>
+                                <span class="blog-classic-subtitle">Those comments become LiveFyre comments. And the Facebook user has no input, nor any notification that their comments are being used this way.</span>
+                                <a class="blog-classic-paragraph" href="/2013/05/comments-everywhere/">May 4, 2013</a>
+                            </div>
+                        </div>
+                        <a href="/2013/05/comments-everywhere/" class="blog-classic-link"></a>
+                    </article>
+                    <!-- End Blog Classic -->
+                </div>
+                
+                
+            
+            
+			                <div class="col-md-6 md-margin-b-30">
+                    <!-- Blog Classic -->
+                    <article class="blog-classic">
                         <img class="img-responsive" src="/img/Zuck.png" alt="">
                         <div class="blog-classic-body">
                         	
@@ -274,6 +290,13 @@
                 </div>
                 
                 
+            
+
+            <!--// end row -->
+            </div>       
+        
+            <div class="row margin-b-30">
+            
             
             
 			                <div class="col-md-6 md-margin-b-30">
@@ -301,14 +324,7 @@
                     <!-- End Blog Classic -->
                 </div>
                 
-                
-            
-
-            <!--// end row -->
-            </div>       
-        
-            <div class="row margin-b-30">
-            
+			
             
             
 			                <div class="col-md-6 md-margin-b-30">
@@ -338,6 +354,14 @@
                 
 			
             
+
+            <!--// end row -->
+
+        </div>
+        
+                    <div class="row margin-b-30">
+            
+            
             
 			                <div class="col-md-6 md-margin-b-30">
                     <!-- Blog Classic -->
@@ -366,14 +390,6 @@
                 
 			
             
-
-            <!--// end row -->
-
-        </div>
-        
-                    <div class="row margin-b-30">
-            
-            
             
 			                <div class="col-md-6 md-margin-b-30">
                     <!-- Blog Classic -->
@@ -396,34 +412,6 @@
                             </div>
                         </div>
                         <a href="/2013/01/if-cute-then-happiness/" class="blog-classic-link"></a>
-                    </article>
-                    <!-- End Blog Classic -->
-                </div>
-                
-			
-            
-            
-			                <div class="col-md-6 md-margin-b-30">
-                    <!-- Blog Classic -->
-                    <article class="blog-classic">
-                        <img class="img-responsive" src="/img/twitter2.png" alt="">
-                        <div class="blog-classic-body">
-                        	
-                            <h2 class="blog-classic-title">Why Do Many Tweets Begin With A Period?</h2>
-                            <span class="blog-classic-subtitle">I eventually realized that beginning your reply Tweet with a period (.) allows it to be seen by all your followers.</span>
-                            <p class="blog-classic-paragraph">Jan 4, 2013</p>
-                        </div>
-                        <div class="blog-classic-overlay">
-                            <div class="blog-classic-hover">
-                                <img class="blog-classic-hover-img" src="/img/twitter2.png" alt="">
-                            </div>
-                            <div class="blog-classic-overlay-body">
-                                <h2 class="blog-classic-title">Why Do Many Tweets Begin With A Period?</h2>
-                                <span class="blog-classic-subtitle">I eventually realized that beginning your reply Tweet with a period (.) allows it to be seen by all your followers.</span>
-                                <a class="blog-classic-paragraph" href="/2013/01/prefixed-period/">Jan 4, 2013</a>
-                            </div>
-                        </div>
-                        <a href="/2013/01/prefixed-period/" class="blog-classic-link"></a>
                     </article>
                     <!-- End Blog Classic -->
                 </div>

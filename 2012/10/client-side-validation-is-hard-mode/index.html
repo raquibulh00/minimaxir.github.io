@@ -105,18 +105,6 @@
   <script>
    $(document).ready(function() {
  
-  // Facebook
-	$( ".social.facebook" ).children().each(function(index,value) {
-	var facebook_button = $(this);
-	var url = facebook_button.attr("data");
-
-  jQuery.getJSON("https://graph.facebook.com/?id="+url, function(data) {
-  if (typeof data.shares != 'undefined') facebook_button.html("<i class=\"fa fa-facebook\"></i><span class=\"count hidden-xs\"> " + data.shares + "</span>");
-  else if (typeof data.likes != 'undefined') facebook_button.html("<i class=\"fa fa-facebook\"></i><span class=\"count hidden-xs\"> " + data.likes + "</span>");
-  else facebook_button.html("<i class=\"fa fa-facebook\"></i><span class=\"count hidden-xs\"> " + " 0</span>");
-  });
-  });
- 
   // LinkedIn
 	$( ".social.linkedin" ).children().each(function(index,value) {
 	var linkedin_button = $(this);
@@ -207,7 +195,7 @@
               <span class="sharing index" style="float: right">
   
 		  <span class="social facebook"><a href="https://www.facebook.com/share.php?u=http://minimaxir.com/2012/10/client-side-validation-is-hard-mode/"  onclick="javascript:window.open(this.href,
-  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data="http://minimaxir.com/2012/10/client-side-validation-is-hard-mode/"><i class="fa fa-facebook"></i><span class="count hidden-xs"> -</span></a></span>
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data="http://minimaxir.com/2012/10/client-side-validation-is-hard-mode/"><i class="fa fa-facebook"></i><span class="count hidden-xs"></span></a></span>
   
 		<span class="social twitter"><a href="http://twitter.com/home/?status=Electronic Arts "Gives Away" Thousands Of Free Games Due To No Server-Side Validation - http://minimaxir.com/2012/10/client-side-validation-is-hard-mode/ - via @minimaxir"  onclick="javascript:window.open(this.href,
   '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data=http://minimaxir.com/2012/10/client-side-validation-is-hard-mode/><i class="fa fa-twitter"></i><span class="count hidden-xs"></span></a> </span>
@@ -305,7 +293,7 @@
               <span class="sharing index" style="float: right; color: #999 !important;">
   
 		  <span class="social facebook"><a href="https://www.facebook.com/share.php?u=http://minimaxir.com/2012/10/client-side-validation-is-hard-mode/"  onclick="javascript:window.open(this.href,
-  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data="http://minimaxir.com/2012/10/client-side-validation-is-hard-mode/"><i class="fa fa-facebook"></i><span class="count hidden-xs"> -</span></a></span>
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data="http://minimaxir.com/2012/10/client-side-validation-is-hard-mode/"><i class="fa fa-facebook"></i><span class="count hidden-xs"></span></a></span>
   
 		<span class="social twitter"><a href="http://twitter.com/home/?status=Electronic Arts "Gives Away" Thousands Of Free Games Due To No Server-Side Validation - http://minimaxir.com/2012/10/client-side-validation-is-hard-mode/ - via @minimaxir"  onclick="javascript:window.open(this.href,
   '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data=http://minimaxir.com/2012/10/client-side-validation-is-hard-mode/><i class="fa fa-twitter"></i><span class="count hidden-xs"></span></a> </span>
@@ -405,6 +393,13 @@
                         
                         <article class="latest-tuts">
                                 <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="/2016/11/first-comment/">What Percent of the Top-Voted Comments in Reddit Threads Were Also 1st Comment?</a></h5>
+                                    <small class="latest-tuts-content-time"> Nov 7, 2016</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
                                     <h5 class="latest-tuts-content-title"><a href="/2016/08/clickbait-cluster/">Visualizing Clusters of Clickbait Headlines Using Spark, Word2vec, and Plotly</a></h5>
                                     <small class="latest-tuts-content-time"> Aug 16, 2016</small>
                                 </div>
@@ -435,13 +430,6 @@
                                 <div class="latest-tuts-content">
                                     <h5 class="latest-tuts-content-title"><a href="/2016/06/reddit-related-subreddits/">Methods for Finding Related Reddit Subreddits with Simple Set Theory</a></h5>
                                     <small class="latest-tuts-content-time"> Jun 20, 2016</small>
-                                </div>
-                        </article>
-                        
-                        <article class="latest-tuts">
-                                <div class="latest-tuts-content">
-                                    <h5 class="latest-tuts-content-title"><a href="/2016/05/sfba-compensation/">Interactive Salary/Equity Chart for Jobs Offered in the San Francisco Bay Area</a></h5>
-                                    <small class="latest-tuts-content-time"> May 31, 2016</small>
                                 </div>
                         </article>
                                                 

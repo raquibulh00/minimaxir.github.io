@@ -99,18 +99,6 @@
   <script>
    $(document).ready(function() {
  
-  // Facebook
-	$( ".social.facebook" ).children().each(function(index,value) {
-	var facebook_button = $(this);
-	var url = facebook_button.attr("data");
-
-  jQuery.getJSON("https://graph.facebook.com/?id="+url, function(data) {
-  if (typeof data.shares != 'undefined') facebook_button.html("<i class=\"fa fa-facebook\"></i><span class=\"count hidden-xs\"> " + data.shares + "</span>");
-  else if (typeof data.likes != 'undefined') facebook_button.html("<i class=\"fa fa-facebook\"></i><span class=\"count hidden-xs\"> " + data.likes + "</span>");
-  else facebook_button.html("<i class=\"fa fa-facebook\"></i><span class=\"count hidden-xs\"> " + " 0</span>");
-  });
-  });
- 
   // LinkedIn
 	$( ".social.linkedin" ).children().each(function(index,value) {
 	var linkedin_button = $(this);

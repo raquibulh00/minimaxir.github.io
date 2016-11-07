@@ -4,7 +4,7 @@
   <title><![CDATA[minimaxir | Max Woolf's Blog]]></title>
   <link href="http://minimaxir.com/rss.xml" rel="self"/>
   <link href="http://minimaxir.com/"/>
-  <updated>2016-08-16T06:33:51-07:00</updated>
+  <updated>2016-11-07T06:33:33-08:00</updated>
   <id>http://minimaxir.com/</id>
   <author>
     <name><![CDATA[Max Woolf]]></name>
@@ -12,6 +12,109 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[What Percent of the Top-Voted Comments in Reddit Threads Were Also 1st Comment?]]></title>
+    <link href="http://minimaxir.com/2016/11/first-comment/"/>
+    <updated>2016-11-07T06:30:00-08:00</updated>
+    <id>http://minimaxir.com/2016/11/first-comment</id>
+    <content type="html"><![CDATA[<p><a href="https://www.reddit.com">Reddit</a> threads can be a crowded place. In popular subreddits such as <a href="https://www.reddit.com/r/AskReddit/">/r/AskReddit</a> and <a href="https://www.reddit.com/r/pics/">/r/pics</a>, Reddit submissions can receive hundreds, even <em>thousands</em> of unique comments. Some comments inevitably become lost in the noise. Reddit&rsquo;s <a href="https://redditblog.com/2009/10/15/reddits-new-comment-sorting-system/">ranking algorithm</a> attempts to rectify this by determining comment ranking using both time and community voting; comments in a thread, by default, are ordered based on the <strong>points score</strong> (upvotes - downvotes) the comment receives, subject to a rank decay based on the age of the comment.</p>
+
+<p><img src="/img/first-comment/reddit_askreddit.png" alt=""></p>
+
+<p>In theory, this system should allow comments that posted later in the thread&rsquo;s lifetime to rank much higher temporarily, then Redditors can vote on the new comment; if the new comment is good, it can now rise to the top and therefore the content which would otherwise be buried is now surfaced. Anecdotally, that doesn&rsquo;t be the case with Reddit&rsquo;s modern algorithm; comments made late in the thread appear at the bottom, where they likely will not receive any upvotes (this led to a minor &ldquo;<a href="https://www.google.com/#q=site:reddit.com+%22late+to+this+thread%22">I know I&rsquo;m late to this thread but&hellip;</a>&rdquo; meme).</p>
+
+<p>I, of course, am not satisfied with anecdotes. A month ago, a Redditor asked &ldquo;<a href="https://www.reddit.com/r/TheoryOfReddit/comments/53d5ep/what_percentage_of_the_top_comment_in_threads/">What percentage of the top comment in threads were also the first comment?</a>&rdquo; Why not calculate it <em>exactly</em> using big data?</p>
+
+<h2>Getting the Reddit Data</h2>
+
+<p><em>You can view all the <a href="https://www.r-project.org">R</a> and <a href="http://ggplot2.org">ggplot2</a> code used to query, analyze, and visualize the Reddit data in <a href="http://minimaxir.com/notebooks/first-comment/">this R Notebook</a>.</em></p>
+
+<p>In order to process a great amount of Reddit data, I turned to <a href="https://cloud.google.com/bigquery/">BigQuery</a>, which now has data for <a href="https://www.reddit.com/r/datasets/comments/590re2/updated_reddit_comments_and_posts_updated_on/">all Reddit comments</a> until September 2016.</p>
+
+<p>For this analysis, I will only look at the <strong>top-level comments</strong> (i.e. comments which are not replies to other comments), since those are the ones most affected by the ordering and submission of new comments. Additionally I will only look at comments within Reddit threads with <strong>atleast 30 top-level comments</strong> to ensure I only look at threads with sufficient discussion and where late posts are more likely to become hidden. It also mirrors the &ldquo;late to this thread&rdquo; meme: can posts be <em>too</em> late?</p>
+
+<p>The queried data will be all comments posted from January 2015 to September 2016: this give a good balance of sample size and foundation around the modern comment ranking algorithms. The total number of Reddit comments analyzed, after filtering on threads with sufficient conversation and limiting the scope to the first 100 comments of a thread scoring within the Top 100, is <strong>n = 86,561,476</strong>.</p>
+
+<p>With clever use of BigQuery window functions, I obtained the aggregate data, counting the number of comments from the filtered Reddit threads at each voting rank and created rank.</p>
+
+<p><img src="/img/first-comment/data.png" alt=""></p>
+
+<h2>Visualizing the Discussion</h2>
+
+<p>Filtering on the top-voted comments (<code>score_rank = 1</code>) only, <em>what percent of the top-voted comments in Reddit threads were also 1st Comment?</em></p>
+
+<p><img src="/img/first-comment/reddit-first-4.png" alt=""></p>
+
+<p>The answer is <strong>17.24%</strong> of all top-voted comments! That&rsquo;s certainly more than what I expected! Additionally, 56% of the top-voted comments were posted within the first 5 comments, and 77% within the first 10 comments. The chart follows a <a href="https://en.wikipedia.org/wiki/Power_law">power-law distribution</a>.</p>
+
+<p>Let&rsquo;s invert it: filtering on only the first comments (<code>created_rank = 1</code>) made in comment threads, <em>what percentage of the 1st Comments in Reddit threads were also the top-voted comment?</em></p>
+
+<p><img src="/img/first-comment/reddit-first-3.png" alt=""></p>
+
+<p>By construction, the answer is the same as before (17.24%), however the followup proportions are slightly different, with the first comment ranking within the Top 5 comments 46% of the time, and within the Top 10 comments 62% of the time.</p>
+
+<p>It may be worth it to visualize both dimensions at the same time using a heatmap, with the created rank on one axis, score rank on the other, and a z-axis representing the number of comments at each rank pairing. We can also add a faint contour line to help visualize clusters of the data. Putting it together:</p>
+
+<p><img src="/img/first-comment/reddit-first-2.png" alt=""></p>
+
+<p>Woah, most of the values are constrained between the semisquare constrained by the first 5 comments and the top 5 comments! But it&rsquo;s harder to see trends, so let&rsquo;s try applying a logarithmic base-10 scaling on the comment count:</p>
+
+<p><img src="/img/first-comment/reddit-first-2a.png" alt=""></p>
+
+<p>Much better! We can see a grouping of the 5x5 semisquare, but also smaller groupings of a 30x30 shape (this may possibly be due to the 30 comment filter threshold), a faint 60x60 shape, and <em>voids</em> in the upper-left and lower-right corners.</p>
+
+<p>From the 2D heatmap, there appears to be a <strong>positive correlation</strong> between the rank of the comment and the time it was submitted. Ideally, if Reddit&rsquo;s algorithm correctly cycled posts so that each comment gets a fair chance at going viral, then there should be <strong>no correlation</strong> between score rank and time posted.</p>
+
+<h2>Analysis by Subreddit</h2>
+
+<p>When working with Reddit data, it is always important to facet the analysis by subreddit, as subreddits can have idiosyncratic behaviors which deviate from general Reddit behavior. As noted in the original Reddit thread with the initial question, it is possible that the percentage of first comments becoming top comment is &ldquo;higher in lighter subs (funny, pics, videos) than more serious subs (askscience, history, etc).&rdquo;</p>
+
+<p>I tweaked the BigQuery above to retrieve the same data for each of the Top 100 subreddits (determined by unique commenter count over the same time period). Afterward, via scripting, I created a 1D proportion-of-first-comments-by-score-rank and 2D heatmaps for each subreddit. You can view and download the 1D charts <a href="https://github.com/minimaxir/first-comment/tree/master/img-1d">here</a>, and the 2D heatmaps <a href="https://github.com/minimaxir/first-comment/tree/master/img-2d">here</a>.</p>
+
+<p>For example, here&rsquo;s the chart of first-comment-rankings for <a href="https://www.reddit.com/r/IAmA/">/r/IAmA</a>, one of Reddit&rsquo;s biggest subreddits where normal Redditors can ask celebrities any question they want.</p>
+
+<p><img src="/img/first-comment/IAmA-1d.png" alt=""></p>
+
+<p>Unlike the all-Reddit chart, the distribution of first-comment proportions is more uniform instead of following a power law. It makes sense in theory; people would likely upvote top-level questions which the original poster replied to, so there should be less of a bias toward the first top-level comment.</p>
+
+<p>What does the 2D heatmap show?</p>
+
+<p><img src="/img/first-comment/IAmA-2d.png" alt=""></p>
+
+<p>Damn it.</p>
+
+<p>While the 1D behavior is different, the overall 2D behavior is the same albeit with larger voids (indeed, in the heatmap, you can see at <code>created_rank = 1</code>, the vertical strip doesn&rsquo;t fit the pattern).</p>
+
+<p>It turns out that most /r/IAmA threads have this comment:</p>
+
+<p><img src="/img/first-comment/automoderator.png" alt=""></p>
+
+<p>As it&rsquo;s made by a robot, it&rsquo;s always the first comment, and it gets ignored/downvoted in normal circumstances. Other subreddits with the same pattern of 1D irregularities, 2D regularities, and AutoModerator usage are <a href="https://www.reddit.com/r/gameofthrones/">/r/gameofthrones</a>, <a href="https://www.reddit.com/r/photoshopbattles/">/r/photoshopbattles</a>, and <a href="https://www.reddit.com/r/WritingPrompts/">/r/WritingPrompts</a>.</p>
+
+<p>Some subreddits have more uniformity than typical Reddit rank behavior. In <a href="https://www.reddit.com/r/funny/">/r/funny</a>, <a href="https://www.reddit.com/r/leagueoflegends/">/r/leagueoflegends</a>, <a href="https://www.reddit.com/r/pics/">/r/pics</a>, <a href="https://www.reddit.com/r/todayilearned/">/r/todayilearned</a>, and <a href="https://www.reddit.com/r/video/">/r/videos</a> (i.e. many default subreddits), there is no upper-left void (early comments can be poorly ranked) and the bottom-right void is minimized but still present.</p>
+
+<p><img src="/img/first-comment/funny-2d.png" alt=""></p>
+
+<p><img src="/img/first-comment/leagueoflegends-2d.png" alt=""></p>
+
+<p>Inversely, there are subreddits where the correlation is obvious. <a href="https://www.reddit.com/r/pcmasterrace/">/r/pcmasterrace</a> and /r/gonewild both exhibit very straight lines, and are subreddits where the comments themselves are not very constructive, so whatever gets posted gets upvoted anyways.</p>
+
+<p><img src="/img/first-comment/pcmasterrace-2d.png" alt=""></p>
+
+<p><img src="/img/first-comment/gonewild-2d.png" alt=""></p>
+
+<p>Rushing to say <strong>FIRST!!1!11!</strong> in a comments section of a blog post or forum thread is a meme that long predates Reddit. However, rushing to make the first comment in a Reddit thread may have strategic merit if you want to get your voice heard.</p>
+
+<p>Even in the most optimistic circumstances, comments that are late to a thread have a very, very low probability of becoming one of the top comments. In fairness, it&rsquo;s hard to determine with public Reddit data if tweaking the ranking algorithm such that new comments will always rank at the top initially will actually improve the Reddit user experience as a whole. On the other hand, this behavior presents an opportunity: if there is a <a href="https://en.wikipedia.org/wiki/Long_tail">long tail</a> of Reddit content that is unjustifiably being buried due to lack of attention, then perhaps there is a <em>business opportunity</em> in creating a service to discover and resurface quality comments&hellip;</p>
+
+<hr>
+
+<p><em>You can view all the <a href="https://www.r-project.org">R</a> and <a href="http://ggplot2.org">ggplot2</a> code used to query, analyze, and visualize the Reddit data in <a href="http://minimaxir.com/notebooks/first-comment/">this R Notebook</a>. You can also view the images/data used for this post in <a href="https://github.com/minimaxir/first-comment">this GitHub repository</a></em>.</p>
+
+<p><em>You are free to use the data visualizations from this article however you wish, but it would be greatly appreciated if proper attribution is given to this article and/or myself!</em></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Visualizing Clusters of Clickbait Headlines Using Spark, Word2vec, and Plotly]]></title>
@@ -1003,101 +1106,6 @@ ggplot<span class="p">(</span>df_net<span class="p">,</span> aes<span class="p">
 <p><em>You can view the code used to process the data and generate the data visualizations <a href="https://github.com/minimaxir/movie-gender/blob/master/movie_gender.ipynb">in this Jupyter notebook</a>, <a href="https://github.com/minimaxir/movie-gender">open-sourced on GitHub</a>, or you can <a href="https://github.com/minimaxir/movie-gender/raw/master/movie_gender_pdf.pdf">view as a PDF</a> which is better if you are on a mobile device.</em></p>
 
 <p><em>You are free to use the charts from this article however you wish, but it would be greatly appreciated if proper attribution is given to this article and/or myself!</em></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[The Importance of Sanity-Checking Datasets Before Analysis]]></title>
-    <link href="http://minimaxir.com/2016/04/trust-but-verify/"/>
-    <updated>2016-04-06T08:00:00-07:00</updated>
-    <id>http://minimaxir.com/2016/04/trust-but-verify</id>
-    <content type="html"><![CDATA[<p>I&rsquo;ve done some cool things with movie data using a dataset from <a href="http://www.omdbapi.com">OMDb API</a>, which is sourced from <a href="http://www.imdb.com">IMDb</a> and <a href="http://www.rottentomatoes.com">Rotten Tomatoes</a> data. In my <a href="http://minimaxir.com/2016/01/movie-revenue-ratings/">previous article</a> on the dataset, I plotted the relationship between the domestic box office revenue of movies and their Rotten Tomatoes scores.</p>
-
-<p><img src="/img/movie-revenue-ratings/box-office-rating-1.png" alt=""></p>
-
-<p>I want to take another look at domestic Box Office Revenues with aggregate statistics such as means/medians on categorical variables such as MPAA rating and release month. For this type of analysis in particular, I&rsquo;ll also need to implement code in <a href="https://www.r-project.org">R</a> for inflation adjustment.</p>
-
-<p>However, I ran into a few unexpectedly silly issues.</p>
-
-<h2>Seeing Double</h2>
-
-<p>There are many similarities between data validation and the Quality Assurance process of product development, which is why this particular area appeals to me personally as a Software QA Engineer. Whenever a cool dataset is released publicly, I play around with it to look for any obvious flaws and to get a good all-around benchmark on the robustness of the data (this is a separate procedure from the traditional &ldquo;data cleaning&rdquo; phase necessary to begin quantification on some poorly-structured datasets).</p>
-
-<p>Do the extreme values in the data make sense? Is the data encoded in a sane format? Are there any obvious gaps or logical contradictions in summary representations of the data, especially when compared to other canonical sources? </p>
-
-<p>These concerns are also some of the reasons I&rsquo;ve switched to the <a href="http://jupyter.org">Jupyter Notebook</a> as my primary data science IDE. After each block of code which transforms data, I can print the data frame inline to immediately see the results of the code execution, and refer back to them if anything odd happens in the future.</p>
-
-<p>Let&rsquo;s say I have a data frame of Movies using the latest data dump (3/26/16) from OMDb. This data set contains 1,160,273 movies, including both IMDb and Rotten Tomatoes data. After cleaning the data (not shown), I can use the R package <code>dplyr</code> by Hadley Wickham to sort the data frame by Box Office Revenue descending, and print the <code>head</code> (top) of the data.</p>
-<div class="highlight"><pre><code class="language-R" data-lang="R"><span class="kp">print</span><span class="p">(</span>df <span class="o">%&gt;%</span> select<span class="p">(</span>imdbID<span class="p">,</span> Title<span class="p">,</span> Year<span class="p">,</span> BoxOffice<span class="p">)</span> <span class="o">%&gt;%</span> arrange<span class="p">(</span>desc<span class="p">(</span>BoxOffice<span class="p">))</span> <span class="o">%&gt;%</span> <span class="kp">head</span><span class="p">(</span><span class="m">25</span><span class="p">),</span> n <span class="o">=</span> <span class="m">25</span><span class="p">)</span>
-</code></pre></div>
-<p><img src="/img/trust-but-verify/data-2.png" alt=""></p>
-
-<p>Those movies being the best <em>makes sense</em>. For <a href="http://www.rottentomatoes.com/m/star_wars_episode_vii_the_force_awakens/">Star Wars: The Force Awakens</a>, I can compare it to the Box Office reported on the corresponding Rotten Tomatoes page, which in turn matches the <a href="http://www.boxofficemojo.com/movies/?id=starwars7.htm">domestic Box Office Revenue</a> on <a href="http://www.boxofficemojo.com">Box Office Mojo</a>.</p>
-
-<p>But wait, <a href="https://en.wikipedia.org/wiki/The_Dark_Knight_%28film%29">The Dark Knight</a> appears <em>twice</em>? How?!</p>
-
-<p>There&rsquo;s no way I would have missed something this obvious during the sanity-check for my previous article. In order to make sure that I&rsquo;m not going insane, I double-checked the December 2015 data dump I used for that post, derived the top movies with the same methodology for the modern data dump, and the duplicate movies <em>were not present</em>. Weird.</p>
-
-<p>There are 2 different IDs for
-The Dark Knight, and for some other movies near the top (<a href="http://www.imdb.com/title/tt4817264/">Inside Out</a>, &ldquo;<a href="http://www.imdb.com/title/tt3138972/">The Gravity</a>&rdquo;). Fortunately, duplicate data like this is easy to debug. The second data entry for The Dark Knight has a greater IMDb ID (1774602) which means it was likely added to the site later. Let&rsquo;s look up the <a href="http://www.imdb.com/title/tt1774602/">corresponding IMDb page</a>:</p>
-
-<p><img src="/img/trust-but-verify/dark-knight.png" alt=""></p>
-
-<p>Huh. Apparently someone put a filler movie entry with the same name and release year as a blockbuster movie in hopes that people search for it by accident (and since it received 50 ratings and an average score of 8.6, this tactic was successful).</p>
-
-<p>Using the Rotten Tomatoes <a href="http://developer.rottentomatoes.com/docs/read/json/v10/Movie_Alias">IMDb Lookup API</a>, we find that &ldquo;The Dark Knight&rdquo; page on Rotten Tomatoes&hellip;<a href="http://api.rottentomatoes.com/api/public/v1.0/movie_alias.json?type=imdb&amp;id=1774602">doesn&rsquo;t exist</a>.</p>
-
-<p>We can run a safe deduplicate by removing entries with the same title (excluding the &ldquo;The&rdquo; if present) and release year.</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r">df_dup <span class="o">&lt;-</span> df <span class="o">%&gt;%</span> select<span class="p">(</span>Title<span class="p">,</span> Year<span class="p">)</span> <span class="o">%&gt;%</span> mutate<span class="p">(</span>Title <span class="o">=</span> <span class="kp">gsub</span><span class="p">(</span><span class="s">&quot;The &quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> Title<span class="p">))</span>
-dup <span class="o">&lt;-</span> <span class="kp">duplicated</span><span class="p">(</span>df_dup<span class="p">)</span>   <span class="c1"># find entry indices which are duplicates</span>
-<span class="kp">rm</span><span class="p">(</span>df_dup<span class="p">)</span>   <span class="c1"># remove temp dataframe</span>
-
-df_dedup <span class="o">&lt;-</span> df <span class="o">%&gt;%</span> filter<span class="p">(</span><span class="o">!</span>dup<span class="p">)</span>   <span class="c1"># keep entries which are *not* dups</span>
-<span class="kp">print</span><span class="p">(</span>df_dedup <span class="o">%&gt;%</span> select<span class="p">(</span>imdbID<span class="p">,</span> Title<span class="p">,</span> Year<span class="p">,</span> BoxOffice<span class="p">)</span> <span class="o">%&gt;%</span> arrange<span class="p">(</span>desc<span class="p">(</span>BoxOffice<span class="p">))</span> <span class="o">%&gt;%</span> <span class="kp">head</span><span class="p">(</span><span class="m">25</span><span class="p">),</span> n <span class="o">=</span> <span class="m">25</span><span class="p">)</span>
-</code></pre></div>
-<p><img src="/img/trust-but-verify/data-1.png" alt=""></p>
-
-<p>There we go! The de-duped dataset has 1,114,431 movies, impliying that there were 45,842 of these duplicate entries.</p>
-
-<p>I&rsquo;m not sure <em>whose</em> fault it is that duplicate movies suddenly became present in the data dump: OMDb or Rotten Tomatoes. <em>But it doesn&rsquo;t matter</em>: the wrong entries still need to be addressed, and it&rsquo;s good to have a test case for the future too.</p>
-
-<h2>Inflation Station</h2>
-
-<p>A <a href="http://stackoverflow.com/a/26068058">Stack Overflow answer</a> from <a href="http://stackoverflow.com/users/1048757/brash-equilibrium">Ben Hanowell</a> has a good R implementation and rationale for implementing inflation adjustment using the <a href="https://research.stlouisfed.org/fred2/data/CPIAUCSL.txt">historical Consumer Price Index data</a> from the <a href="https://www.stlouisfed.org">Federal Reserve Bank of St. Louis</a>.</p>
-
-<p>Take the index for each year (averaging each month for simplicity) and create an adjustment factor to convert historical dollar amounts into present-day dollar amounts. Much better than plugging hundreds of thousands of values into an online calculator. Here&rsquo;s the SO code made <code>dplyr</code>-friendly for this purpose, with the requisite sanity-checks.</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r">inflation <span class="o">&lt;-</span> read_csv<span class="p">(</span><span class="s">&quot;http://research.stlouisfed.org/fred2/data/CPIAUCSL.csv&quot;</span><span class="p">)</span> <span class="o">%&gt;%</span>
-                    group_by<span class="p">(</span>Year <span class="o">=</span> <span class="kp">as.integer</span><span class="p">(</span><span class="kp">substr</span><span class="p">(</span>DATE<span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="m">4</span><span class="p">)))</span> <span class="o">%&gt;%</span>
-                    summarize<span class="p">(</span>Avg_Value <span class="o">=</span> <span class="kp">mean</span><span class="p">(</span>VALUE<span class="p">))</span> <span class="o">%&gt;%</span>   <span class="c1"># average across all months</span>
-                    mutate<span class="p">(</span>Adjust <span class="o">=</span> <span class="kp">tail</span><span class="p">(</span>Avg_Value<span class="p">,</span> <span class="m">1</span><span class="p">)</span> <span class="o">/</span> Avg_Value<span class="p">)</span>   <span class="c1"># normalize by most-recent year</span>
-
-<span class="kp">print</span><span class="p">(</span>inflation <span class="o">%&gt;%</span> <span class="kp">head</span><span class="p">())</span>
-<span class="kp">print</span><span class="p">(</span>inflation <span class="o">%&gt;%</span> <span class="kp">tail</span><span class="p">())</span>
-</code></pre></div>
-<p><img src="/img/trust-but-verify/inf.png" alt=""></p>
-
-<p>For example, to get the inflation-adjusted Box Office Revenue for a movie released in 1949 in 2016 dollars, we multiply the reported revenue by 10. That sounds about right (and matches closely enough to the output of the <a href="http://data.bls.gov/cgi-bin/cpicalc.pl?cost1=1&amp;year1=1949&amp;year2=2016">Bureau of Labor Statistics inflation calculator</a>).</p>
-
-<p>Now map each inflation adjustment factor to each movie by merging the two datasets (on the <code>Year</code> column), then multiply the Box Office revenue by the adjustment factor to get the inflation-adjusted revenue. Plus another sanity-check for good measure. </p>
-<div class="highlight"><pre><code class="language-r" data-lang="r">df_dedup_join <span class="o">&lt;-</span> df_dedup <span class="o">%&gt;%</span> inner_join<span class="p">(</span>inflation<span class="p">)</span> <span class="o">%&gt;%</span> mutate<span class="p">(</span>AdjBoxOffice <span class="o">=</span> BoxOffice <span class="o">*</span> Adjust<span class="p">)</span>
-
-<span class="kp">print</span><span class="p">(</span>df_dedup_join <span class="o">%&gt;%</span> select<span class="p">(</span>Title<span class="p">,</span> Year<span class="p">,</span> AdjBoxOffice<span class="p">)</span> <span class="o">%&gt;%</span> arrange<span class="p">(</span>desc<span class="p">(</span>AdjBoxOffice<span class="p">))</span> <span class="o">%&gt;%</span> <span class="kp">head</span><span class="p">(</span><span class="m">25</span><span class="p">),</span> n<span class="o">=</span><span class="m">25</span><span class="p">)</span>
-</code></pre></div>
-<p><img src="/img/trust-but-verify/data-3.png" alt=""></p>
-
-<p>Uh-oh.</p>
-
-<p>I mean, <a href="https://en.wikipedia.org/wiki/The_Lorax_(TV_special)">The Lorax</a> probably earned $1.2 billion in VHS sales for Earth Day education <em>alone</em>, but the TV special was never released in theaters. There was a <a href="https://en.wikipedia.org/wiki/The_Lorax_(film)">CGI remake of The Lorax</a> a few years ago which was reasonably popular. Could it be that someone at Rotten Tomatoes or Box Office Mojo confused the two media?</p>
-
-<p>That is exactly what happened. On Rotten Tomatoes, The <a href="http://www.rottentomatoes.com/m/the-lorax/">1972 Lorax</a> was encoded with similar box office revenue as the <a href="http://www.rottentomatoes.com/m/the_lorax/">2012 Lorax</a>; then the inflation factor sextupled it. For this type of data fidelity issue, it&rsquo;s considerably more obvious whose at fault.</p>
-
-<p>Unfortunately, that&rsquo;s not the end of problems with the dataset. I compared my results with <a href="http://www.vox.com/2016/4/4/11351788/batman-v-superman-terrible-reviews#undefined">Vox&rsquo;s dataset</a> on worldwide historical box office revenues. In the Top 200 Movies by inflation-adjusted revenue, there are noted historical movie omissions such as <a href="http://www.rottentomatoes.com/m/jaws/">Jaws</a> and <a href="http://www.rottentomatoes.com/m/star_wars/">Star Wars: A New Hope</a>. It turns out Rotten Tomatoes does not have Box Office Revenue data for these movies at all. </p>
-
-<p>That is a very serious problem which I&rsquo;ll have to think about if it blocks any analysis on aggregate box office data completely. In the end, sanity-checking third party data is important because you never know <em>how</em> the data will surprise you, until it&rsquo;s too late.</p>
-
-<hr>
-
-<p><em>You can view the Top 200 movies by domestic box office revenue for each of the 12/15 source dataset, the 3/16 dataset, the 3/16 deduped dataset, and the 3/16 deduced inflation-adjusted data <a href="https://github.com/minimaxir/movie-data-sanity-checking">in this GitHub repository</a>, along with the Jupyter notebook.</em></p>
 ]]></content>
   </entry>
   

@@ -99,18 +99,6 @@
   <script>
    $(document).ready(function() {
  
-  // Facebook
-	$( ".social.facebook" ).children().each(function(index,value) {
-	var facebook_button = $(this);
-	var url = facebook_button.attr("data");
-
-  jQuery.getJSON("https://graph.facebook.com/?id="+url, function(data) {
-  if (typeof data.shares != 'undefined') facebook_button.html("<i class=\"fa fa-facebook\"></i><span class=\"count hidden-xs\"> " + data.shares + "</span>");
-  else if (typeof data.likes != 'undefined') facebook_button.html("<i class=\"fa fa-facebook\"></i><span class=\"count hidden-xs\"> " + data.likes + "</span>");
-  else facebook_button.html("<i class=\"fa fa-facebook\"></i><span class=\"count hidden-xs\"> " + " 0</span>");
-  });
-  });
- 
   // LinkedIn
 	$( ".social.linkedin" ).children().each(function(index,value) {
 	var linkedin_button = $(this);
@@ -251,6 +239,34 @@
 			                <div class="col-md-6 md-margin-b-30">
                     <!-- Blog Classic -->
                     <article class="blog-classic">
+                        <img class="img-responsive" src="/img/techcommntr.png" alt="">
+                        <div class="blog-classic-body">
+                        	
+                            <h2 class="blog-classic-title">If You're Going to Blog, Use Tumblr, Not WordPress</h2>
+                            <span class="blog-classic-subtitle">If Tumblr fully captures the long-tail, WordPress could be in trouble.</span>
+                            <p class="blog-classic-paragraph">Mar 9, 2012</p>
+                        </div>
+                        <div class="blog-classic-overlay">
+                            <div class="blog-classic-hover">
+                                <img class="blog-classic-hover-img" src="/img/techcommntr.png" alt="">
+                            </div>
+                            <div class="blog-classic-overlay-body">
+                                <h2 class="blog-classic-title">If You're Going to Blog, Use Tumblr, Not WordPress</h2>
+                                <span class="blog-classic-subtitle">If Tumblr fully captures the long-tail, WordPress could be in trouble.</span>
+                                <a class="blog-classic-paragraph" href="/2012/03/a-wordpress-about-tumblr/">Mar 9, 2012</a>
+                            </div>
+                        </div>
+                        <a href="/2012/03/a-wordpress-about-tumblr/" class="blog-classic-link"></a>
+                    </article>
+                    <!-- End Blog Classic -->
+                </div>
+                
+                
+            
+            
+			                <div class="col-md-6 md-margin-b-30">
+                    <!-- Blog Classic -->
+                    <article class="blog-classic">
                         <img class="img-responsive" src="/img/" alt="">
                         <div class="blog-classic-body">
                         	
@@ -274,6 +290,13 @@
                 </div>
                 
                 
+            
+
+            <!--// end row -->
+            </div>       
+        
+            <div class="row margin-b-30">
+            
             
             
 			                <div class="col-md-6 md-margin-b-30">
@@ -301,14 +324,7 @@
                     <!-- End Blog Classic -->
                 </div>
                 
-                
-            
-
-            <!--// end row -->
-            </div>       
-        
-            <div class="row margin-b-30">
-            
+			
             
             
 			                <div class="col-md-6 md-margin-b-30">
@@ -338,6 +354,14 @@
                 
 			
             
+
+            <!--// end row -->
+
+        </div>
+        
+                    <div class="row margin-b-30">
+            
+            
             
 			                <div class="col-md-6 md-margin-b-30">
                     <!-- Blog Classic -->
@@ -365,14 +389,6 @@
                 </div>
                 
 			
-            
-
-            <!--// end row -->
-
-        </div>
-        
-                    <div class="row margin-b-30">
-            
             
             
 			                <div class="col-md-6 md-margin-b-30">
