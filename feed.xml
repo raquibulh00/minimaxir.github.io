@@ -5,8 +5,8 @@
     <description>A blog by Max Woolf about startups, technology, and blogging. It&#39;s so meta, even this acronym.</description>
     <link>http://minimaxir.com/</link>
     <atom:link href="http://minimaxir.com/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Mon, 12 Dec 2016 06:32:59 -0800</pubDate>
-    <lastBuildDate>Mon, 12 Dec 2016 06:32:59 -0800</lastBuildDate>
+    <pubDate>Mon, 12 Dec 2016 06:42:29 -0800</pubDate>
+    <lastBuildDate>Mon, 12 Dec 2016 06:42:29 -0800</lastBuildDate>
     <generator>Jekyll v3.1.2</generator>
     
       <item>
@@ -17,11 +17,11 @@
 
 &lt;p&gt;Another option worth considering in light of these potential constraints is vector graphics, which can be scaled to &lt;em&gt;any&lt;/em&gt; resolution at a significant fraction of the storage space. Although graphic formats such as &lt;a href=&quot;https://en.wikipedia.org/wiki/Scalable_Vector_Graphics&quot;&gt;Scalable Vector Graphics&lt;/a&gt; (SVG) have existed &lt;em&gt;long&lt;/em&gt; before 4k media (and even 1080p media), support for it had died out over the years since JPGs and PNGs were more practical for the 1024x768px screens of the day, and older versions of Internet Explorer did not support SVGs. However, creating complex SVGs is not trivial, and there aren&amp;rsquo;t any magic applications that can convert a normal image into vector graphics automatically (the closest is &lt;a href=&quot;http://potrace.sourceforge.net&quot;&gt;potrace&lt;/a&gt;, which only works for one color).&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&quot;https://github.com/fogleman/primitive&quot;&gt;Primitive&lt;/a&gt;, an open-source project by &lt;a href=&quot;https://twitter.com/FogleBird&quot;&gt;Michael Fogelman&lt;/a&gt;, is a cross-platform command-line application that creates abstract art by taking simple polygons such as triangles and rectangles and placing them such that the group of polygons is as close as possible to the original image. The Twitter account &lt;a href=&quot;https://twitter.com/PrimitivePic&quot;&gt;@PrimitivePic&lt;/a&gt; posts examples of such images every half hour.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/fogleman/primitive&quot;&gt;Primitive&lt;/a&gt;, an open-source project by &lt;a href=&quot;https://twitter.com/FogleBird&quot;&gt;Michael Fogleman&lt;/a&gt;, is a cross-platform command-line application that creates abstract art by taking simple polygons such as triangles and rectangles and placing them such that the group of polygons is as close as possible to the original image. The Twitter account &lt;a href=&quot;https://twitter.com/PrimitivePic&quot;&gt;@PrimitivePic&lt;/a&gt; posts examples of such images every half hour.&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;/img/primitive/git.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
 
-&lt;p&gt;The &lt;a href=&quot;https://primitive.lol&quot;&gt;Primitive application&lt;/a&gt; on the &lt;a href=&quot;https://itunes.apple.com/us/app/primitive/id1175103038?mt=12&quot;&gt;Mac App Store&lt;/a&gt;, also by Fogelman, provides a simple user interface for the application for $9.99 (worth it for the productivity increase over fiddling with the command-line). With this GUI, you can see exactly &lt;em&gt;how&lt;/em&gt; the art is being made, in real time. The app has also been &lt;a href=&quot;https://medium.com/art-marketing/product-launch-post-mortem-primitive-for-macos-2eee316134ad&quot;&gt;financially successful&lt;/a&gt; for a side project.&lt;/p&gt;
+&lt;p&gt;The &lt;a href=&quot;https://primitive.lol&quot;&gt;Primitive application&lt;/a&gt; on the &lt;a href=&quot;https://itunes.apple.com/us/app/primitive/id1175103038?mt=12&quot;&gt;Mac App Store&lt;/a&gt;, also by Fogleman, provides a simple user interface for the application for $9.99 (worth it for the productivity increase over fiddling with the command-line). With this GUI, you can see exactly &lt;em&gt;how&lt;/em&gt; the art is being made, in real time. The app has also been &lt;a href=&quot;https://medium.com/art-marketing/product-launch-post-mortem-primitive-for-macos-2eee316134ad&quot;&gt;financially successful&lt;/a&gt; for a side project.&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;/img/primitive/primitive.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
 
