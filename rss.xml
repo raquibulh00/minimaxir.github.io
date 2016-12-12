@@ -4,7 +4,7 @@
   <title><![CDATA[minimaxir | Max Woolf's Blog]]></title>
   <link href="http://minimaxir.com/rss.xml" rel="self"/>
   <link href="http://minimaxir.com/"/>
-  <updated>2016-12-05T06:45:36-08:00</updated>
+  <updated>2016-12-12T06:32:59-08:00</updated>
   <id>http://minimaxir.com/</id>
   <author>
     <name><![CDATA[Max Woolf]]></name>
@@ -12,6 +12,83 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Infinite-Quality Abstract Art and Animations with Primitive]]></title>
+    <link href="http://minimaxir.com/2016/12/primitive/"/>
+    <updated>2016-12-12T06:30:00-08:00</updated>
+    <id>http://minimaxir.com/2016/12/primitive</id>
+    <content type="html"><![CDATA[<p>4k media (&ldquo;<a href="https://en.wikipedia.org/wiki/Ultra-high-definition_television">Ultra HD</a>&rdquo;) is the new big thing. <a href="https://www.youtube.com">YouTube</a> and <a href="https://www.netflix.com/">Netflix</a> now offer 4k video streaming, cell phones such as the <a href="http://www.apple.com/iphone-7/">iPhone 7</a> can now record 4k video, gaming consoles such as the <a href="https://www.playstation.com/en-us/explore/ps4-pro/">PlayStation 4 Pro</a> can play video games in native 4k, and 4k-compatible computer monitors and television sets are now priced reasonably.</p>
+
+<p>However, the improvements offered by 4k do not come for free. From 1080p, 4k media requires much more resources to store the media on disk, much more resources to read from disk or stream over the Internet, and much more resources to store in memory. And Moore&rsquo;s Law has been slowing down.</p>
+
+<p>Another option worth considering in light of these potential constraints is vector graphics, which can be scaled to <em>any</em> resolution at a significant fraction of the storage space. Although graphic formats such as <a href="https://en.wikipedia.org/wiki/Scalable_Vector_Graphics">Scalable Vector Graphics</a> (SVG) have existed <em>long</em> before 4k media (and even 1080p media), support for it had died out over the years since JPGs and PNGs were more practical for the 1024x768px screens of the day, and older versions of Internet Explorer did not support SVGs. However, creating complex SVGs is not trivial, and there aren&rsquo;t any magic applications that can convert a normal image into vector graphics automatically (the closest is <a href="http://potrace.sourceforge.net">potrace</a>, which only works for one color).</p>
+
+<p><a href="https://github.com/fogleman/primitive">Primitive</a>, an open-source project by <a href="https://twitter.com/FogleBird">Michael Fogelman</a>, is a cross-platform command-line application that creates abstract art by taking simple polygons such as triangles and rectangles and placing them such that the group of polygons is as close as possible to the original image. The Twitter account <a href="https://twitter.com/PrimitivePic">@PrimitivePic</a> posts examples of such images every half hour.</p>
+
+<p><img src="/img/primitive/git.png" alt=""></p>
+
+<p>The <a href="https://primitive.lol">Primitive application</a> on the <a href="https://itunes.apple.com/us/app/primitive/id1175103038?mt=12">Mac App Store</a>, also by Fogelman, provides a simple user interface for the application for $9.99 (worth it for the productivity increase over fiddling with the command-line). With this GUI, you can see exactly <em>how</em> the art is being made, in real time. The app has also been <a href="https://medium.com/art-marketing/product-launch-post-mortem-primitive-for-macos-2eee316134ad">financially successful</a> for a side project.</p>
+
+<p><img src="/img/primitive/primitive.png" alt=""></p>
+
+<p>Both interfaces allow for SVG export, which means that we can use Primitive to take small images and scale them <em>indefinitely</em>.</p>
+
+<p>But what cool things can you do with these fancy SVGs? Let&rsquo;s take a look.</p>
+
+<h2>Playing with Primitive</h2>
+
+<p>Here&rsquo;s a photo I took of the <a href="https://en.wikipedia.org/wiki/San_Francisco_Ferry_Building">San Francisco Ferry Building</a> last year, cropped to 16:9 with an attempt to follow the <a href="https://en.wikipedia.org/wiki/Rule_of_thirds">rule of thirds</a>.</p>
+
+<p><img src="/img/primitive/San_Francisco.png" alt=""></p>
+
+<p>This PNG image is 672 KB. Let&rsquo;s try running it through Primitive to see if we can make it smaller, and make it <em>cooler</em> by drawing 50 quadrilaterals (with zero transparency), at the 1024px &ldquo;nicest&rdquo; working size for maximum quality.</p>
+
+<p><img src="/img/primitive/SF_Final_50.svg" alt=""></p>
+
+<p>Now that is definitely minimalistic. Maybe <em>too</em> abstract. What happens if we want to add detail? We can do that by adding many quadratic <a href="https://en.wikipedia.org/wiki/B%C3%A9zier_curve">Bèzier curves</a>. Let&rsquo;s add 500 solid curves to this image.</p>
+
+<p><img src="/img/primitive/SF_Final_550.svg" alt=""></p>
+
+<p>Now that looks fancy, is only 94 KB (about 1/8th the file size of the static image!), and can scale to any screen size.</p>
+
+<p>You may have noticed that this SVG is the final result from the <a href="/img/primitive/SF_Final_550_animated.svg">animation</a> at the beginning of this article. This particular shenanigan is <a href="http://minimaxir.com/2016/12/interactive-network/">another</a> of my trademark weird-tricks-that-should-not-even-work-but-do. By passing the final SVG through <a href="https://maxwellito.github.io/vivus/">Vivus</a> (specifically, <a href="https://maxwellito.github.io/vivus-instant/">Vivus Instant</a>), we can animate the Bèzier curves such that it looks like they are being drawn <em>in real time</em> on the quadrilateral background.</p>
+
+<p>The animations generated from Vivus Instant are pure CSS and require no additional dependencies (although you&rsquo;ll need to <a href="https://css-tricks.com/scale-svg/">manually add</a> the <code>viewBox</code> attribute to make the SVG mobile-friendly). Even then, the result is 276 KB; still much smaller than the original raster image!</p>
+
+<p>Of the polygons available in Primitive, Vivus Instant will only animate the Bèzier curves. If you wanted to animate other polygons, you could use <a href="http://snapsvg.io">Snap.svg</a>, which might make a fun project for a future post.</p>
+
+<p>These SVG animations only work on the web, but it&rsquo;s not difficult to make animations of SVG creation into a share-friendly format.</p>
+
+<h2>Abstract GIFs</h2>
+
+<p>GIFs nowadays can be shared anywhere, and Primitive has a few ways of making GIFs. The command-line interface has a GIF-maker built in; essentially, it outputs each frame as an image and stitches them together.</p>
+
+<p>The Primitive Mac App has another option. Since the polygons are rendered on-screen, you can <em>record the screen</em> using tools like <a href="https://support.apple.com/en-us/HT201066">QuickTime&rsquo;s screen recording</a> to simultaneously visualize and record the vector image. Once recorded (and after editing the video to speed things up), you can use one of any number of video-to-GIF converters to make a sharable animation.</p>
+
+<p>For this test, let&rsquo;s try using an <em>extremely</em> small image and see how well Primitive can extrapolate to an infinite size. Here&rsquo;s a 64x64px sprite of the <a href="http://www.pokemon.com/us/">Pokèmon</a> Pikachu from the 3rd generation of Pokèmon games (via <a href="http://bulbapedia.bulbagarden.net/wiki/Pikachu_(Pok%C3%A9mon)">Bulbapedia</a>).</p>
+
+<p><img src="/img/primitive/Spr_3r_025.png" alt=""></p>
+
+<p>I made a video of Primitive rendering Pikachu using a combination of 1,000 ellipses, rectangles, triangles and curves, and converted it to a GIF using my noncreatively-named <a href="https://github.com/minimaxir/video-to-gif-osx">Convert Video to GIF</a> tool. The result?</p>
+
+<p><img src="/img/primitive/Pikachu_Record.gif" alt=""></p>
+
+<p>Not too bad, given the input. Again, the GIF can be sized to any resolution, bandwidth considerations aside.</p>
+
+<h2>Abstract 4k Videos</h2>
+
+<p>So how do you get these infinite-quality images into 4k videos? You can export the Primitive renderings as a super-high-resolution PNG and embed them into the video, but there may still be pixellation if you cinematically zoom into the image. SVGs aren&rsquo;t natively supported by video editing programs such as Final Cut Pro and Adobe Premiere. But <em>PDFs</em> are, and there are many SVG-to-PDF converters which preserve the vector information (On macOS, <a href="https://itunes.apple.com/us/app/gapplin/id768053424?mt=12">Gapplin</a> works fine for this purpose).</p>
+
+<p>For vector scaling in Final Cut Pro, you must first <a href="http://www.fcp.co/forum/4-final-cut-pro-x-fcpx/25544-best-way-to-use-illustrador-files-in-fcpx#77676">import through Motion</a> first. Here&rsquo;s a quick 4k/60fps video as proof using the Ferry Building vector image above, with a bit of style.</p>
+
+<div class="responsive-video"><iframe src="http://www.youtube.com/embed/Cv4P6VMvBCw " style="width: 100%; height: 100%; border: none; padding-bottom: 20px" allowfullscreen></iframe></div>
+
+<p>Again, vector images are not a new concept, but given the changes in the media and technology landscape, it is very worthwhile to give them a second chance. Once technology evolves and the media industries start pushing <em>8k media</em> (and they will), having a sensible method of producing high-quality assets pays for itself.</p>
+
+<p>At the least, Primitive will give me some nice background visuals for when I start producing 4k data visualizations videos (yes, that&rsquo;s a thing!).</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[How to Create an Interactive WebGL Network Graph Using R ]]></title>
@@ -1013,113 +1090,6 @@ ggplot<span class="p">(</span>df_net<span class="p">,</span> aes<span class="p">
 <p><em>As always, the full code used to process the edge list and generate the visualizations is available in <a href="https://github.com/minimaxir/reddit-graph/blob/master/subreddit_network_pdf.ipynb">this Jupyter notebook</a>, open-sourced <a href="https://github.com/minimaxir/reddit-graph">on GitHub</a>.</em></p>
 
 <p><em>Additionally, thanks to Professor James P. Curley of Columbia University for providing <a href="http://curleylab.psych.columbia.edu/netviz/netviz1.html#/">helpful slides</a> which have good code samples for getting started with igraph/ggnetwork.</em></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Creating Stylish, High-Quality Word Clouds Using Python and Font Awesome Icons]]></title>
-    <link href="http://minimaxir.com/2016/05/wordclouds/"/>
-    <updated>2016-05-09T08:00:00-07:00</updated>
-    <id>http://minimaxir.com/2016/05/wordclouds</id>
-    <content type="html"><![CDATA[<p>You&rsquo;ve probably seen word clouds around the internet. There are several popular free tools for creating them, such as <a href="http://www.wordle.net">Wordle</a>. I myself am a fan of them, and I have made them for previous posts using the <a href="http://www.inside-r.org/packages/cran/wordcloud/docs/wordcloud">wordcloud package</a> for R.</p>
-
-<p><img src="/img/gif-unlimited/reddit-gif-wordcloud-e.png" alt=""></p>
-
-<p>Word clouds are not the most scientific type of data visualization. However, they are a very <em>information-dense</em> representation of the frequency of all words in a given text. Word clouds are more effective than just using bar charts displaying the counts of words for large amounts of text, as the chart would be difficult to parse if there are too many bars.</p>
-
-<p>The <a href="https://github.com/amueller/word_cloud">Python word_cloud package</a> by Andreas Mueller is relatively popular. A Reddit bot <a href="https://github.com/Winneon/makeswordclouds">makeswordclouds</a> by Jesse Bryan automatically <a href="https://www.reddit.com/user/makeswordcloudsagain">generates a word cloud</a> of comments on <a href="https://www.reddit.com">Reddit</a> submissions using this package. However, when I first saw the example output on the package, I was not impressed.</p>
-
-<p><img src="/img/wordclouds/constitution.png" alt=""></p>
-
-<p>I did more research into the <a href="http://amueller.github.io/word_cloud/">package documentation</a>. I found that there are two important perks present the Python implementation:</p>
-
-<p>1) Python word_cloud allows the user to specify a mask to constrain the distribution of words.</p>
-
-<p><img src="/img/wordclouds/a_new_hope_1.png" alt=""></p>
-
-<p>2) In addition to the mask, Python word_cloud allows the user to use the original colors of the image to set the colors of the words.</p>
-
-<p><img src="/img/wordclouds/colored_2.png" alt=""></p>
-
-<p>The masks are the more interesting aspect for creating visualizations, but <em>where</em> do you get the masks? You can manually trace and extract objects from images, but that can be time consuming and the masks will likely be heavily aliased and at a low resolution (the size of the mask sets the size of the word cloud).</p>
-
-<p>Enter <a href="https://fortawesome.github.io/Font-Awesome/">Font Awesome</a>, an icon font by Dave Gandy which is <em>very</em> widely used throughout the Internet (including this website). Icon fonts contain a wide variety of shapes and are vectorized, and therefore they can scale to any size.</p>
-
-<p><img src="/img/wordclouds/fa_icons.png" alt=""></p>
-
-<p>So why not use Font Awesome icons as masks for the word cloud? The font icons need to be extracted and rasterized as an image in order to be usable with the Python word_cloud package: cue the Python script <a href="https://github.com/Pythonity/icon-font-to-png">Icon Font to PNG</a> by Pythonity which does what the name implies.</p>
-
-<p><img src="/img/wordclouds/fa_icons_finder.png" alt=""></p>
-
-<p>Now <em>every</em> Font Awesome icon can be used as a word cloud mask! And the icons can be exported at any size: for this post, I render the word clouds at <strong>2048x2048px</strong>, larger than most desktop screens! After hacking the Python scripts included with the package which were used to create the default word clouds, I managed to create a few interesting examples.</p>
-
-<h2>Reddit Data and Thematic Icons</h2>
-
-<p>Font Awesome has <a href="http://fortawesome.github.io/Font-Awesome/icon/line-chart/">icons for charts</a>, which logically appeals to me as a data person. Why not make a word cloud which looks like a line chart?</p>
-
-<p>Let&rsquo;s use the word counts of titles of submissions to the <a href="https://www.reddit.com/r/dataisbeautiful/">/r/dataisbeautiful subreddit</a> on Reddit which have scored at least 100 points (using the <a href="https://bigquery.cloud.google.com/table/fh-bigquery:reddit_posts.full_corpus_201512">Reddit data dump</a> located on <a href="https://cloud.google.com/bigquery/">BigQuery</a>).</p>
-
-<p>Additionally, we can improve on the design of the default word cloud output by forcing all-caps text and by changing the text font. For word clouds, I prefer to use condensed font families, as they can allow for more information to be displayed in the word cloud. In this example, I will be using the <a href="https://www.myfonts.com/fonts/paratype/din-condensed/">DIN Condensed</a> font, a font native to OS X and a font you&rsquo;ve likely seen in media advertisements and website logos.</p>
-
-<p>Putting it all together:</p>
-
-<p><a href="https://raw.githubusercontent.com/minimaxir/stylistic-word-clouds/master/wordclouds/dataisbeautiful_wordcloud.png"><img src="/img/wordclouds/dataisbeautiful_wordcloud.png" alt=""></a></p>
-
-<p><em>(All word clouds in this post are shrunk to 600x600px to reduce loading time: click on the image for the full 2048x2048px resolution.)</em></p>
-
-<h2>GitHub Data and Brand Icons</h2>
-
-<p>Font Awesome also contains icons representing the logos of popular internet brands, such as Facebook and Twitter.</p>
-
-<p><a href="https://github.com">GitHub</a> is another such website. I will use BigQuery again with the <a href="https://bigquery.cloud.google.com/table/githubarchive:year.2014">2014 GitHub Archive dataset</a> to gather word counts of git commit messages during that year, and use the modern GitHub logo as the mask. This time, I will incorporate the freeware condensed monospaced font <a href="https://www.fontsquirrel.com/fonts/M-1m">M+ 1m</a> in order to create a more code-like aesthetic, which creates an interesting look when juxtaposed with the negative space of GitHub&rsquo;s logo.</p>
-
-<p><a href="https://raw.githubusercontent.com/minimaxir/stylistic-word-clouds/master/wordclouds/github_wordcloud.png"><img src="/img/wordclouds/github_wordcloud.png" alt=""></a></p>
-
-<h2>Yelp Data and Sentiment Icons</h2>
-
-<p>One of the <a href="http://minimaxir.com/2014/09/one-star-five-stars/">earliest word clouds I made</a> was for the <a href="http://www.yelp.com">Yelp</a> reviews dataset from the <a href="https://www.yelp.com/dataset_challenge">Yelp Dataset Challenge</a> to compare and contrast verbiage between 1-star reviews and 5-star reviews. Let&rsquo;s remake those word clouds.</p>
-
-<p>At this point I should mention appropriate color palettes for word clouds since the  rainbows of the stereotypical word clouds can be distracting. I strongly recommend using the <a href="http://colorbrewer2.org">ColorBrewer</a> palettes, helpfully provided for this use case with the <a href="https://github.com/jiffyclub/palettable">paletteable Python library</a> by Matt Davis. I particularly like the <a href="https://jiffyclub.github.io/palettable/colorbrewer/sequential/">sequential palettes</a>, which follow a clean gradient between white and another color (or between two or three colors), although I ignore some of the lighter colors as they may not be visible against white backgrounds.</p>
-
-<p>The font choice this time is <a href="https://www.google.com/fonts/specimen/Open+Sans+Condensed">Open Sans Condensed</a>, a Google Font. <a href="https://www.google.com/fonts">Google Fonts</a> are free and open source. I strongly recommend using them for documents/websites to add some flair over default fonts.</p>
-
-<p>Using the <strong>Greens</strong> palette and a smiley-face Font Awesome icon on 5-star reviews:</p>
-
-<p><a href="https://raw.githubusercontent.com/minimaxir/stylistic-word-clouds/master/wordclouds/yelp_pos_wordcloud.png"><img src="/img/wordclouds/yelp_pos_wordcloud.png" alt=""></a></p>
-
-<p>Makes sense, although the thin lines of the smiley-face causes the font sizes to become constrained. How about the inverse: <strong>Reds</strong>, thumbs-down, and 1-star reviews?</p>
-
-<p><a href="https://raw.githubusercontent.com/minimaxir/stylistic-word-clouds/master/wordclouds/yelp_neg_wordcloud.png"><img src="/img/wordclouds/yelp_neg_wordcloud.png" alt=""></a></p>
-
-<h2>Facebook Data and Etc. Icons</h2>
-
-<p>I recently updated my <a href="https://github.com/minimaxir/facebook-page-post-scraper">Facebook Page Data Scraper</a>, which gathers public posts made by Facebook Pages, to now retrieve total Reaction counts on those posts instead of just Likes.</p>
-
-<p>Why not create a word cloud of news headlines to get a zeitgeist of popular discussion? To do this, I scraped all the public posts from <a href="https://www.facebook.com/cnn/">CNN&rsquo;s Facebook page</a>, and created a word cloud of all CNN headlines to which the posts link. Let&rsquo;s use the Google Font  <a href="https://www.google.com/fonts/specimen/Amatic+SC">Amatic SC</a> which you&rsquo;ve likely seen before in ads, and let&rsquo;s try a <a href="https://jiffyclub.github.io/palettable/colorbrewer/qualitative/">qualitative palette</a>, <strong>Dark2</strong>, to get a &ldquo;rainbow&rdquo; effect without looking gawdy.</p>
-
-<p>And use a flag icon, because why not?</p>
-
-<p><a href="https://raw.githubusercontent.com/minimaxir/stylistic-word-clouds/master/wordclouds/cnn_wordcloud.png"><img src="/img/wordclouds/cnn_wordcloud.png" alt=""></a></p>
-
-<p>Of course, CNN has had fun with the 2016 U.S. Presidential election.</p>
-
-<p>Let&rsquo;s do one more word cloud. We have not yet done a word cloud using the colors-from-original-image technique. Using the underlying <a href="http://matplotlib.org/examples/color/colormaps_reference.html">matplotlib color map</a> for the <strong>Spectral</strong> palette, we can overlay a spatial rainbow which determines the color of the words displayed at that area of the mask:</p>
-
-<p><img src="/img/wordclouds/spectral.jpg" alt=""></p>
-
-<p>Additionally, in order to estimate the importance of the presence of each word in generating Reactions, we can create a word cloud of the words where the words are sized not by count, but by the <strong>average number of Reactions</strong> on Facebook posts referencing CNN headlines containing that word (where the word is used in at least 20 headlines for some statistical correction). And let&rsquo;s try a black background.</p>
-
-<p><a href="https://raw.githubusercontent.com/minimaxir/stylistic-word-clouds/master/wordclouds/cnn_wordcloud_reactions.png"><img src="/img/wordclouds/cnn_wordcloud_reactions.png" alt=""></a></p>
-
-<p>While the word cloud cannot be output in a vectorized format using this method, creating a word cloud at a super-high resolution (even larger than 2048x2048px) is more-than-enough for making typical wall posters and t-shirts.</p>
-
-<p>Word clouds may not have as much explanatory value in the academic sense, but they have <em>persuasive</em> power, which is just as important. At the least, it&rsquo;s another visual technique in my fun bag of visualization tricks to spice up future blog posts. </p>
-
-<p>Performing postprocessing on rendered word clouds can help create especially artsy art, but that discussion best-saved for <a href="https://raw.githubusercontent.com/minimaxir/stylistic-word-clouds/master/wordclouds/starry_night_cnn_weight_12_iterations_500_smooth_5.png">another time</a>.</p>
-
-<hr>
-
-<p><em>You can view the scripts to create the word clouds in this posts in this <a href="https://github.com/minimaxir/stylistic-word-clouds">GitHub repository</a>; the code is more hacky than usual, but it should be clear enough to demonstrate how the raw data was processed in each instance and how the word clouds were rendered. In the future, I hope to create a <a href="http://flask.pocoo.org">Flask app</a> based on these scripts to streamline the creation of word clouds.</em></p>
 ]]></content>
   </entry>
   
