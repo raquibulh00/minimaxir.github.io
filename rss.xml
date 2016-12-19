@@ -4,7 +4,7 @@
   <title><![CDATA[minimaxir | Max Woolf's Blog]]></title>
   <link href="http://minimaxir.com/rss.xml" rel="self"/>
   <link href="http://minimaxir.com/"/>
-  <updated>2016-12-12T06:42:29-08:00</updated>
+  <updated>2016-12-19T08:54:10-08:00</updated>
   <id>http://minimaxir.com/</id>
   <author>
     <name><![CDATA[Max Woolf]]></name>
@@ -12,6 +12,66 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Network Visualization of Breached Internet Services Using HaveIBeenPwned? Data]]></title>
+    <link href="http://minimaxir.com/2016/12/pwned-network/"/>
+    <updated>2016-12-19T08:30:00-08:00</updated>
+    <id>http://minimaxir.com/2016/12/pwned-network</id>
+    <content type="html"><![CDATA[<p>Last week, Yahoo <a href="https://yahoo.tumblr.com/post/154479236569/important-security-information-for-yahoo-users">announced</a> that 1 billion accounts on their service were compromised by attackers in 2013. That is bad, and unfortunately common nowadays.</p>
+
+<p>Security expert <a href="https://twitter.com/troyhunt">Troy Hunt</a> maintains <a href="https://haveibeenpwned.com">Have I been pwned?</a>, a database of breached internet services where users can check to see if their account information has been compromised in such an attack as the Yahoo attack. Recently, Hunt <a href="https://www.troyhunt.com/heres-1-4-billion-records-from-have-i-been-pwned-for-you-to-analyse/">released a dataset</a> consisting of <strong>1.4 billion</strong> unique breached accounts, and the services where those specific accounts were compromised.</p>
+
+<p>The dataset has been scrubbed of identifying information and sensitive data (justifiability so), which strongly limits the scope of any potential analysis. However, what may be interesting is taking a look at the interrelated networks between the services and creating a neat data visualization.</p>
+
+<h2>Methodology</h2>
+
+<p>Here&rsquo;s a line from the 141.8 MB text file:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">Adobe;GFAN;HeroesOfNewerth;NetEase;Tumblr 2
+</code></pre></div>
+<p>In this example, 2 users had their accounts breached at these specific 5 services.</p>
+
+<p>I wrote a <a href="https://github.com/minimaxir/breach-network/blob/master/hibp_service_edges.py">simple Python script</a> that takes in the HIBP data dump and outputs two files:</p>
+
+<p>One, <a href="https://github.com/minimaxir/breach-network/blob/master/hibp_services.csv">a CSV file</a> containing the total number of breached accounts from each service in this dataset. From the example data point, we would add 2 to the counts of Adobe breaches, GFAN breaches, etc. There are <strong>1,768,628,867</strong> total records in the dataset (which is greater than the earlier 1.4B metric since it multicounts accounts which have been breached multiple times). The 1.77B number approximately matches the given number of total number of records on HIBP (1,989,141,353) minus the number of records from sensitive breaches (~221M).</p>
+
+<p><img src="/img/breach-network/nodes.png" alt=""></p>
+
+<p>Two, <a href="https://github.com/minimaxir/breach-network/blob/master/hibp_edges.csv">a CSV file</a> containing the unique combination pairs of each service in a data point, From the example data point, we would add 2 to the counts of [Adobe, GFAN], [Adobe, HeroesOfNewerth], etc. (statistically-minded readers will notice that there are 10 unique two-value combinations for a set of 5 services). </p>
+
+<p><img src="/img/breach-network/edges.png" alt=""></p>
+
+<p>Although the HIBP dataset represents 1.77 Billion records, it is far from &ldquo;big data&rdquo;: my Python script takes less than a minute to process it.</p>
+
+<p>The latter CSV serves as the edge list for a network graph. There are 10,816 unique edges. Using <a href="https://www.r-project.org">R</a>, <a href="http://ggplot2.org">ggplot2</a>, and <a href="https://briatte.github.io/ggnetwork/">ggnetwork</a>, I connected all the edges into a graph network (removing edges with too few breached accounts), set the layout according to 50,000 iterations of the <a href="https://github.com/gephi/gephi/wiki/Fruchterman-Reingold">Fruchterman-Reingold algorithm</a>, and attempted to make it pretty.</p>
+
+<p>The results of my first made-in-an-hour-after-getting-home-from-work draft were <a href="http://i.imgur.com/FpLiFGk.png">not pretty</a>. On Hacker News, user flashman <a href="https://news.ycombinator.com/item?id=13112461">provides a sensible fix</a>; only include edges in the network with a proportional number of accounts shared between the two internet services it connects (e.g. the edge contains atleast 1% of the accounts in both services).</p>
+
+<p>Removing edges which do not fit that criteria dramatically reduces the clutter and makes communities much more distinct. After rerunning the code and making further style tweaks, here&rsquo;s the final result:</p>
+
+<p><a href="/img/breach-network/hibp.png"><img src="/img/breach-network/hibp.png" alt=""></a></p>
+
+<p><em>(click on the image to view at full resolution)</em></p>
+
+<p>The interactive version at the top of the page was created with <a href="https://plot.ly">Plotly</a>, via my workflow mentioned in a <a href="http://minimaxir.com/2016/12/interactive-network/">previous post</a>.</p>
+
+<h2>Analysis</h2>
+
+<p>The colors of the nodes represent the communities as determined by the <a href="http://arxiv.org/abs/physics/0512106">Walktrap community finding algorithm</a> run on the network. There are a few noteworthy groups: the turquoise group of mainstream social networking services including LinkedIn and MySpace, the brown group of mainstream gaming services like Nexus Mods and XSplit, and mustard-colored services of questionable legality on the right of the cluster. There are clusters of services extended far from the general clusters which represent non-English services: the yellow-green cluster on the left consists of Russian internet services, while the lime-green cluster at the top represents Chinese internet services.</p>
+
+<p>The size of the nodes represent the degree of the node, or the number of nodes connected to a given node. With that, we can easily see services like LinkedIn and XSplit have strong connections to other breached services. Relatedly, the transparency of the edges in the image is determined by the corresponding weight of the edge, and demonstrates the relative magnitude of the LinkedIn/MySpace breaches. (And it&rsquo;s also why we can&rsquo;t use other metrics like <a href="https://en.wikipedia.org/wiki/Centrality">centrality</a> for sizing the nodes, as the relative weights of those breaches skew the result.)</p>
+
+<p>What&rsquo;s important is that the network is generated <em>entirely from user behavior</em>, and not by manually establishing the actual relationships between the internet services.</p>
+
+<p>Given the wildly-varying timing and magnitude of these breaches, along with the numerous potential <em>causes</em> of breaches which are not always publicly disclosed, it is difficult to make accurate predictive models about future breaches from the HaveIBeenPwned? dataset. The records in HIBP are a <em>very</em> small sample of all the leaked data worldwide, unfortunately. However, it shows what  relationships can be visualized from simple user fingerprints all around the web, even when the fingerprint <em>itself</em> is unknown.</p>
+
+<hr>
+
+<p><em>You can view all the R and ggplot2 code used to visualize the network data in <a href="http://minimaxir.com/notebooks/breach-network/">this R Notebook</a>. You can also view the images/data used for this post in <a href="https://github.com/minimaxir/breach-network">this GitHub repository</a></em>.</p>
+
+<p><em>You are free to use the data visualizations from this article however you wish, but it would be greatly appreciated if proper attribution is given to this article and/or myself!</em></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Infinite-Quality Abstract Art and Animations with Primitive]]></title>
@@ -939,157 +999,6 @@
 <p><em>As always, the code used to create the visualizations is available in <a href="https://github.com/minimaxir/sfba-compensation/blob/master/angelist_sfbayarea_jobs.ipynb">this Jupyter notebook</a>, and the code used to scrape the AngelList data is open-sourced <a href="https://github.com/minimaxir/sfba-compensation">on GitHub</a>. This post is my first test of using <a href="https://plot.ly">plot.ly</a> to <a href="http://moderndata.plot.ly/ggplot2-docs-completely-remade-in-d3-js/">automatically convert ggplot2 plots</a> into fully-interactive <a href="https://d3js.org">D3.js</a> charts. The results were better than I expected (aside from the font-size issues specific to faceting), so expect to see more interactive charts in my future posts!</em></p>
 
 <p><em>If you do find any other interesting trends in the chart and write about it, it would be greatly appreciated if proper attribution is given back to this post and/or myself. Thanks!</em></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[How to Create a Network Graph Visualization of Reddit Subreddits]]></title>
-    <link href="http://minimaxir.com/2016/05/reddit-graph/"/>
-    <updated>2016-05-27T08:00:00-07:00</updated>
-    <id>http://minimaxir.com/2016/05/reddit-graph</id>
-    <content type="html"><![CDATA[<p><a href="https://en.wikipedia.org/wiki/Graph_theory">Network graphs</a> are pretty data visualizations, and I like pretty data visualizations. Recently, <a href="https://www.reddit.com">Reddit</a> user CuriousGnu <a href="http://www.curiousgnu.com/reddit-comments">posted a network graph</a> of the comment patterns of the top 50 Reddit subreddits:</p>
-
-<p><img src="/img/reddit-graph/rd_comments_net_hd.png" alt=""></p>
-
-<p>The <a href="https://www.reddit.com/r/dataisbeautiful/comments/4fsrjd/oc_redditors_who_commented_in_rx_also_commented/">visualization</a> was made with <a href="https://gephi.org">Gephi</a>, a very popular free and open-source network graph tool.</p>
-
-<p><img src="/img/reddit-graph/gephi.png" alt=""></p>
-
-<p>Gephi is <em>extremely</em> difficult to use, and most blog posts  about the software are in the form of Step 1: Gephi, Step 2: ???, Step 3: Profit. Even if you know <em>do</em> how to use it, most of the network design customizations must be done manually, which is not helped by software slowness even on high-end machines. My own attempts to use Gephi for nice-looking networks have had <a href="https://www.reddit.com/r/dataisbeautiful/comments/3z60z6/network_of_reddit_commenting_patterns_for_the_top/">mixed</a> <a href="https://www.reddit.com/r/magicTCG/comments/401hdq/graph_network_of_magic_the_gathering_creature/">results</a>.</p>
-
-<p>Additionally, there is very little discussion on how to gather the data for large-scale network graph visualizations, and how to make them in a <em>reproducible</em> manner. It is time to fix that and create a Reddit network graph visualization with many more nodes, step by step.</p>
-
-<h2>Getting Reddit Edge Data</h2>
-
-<p>Network graphs are typically formed by getting the relationship data between two entities (the edges), then extrapolating the vertices of the graph (the nodes) from that data.</p>
-
-<p>There are two common data structures for representing edge data. One is an <a href="https://en.wikipedia.org/wiki/Adjacency_matrix">adjacency matrix</a>, which is a 2D matrix where the rows/columns represent the entities, and the value at the intersection between a row/column represents the <em>weight</em> of the relationships. For the visualization above, CuriousGnu made an adjacency matrix by querying the relationships from <a href="https://cloud.google.com/bigquery/">BigQuery</a> for each subreddit manually. That requires adding a line of SQL for <em>each</em> subreddit you want to plot, which is time-consuming and I am lazy.</p>
-
-<p>Let&rsquo;s try option #2: an <a href="https://reference.wolfram.com/language/ref/EdgeList.html">edge list</a>, which is a tabular dataset where each row contains the two entities and a weight. With clever use of BigQuery, we can query the edges for <em>every single subreddit</em> at the same time. And we can query on real-time Reddit data from approximately the past 6 months using Jason Baumgartner&rsquo;s <a href="https://pushshift.io/using-bigquery-with-reddit-data/">Reddit dataset</a> on BigQuery. </p>
-
-<p>The process works like this:</p>
-
-<ol>
-<li>Determine active users of a subreddit by identifying the subreddits where a user has <strong>commented</strong> on at least <strong>5 different submissions</strong> within the past 6 months.</li>
-<li>Perform a <a href="http://stackoverflow.com/questions/3362038/what-is-self-join-and-when-would-you-use-it">self-join</a> by joining the table on itself: this will create <strong>links</strong> between all subreddits where a given user is active. (e.g. an active user of /r/askreddit, /r/pics, and /r/gifs will form 9 links: askreddit → askreddit, askreddit → pics, askreddit → gifs, pics → askreddit, etc.)</li>
-<li>Aggregate the counts of the number of links between two subreddits; this will become the edge <strong>Weight</strong>.</li>
-<li>Filter the resulting dataset by removing self-loops and reverse-edges. (e.g. since we have askreddit → pics, remove pics → askreddit). Additionally, we should only retain edges with <strong>at least 200 active users</strong> to keep the resulting dataset a manageable size for this analysis.</li>
-</ol>
-
-<p>Putting it all together results in this query:</p>
-<div class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="k">SELECT</span> <span class="n">a</span><span class="p">.</span><span class="n">l_subreddit</span> <span class="k">as</span> <span class="k">Source</span><span class="p">,</span> <span class="n">b</span><span class="p">.</span><span class="n">l_subreddit</span> <span class="k">as</span> <span class="n">Target</span><span class="p">,</span> <span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">as</span> <span class="n">Weight</span>
-<span class="k">FROM</span> <span class="p">(</span>
-  <span class="k">SELECT</span> <span class="n">author</span><span class="p">,</span> <span class="k">LOWER</span><span class="p">(</span><span class="n">subreddit</span><span class="p">)</span> <span class="k">as</span> <span class="n">l_subreddit</span><span class="p">,</span> <span class="k">COUNT</span><span class="p">(</span><span class="k">DISTINCT</span><span class="p">(</span><span class="n">link_id</span><span class="p">))</span> <span class="k">as</span> <span class="n">unique_threads</span>
-  <span class="k">FROM</span> <span class="p">[</span><span class="n">pushshift</span><span class="p">:</span><span class="n">rt_reddit</span><span class="p">.</span><span class="n">comments</span><span class="p">]</span>
-  <span class="k">GROUP</span> <span class="k">BY</span> <span class="n">author</span><span class="p">,</span> <span class="n">l_subreddit</span>
-  <span class="k">HAVING</span> <span class="n">unique_threads</span> <span class="o">&gt;=</span> <span class="mi">5</span><span class="p">)</span> <span class="n">a</span> <span class="k">JOIN</span> <span class="p">(</span>
-  <span class="k">SELECT</span> <span class="n">author</span><span class="p">,</span> <span class="k">LOWER</span><span class="p">(</span><span class="n">subreddit</span><span class="p">)</span> <span class="k">as</span> <span class="n">l_subreddit</span><span class="p">,</span> <span class="k">COUNT</span><span class="p">(</span><span class="k">DISTINCT</span><span class="p">(</span><span class="n">link_id</span><span class="p">))</span> <span class="k">as</span> <span class="n">unique_threads</span>
-  <span class="k">FROM</span> <span class="p">[</span><span class="n">pushshift</span><span class="p">:</span><span class="n">rt_reddit</span><span class="p">.</span><span class="n">comments</span><span class="p">]</span>
-  <span class="k">GROUP</span> <span class="k">BY</span> <span class="n">author</span><span class="p">,</span> <span class="n">l_subreddit</span>
-  <span class="k">HAVING</span> <span class="n">unique_threads</span> <span class="o">&gt;=</span> <span class="mi">5</span><span class="p">)</span> <span class="n">b</span> <span class="k">ON</span> <span class="n">a</span><span class="p">.</span><span class="n">author</span> <span class="o">=</span> <span class="n">b</span><span class="p">.</span><span class="n">author</span>
-<span class="k">GROUP</span> <span class="k">BY</span> <span class="k">Source</span><span class="p">,</span> <span class="n">Target</span>
-<span class="k">HAVING</span> <span class="k">Source</span> <span class="o">&lt;</span> <span class="n">Target</span> <span class="k">AND</span> <span class="n">Weight</span> <span class="o">&gt;=</span> <span class="mi">200</span>
-<span class="k">ORDER</span> <span class="k">BY</span> <span class="n">Weight</span> <span class="k">DESC</span>
-</code></pre></div>
-<p>Only 13 lines of code, with 3 of those lines repeated. Running the query only takes a few minutes. (which is actually <em>forever</em> in BigQuery time: when people talk about &ldquo;big data,&rdquo; this is <em>actually big data</em>!)</p>
-
-<p>That query (at the time of analysis) returns <a href="https://docs.google.com/spreadsheets/d/1MFHno-sYR3MkWgntnieWobWQ2e3x4CAcNUdVIFjmlQI/edit?usp=sharing">this dataset</a> of 7,498 edges; more than enough. Now for the fun part.</p>
-
-<h2>Visualizing the Reddit Data</h2>
-
-<p>The edge list linked above can actually be imported into Gephi as-is. <strong>Don&rsquo;t</strong>.</p>
-
-<p>Instead, let&rsquo;s use R and my favorite data visualization tool <code>ggplot2</code>, with a twist.</p>
-
-<p>First, we load the edge list into R, and create an undirected network graph using the <code>igraph</code> package.</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r">net <span class="o">&lt;-</span> graph.data.frame<span class="p">(</span>df<span class="p">,</span> directed<span class="o">=</span><span class="bp">F</span><span class="p">)</span>
-</code></pre></div>
-<p><img src="/img/reddit-graph/igraph.png" alt=""></p>
-
-<p>The imported edge list results in a network with 1,131 nodes/subreddits. After pruning nodes with only a few neighbors and removing the subsequently-orphaned edges, we get a network of 517 nodes/subreddits with 6,732 edges.</p>
-
-<p>We can then add summary statistics for the nodes, such as the group/community each node belongs to, and the <a href="https://en.wikipedia.org/wiki/Centrality">eigenvector centrality</a> of the node.</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r">V<span class="p">(</span>net<span class="p">)</span><span class="o">$</span>group <span class="o">&lt;-</span> membership<span class="p">(</span>cluster_walktrap<span class="p">(</span>net<span class="p">,</span> weights<span class="o">=</span>E<span class="p">(</span>net<span class="p">)</span><span class="o">$</span>Weight<span class="p">))</span>
-V<span class="p">(</span>net<span class="p">)</span><span class="o">$</span>centrality <span class="o">&lt;-</span> eigen_centrality<span class="p">(</span>net<span class="p">,</span> weights<span class="o">=</span>E<span class="p">(</span>net<span class="p">)</span><span class="o">$</span>Weight<span class="p">)</span><span class="o">$</span><span class="kt">vector</span>
-</code></pre></div>
-<p>Convert the network to a dataframe suitable for plotting using the <code>ggnetwork</code> library.</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r">df_net <span class="o">&lt;-</span> ggnetwork<span class="p">(</span>net<span class="p">,</span> layout <span class="o">=</span> <span class="s">&quot;fruchtermanreingold&quot;</span><span class="p">,</span> weights<span class="o">=</span><span class="s">&quot;Weight&quot;</span><span class="p">,</span> niter<span class="o">=</span><span class="m">50000</span><span class="p">)</span>
-</code></pre></div>
-<p>Now time for ggplot2/ggnetwork fun. In this case, we will color the nodes whether or not they are a default subreddit (orange if default, blue otherwise) and color the lines accordingly (orange if either end is a default subreddit, blue otherwise).</p>
-
-<p>Yes, writing and optimizing all of this code is <em>significantly</em> easier than using Gephi, believe it or not.</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r">default_colors<span class="o">=</span><span class="kt">c</span><span class="p">(</span><span class="s">&quot;#3498db&quot;</span><span class="p">,</span> <span class="s">&quot;#e67e22&quot;</span><span class="p">)</span>
-default_labels<span class="o">=</span><span class="kt">c</span><span class="p">(</span><span class="s">&quot;Not Default&quot;</span><span class="p">,</span> <span class="s">&quot;Default&quot;</span><span class="p">)</span>
-
-ggplot<span class="p">(</span>df_net<span class="p">,</span> aes<span class="p">(</span>x <span class="o">=</span> x<span class="p">,</span> y <span class="o">=</span> y<span class="p">,</span> xend <span class="o">=</span> xend<span class="p">,</span> yend <span class="o">=</span> yend<span class="p">,</span> size <span class="o">=</span> centrality<span class="p">))</span> <span class="o">+</span>
-    geom_edges<span class="p">(</span>aes<span class="p">(</span>color <span class="o">=</span> connectDefault<span class="p">),</span> size<span class="o">=</span><span class="m">0.05</span><span class="p">)</span> <span class="o">+</span>
-    geom_nodes<span class="p">(</span>aes<span class="p">(</span>fill <span class="o">=</span> defaultnode<span class="p">),</span> shape <span class="o">=</span> <span class="m">21</span><span class="p">,</span> stroke<span class="o">=</span><span class="m">0.2</span><span class="p">,</span> color<span class="o">=</span><span class="s">&quot;black&quot;</span><span class="p">)</span> <span class="o">+</span>
-    geom_nodelabel_repel<span class="p">(</span>data<span class="o">=</span>df_net<span class="p">,</span> aes<span class="p">(</span>color <span class="o">=</span> defaultnode<span class="p">,</span> label <span class="o">=</span> vertex.names<span class="p">),</span>
-                          fontface <span class="o">=</span> <span class="s">&quot;bold&quot;</span><span class="p">,</span> size<span class="o">=</span><span class="m">0.5</span><span class="p">,</span> box.padding <span class="o">=</span> unit<span class="p">(</span><span class="m">0.05</span><span class="p">,</span> <span class="s">&quot;lines&quot;</span><span class="p">),</span>
-                          label.padding<span class="o">=</span> unit<span class="p">(</span><span class="m">0.1</span><span class="p">,</span> <span class="s">&quot;lines&quot;</span><span class="p">),</span> segment.size<span class="o">=</span><span class="m">0.1</span><span class="p">,</span> label.size<span class="o">=</span><span class="m">0.2</span><span class="p">)</span> <span class="o">+</span>
-    scale_color_manual<span class="p">(</span>values<span class="o">=</span>default_colors<span class="p">,</span> labels<span class="o">=</span>default_labels<span class="p">,</span> guide<span class="o">=</span><span class="bp">F</span><span class="p">)</span> <span class="o">+</span>
-    scale_fill_manual<span class="p">(</span>values<span class="o">=</span>default_colors<span class="p">,</span> labels<span class="o">=</span>default_labels<span class="p">)</span> <span class="o">+</span>
-    ggtitle<span class="p">(</span><span class="s">&quot;Network Graph of Reddit Subreddits (by @minimaxir)&quot;</span><span class="p">)</span> <span class="o">+</span>
-    scale_size<span class="p">(</span>range<span class="o">=</span><span class="kt">c</span><span class="p">(</span><span class="m">0.1</span><span class="p">,</span> <span class="m">4</span><span class="p">))</span> <span class="o">+</span> 
-    theme_blank<span class="p">()</span>
-</code></pre></div>
-<p><object data="/img/reddit-graph/subreddit-1.pdf" type="application/pdf" width="100%" height="400px"></object></p>
-
-<p><span class="hidden-lg"><em>If you are on a smartphone or tablet, tap <a href="/img/reddit-graph/subreddit-1.pdf" target="_blank">this link</a> to view the network in a zoomable format.</em></span></p>
-
-<p>The large networks in the blog post are rendered as a PDF, which allows for easy pan/zooming at a very low file size (284KB!), while SVG/<a href="https://d3js.org">d3</a>/<a href="http://sigmajs.org">sigma.js</a> approaches have very poor performance at large numbers of nodes/edges.</p>
-
-<p>As we expect, the default subreddits are in the center of the network graph and have high centrality (although /r/art and /r/earthporn are oddly far separated from the other defaults). The large amounts of orange graph-wide illustrate the breadth of the defaults.</p>
-
-<p>Now let&rsquo;s color the nodes and edges by group, just as you saw in the introductory visualization:</p>
-
-<p><object data="/img/reddit-graph/subreddit-2.pdf" type="application/pdf" width="100%" height="400px"></object></p>
-
-<p><span class="hidden-lg"><em>If you are on a smartphone or tablet, tap <a href="/img/reddit-graph/subreddit-2.pdf" target="_blank">this link</a> to view the network in a zoomable format.</em></span></p>
-
-<p>If an edge links to a node of the same group, the edge is colored that group. Otherwise, the edge is colored gray. (the code that implements this is not shown because it is somewhat convoluted). This color scheme helps gauge the overall impact of the communities on Reddit. But why not look at specific groups?</p>
-
-<h2>Subgraph Surprises</h2>
-
-<p>As you can see plainly in the group-colored visualization, there is a giant green group at the center which includes the default subreddits. Analyzing that is not helpful. But we can filter the network on other specific groups and their subgraphs to see if we can define any Reddit subcultures. (note that the Group number is merely an ID; the value and order are not relevant).</p>
-
-<p>The most notable Reddit groups are gaming groups. We have two distinct groups of gamers:</p>
-
-<p><img src="/img/reddit-graph/group-006.png" alt=""></p>
-
-<p><img src="/img/reddit-graph/group-008.png" alt=""></p>
-
-<p>Plus Nintendo gamers? With a little Vita on the side?</p>
-
-<p><img src="/img/reddit-graph/group-010.png" alt=""></p>
-
-<p>Subreddits related to sports and sporting teams form a nice cluster:</p>
-
-<p><img src="/img/reddit-graph/group-001.png" alt=""></p>
-
-<p>PC-building has a distinct community:</p>
-
-<p><img src="/img/reddit-graph/group-011.png" alt=""></p>
-
-<p>The British make nice triangles!</p>
-
-<p><img src="/img/reddit-graph/group-022.png" alt=""></p>
-
-<p>Relationship and female-oriented subreddits have a relationship. </p>
-
-<p><img src="/img/reddit-graph/group-007.png" alt=""></p>
-
-<p>Lastly, DC Comics has their own sector, particularly with the corresponding CW television shows. (although some Marvel shows sneak in!)</p>
-
-<p><img src="/img/reddit-graph/group-003.png" alt=""></p>
-
-<p>Of course, Reddit itself has better data for identifying relationships between subreddits, as they can track user activity more intimately. Meanwhile, the output for this post turned out better than expected and I hope to include similar visualizations in future blog posts. Hopefully, it dispelled some of the mystery behind pretty network graphs. (if you do use the code or data visualization designs from this post, it would be greatly appreciated if proper attribution is given back to this post and/or myself. Thanks!).</p>
-
-<hr>
-
-<p><em>As always, the full code used to process the edge list and generate the visualizations is available in <a href="https://github.com/minimaxir/reddit-graph/blob/master/subreddit_network_pdf.ipynb">this Jupyter notebook</a>, open-sourced <a href="https://github.com/minimaxir/reddit-graph">on GitHub</a>.</em></p>
-
-<p><em>Additionally, thanks to Professor James P. Curley of Columbia University for providing <a href="http://curleylab.psych.columbia.edu/netviz/netviz1.html#/">helpful slides</a> which have good code samples for getting started with igraph/ggnetwork.</em></p>
 ]]></content>
   </entry>
   
