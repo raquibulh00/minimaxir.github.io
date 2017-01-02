@@ -5,9 +5,131 @@
     <description>A blog by Max Woolf about startups, technology, and blogging. It's so meta, even this acronym.</description>
     <link>http://minimaxir.com/</link>
     <atom:link href="http://minimaxir.com/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Mon, 19 Dec 2016 08:54:10 -0800</pubDate>
-    <lastBuildDate>Mon, 19 Dec 2016 08:54:10 -0800</lastBuildDate>
+    <pubDate>Mon, 02 Jan 2017 09:00:49 -0800</pubDate>
+    <lastBuildDate>Mon, 02 Jan 2017 09:00:49 -0800</lastBuildDate>
     <generator>Jekyll v3.3.1</generator>
+    
+      <item>
+        <title>Playing with 80 Million Amazon Product Review Ratings Using Apache Spark</title>
+        <description>&lt;p&gt;&lt;a href=&quot;https://www.amazon.com&quot;&gt;Amazon&lt;/a&gt; product reviews and ratings are a very important business. Customers on Amazon often make purchasing decisions based on those reviews, and a single bad review can cause a potential purchaser to reconsider. A couple years ago, I wrote a blog post titled &lt;a href=&quot;http://minimaxir.com/2014/06/reviewing-reviews/&quot;&gt;A Statistical Analysis of 1.2 Million Amazon Reviews&lt;/a&gt;, which was well-received.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/amazon/amzn-basic-score.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;Back then, I was only limited to 1.2M reviews because attempting to process more data caused out-of-memory issues and my R code took &lt;em&gt;hours&lt;/em&gt; to run.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://spark.apache.org&quot;&gt;Apache Spark&lt;/a&gt;, which makes processing gigantic amounts of data efficient and sensible, has become very popular in the past couple years (for good tutorials on using Spark with Python, I recommend the &lt;a href=&quot;https://courses.edx.org/courses/course-v1:BerkeleyX+CS105x+1T2016/info&quot;&gt;free&lt;/a&gt; &lt;a href=&quot;https://courses.edx.org/courses/course-v1:BerkeleyX+CS110x+2T2016/info&quot;&gt;eDX&lt;/a&gt; &lt;a href=&quot;https://courses.edx.org/courses/course-v1:BerkeleyX+CS120x+2T2016/info&quot;&gt;courses&lt;/a&gt;). Although data scientists often use Spark to process data with distributed cloud computing via &lt;a href=&quot;https://aws.amazon.com/ec2/&quot;&gt;Amazon EC2&lt;/a&gt; or &lt;a href=&quot;https://azure.microsoft.com/en-us/services/hdinsight/apache-spark/&quot;&gt;Microsoft Azure&lt;/a&gt;, Spark works just fine even on a typical laptop, given enough memory (for this post, I use a 2016 MacBook Pro/16GB RAM, with 8GB allocated to the Spark driver).&lt;/p&gt;
+
+&lt;p&gt;I wrote a &lt;a href=&quot;https://github.com/minimaxir/amazon-spark/blob/master/amazon_preprocess.py&quot;&gt;simple Python script&lt;/a&gt; to combine the per-category ratings-only data from the &lt;a href=&quot;http://jmcauley.ucsd.edu/data/amazon/&quot;&gt;Amazon product reviews dataset&lt;/a&gt; curated by Julian McAuley, Rahul Pandey, and Jure Leskovec for their 2015 paper &lt;a href=&quot;http://cseweb.ucsd.edu/%7Ejmcauley/pdfs/kdd15.pdf&quot;&gt;Inferring Networks of Substitutable and Complementary Products&lt;/a&gt;. The result is a 4.53 GB CSV that would definitely not open in Microsoft Excel. The truncated and combined dataset includes the &lt;strong&gt;user_id&lt;/strong&gt; of the user leaving the review, the &lt;strong&gt;item_id&lt;/strong&gt; indicating the Amazon product receiving the review, the &lt;strong&gt;rating&lt;/strong&gt; the user gave the product from 1 to 5, and the &lt;strong&gt;timestamp&lt;/strong&gt; indicating the time when the review was written (truncated to the Day). We can also infer the &lt;strong&gt;category&lt;/strong&gt; of the reviewed product from the name of the data subset.&lt;/p&gt;
+
+&lt;p&gt;Afterwards, using the new &lt;a href=&quot;http://spark.rstudio.com&quot;&gt;sparklyr&lt;/a&gt; package for R, I can easily start a local Spark cluster with a single &lt;code&gt;spark_connect()&lt;/code&gt; command and load the entire CSV into the cluster in seconds with a single &lt;code&gt;spark_read_csv()&lt;/code&gt; command.  &lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/amazon-spark/output.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;There are 80.74 million records total in the dataset, or as the output helpfully reports, &lt;code&gt;8.074e+07&lt;/code&gt; records. Performing advanced queries with traditional tools like &lt;a href=&quot;https://cran.rstudio.com/web/packages/dplyr/vignettes/introduction.html&quot;&gt;dplyr&lt;/a&gt; or even Python&amp;rsquo;s &lt;a href=&quot;http://pandas.pydata.org&quot;&gt;pandas&lt;/a&gt; on such a dataset would take a considerable amount of time to execute.&lt;/p&gt;
+
+&lt;p&gt;With sparklyr, manipulating actually-big-data is &lt;em&gt;just as easy&lt;/em&gt; as performing an analysis on a dataset with only a few records (and an order of magnitude easier than the Python approaches taught in the eDX class mentioned above!).&lt;/p&gt;
+
+&lt;h2&gt;Exploratory Analysis&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;(You can view the R code used to process the data with Spark and generate the data visualizations in &lt;a href=&quot;http://minimaxir.com/notebooks/amazon-spark/&quot;&gt;this R Notebook&lt;/a&gt;)&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;There are &lt;strong&gt;20,368,412&lt;/strong&gt; unique users who provided reviews in this dataset. &lt;strong&gt;51.9%&lt;/strong&gt; of those users have only written one review.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/amazon-spark/user_count_cum.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;Relatedly, there are &lt;strong&gt;8,210,439&lt;/strong&gt; unique products in this dataset, where &lt;strong&gt;43.3%&lt;/strong&gt; have only one review.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/amazon-spark/item_count_cum.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;After removing duplicate ratings, I added a few more features to each rating which may help illustrate how review behavior changed over time: a ranking value indicating the # review that the author of a given review has written (1st review by author, 2nd review by author, etc.), a ranking value indicating the # review that the product of a given review has received (1st review for product, 2nd review for product, etc.), and the month and year the review was made.&lt;/p&gt;
+
+&lt;p&gt;The first two added features require a &lt;em&gt;very&lt;/em&gt; large amount of processing power, and highlight the convenience of Spark&amp;rsquo;s speed (and the fact that Spark uses all CPU cores by default, while typical R/Python approaches are single-threaded!)&lt;/p&gt;
+
+&lt;p&gt;These changes are cached into a Spark DataFrame &lt;code&gt;df_t&lt;/code&gt;. If I wanted to determine which Amazon product category receives the best review ratings on average, I can aggregate the data by category, calculate the average rating score for each category, and sort. Thanks to the power of Spark, the data processing for this many-millions-of-records takes seconds.&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;df_agg &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; df_t &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;
+            group_by&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kp&quot;&gt;category&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;
+            summarize&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;count &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; n&lt;span class=&quot;p&quot;&gt;(),&lt;/span&gt; avg_rating &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;mean&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;rating&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;
+            arrange&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;desc&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;avg_rating&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;
+            collect&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;img src=&quot;/img/amazon-spark/avg.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;Or, visualized in chart form using &lt;a href=&quot;http://ggplot2.org&quot;&gt;ggplot2&lt;/a&gt;:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/amazon-spark/avg_rating_desc.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;Digital Music/CD products receive the highest reviews on average, while Video Games and Cell Phones receive the lowest reviews on average, with a &lt;strong&gt;0.77&lt;/strong&gt; rating range between them. This does make some intuitive sense; Digital Music and CDs are types of products where you know &lt;em&gt;exactly&lt;/em&gt; what you are getting with no chance of a random product defect, while Cell Phones and Accessories can have variable quality from shady third-party sellers (Video Games in particular are also prone to irrational &lt;a href=&quot;http://steamed.kotaku.com/steam-games-are-now-even-more-susceptible-to-review-bom-1774940065&quot;&gt;review bombing&lt;/a&gt; over minor grievances).&lt;/p&gt;
+
+&lt;p&gt;We can refine this visualization by splitting each bar into a percentage breakdown of each rating from 1-5. This could be plotted with a pie chart for each category, however a stacked bar chart, scaled to 100%, looks much cleaner.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/amazon-spark/category_breakdown.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;The new visualization does help support the theory above; the top categories have a significantly higher percentage of 4/5-star ratings than the bottom categories, and a much a lower proportion of 1/2/3-star ratings. The inverse holds true for the bottom categories.&lt;/p&gt;
+
+&lt;p&gt;How have these breakdowns changed over time? Are there other factors in play?&lt;/p&gt;
+
+&lt;h2&gt;Rating Breakdowns Over Time&lt;/h2&gt;
+
+&lt;p&gt;Perhaps the advent of the binary Like/Dislike behaviors in social media in the 2000&amp;rsquo;s have translated into a change in behavior for a 5-star review system. Here are the rating breakdowns for reviews written in each month from January 2000 to July 2014:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/amazon-spark/time_breakdown.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;The voting behavior oscillates very slightly over time with no clear spikes or inflection points, which dashes that theory.&lt;/p&gt;
+
+&lt;h2&gt;Distribution of Average Scores&lt;/h2&gt;
+
+&lt;p&gt;We should look at the global averages of Amazon product scores (i.e. what customers see when they buy products), and the users who give the ratings. We would expect the distributions to match, so any deviations would be interesting.&lt;/p&gt;
+
+&lt;p&gt;Products on average, when looking at products with atleast 5 ratings, have a &lt;strong&gt;4.16&lt;/strong&gt; overall rating.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/amazon-spark/item_histogram.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;When looking at a similar graph for the overall ratings given by users, (5 ratings minimum), the average rating is slightly higher at &lt;strong&gt;4.20&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/amazon-spark/user_histogram.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;The primary difference between the two distributions is that there is significantly higher proportion of Amazon customers giving &lt;em&gt;only&lt;/em&gt; 5-star reviews. Normalizing and overlaying the two charts clearly highlights that discrepancy.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/amazon-spark/user_item_histogram.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;h2&gt;The Marginal Review&lt;/h2&gt;
+
+&lt;p&gt;A few posts ago, I discussed how the &lt;a href=&quot;http://minimaxir.com/2016/11/first-comment/&quot;&gt;first comment on a Reddit post&lt;/a&gt; has dramatically more influence than subsequent comments. Does user rating behavior change after making more and more reviews? Is the typical rating behavior different for the first review of a given product? &lt;/p&gt;
+
+&lt;p&gt;Here is the ratings breakdown for the &lt;em&gt;n&lt;/em&gt;-th Amazon review a user gives:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/amazon-spark/user_nth_breakdown.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;The first user review has a slightly higher proportion of being a 1-star review than subsequent reviews. Otherwise, the voting behavior is mostly the same overtime, although users have an increased proportion of giving a 4-star review instead of a 5-star review as they get more comfortable.&lt;/p&gt;
+
+&lt;p&gt;In contrast, here is the ratings breakdown for the &lt;em&gt;n&lt;/em&gt;-th review an Amazon product received:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/amazon-spark/item_nth_breakdown.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;The first product review has a slightly higher proportion of being a 5-star review than subsequent reviews. However, after the 10th review, there is &lt;em&gt;zero&lt;/em&gt; change in the distribution of ratings, which implies that the marginal rating behavior is independent from the current score after that threshold.&lt;/p&gt;
+
+&lt;h2&gt;Summary&lt;/h2&gt;
+
+&lt;p&gt;Granted, this blog post is more playing with data and less analyzing data. What might be interesting to look into for future technical posts is conditional behavior, such as predicting the rating of a review given the previous ratings on that product/by that user. However, this post shows that while &amp;ldquo;big data&amp;rdquo; may be an inscrutable buzzword nowadays, you don&amp;rsquo;t have to work for a Fortune 500 company to be able to understand it. Even with a data set consisting of 5 simple features, you can extract a large number of insights. &lt;/p&gt;
+
+&lt;p&gt;And this post doesn&amp;rsquo;t even look at the text of the Amazon product reviews or the metadata associated with the products! I do have a few ideas lined up there which I won&amp;rsquo;t spoil.&lt;/p&gt;
+
+&lt;hr&gt;
+
+&lt;p&gt;&lt;em&gt;You can view all the R and ggplot2 code used to visualize the Amazon data in &lt;a href=&quot;http://minimaxir.com/notebooks/amazon-spark/&quot;&gt;this R Notebook&lt;/a&gt;. You can also view the images/data used for this post in &lt;a href=&quot;https://github.com/minimaxir/amazon-spark&quot;&gt;this GitHub repository&lt;/a&gt;&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;You are free to use the data visualizations from this article however you wish, but it would be greatly appreciated if proper attribution is given to this article and/or myself!&lt;/em&gt;&lt;/p&gt;
+</description>
+        <pubDate>Mon, 02 Jan 2017 09:00:00 -0800</pubDate>
+        <link>http://minimaxir.com/2017/01/amazon-spark/</link>
+        <guid isPermaLink="true">http://minimaxir.com/2017/01/amazon-spark/</guid>
+        
+        
+        <category>Visualization</category>
+        
+        <category>Data</category>
+        
+      </item>
     
       <item>
         <title>Network Visualization of Breached Internet Services Using HaveIBeenPwned? Data</title>
@@ -1019,54 +1141,6 @@
         <category>Visualization</category>
         
         <category>Data</category>
-        
-      </item>
-    
-      <item>
-        <title>Interactive Salary/Equity Chart for Jobs Offered in the San Francisco Bay Area</title>
-        <description>&lt;p&gt;There has been a lot of talk about the high salaries paid to engineers in Silicon Valley and the San Francisco Bay Area. Why not take a quick look at the amount of money being offered to prospective employees?&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://angel.co&quot;&gt;AngelList&lt;/a&gt; is a social network for startups and startup employees to network professionally. There is &lt;a href=&quot;https://angel.co/jobs&quot;&gt;also a section&lt;/a&gt; where startups can &lt;a href=&quot;https://angel.co/david-174/jobs/72943-engineer&quot;&gt;make job postings&lt;/a&gt;:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/sfba-compensation/senior.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;Unusually for job sites, AngelList requires posting compensation information for jobs, with a range of offered salary and equity for the position. (Note: due to their cash-strapped nature, early-stage startups may underpay candidates relative to market/experience).&lt;/p&gt;
-
-&lt;p&gt;Using the &lt;a href=&quot;https://angel.co/api&quot;&gt;AngelList API&lt;/a&gt;, I scraped all publicly-available full-time jobs located in the San Francisco Bay Area. I retrieved 5,941 jobs total, with half of those for Engineer/Developer positions.&lt;/p&gt;
-
-&lt;p&gt;Let&amp;rsquo;s plot Salary vs. Equity to get a 2D range of the different types compensation (by inferring a coordinate by taking the midpoint of each offered range; e.g. for an $80k—$125k salary offer, we plot Y=$102.5k). We can also control on Engineers vs. Non-Engineers since those salaries will likely be different in distribution.&lt;/p&gt;
-
-&lt;p&gt;Putting it all together:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/sfba-compensation/engineer-sfba-1.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;This is the same chart as the interactive one at the beginning of the article; if you haven&amp;rsquo;t, navigate around that chart, particularly looking at the  changes in job titles as you move upward with increasing salary/equity for a given facet.&lt;/p&gt;
-
-&lt;p&gt;A few quick observations:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;The black horizontal lines represent the &lt;strong&gt;median salary&lt;/strong&gt; offered for each facet. For Engineers, the median salary offered is &lt;strong&gt;$115k&lt;/strong&gt;, and for Non-Engineers, the median salary offered is &lt;strong&gt;$90k&lt;/strong&gt;. (as mentioned before, early-stage startups pay lower and are more prominent on AngelList, so these results may be affected by selection bias).&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Median equity&lt;/strong&gt;, on the other hand, is negligible and not worth plotting (&lt;strong&gt;0.10%&lt;/strong&gt; for Engineers, &lt;strong&gt;0.02%&lt;/strong&gt; for Non-Engineers).&lt;/li&gt;
-&lt;li&gt;Speaking of equity, startups do not give much, with the distribution topping out at about 1.0% in both cases. (Engineers appear to get a little more equity, though).&lt;/li&gt;
-&lt;li&gt;However, for serious roles, 7.5% equity (from offering 0%—15% or 5%—10%) is a figure that appears relatively often.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr&gt;
-
-&lt;p&gt;&lt;em&gt;As always, the code used to create the visualizations is available in &lt;a href=&quot;https://github.com/minimaxir/sfba-compensation/blob/master/angelist_sfbayarea_jobs.ipynb&quot;&gt;this Jupyter notebook&lt;/a&gt;, and the code used to scrape the AngelList data is open-sourced &lt;a href=&quot;https://github.com/minimaxir/sfba-compensation&quot;&gt;on GitHub&lt;/a&gt;. This post is my first test of using &lt;a href=&quot;https://plot.ly&quot;&gt;plot.ly&lt;/a&gt; to &lt;a href=&quot;http://moderndata.plot.ly/ggplot2-docs-completely-remade-in-d3-js/&quot;&gt;automatically convert ggplot2 plots&lt;/a&gt; into fully-interactive &lt;a href=&quot;https://d3js.org&quot;&gt;D3.js&lt;/a&gt; charts. The results were better than I expected (aside from the font-size issues specific to faceting), so expect to see more interactive charts in my future posts!&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;If you do find any other interesting trends in the chart and write about it, it would be greatly appreciated if proper attribution is given back to this post and/or myself. Thanks!&lt;/em&gt;&lt;/p&gt;
-</description>
-        <pubDate>Tue, 31 May 2016 08:00:00 -0700</pubDate>
-        <link>http://minimaxir.com/2016/05/sfba-compensation/</link>
-        <guid isPermaLink="true">http://minimaxir.com/2016/05/sfba-compensation/</guid>
-        
-        
-        <category>Visualization</category>
-        
-        <category>Data</category>
-        
-        <category>Interactive</category>
         
       </item>
     
