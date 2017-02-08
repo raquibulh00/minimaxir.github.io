@@ -5,9 +5,123 @@
     <description>A blog by Max Woolf about startups, technology, and blogging. It's so meta, even this acronym.</description>
     <link>http://minimaxir.com/</link>
     <atom:link href="http://minimaxir.com/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Mon, 02 Jan 2017 09:00:49 -0800</pubDate>
-    <lastBuildDate>Mon, 02 Jan 2017 09:00:49 -0800</lastBuildDate>
+    <pubDate>Wed, 08 Feb 2017 06:45:35 -0800</pubDate>
+    <lastBuildDate>Wed, 08 Feb 2017 06:45:35 -0800</lastBuildDate>
     <generator>Jekyll v3.3.1</generator>
+    
+      <item>
+        <title>Predicting And Mapping Arrest Types in San Francisco with LightGBM, R, ggplot2</title>
+        <description>&lt;p&gt;The new hotness in the world of data science is &lt;a href=&quot;https://en.wikipedia.org/wiki/Artificial_neural_network&quot;&gt;neural networks&lt;/a&gt;, which form the basis of &lt;a href=&quot;https://en.wikipedia.org/wiki/Deep_learning&quot;&gt;deep learning&lt;/a&gt;. But while everyone is obsessing about neural networks and how deep learning is &lt;em&gt;magic&lt;/em&gt; and can solve &lt;em&gt;any&lt;/em&gt; problem if you just &lt;a href=&quot;https://www.reddit.com/r/ProgrammerHumor/comments/5si1f0/machine_learning_approaches/&quot;&gt;stack enough layers&lt;/a&gt;, there have been many recent developments in the relatively nonmagical world of machine learning with &lt;em&gt;boring&lt;/em&gt; CPUs.&lt;/p&gt;
+
+&lt;p&gt;Years before neural networks were the Swiss army knife of data science, there were &lt;a href=&quot;https://en.wikipedia.org/wiki/Gradient_boosting&quot;&gt;gradient-boosted machines&lt;/a&gt;/&lt;a href=&quot;https://en.wikipedia.org/wiki/Gradient_boosting#Gradient_tree_boosting&quot;&gt;gradient-boosted trees&lt;/a&gt;. GBMs/GBTs are machine learning methods which are effective on many types of data, and do not require the &lt;a href=&quot;http://r-statistics.co/Assumptions-of-Linear-Regression.html&quot;&gt;traditional model assumptions&lt;/a&gt; of linear/logistic regression models. Wikipedia has a good article on the advantages of &lt;a href=&quot;https://en.wikipedia.org/wiki/Decision_tree_learning&quot;&gt;decision tree learning&lt;/a&gt;, and visual diagrams of the architecture:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/predicting-arrests/CART_tree_titanic_survivors.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;GBMs, as &lt;a href=&quot;http://scikit-learn.org/stable/modules/generated/sklearn.ensemble.GradientBoostingClassifier.html&quot;&gt;implemented&lt;/a&gt; in the Python package &lt;a href=&quot;http://scikit-learn.org/stable/&quot;&gt;scikit-learn&lt;/a&gt;, are extremely popular in &lt;a href=&quot;https://www.kaggle.com&quot;&gt;Kaggle&lt;/a&gt; machine learning competitions. But scikit-learn is relatively old, and new technologies have emerged which implement GBMs/GBTs on large datasets with massive parallelization and and in-memory computation. A popular big data machine learning library, &lt;a href=&quot;http://www.h2o.ai&quot;&gt;H2O&lt;/a&gt;, has a &lt;a href=&quot;http://docs.h2o.ai/h2o-tutorials/latest-stable/tutorials/gbm-randomforest/index.html&quot;&gt;famous GBM implementation&lt;/a&gt; which, &lt;a href=&quot;https://github.com/szilard/benchm-ml&quot;&gt;per benchmarks&lt;/a&gt;, is over 10x faster than scikit-learn and is optimized for datasets with millions of records. But even &lt;em&gt;faster&lt;/em&gt; than H2O is &lt;a href=&quot;https://github.com/dmlc/xgboost&quot;&gt;xgboost&lt;/a&gt;, which can hit a 5x-10x speed-ups relative to H2O, depending on the dataset size.&lt;/p&gt;
+
+&lt;p&gt;Enter &lt;a href=&quot;https://github.com/Microsoft/LightGBM&quot;&gt;LightGBM&lt;/a&gt;, a new (October 2016) open-source machine learning framework by &lt;a href=&quot;https://www.microsoft.com/en-us/&quot;&gt;Microsoft&lt;/a&gt; which, per &lt;a href=&quot;https://github.com/Microsoft/LightGBM/issues/211&quot;&gt;benchmarks&lt;/a&gt; on release, was up to &lt;em&gt;4x faster&lt;/em&gt; than xgboost! (xgboost very recently implemented a &lt;a href=&quot;https://github.com/dmlc/xgboost/issues/1950&quot;&gt;technique&lt;/a&gt; also used in LightGBM, which reduced the relative speedup to just ~2x). As a result, LightGBM allows for very efficient model building on large datasets without requiring cloud computing or nVidia CUDA GPUs.&lt;/p&gt;
+
+&lt;p&gt;A year ago, I &lt;a href=&quot;http://minimaxir.com/2015/12/sf-arrests/&quot;&gt;wrote an analysis&lt;/a&gt; of the types of police arrests in San Francisco, using data from the &lt;a href=&quot;https://data.sfgov.org&quot;&gt;SF OpenData&lt;/a&gt; initiative, with a &lt;a href=&quot;http://minimaxir.com/2015/12/sf-arrest-maps/&quot;&gt;followup article&lt;/a&gt; analyzing the locations of these arrests. Months later, the same source dataset was used &lt;a href=&quot;https://www.kaggle.com/c/sf-crime&quot;&gt;for a Kaggle competition&lt;/a&gt;. Why not give the dataset another look and test LightGBM out?&lt;/p&gt;
+
+&lt;h2&gt;Playing With The Data&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;(You can view the R code used to process the data and generate the data visualizations in &lt;a href=&quot;http://minimaxir.com/notebooks/predicting-arrests/&quot;&gt;this R Notebook&lt;/a&gt;)&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;The &lt;a href=&quot;https://data.sfgov.org/Public-Safety/SFPD-Incidents-from-1-January-2003/tmnf-yvry&quot;&gt;SFPD Incidents&lt;/a&gt; dataset includes crime incidents in San Francisco from 1/1/2003 to 1/17/2017 (at time of analysis). Filtering the dataset only on incidents which resulted in arrests (since most incidents are trivial) leaves a dataset of 634,299 arrests total. The dataset also includes information on the type of crime, the location where the arrest occurred, and the date/time. There are 39 different types of arrests in the &lt;strong&gt;Category&lt;/strong&gt; column such as Assault, Burglary, and Prostitution, which serves as the response variable.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/predicting-arrests/data.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;Meanwhile, we can engineer features from the location and date/time. 
+Performing an exploratory data analysis of both is helpful to determine at a glance which features may be relevant (fortunately, I did that a year ago).&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/sf-arrests/sf-arrest-when-4.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;The location is given as latitude/longitude coordinates, so we can select a longitude &lt;strong&gt;X&lt;/strong&gt; and latitude &lt;strong&gt;Y&lt;/strong&gt; as features. Date/Time can be deconstructed further. We can extract the &lt;strong&gt;hour&lt;/strong&gt; in which a given arrest occurred as a feature (hour can take 24 different values from 0 — 23). Likewise, we can extract the &lt;strong&gt;month&lt;/strong&gt; in a similar manner (12 values, from 1 — 12). The &lt;strong&gt;year&lt;/strong&gt; the crime occurred can be extracted without special encoding. (2003 — 2017). It is always helpful to include a year feature in predictive models to help account for change over time. The &lt;strong&gt;DayOfWeek&lt;/strong&gt; is important, but encoding it as a numeric value is tricker; we logically encode each day of the week from 1 — 7, but which day should be #1? Making Monday #1 and Sunday #7 is the most logical, since a decision tree rule that sets a threshold on DayOfWeek values &amp;gt; 5 will translate logically to a weekend.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/predicting-arrests/predict_matrix.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;That&amp;rsquo;s six features total. There are more features which could be helpful, but let&amp;rsquo;s check a baseline model as a start.&lt;/p&gt;
+
+&lt;h2&gt;Modeling&lt;/h2&gt;
+
+&lt;p&gt;Specifically, the model will predict the answer the question: &lt;em&gt;given that a San Francisco police arrest occurs at a specified time and place, what is the reason for that arrest?&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;For this post, I will use the &lt;a href=&quot;https://github.com/Microsoft/LightGBM/tree/master/R-package&quot;&gt;R package&lt;/a&gt; for LightGBM (which was beta-released in January 2017; it&amp;rsquo;s &lt;em&gt;extremely&lt;/em&gt; cutting edge!) We split the dataset 70%/30% into a training set of 444,011 arrests and a test set of 190,288 arrests (due to the large amount of different category labels, the split must be &lt;a href=&quot;https://en.wikipedia.org/wiki/Stratified_sampling&quot;&gt;stratified&lt;/a&gt; to ensure the training and test sets have a balanced distribution of labels; in R, this can be implemented with the &lt;code&gt;caret&lt;/code&gt; package and &lt;code&gt;createDataPartition&lt;/code&gt;).&lt;/p&gt;
+
+&lt;p&gt;LightGBM trains the model on the training set and evaluates it on the test set to minimize the &lt;a href=&quot;https://www.kaggle.com/c/sf-crime#evaluation&quot;&gt;multiclass logarithmic loss&lt;/a&gt; of the model. For now, I use the &lt;a href=&quot;https://github.com/Microsoft/LightGBM/blob/master/docs/Parameters.md&quot;&gt;default parameters&lt;/a&gt; of LightGBM, except to massively increase the number of iterations of the training algorithm, and to stop training the model early if the model stops improving. After about 4 minutes on my laptop (which is very fast for a dataset of this size!), the model returns a multilogloss of &lt;strong&gt;1.98&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;That number sounds arbitrary. Is it good or bad? Let&amp;rsquo;s compare it to the multilogloss from the &lt;a href=&quot;https://www.kaggle.com/c/sf-crime/leaderboard&quot;&gt;top models&lt;/a&gt; from the Kaggle version of the dataset, where a lower score is better:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/predicting-arrests/kaggle.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;&amp;hellip;okay, 1.98 &lt;em&gt;is&lt;/em&gt; a good score, and without spending much time adding features to the model and &lt;a href=&quot;https://github.com/Microsoft/LightGBM/blob/master/docs/Parameters-tuning.md&quot;&gt;tuning parameters&lt;/a&gt;! To be fair, my methodology would not necessarily result in the same score on the Kaggle dataset, but it confirms that the LightGBM model is in the top tier of models available for this problem and dataset context. And it didn&amp;rsquo;t &lt;a href=&quot;https://www.kaggle.com/smerity/sf-crime/fighting-crime-with-keras/output&quot;&gt;require any neural networks&lt;/a&gt; either!&lt;/p&gt;
+
+&lt;p&gt;There are areas for improvement in feature engineering which &lt;a href=&quot;https://www.kaggle.com/c/sf-crime/kernels&quot;&gt;other entries&lt;/a&gt; in the Kaggle competition implemented, such as a &lt;a href=&quot;https://en.wikipedia.org/wiki/Dummy_variable_(statistics)&quot;&gt;dummy variable&lt;/a&gt; indicating whether the offense occurred at an intersection and which SF police station was involved in the arrest. We could also encode features such as hour and DayOfWeek as categorical features (LightGBM conveniently allows this without requiring &lt;a href=&quot;https://en.wikipedia.org/wiki/One-hot&quot;&gt;one-hot encoding&lt;/a&gt; the features) instead of numeric, but in my brief testing, it made the model &lt;em&gt;worse&lt;/em&gt;, interestingly.&lt;/p&gt;
+
+&lt;h2&gt;Analyzing the LightGBM Model&lt;/h2&gt;
+
+&lt;p&gt;Another perk of not using a neural network for statistical model building is the ability to learn more about the importance of features in a model, as opposed to it being a &lt;a href=&quot;https://en.wikipedia.org/wiki/Black_box&quot;&gt;black box&lt;/a&gt;. In the case of gradient boosting, we can calculate the proportional contribution of each feature to the total &lt;a href=&quot;https://en.wikipedia.org/wiki/Information_gain_in_decision_trees&quot;&gt;information gain&lt;/a&gt; of the model, which will help identify the most important features, and potentially unhelpful features:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/predicting-arrests/imp.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;Unsurprisingly, location features are the most important, with both location-based features establishing 70% of the total Gain in the model. But no feature is completely insignificant, which is a good thing.&lt;/p&gt;
+
+&lt;p&gt;Back to the multilogloss of 1.98. What does that mean in the real world? What is the &lt;em&gt;accuracy&lt;/em&gt; of the model? We run each of the 190,288 arrests in the test set against the model, which returns 39 probability values for each record: one for each possible category of arrest. The category with the highest probability becomes the &lt;strong&gt;predicted&lt;/strong&gt; type of arrest.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/predicting-arrests/predicted_results.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;The accuracy of the model on the test set, which is the proportion of predictions where the predicted category value matches the &lt;strong&gt;actual&lt;/strong&gt; category value, is &lt;strong&gt;39.7%&lt;/strong&gt;, with a 95% confidence interval for the true accuracy between 39.5% and 39.9%. That seems low! However, there is catch-all &amp;ldquo;Other Offenses&amp;rdquo; category for an arrest; if you predicted a &amp;ldquo;Other Offenses&amp;rdquo; label for all the test-set values, you would get an accuracy of &lt;em&gt;31.1%&lt;/em&gt;, which serves as the No Information Rate (since it would be the highest accuracy approach if there was no information at all). A 8.6 percentage point improvement is still an improvement though; many industries would &lt;em&gt;love&lt;/em&gt; an 8.6 percentage point increase in accuracy, but for this context obviously it&amp;rsquo;s not enough to usher in a &lt;a href=&quot;https://en.wikipedia.org/wiki/Minority_Report_(film)&quot;&gt;Minority Report&lt;/a&gt;/&lt;a href=&quot;https://en.wikipedia.org/wiki/Person_of_Interest_(TV_series)&quot;&gt;Person of Interest&lt;/a&gt; future.&lt;/p&gt;
+
+&lt;p&gt;We can visualize the classifications on the test set by the model using a &lt;a href=&quot;https://en.wikipedia.org/wiki/Confusion_matrix&quot;&gt;confusion matrix&lt;/a&gt;; &lt;code&gt;caret&lt;/code&gt; has a simple &lt;code&gt;confusionMatrix()&lt;/code&gt; function, and ggplot2 has a &lt;code&gt;geom_tile()&lt;/code&gt; to map out the relationships, even with 39 classes. We can also annotate the tiles where actual label = predicted label by drawing a &lt;code&gt;geom_point()&lt;/code&gt; on top. Putting it all together:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/predicting-arrests/confusionMatrix.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;There is, indeed, a large amount of confusion. Many of the labels are mispredicted as Other Offenses. Specifically, the model frequently confuses the combinations of Assault, Drug/Narcotics, Larceny/Theft, and Warrants, suggesting that they also may be catch-alls.&lt;/p&gt;
+
+&lt;p&gt;In theory, the predicted probabilities from the model between similar types of crime should also be similar, which may be causing these mispredictions. We can calculate the &lt;a href=&quot;https://en.wikipedia.org/wiki/Pearson_correlation_coefficient&quot;&gt;Pearson correlations&lt;/a&gt; between the predicted probabilities, and use &lt;a href=&quot;https://en.wikipedia.org/wiki/Hierarchical_clustering&quot;&gt;hierarchical clustering&lt;/a&gt; to &lt;a href=&quot;http://www.sthda.com/english/wiki/ggplot2-quick-correlation-matrix-heatmap-r-software-and-data-visualization&quot;&gt;arrange and plot the correlations&lt;/a&gt; and their labels in a logical order. The majority of the correlations between labels are between 0 and +/- 0.5 (weak to moderate), but their arrangement tells a different story:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/predicting-arrests/correlationMatrix.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;From top to bottom, you can see that there is a grouping of more blue-collar, physical crimes types (Assault, Vandalism), then a grouping of less-physical, white-collar crime types (Bribery, Extortion), and then a smaller grouping of seedier crime types (Liquor Laws, Prostitution).&lt;/p&gt;
+
+&lt;p&gt;The visualization doesn&amp;rsquo;t necessarily provide more information about the confusion matrix and the mispredictions, but &lt;em&gt;it looks cool&lt;/em&gt;, which is enough.&lt;/p&gt;
+
+&lt;h2&gt;Mapping the Predicted Types of Arrests&lt;/h2&gt;
+
+&lt;p&gt;Kaggle competitions emphasize model creation, but don&amp;rsquo;t discuss how to implement and execute models in practice. Since we can predict the type of crime based on the given location and date/time of an arrest, we can map boundaries of the mostly likely type of offense. Using &lt;code&gt;ggmap&lt;/code&gt; to get a map of San Francisco, splitting San Francisco into tens of thousands of points, and predicting the most-likely type of arrest at the location with a given date/time.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s say we want to predict the types of crime in the future, on April 15th, 2017, during 8 PM. We construct a dataset of those points and the same date/time features used to generate the model originally. Then run those fabricated points through the model again to get new predicted labels (Additionally, we need to remove &amp;ldquo;Other Offenses&amp;rdquo; predicted labels since they cloud up the map). Plotting each point as a &lt;code&gt;geom_tile&lt;/code&gt; will interpolate regions around the city. Putting it all together:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/predicting-arrests/crime-2017-04-15-20.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;Not too shabby. But that&amp;rsquo;s not all; we can &lt;em&gt;animate&lt;/em&gt; this map over a day by incrementing the hour, generating a map for each hour (while keeping the colors corresponding to the arrest type consistent), and then &lt;a href=&quot;https://github.com/minimaxir/frames-to-gif-osx&quot;&gt;stitching the maps together&lt;/a&gt; into a GIF. Let&amp;rsquo;s do March 14th, 2017 (&lt;a href=&quot;https://en.wikipedia.org/wiki/Pi_Day&quot;&gt;Pi Day&lt;/a&gt; can be dangerous!) starting at 6 AM:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/predicting-arrests/map_ani.gif&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;Wow!&lt;/p&gt;
+
+&lt;h2&gt;Conclusion&lt;/h2&gt;
+
+&lt;p&gt;I deliberately avoided using the term &amp;ldquo;machine learning&amp;rdquo; in the headline of this post because it has been overused to the point of clickbait. Indeed, neural networks/deep learning excel at processing higher-dimensional data such as text, image, and voice data, but in cases where dataset features are &lt;a href=&quot;https://news.ycombinator.com/item?id=13563892&quot;&gt;simple and known&lt;/a&gt;, neural networks are not necessarily the most &lt;em&gt;pragmatic&lt;/em&gt; option. CPU/RAM machine learning libraries like LightGBM are still worthwhile, despite the religious fervor for deep learning.&lt;/p&gt;
+
+&lt;p&gt;And there&amp;rsquo;s still a lot of work that can be done with the SF Crime Incidents dataset. The model only predicts the type of crime given an arrest occurred; it does not predict &lt;em&gt;if&lt;/em&gt; an arrest will occur at a given time and place, which would make a fun project for the future!&lt;/p&gt;
+
+&lt;hr&gt;
+
+&lt;p&gt;&lt;em&gt;You can view all the R and ggplot2 code used to visualize the San Francisco crime data in &lt;a href=&quot;http://minimaxir.com/notebooks/predicting-arrests/&quot;&gt;this R Notebook&lt;/a&gt;. You can also view the images/data used for this post in &lt;a href=&quot;https://github.com/minimaxir/sf-arrests-predict&quot;&gt;this GitHub repository&lt;/a&gt;&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;You are free to use the data visualizations from this article however you wish, but it would be greatly appreciated if proper attribution is given to this article and/or myself!&lt;/em&gt;&lt;/p&gt;
+</description>
+        <pubDate>Wed, 08 Feb 2017 06:30:00 -0800</pubDate>
+        <link>http://minimaxir.com/2017/02/predicting-arrests/</link>
+        <guid isPermaLink="true">http://minimaxir.com/2017/02/predicting-arrests/</guid>
+        
+        
+        <category>Visualization</category>
+        
+        <category>Data</category>
+        
+      </item>
     
       <item>
         <title>Playing with 80 Million Amazon Product Review Ratings Using Apache Spark</title>
@@ -1022,125 +1136,6 @@
         <category>Data</category>
         
         <category>Interactive</category>
-        
-      </item>
-    
-      <item>
-        <title>Methods for Finding Related Reddit Subreddits with Simple Set Theory</title>
-        <description>&lt;p&gt;I recently &lt;a href=&quot;http://minimaxir.com/2016/05/reddit-graph/&quot;&gt;wrote a post&lt;/a&gt; on how to visualize &lt;a href=&quot;https://en.wikipedia.org/wiki/Graph_theory&quot;&gt;network graphs&lt;/a&gt; of &lt;a href=&quot;https://www.reddit.com&quot;&gt;Reddit&lt;/a&gt; subreddits.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/reddit-graph/group-001.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;One of the reasons I&amp;rsquo;ve been researching the topic is to find a good way to facilitate discovery of lesser-known subreddits, as Reddit is doing a terrible job at it (although they have been trying a &lt;a href=&quot;https://www.reddit.com/r/changelog/comments/4o4qjh/more_small_tests_to_improve_user_experience_live/d49leyu?context=2&quot;&gt;few new experiments&lt;/a&gt; &lt;em&gt;very recently&lt;/em&gt;). As it turns out, invoking graph theory is overkill. Even fancy machine learning approaches like &lt;a href=&quot;https://en.wikipedia.org/wiki/Collaborative_filtering&quot;&gt;collaborative filtering&lt;/a&gt;, while powerful, may not be required to help Redditors discover new things.&lt;/p&gt;
-
-&lt;h2&gt;Finding Related Subreddits&lt;/h2&gt;
-
-&lt;p&gt;Let&amp;rsquo;s say we have two sets: Set &lt;em&gt;A&lt;/em&gt;, where &lt;em&gt;A&lt;/em&gt; represents the number of active users in a given subreddit, and set &lt;em&gt;B&lt;/em&gt;, where &lt;em&gt;B&lt;/em&gt; is the set of active users in a subreddit. The intersection of Sets &lt;em&gt;A&lt;/em&gt; and &lt;em&gt;B&lt;/em&gt; (A ∩ B) represents users who are active in &lt;em&gt;both&lt;/em&gt; subreddits.&lt;/p&gt;
-
-&lt;p&gt;Using &lt;a href=&quot;https://cloud.google.com/bigquery/&quot;&gt;BigQuery&lt;/a&gt;, I can get the comment data from &lt;strong&gt;ALL&lt;/strong&gt; public Reddit subreddits, as otherwise this technique would not work well using any smaller subset. The network graph edgelist conveniently gives (A ∩ B), obtained &lt;a href=&quot;http://minimaxir.com/2016/05/reddit-graph/&quot;&gt;as described in my previous post&lt;/a&gt;, which calculates the number of active users for all pairs of subreddits (defining &amp;ldquo;active users&amp;rdquo; as users who have made a comment in at least 5 unique threads in a given subreddit within the past 6 months).&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/reddit-related-subreddits/active-edge.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;In this case, we can filter the edgelist to only allow intersections where there are at least 10 active users; this prevents including dead and personal subreddits.&lt;/p&gt;
-
-&lt;p&gt;We can run another similar query to get the number of active users for each subreddit.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/reddit-related-subreddits/active-users.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;After that, for a given subreddit &lt;em&gt;A&lt;/em&gt;, find:&lt;/p&gt;
-
-&lt;p&gt;(A ∩ B) / (B)&lt;/p&gt;
-
-&lt;p&gt;for all subreddits &lt;em&gt;B&lt;/em&gt; where (A ∩ B) &amp;gt; 0 (i.e. only neighbors of &lt;em&gt;A&lt;/em&gt;). This computation takes less than a second. Additionally, the output is always a percentage between 0% and 100%. For the visualizations, we plot the Top 15 subreddits with the highest overlap of the specified subreddit &lt;em&gt;A&lt;/em&gt; (and color the bars with a nice &lt;a href=&quot;https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html&quot;&gt;viridis palette&lt;/a&gt; to provide another easy way to perceive relative magnitude of relatedness).&lt;/p&gt;
-
-&lt;p&gt;The methodology may sound arbitrary, but the results are very interesting. Here&amp;rsquo;s a chart of the top related subreddits for &lt;a href=&quot;https://www.reddit.com/r/aww&quot;&gt;/r/aww&lt;/a&gt;, one of the most popular places on the internet for cat pictures.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/reddit-related-subreddits/aww-related.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;I have honestly &lt;em&gt;never&lt;/em&gt; heard of any of these subreddits before. But yet, by analyzing public user activity alone, I found a few new places to get more cute pics.&lt;/p&gt;
-
-&lt;p&gt;This methodology is excellent for finding subreddit-specific subsubreddits which may not be documented. The related subreddits for &lt;a href=&quot;https://www.reddit.com/r/buildapc&quot;&gt;/r/buildapc&lt;/a&gt; offer more places to get PC building advice.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/reddit-related-subreddits/buildapc-related.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;Related subreddits for sport-specific subreddits, like &lt;a href=&quot;https://www.reddit.com/r/cfb&quot;&gt;/r/cfb&lt;/a&gt; (college football) include the corresponding teams.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/reddit-related-subreddits/cfb-related.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://www.reddit.com/r/food&quot;&gt;/r/food&lt;/a&gt; related subreddits list a surprising number of subreddits dedicated to specific foods.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/reddit-related-subreddits/food-related.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;There is a surprising amount of depth to the &lt;a href=&quot;https://www.reddit.com/r/me_irl&quot;&gt;/r/me_irl&lt;/a&gt; network.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/reddit-related-subreddits/me_irl-related.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;The chart for &lt;a href=&quot;https://www.reddit.com/r/programming&quot;&gt;/r/programming&lt;/a&gt; can tell you which subreddits exist for specific programming languages and technologies.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/reddit-related-subreddits/programming-related.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;The methodology can also reveal a &lt;em&gt;lack&lt;/em&gt; of related subreddits, by the large contrast between subreddits with high relatedness and low relatedness. For example, while /r/cfb may have large numbers of obviously-related subreddits as a sports subreddit, &lt;a href=&quot;https://www.reddit.com/r/golf&quot;&gt;/r/golf&lt;/a&gt; has only 2.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/reddit-related-subreddits/golf-related.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;You can view Related Subreddit charts for the Top 200 Subreddits &lt;a href=&quot;https://github.com/minimaxir/subreddit-related/tree/master/related&quot;&gt;in this GitHub repository&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h2&gt;Finding Similar Subreddits&lt;/h2&gt;
-
-&lt;p&gt;Another method for finding related subreddits would be to find subreddits with similar communities. An academic approach to finding similarity between sets is the &lt;a href=&quot;https://en.wikipedia.org/wiki/Jaccard_index&quot;&gt;Jaccard Index&lt;/a&gt;. Using the same set A and set B definitions above, the formula now becomes:&lt;/p&gt;
-
-&lt;p&gt;(A ∩ B) / [(A) + (B) - (A ∩ B)]&lt;/p&gt;
-
-&lt;p&gt;which outputs the Jaccard Index, between 0 and 1. This formula only requires a few tweaks to the original code. The results from this computation tell a different story.&lt;/p&gt;
-
-&lt;p&gt;Here are the most-similar subreddits to /r/aww:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/reddit-related-subreddits/aww-jaccard-nondefault.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;In this implementation, the &lt;a href=&quot;https://www.reddit.com/r/defaults/comments/4l3svc/list_of_default_subreddits_usa_26_may_2016/&quot;&gt;default Reddit subreddits&lt;/a&gt; must be removed from the results, as the communities of default subreddits are largely similar to most others by design. Even former defaults like &lt;a href=&quot;https://www.reddit.com/r/adviceanimals&quot;&gt;/r/adviceanimals&lt;/a&gt; and &lt;a href=&quot;https://www.reddit.com/r/technology&quot;&gt;/r/technology&lt;/a&gt; still have large amounts of holdout users which skew the results. As &lt;a href=&quot;https://www.reddit.com/r/aww&quot;&gt;/r/aww&lt;/a&gt; is a mass-appeal subreddit, it makes sense that the communities are similar to other mass-appeal subreddits. &lt;/p&gt;
-
-&lt;p&gt;The magnitude of the Jaccard Index measures the strength of the similarity. Most subreddit relationships have a low Jaccard Index, but the relative magnitude between all subreddit neighbors illustrate comparisons for potential related subreddits regardless (this is also the reason why the x-axis is not fixed across plots). The subreddit relationship with the highest absolute similarity is &lt;a href=&quot;https://www.reddit.com/r/arrow&quot;&gt;/r/arrow&lt;/a&gt; and &lt;a href=&quot;https://www.reddit.com/r/flashtv&quot;&gt;/r/flashtv&lt;/a&gt; at 0.345, which make sense given the massive overlap between the two CW television shows.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/reddit-related-subreddits/arrow-jaccard-nondefault.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;The Jaccard Index is more useful for finding similar subreddits to niche subreddits. Let&amp;rsquo;s try a few of the subreddits mentioned previously and see how the results changed.&lt;/p&gt;
-
-&lt;p&gt;/r/buildapc is a niche, and the output identifies well-established subreddits, unlike with the previous related-subreddit methodology.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/reddit-related-subreddits/buildapc-jaccard-nondefault.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;The subreddit most similar to /r/cfb (college football) is &lt;a href=&quot;https://www.reddit.com/r/collegebasketball&quot;&gt;/r/collegebasketball&lt;/a&gt;!&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/reddit-related-subreddits/cfb-jaccard-nondefault.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;The subreddit most similar to /r/food is &lt;a href=&quot;https://www.reddit.com/r/cooking&quot;&gt;/r/cooking&lt;/a&gt;!&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/reddit-related-subreddits/food-jaccard-nondefault.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;The subreddit most similar to /r/programming is &lt;a href=&quot;https://www.reddit.com/r/linux&quot;&gt;/r/linux&lt;/a&gt;! (of course)&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/reddit-related-subreddits/programming-jaccard-nondefault.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;You can view the Similar Subreddit charts for the Top 200 Subreddits &lt;a href=&quot;https://github.com/minimaxir/subreddit-related/tree/master/similar&quot;&gt;in this GitHub repository&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;Again, Reddit has significantly better internal data for identifying user activity between subreddits, such as voting patterns and clickthrough tracking. But the results shown using these two set methodologies are pretty good for using public data. In fact, these two set approaches can theoretically work with &lt;em&gt;any&lt;/em&gt; set of categorized, settable data, which may give me a few ideas for new blog posts in the future.&lt;/p&gt;
-
-&lt;p&gt;And there&amp;rsquo;s still the fancy machine learning approaches to try.&lt;/p&gt;
-
-&lt;hr&gt;
-
-&lt;p&gt;&lt;em&gt;As always, the full code used to process the comment data and generate the visualizations is available in &lt;a href=&quot;https://github.com/minimaxir/subreddit-related/blob/master/find_related_subreddits.ipynb&quot;&gt;this Jupyter notebook&lt;/a&gt;, open-sourced &lt;a href=&quot;https://github.com/minimaxir/subreddit-related&quot;&gt;on GitHub&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;If you do find any other interesting trends in the related/similar charts of other subreddits and write about it, it would be greatly appreciated if proper attribution is given back to this post and/or myself. Thanks!&lt;/em&gt;&lt;/p&gt;
-</description>
-        <pubDate>Mon, 20 Jun 2016 08:20:00 -0700</pubDate>
-        <link>http://minimaxir.com/2016/06/reddit-related-subreddits/</link>
-        <guid isPermaLink="true">http://minimaxir.com/2016/06/reddit-related-subreddits/</guid>
-        
-        
-        <category>Visualization</category>
-        
-        <category>Data</category>
         
       </item>
     

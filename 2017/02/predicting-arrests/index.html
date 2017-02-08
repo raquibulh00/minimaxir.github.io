@@ -5,11 +5,11 @@
 <head>
 <meta charset="utf-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>Game Theory: How 70,000 Pokemon Players Sabotage Themselves</title>
+<title>Predicting And Mapping Arrest Types in San Francisco with LightGBM, R, ggplot2</title>
 <meta property="article:author" content="https://www.facebook.com/max.woolf" />
-<meta name="description" content="Pokemon Red and Pokemon Blue remain as two of the most iconic games in video gaming history. They have retained a lot of nostalgia value for those who grew u...">
+<meta name="description" content="The new hotness in the world of data science is neural networks, which form the basis of deep learning. But while everyone is obsessing about neural networks...">
 <link href="/rss.xml" rel="alternate" title="minimaxir | Max Woolf's Blog" type="application/atom+xml">
-<link rel="canonical" href="http://minimaxir.com/2014/02/glory-to-the-helix/">
+<link rel="canonical" href="http://minimaxir.com/2017/02/predicting-arrests/">
 
 <!-- Mobile Metas -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,38 +19,38 @@
 <meta name="twitter:site" content="@minimaxir">
 <meta name="twitter:creator" content="@minimaxir">
 
-  <meta name="twitter:title" content="Game Theory: How 70,000 Pokemon Players Sabotage Themselves">
+  <meta name="twitter:title" content="Predicting And Mapping Arrest Types in San Francisco with LightGBM, R, ggplot2">
 
 
-  <meta name="twitter:url" content="http://minimaxir.com/2014/02/glory-to-the-helix/">
+  <meta name="twitter:url" content="http://minimaxir.com/2017/02/predicting-arrests/">
 
 
-  <meta name="twitter:description" content="Twitch Plays Pokemon isn't about winning. It's about trying not to fail spectacularly. And they still fail regardless. It's an irresistible train wreck that's hard to stop watching.">
+  <meta name="twitter:description" content="Given that a SF police arrest occurs at a specified time and place, what is the reason for that arrest?">
 
 
-  <meta name="twitter:image:src" content="http://minimaxir.com/img/h2sFCtt.png">
+  <meta name="twitter:image:src" content="http://minimaxir.com/img/confusionMatrix.png">
 
  
  <meta content="minimaxir | Max Woolf's Blog" property="og:site_name">
 
-  <meta content="Game Theory: How 70,000 Pokemon Players Sabotage Themselves" property="og:title">
+  <meta content="Predicting And Mapping Arrest Types in San Francisco with LightGBM, R, ggplot2" property="og:title">
 
 
   <meta content="article" property="og:type">
 
 
-  <meta content="Twitch Plays Pokemon isn't about winning. It's about trying not to fail spectacularly. And they still fail regardless. It's an irresistible train wreck that's hard to stop watching." property="og:description">
+  <meta content="Given that a SF police arrest occurs at a specified time and place, what is the reason for that arrest?" property="og:description">
 
 
-  <meta content="http://minimaxir.com/2014/02/glory-to-the-helix/" property="og:url">
+  <meta content="http://minimaxir.com/2017/02/predicting-arrests/" property="og:url">
 
 
 
-  <meta content="http://minimaxir.com/img/h2sFCtt.png" property="og:image">
+  <meta content="http://minimaxir.com/img/confusionMatrix.png" property="og:image">
 
 
   
-  <meta content="Gaming" property="article:section">
+  <meta content="Visualization" property="article:section">
   
 
 
@@ -185,23 +185,23 @@
     
     
     
-    <section class="breadcrumbs-v5" style="background: url('/img/h2sFCtt.png') no-repeat center center; background-size: cover;">
+    <section class="breadcrumbs-v5" style="background: url('/img/confusionMatrix.png') no-repeat center center; background-size: cover;">
     
         <div class="container">
-            <h1 class="breadcrumbs-v5-title">Game Theory: How 70,000 Pokemon Players Sabotage Themselves</h1>
-            <span class="breadcrumbs-v5-subtitle">February 18, 2014
+            <h1 class="breadcrumbs-v5-title">Predicting And Mapping Arrest Types in San Francisco with LightGBM, R, ggplot2</h1>
+            <span class="breadcrumbs-v5-subtitle">February 8, 2017
             
     
               <span class="sharing index" style="float: right">
   
-		  <span class="social facebook"><a href="https://www.facebook.com/share.php?u=http://minimaxir.com/2014/02/glory-to-the-helix/"  onclick="javascript:window.open(this.href,
-  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data="http://minimaxir.com/2014/02/glory-to-the-helix/"><i class="fa fa-facebook"></i><span class="count hidden-xs"></span></a></span>
+		  <span class="social facebook"><a href="https://www.facebook.com/share.php?u=http://minimaxir.com/2017/02/predicting-arrests/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data="http://minimaxir.com/2017/02/predicting-arrests/"><i class="fa fa-facebook"></i><span class="count hidden-xs"></span></a></span>
   
-		<span class="social twitter"><a href="http://twitter.com/home/?status=Game Theory: How 70,000 Pokemon Players Sabotage Themselves - http://minimaxir.com/2014/02/glory-to-the-helix/ - via @minimaxir"  onclick="javascript:window.open(this.href,
-  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data=http://minimaxir.com/2014/02/glory-to-the-helix/><i class="fa fa-twitter"></i><span class="count hidden-xs"></span></a> </span>
+		<span class="social twitter"><a href="http://twitter.com/home/?status=Predicting And Mapping Arrest Types in San Francisco with LightGBM, R, ggplot2 - http://minimaxir.com/2017/02/predicting-arrests/ - via @minimaxir"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data=http://minimaxir.com/2017/02/predicting-arrests/><i class="fa fa-twitter"></i><span class="count hidden-xs"></span></a> </span>
 
-  <span  class="social linkedin"><a href="http://www.linkedin.com/shareArticle?mini=true&title=&url=http://minimaxir.com/2014/02/glory-to-the-helix/"  onclick="javascript:window.open(this.href,
-  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=600');return false;" data=http://minimaxir.com/2014/02/glory-to-the-helix/><i class="fa fa-linkedin"></i><span class="count hidden-xs"> -</span></a> </span>
+  <span  class="social linkedin"><a href="http://www.linkedin.com/shareArticle?mini=true&title=&url=http://minimaxir.com/2017/02/predicting-arrests/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=600');return false;" data=http://minimaxir.com/2017/02/predicting-arrests/><i class="fa fa-linkedin"></i><span class="count hidden-xs"> -</span></a> </span>
    
 			</span>
             
@@ -224,6 +224,18 @@
         <div class="content-sm container">
         
             
+			<div class="row">
+			<div class="col-md-12 md-margin-b-50">
+			
+    <div style="row">
+        <div class="col-md-6 col-md-offset-3 col-sm-12 col-sm-offset-0 margin-b-20">
+            <img src="/img/predicting-arrests/map_ani.gif" width="100%" style="border: 1px solid #eaeaea;"></img>
+        </div>
+    </div>
+
+			</div>
+			</div>
+			
 		
         
             <div class="row">
@@ -236,131 +248,106 @@
 
                         <!-- Blog Grid Content -->
 						<div class="blog-grid-content">
-						<p><a href="http://bulbapedia.bulbagarden.net/wiki/Pok%C3%A9mon_Red_and_Blue_Versions">Pokemon Red and Pokemon Blue</a> remain as two of the most iconic games in video gaming history. They have retained a lot of nostalgia value for those who grew up playing the games (such as myself), and nowadays even adult gamers revisit such classics.</p>
+						<p>The new hotness in the world of data science is <a href="https://en.wikipedia.org/wiki/Artificial_neural_network">neural networks</a>, which form the basis of <a href="https://en.wikipedia.org/wiki/Deep_learning">deep learning</a>. But while everyone is obsessing about neural networks and how deep learning is <em>magic</em> and can solve <em>any</em> problem if you just <a href="https://www.reddit.com/r/ProgrammerHumor/comments/5si1f0/machine_learning_approaches/">stack enough layers</a>, there have been many recent developments in the relatively nonmagical world of machine learning with <em>boring</em> CPUs.</p>
 
-<p>On the game live-streaming site <a href="http://www.twitch.tv/">Twitch.tv</a>, one user simply known as &ldquo;TwitchPlaysPokemon&rdquo; setup <a href="http://www.twitch.tv/twitchplayspokemon">a live-stream of Pokemon Red</a>, but with a twist: all game commands, such as &ldquo;up&rdquo;,&ldquo;down&rdquo;,&ldquo;left&rdquo;,&ldquo;right&rdquo;,&ldquo;b&rdquo;,&ldquo;a&rdquo;,&ldquo;select&rdquo;, and &ldquo;start&rdquo;, would be input by typing the appropriate command into the livestream chat. At first, this seems like a crazy idea: if thousands of people are inputting commands at the same time, could we accomplish <em>anything</em> in the game?</p>
+<p>Years before neural networks were the Swiss army knife of data science, there were <a href="https://en.wikipedia.org/wiki/Gradient_boosting">gradient-boosted machines</a>/<a href="https://en.wikipedia.org/wiki/Gradient_boosting#Gradient_tree_boosting">gradient-boosted trees</a>. GBMs/GBTs are machine learning methods which are effective on many types of data, and do not require the <a href="http://r-statistics.co/Assumptions-of-Linear-Regression.html">traditional model assumptions</a> of linear/logistic regression models. Wikipedia has a good article on the advantages of <a href="https://en.wikipedia.org/wiki/Decision_tree_learning">decision tree learning</a>, and visual diagrams of the architecture:</p>
 
-<p><img src="/img/AcXmBbM.png"  ></p>
+<p><img src="/img/predicting-arrests/CART_tree_titanic_survivors.png" alt=""></p>
 
-<p>As it turns out, it was an idea that had gone horribly right. By the time gaming forum NeoGAF <a href="http://www.neogaf.com/forum/showthread.php?t=768965">found the stream</a>, the channel had made an unexpected amount of progress; a group of 3,000 viewes made it past the first Gym (out of eight) and continued to move forward. A few days later, after the channel was covered by <a href="http://www.polygon.com/2014/2/17/5420334/twitch-plays-pokemon-captivates-with-more-than-6-5m-total-views">major news outlets</a>, the channel had completed <em>four</em> gyms, inspired the creation of a large amount of <a href="https://docs.google.com/document/d/1Luwz9wr8XkoekzU4zv3duj9D2K5AoAyqnYMcbCHZKqc">hilarious fan art</a>, and also created a <a href="http://askhelixfossil.com/">new religion</a>. You can read a summary of the stream&rsquo;s status <a href="https://docs.google.com/a/minimaxir.com/document/d/1Ka89uCBeLl9VV5GPlAKuW7yF8FGtnVmdbPnIwG8FnQ4/preview?pli=1&amp;sle=true">here</a>.</p>
+<p>GBMs, as <a href="http://scikit-learn.org/stable/modules/generated/sklearn.ensemble.GradientBoostingClassifier.html">implemented</a> in the Python package <a href="http://scikit-learn.org/stable/">scikit-learn</a>, are extremely popular in <a href="https://www.kaggle.com">Kaggle</a> machine learning competitions. But scikit-learn is relatively old, and new technologies have emerged which implement GBMs/GBTs on large datasets with massive parallelization and and in-memory computation. A popular big data machine learning library, <a href="http://www.h2o.ai">H2O</a>, has a <a href="http://docs.h2o.ai/h2o-tutorials/latest-stable/tutorials/gbm-randomforest/index.html">famous GBM implementation</a> which, <a href="https://github.com/szilard/benchm-ml">per benchmarks</a>, is over 10x faster than scikit-learn and is optimized for datasets with millions of records. But even <em>faster</em> than H2O is <a href="https://github.com/dmlc/xgboost">xgboost</a>, which can hit a 5x-10x speed-ups relative to H2O, depending on the dataset size.</p>
 
-<p>That being said, it was neither a straight nor short path to success. In the end, the gaming community fought its greatest enemy: itself. Twitch Plays Pokemon isn&rsquo;t about winning. It&rsquo;s about trying not to fail spectacularly. And they still fail regardless. It&rsquo;s an irresistible train wreck that&rsquo;s hard to stop watching.</p>
+<p>Enter <a href="https://github.com/Microsoft/LightGBM">LightGBM</a>, a new (October 2016) open-source machine learning framework by <a href="https://www.microsoft.com/en-us/">Microsoft</a> which, per <a href="https://github.com/Microsoft/LightGBM/issues/211">benchmarks</a> on release, was up to <em>4x faster</em> than xgboost! (xgboost very recently implemented a <a href="https://github.com/dmlc/xgboost/issues/1950">technique</a> also used in LightGBM, which reduced the relative speedup to just ~2x). As a result, LightGBM allows for very efficient model building on large datasets without requiring cloud computing or nVidia CUDA GPUs.</p>
 
-<h2>The Adventure Begins</h2>
+<p>A year ago, I <a href="http://minimaxir.com/2015/12/sf-arrests/">wrote an analysis</a> of the types of police arrests in San Francisco, using data from the <a href="https://data.sfgov.org">SF OpenData</a> initiative, with a <a href="http://minimaxir.com/2015/12/sf-arrest-maps/">followup article</a> analyzing the locations of these arrests. Months later, the same source dataset was used <a href="https://www.kaggle.com/c/sf-crime">for a Kaggle competition</a>. Why not give the dataset another look and test LightGBM out?</p>
 
-<p>The first areas of Pokemon Red are relatively linear up until <a href="http://bulbapedia.bulbagarden.net/wiki/Vermilion_City">Vermilion City</a>, where the third gym is located. Before that, Pokemon Trainer Red, the player character, had a few interesting encounters thanks to the bizarre overlords of the Twitch chat. Red chose <a href="http://bulbapedia.bulbagarden.net/wiki/Charmander">Charmander</a> (later evolved into <a href="http://bulbapedia.bulbagarden.net/wiki/Charmeleon_(Pok%C3%A9mon)">Charmeleon</a>) as his starter Pokemon, which he nicknamed <strong>ABBBBBBK (</strong> or &ldquo;Abby&rdquo; for short. He caught a few more basic Pokemon, including a <a href="http://bulbapedia.bulbagarden.net/wiki/Pidgey">Pidgey</a> (later evolved into <a href="http://bulbapedia.bulbagarden.net/wiki/Pidgeotto_(Pok%C3%A9mon)">Pidgeotto</a>) and <a href="http://bulbapedia.bulbagarden.net/wiki/Pidgeot_(Pok%C3%A9mon)">Pidgeot</a>), 2 <a href="http://bulbapedia.bulbagarden.net/wiki/Rattata">Rattata</a> (one nicknamed <strong>JLVWNNOOOO</strong>, i.e. &ldquo;Jay Leno&rdquo;), a <a href="http://bulbapedia.bulbagarden.net/wiki/Drowzee">Drowzee</a>, and a <a href="http://bulbapedia.bulbagarden.net/wiki/Spearow">Spearow</a> which was traded for a <a href="http://bulbapedia.bulbagarden.net/wiki/Farfetch%27d">Farfetch&rsquo;d</a>, all of which gave him a full party of Pokemon.</p>
+<h2>Playing With The Data</h2>
 
-<p><img src="/img/MwarCER.png"  ></p>
+<p><em>(You can view the R code used to process the data and generate the data visualizations in <a href="http://minimaxir.com/notebooks/predicting-arrests/">this R Notebook</a>)</em></p>
 
-<p>Since thousands of players are inputting commands at the same time, there is absolutely no strategy involved in Pokemon battles, which in most cases make the battles unwinnable. Thanks to the nature of RPG level-ups and a few lucky critical hits, Red can still persevere (although it will a few hours).</p>
+<p>The <a href="https://data.sfgov.org/Public-Safety/SFPD-Incidents-from-1-January-2003/tmnf-yvry">SFPD Incidents</a> dataset includes crime incidents in San Francisco from 1/1/2003 to 1/17/2017 (at time of analysis). Filtering the dataset only on incidents which resulted in arrests (since most incidents are trivial) leaves a dataset of 634,299 arrests total. The dataset also includes information on the type of crime, the location where the arrest occurred, and the date/time. There are 39 different types of arrests in the <strong>Category</strong> column such as Assault, Burglary, and Prostitution, which serves as the response variable.</p>
 
-<p>The Twitch channel was a very casual experience, until Red obtained HM 01 from the <a href="http://bulbapedia.bulbagarden.net/wiki/S.S._Anne">S.S. Anne</a>, an item that requires a sequence of sequential button presses to operate.</p>
+<p><img src="/img/predicting-arrests/data.png" alt=""></p>
 
-<p>Then things get complicated.</p>
+<p>Meanwhile, we can engineer features from the location and date/time. 
+Performing an exploratory data analysis of both is helpful to determine at a glance which features may be relevant (fortunately, I did that a year ago).</p>
 
-<h2>Cutting A Thin Line</h2>
+<p><img src="/img/sf-arrests/sf-arrest-when-4.png" alt=""></p>
 
-<p>HM 01 is an item that grants the Cut ability to a Pokemon, which is required to cut trees blocking progress; in this case, the tree in front of the Vermilion City Gym. In order to teach a Pokemon Cut, the player must:</p>
+<p>The location is given as latitude/longitude coordinates, so we can select a longitude <strong>X</strong> and latitude <strong>Y</strong> as features. Date/Time can be deconstructed further. We can extract the <strong>hour</strong> in which a given arrest occurred as a feature (hour can take 24 different values from 0 — 23). Likewise, we can extract the <strong>month</strong> in a similar manner (12 values, from 1 — 12). The <strong>year</strong> the crime occurred can be extracted without special encoding. (2003 — 2017). It is always helpful to include a year feature in predictive models to help account for change over time. The <strong>DayOfWeek</strong> is important, but encoding it as a numeric value is tricker; we logically encode each day of the week from 1 — 7, but which day should be #1? Making Monday #1 and Sunday #7 is the most logical, since a decision tree rule that sets a threshold on DayOfWeek values &gt; 5 will translate logically to a weekend.</p>
 
-<ol>
-<li>Bring up the Start menu.</li>
-<li>Select &ldquo;Items.&rdquo;</li>
-<li>Select HM 01.</li>
-<li>Confirm that HM 01 is to be used.</li>
-<li>Select a Pokemon to learn Cut.</li>
-<li>Confirm that the selected Pokemon is to learn Cut.</li>
-<li>Choose a move for Cut to replace.</li>
-</ol>
+<p><img src="/img/predicting-arrests/predict_matrix.png" alt=""></p>
 
-<p>The kicker? Pressing the B button or choosing the wrong option during <em>any</em> of these 7 steps takes the process back a step.</p>
+<p>That&rsquo;s six features total. There are more features which could be helpful, but let&rsquo;s check a baseline model as a start.</p>
 
-<p><img src="/img/1XSdWPY.jpg"  ></p>
+<h2>Modeling</h2>
 
-<p>At this point in the stream, the audience hit 30,000 viewers. The increased activity caused an input delay of about 20 seconds from when the Twitch user input the command in chat to when the game recognized the command. This can make navigating menus difficult when an &ldquo;up&rdquo; or a &ldquo;down&rdquo; command is applied to a menu that isn&rsquo;t even visible yet.</p>
+<p>Specifically, the model will predict the answer the question: <em>given that a San Francisco police arrest occurs at a specified time and place, what is the reason for that arrest?</em></p>
 
-<p>Additionally, as the number of viewers in a stream increases, the number of trolls increases. And those trolls loved to spam the B button command.</p>
+<p>For this post, I will use the <a href="https://github.com/Microsoft/LightGBM/tree/master/R-package">R package</a> for LightGBM (which was beta-released in January 2017; it&rsquo;s <em>extremely</em> cutting edge!) We split the dataset 70%/30% into a training set of 444,011 arrests and a test set of 190,288 arrests (due to the large amount of different category labels, the split must be <a href="https://en.wikipedia.org/wiki/Stratified_sampling">stratified</a> to ensure the training and test sets have a balanced distribution of labels; in R, this can be implemented with the <code>caret</code> package and <code>createDataPartition</code>).</p>
 
-<p>Thanks to these two factors, the channel had failed to teach any Pokemon Cut for over <em>4 hours</em>. The stream chat became a bloodbath of blame.</p>
+<p>LightGBM trains the model on the training set and evaluates it on the test set to minimize the <a href="https://www.kaggle.com/c/sf-crime#evaluation">multiclass logarithmic loss</a> of the model. For now, I use the <a href="https://github.com/Microsoft/LightGBM/blob/master/docs/Parameters.md">default parameters</a> of LightGBM, except to massively increase the number of iterations of the training algorithm, and to stop training the model early if the model stops improving. After about 4 minutes on my laptop (which is very fast for a dataset of this size!), the model returns a multilogloss of <strong>1.98</strong>.</p>
 
-<p><img src="/img/p30F3g7.png"  ></p>
+<p>That number sounds arbitrary. Is it good or bad? Let&rsquo;s compare it to the multilogloss from the <a href="https://www.kaggle.com/c/sf-crime/leaderboard">top models</a> from the Kaggle version of the dataset, where a lower score is better:</p>
 
-<p>Eventually, it happened. The Farfetch&rsquo;d was taught Cut. No one knows <em>how</em>, but it happened. But <em>that</em> was only one step towards progress.</p>
+<p><img src="/img/predicting-arrests/kaggle.png" alt=""></p>
 
-<p>The second step is actually Cutting the tree. In order to Cut:</p>
+<p>&hellip;okay, 1.98 <em>is</em> a good score, and without spending much time adding features to the model and <a href="https://github.com/Microsoft/LightGBM/blob/master/docs/Parameters-tuning.md">tuning parameters</a>! To be fair, my methodology would not necessarily result in the same score on the Kaggle dataset, but it confirms that the LightGBM model is in the top tier of models available for this problem and dataset context. And it didn&rsquo;t <a href="https://www.kaggle.com/smerity/sf-crime/fighting-crime-with-keras/output">require any neural networks</a> either!</p>
 
-<ol>
-<li>Face the tree.</li>
-<li>Bring up the Start menu.</li>
-<li>Select &ldquo;Pokemon&rdquo;</li>
-<li>Select the Pokemon with Cut.</li>
-<li>Select Cut.</li>
-</ol>
+<p>There are areas for improvement in feature engineering which <a href="https://www.kaggle.com/c/sf-crime/kernels">other entries</a> in the Kaggle competition implemented, such as a <a href="https://en.wikipedia.org/wiki/Dummy_variable_(statistics)">dummy variable</a> indicating whether the offense occurred at an intersection and which SF police station was involved in the arrest. We could also encode features such as hour and DayOfWeek as categorical features (LightGBM conveniently allows this without requiring <a href="https://en.wikipedia.org/wiki/One-hot">one-hot encoding</a> the features) instead of numeric, but in my brief testing, it made the model <em>worse</em>, interestingly.</p>
 
-<p>Same kickers as before, too. Facing the tree is even harder since the same up/down commands for navigating the menus can reorient Red away from the tree.</p>
+<h2>Analyzing the LightGBM Model</h2>
 
-<p>It took another 4 hours to cut down that tree. Later, when Red was defeated in the Gym, the tree respawned. Yeah.</p>
+<p>Another perk of not using a neural network for statistical model building is the ability to learn more about the importance of features in a model, as opposed to it being a <a href="https://en.wikipedia.org/wiki/Black_box">black box</a>. In the case of gradient boosting, we can calculate the proportional contribution of each feature to the total <a href="https://en.wikipedia.org/wiki/Information_gain_in_decision_trees">information gain</a> of the model, which will help identify the most important features, and potentially unhelpful features:</p>
 
-<p><img src="/img/NCo5N3j.png"  ></p>
+<p><img src="/img/predicting-arrests/imp.png" alt=""></p>
 
-<p>HM 01 was a harsh reminder that the more people present, the higher the chance that your task will fail. Not necessarily due to incompetence and disorganization, but due to mischief.</p>
+<p>Unsurprisingly, location features are the most important, with both location-based features establishing 70% of the total Gain in the model. But no feature is completely insignificant, which is a good thing.</p>
 
-<h2>Fighting The Ledge Boss</h2>
+<p>Back to the multilogloss of 1.98. What does that mean in the real world? What is the <em>accuracy</em> of the model? We run each of the 190,288 arrests in the test set against the model, which returns 39 probability values for each record: one for each possible category of arrest. The category with the highest probability becomes the <strong>predicted</strong> type of arrest.</p>
 
-<p>After the Vermilion City Gym was (eventually) completed, the Twitch stream progressed through <a href="http://bulbapedia.bulbagarden.net/wiki/Kanto_Route_9">Route 9</a> toward <a href="http://bulbapedia.bulbagarden.net/wiki/Lavender_Town">Lavender Town</a>. Sounds simple, until Red hit this obstacle.</p>
+<p><img src="/img/predicting-arrests/predicted_results.png" alt=""></p>
 
-<p><img src="/img/ledge.png"  ></p>
+<p>The accuracy of the model on the test set, which is the proportion of predictions where the predicted category value matches the <strong>actual</strong> category value, is <strong>39.7%</strong>, with a 95% confidence interval for the true accuracy between 39.5% and 39.9%. That seems low! However, there is catch-all &ldquo;Other Offenses&rdquo; category for an arrest; if you predicted a &ldquo;Other Offenses&rdquo; label for all the test-set values, you would get an accuracy of <em>31.1%</em>, which serves as the No Information Rate (since it would be the highest accuracy approach if there was no information at all). A 8.6 percentage point improvement is still an improvement though; many industries would <em>love</em> an 8.6 percentage point increase in accuracy, but for this context obviously it&rsquo;s not enough to usher in a <a href="https://en.wikipedia.org/wiki/Minority_Report_(film)">Minority Report</a>/<a href="https://en.wikipedia.org/wiki/Person_of_Interest_(TV_series)">Person of Interest</a> future.</p>
 
-<p>Red must walk from the left to the right through the 1-character-wide path. If Red went down, the ledge is a one-way drop, and Red must walk back to the beginning to try again.</p>
+<p>We can visualize the classifications on the test set by the model using a <a href="https://en.wikipedia.org/wiki/Confusion_matrix">confusion matrix</a>; <code>caret</code> has a simple <code>confusionMatrix()</code> function, and ggplot2 has a <code>geom_tile()</code> to map out the relationships, even with 39 classes. We can also annotate the tiles where actual label = predicted label by drawing a <code>geom_point()</code> on top. Putting it all together:</p>
 
-<p>The Twitch chat must go &ldquo;right&rdquo; about 8 times <em>without going &ldquo;down&rdquo; at all</em>.</p>
+<p><img src="/img/predicting-arrests/confusionMatrix.png" alt=""></p>
 
-<p>HM01 had input lag as a contributing factor to its failures. In this case, the trolls had <em>all</em> the power. One &ldquo;down&rdquo; ends the entire attempt. And the stream was even more popular with an audience of 50,000 people.</p>
+<p>There is, indeed, a large amount of confusion. Many of the labels are mispredicted as Other Offenses. Specifically, the model frequently confuses the combinations of Assault, Drug/Narcotics, Larceny/Theft, and Warrants, suggesting that they also may be catch-alls.</p>
 
-<p><img src="/img/h2sFCtt.png"  ></p>
+<p>In theory, the predicted probabilities from the model between similar types of crime should also be similar, which may be causing these mispredictions. We can calculate the <a href="https://en.wikipedia.org/wiki/Pearson_correlation_coefficient">Pearson correlations</a> between the predicted probabilities, and use <a href="https://en.wikipedia.org/wiki/Hierarchical_clustering">hierarchical clustering</a> to <a href="http://www.sthda.com/english/wiki/ggplot2-quick-correlation-matrix-heatmap-r-software-and-data-visualization">arrange and plot the correlations</a> and their labels in a logical order. The majority of the correlations between labels are between 0 and +/- 0.5 (weak to moderate), but their arrangement tells a different story:</p>
 
-<p>The result? Crossing the ledge took over <em>12 hours</em>. And then Red was defeated by the trainer at the end of the ledge and so getting back across the ledge took an equally absurd amount of time.</p>
+<p><img src="/img/predicting-arrests/correlationMatrix.png" alt=""></p>
 
-<p>Lesson learned? If trolls have absolute power, <em>they will use it</em> and they will use it without mercy.</p>
+<p>From top to bottom, you can see that there is a grouping of more blue-collar, physical crimes types (Assault, Vandalism), then a grouping of less-physical, white-collar crime types (Bribery, Extortion), and then a smaller grouping of seedier crime types (Liquor Laws, Prostitution).</p>
 
-<p><em>EDIT 2/19: The defeat of the ledge boss was due to the intervention of another Twitch channel which <a href="http://www.reddit.com/r/twitchplayspokemon/comments/1y1ee8/the_meta_strat_or_how_we_beat_the_ledge/">executed a meta-strategy</a>: press &ldquo;right&rdquo; in sync with the input delay: with enough people, Red would move right enough times.</em></p>
+<p>The visualization doesn&rsquo;t necessarily provide more information about the confusion matrix and the mispredictions, but <em>it looks cool</em>, which is enough.</p>
 
-<h2>Disregarding Decision Trees</h2>
+<h2>Mapping the Predicted Types of Arrests</h2>
 
-<p>After the ledge incident, the fanbase became paranoid. What other gameplay aspects in this playthrough could be compromised by trolls in the future? One concern is the PC system used to store Pokemon; the same system can also <em>release</em> them, removing them from the game forever. The risk of losing a top Pokemon to the PC due to trolls was too great and would make the game nearly unwinnable, and therefore the stream decided to avoid using the PC unless necessary.</p>
+<p>Kaggle competitions emphasize model creation, but don&rsquo;t discuss how to implement and execute models in practice. Since we can predict the type of crime based on the given location and date/time of an arrest, we can map boundaries of the mostly likely type of offense. Using <code>ggmap</code> to get a map of San Francisco, splitting San Francisco into tens of thousands of points, and predicting the most-likely type of arrest at the location with a given date/time.</p>
 
-<p>Red progressed through Lavender Town and arrived at <a href="http://bulbapedia.bulbagarden.net/wiki/Celadon_City">Celadon City</a>, where the Twitch channel defeated the Gym Leader for the fourth badge (it took awhile: there was a tree outside <em>and</em> inside the gym!)</p>
+<p>Let&rsquo;s say we want to predict the types of crime in the future, on April 15th, 2017, during 8 PM. We construct a dataset of those points and the same date/time features used to generate the model originally. Then run those fabricated points through the model again to get new predicted labels (Additionally, we need to remove &ldquo;Other Offenses&rdquo; predicted labels since they cloud up the map). Plotting each point as a <code>geom_tile</code> will interpolate regions around the city. Putting it all together:</p>
 
-<p>At this point in Pokemon Red, the game becomes more nonlinear, which started a debate on what next to do in game. Many pointed out that the party lacked a Pokemon which could learn Surf, a skill, like Cut, which was required to progress in the game much later. Red will eventually earn such a Pokemon which could learn Surf (<a href="http://bulbapedia.bulbagarden.net/wiki/Lapras">Lapras</a>) as a part of the plot, who&rsquo;s a decent combatant too.</p>
+<p><img src="/img/predicting-arrests/crime-2017-04-15-20.png" alt=""></p>
 
-<p>On the other hand, the player can also collect <a href="http://bulbapedia.bulbagarden.net/wiki/Eevee">Eevee</a> as a free Pokemon. Eevee has three evolutions: the terrible <a href="http://bulbapedia.bulbagarden.net/wiki/Flareon_(Pok%C3%A9mon)">Flareon</a>, the good <a href="http://bulbapedia.bulbagarden.net/wiki/Jolteon_(Pok%C3%A9mon)">Jolteon</a>, and the great <a href="http://bulbapedia.bulbagarden.net/wiki/Vaporeon_(Pok%C3%A9mon)">Vaporeon</a> who can also learn Surf. But in order to evolve Vaporeon Eevee into , the party must a) buy a Water Stone, and not accidentally any other elemental stone instead and b) use the Stone <em>without accidentally tossing it</em> and destroying it. Both of which are difficult due to input lag and trolls.</p>
+<p>Not too shabby. But that&rsquo;s not all; we can <em>animate</em> this map over a day by incrementing the hour, generating a map for each hour (while keeping the colors corresponding to the arrest type consistent), and then <a href="https://github.com/minimaxir/frames-to-gif-osx">stitching the maps together</a> into a GIF. Let&rsquo;s do March 14th, 2017 (<a href="https://en.wikipedia.org/wiki/Pi_Day">Pi Day</a> can be dangerous!) starting at 6 AM:</p>
 
-<p>The party had 5 Pokemon (after a Rattata was deposited  earlier into the PC), and so the stream only had the opportunity for get <em>one</em> Pokemon, since the stream did not want deposit any in the PC for fear of release. Which is the more rational path for getting a Pokemon with Surf: waiting to get a guaranteed Lapras, or getting the Eevee and hope the stream can evolve it into a Vaporeon? A guaranteed decent Pokemon or a chance at a great Pokemon?</p>
+<p><img src="/img/predicting-arrests/map_ani.gif" alt=""></p>
 
-<p>As it turns out, when 70,000 people make a decision, they aren&rsquo;t exactly rational. Instead, hilarity ensued.</p>
+<p>Wow!</p>
 
-<h2>Game Over Theory</h2>
+<h2>Conclusion</h2>
 
-<p>The stream obtained the Eevee (even after many said it was <a href="http://i.imgur.com/9cV06Yq.png">a bad idea</a>) and went to purchase a Water Stone. Due to input manipulation, they instead bought a Fire Stone, and later the Eevee evolved into the unhelpful Flareon. Chat becomes a bloodbath once again.</p>
+<p>I deliberately avoided using the term &ldquo;machine learning&rdquo; in the headline of this post because it has been overused to the point of clickbait. Indeed, neural networks/deep learning excel at processing higher-dimensional data such as text, image, and voice data, but in cases where dataset features are <a href="https://news.ycombinator.com/item?id=13563892">simple and known</a>, neural networks are not necessarily the most <em>pragmatic</em> option. CPU/RAM machine learning libraries like LightGBM are still worthwhile, despite the religious fervor for deep learning.</p>
 
-<p><img src="/img/QGiFYYu.jpg"  ></p>
-
-<p>In order to make room for Lapras in the future, the stream attempted to use a PC to deposit Flareon.</p>
-
-<p><img src="/img/0ndYCF1.png"  ></p>
-
-<p>Instead, both Abby and Jay Leno were permanently released.</p>
-
-<p><img src="/img/tumblr_n157ldJl611rvlenbo1_1280.jpg"  ></p>
-
-<p>The stream became completely derailed.</p>
-
-<p>As of today, Twitch pushes on, but everyone who&rsquo;s participating in the stream has now learned a lesson: people act in their self interest and do what they think is best. Trolls have&hellip;different self-interests. And there will always be trolls. Knowing how to fail gracefully is always valuable.</p>
-
-<p>At the least, the amount of progress the stream has made is still very, very impressive and unexpected.</p>
+<p>And there&rsquo;s still a lot of work that can be done with the SF Crime Incidents dataset. The model only predicts the type of crime given an arrest occurred; it does not predict <em>if</em> an arrest will occur at a given time and place, which would make a fun project for the future!</p>
 
 <hr>
 
-<p><em>Credit for all fan art goes to their respective artists: I&rsquo;m currently working on tracking them down.</em></p>
+<p><em>You can view all the R and ggplot2 code used to visualize the San Francisco crime data in <a href="http://minimaxir.com/notebooks/predicting-arrests/">this R Notebook</a>. You can also view the images/data used for this post in <a href="https://github.com/minimaxir/sf-arrests-predict">this GitHub repository</a></em>.</p>
+
+<p><em>You are free to use the data visualizations from this article however you wish, but it would be greatly appreciated if proper attribution is given to this article and/or myself!</em></p>
 
 						
             			 <div class="breadcrumbs-v5-subtitle sharing-post" style="color: #999 !important; padding-top:10px; border-top: 1px solid #eee">Share this article!
@@ -368,14 +355,14 @@
 
               <span class="sharing index" style="float: right; color: #999 !important;">
   
-		  <span class="social facebook"><a href="https://www.facebook.com/share.php?u=http://minimaxir.com/2014/02/glory-to-the-helix/"  onclick="javascript:window.open(this.href,
-  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data="http://minimaxir.com/2014/02/glory-to-the-helix/"><i class="fa fa-facebook"></i><span class="count hidden-xs"></span></a></span>
+		  <span class="social facebook"><a href="https://www.facebook.com/share.php?u=http://minimaxir.com/2017/02/predicting-arrests/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data="http://minimaxir.com/2017/02/predicting-arrests/"><i class="fa fa-facebook"></i><span class="count hidden-xs"></span></a></span>
   
-		<span class="social twitter"><a href="http://twitter.com/home/?status=Game Theory: How 70,000 Pokemon Players Sabotage Themselves - http://minimaxir.com/2014/02/glory-to-the-helix/ - via @minimaxir"  onclick="javascript:window.open(this.href,
-  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data=http://minimaxir.com/2014/02/glory-to-the-helix/><i class="fa fa-twitter"></i><span class="count hidden-xs"></span></a> </span>
+		<span class="social twitter"><a href="http://twitter.com/home/?status=Predicting And Mapping Arrest Types in San Francisco with LightGBM, R, ggplot2 - http://minimaxir.com/2017/02/predicting-arrests/ - via @minimaxir"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data=http://minimaxir.com/2017/02/predicting-arrests/><i class="fa fa-twitter"></i><span class="count hidden-xs"></span></a> </span>
 
-  <span  class="social linkedin"><a href="http://www.linkedin.com/shareArticle?mini=true&title=&url=http://minimaxir.com/2014/02/glory-to-the-helix/"  onclick="javascript:window.open(this.href,
-  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=600');return false;" data=http://minimaxir.com/2014/02/glory-to-the-helix/><i class="fa fa-linkedin"></i><span class="count hidden-xs"> -</span></a> </span>
+  <span  class="social linkedin"><a href="http://www.linkedin.com/shareArticle?mini=true&title=&url=http://minimaxir.com/2017/02/predicting-arrests/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=600');return false;" data=http://minimaxir.com/2017/02/predicting-arrests/><i class="fa fa-linkedin"></i><span class="count hidden-xs"> -</span></a> </span>
 
    </span>
    </div>
@@ -400,8 +387,8 @@
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://minimaxir.com/2014/02/glory-to-the-helix/';
-        var disqus_url = 'http://minimaxir.com/2014/02/glory-to-the-helix/';
+        var disqus_identifier = 'http://minimaxir.com/2017/02/predicting-arrests/';
+        var disqus_url = 'http://minimaxir.com/2017/02/predicting-arrests/';
         var disqus_script = 'embed.js';
       
     (function () {
@@ -469,6 +456,13 @@
                         
                         <article class="latest-tuts">
                                 <div class="latest-tuts-content">
+                                    <h5 class="latest-tuts-content-title"><a href="/2017/02/predicting-arrests/">Predicting And Mapping Arrest Types in San Francisco with LightGBM, R, ggplot2</a></h5>
+                                    <small class="latest-tuts-content-time"> Feb 8, 2017</small>
+                                </div>
+                        </article>
+                        
+                        <article class="latest-tuts">
+                                <div class="latest-tuts-content">
                                     <h5 class="latest-tuts-content-title"><a href="/2017/01/amazon-spark/">Playing with 80 Million Amazon Product Review Ratings Using Apache Spark</a></h5>
                                     <small class="latest-tuts-content-time"> Jan 2, 2017</small>
                                 </div>
@@ -499,13 +493,6 @@
                                 <div class="latest-tuts-content">
                                     <h5 class="latest-tuts-content-title"><a href="/2016/11/first-comment/">What Percent of the Top-Voted Comments in Reddit Threads Were Also 1st Comment?</a></h5>
                                     <small class="latest-tuts-content-time"> Nov 7, 2016</small>
-                                </div>
-                        </article>
-                        
-                        <article class="latest-tuts">
-                                <div class="latest-tuts-content">
-                                    <h5 class="latest-tuts-content-title"><a href="/2016/08/clickbait-cluster/">Visualizing Clusters of Clickbait Headlines Using Spark, Word2vec, and Plotly</a></h5>
-                                    <small class="latest-tuts-content-time"> Aug 16, 2016</small>
                                 </div>
                         </article>
                                                 
