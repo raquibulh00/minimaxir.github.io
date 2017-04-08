@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+
+  <!-- HEAD -->
+<head>
+<meta charset="utf-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Max Woolf's Data Portfolio</title>
+<meta property="article:author" content="https://www.facebook.com/max.woolf" />
+<meta name="description" content="A blog by Max Woolf about startups, technology, and blogging. It's so meta, even this acronym.">
+<link href="/rss.xml" rel="alternate" title="minimaxir | Max Woolf's Blog" type="application/atom+xml">
+<link rel="canonical" href="http://minimaxir.com/data-portfolio/">
+
+<!-- Mobile Metas -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+ <meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@minimaxir">
+<meta name="twitter:creator" content="@minimaxir">
+
+  <meta name="twitter:title" content="Max Woolf's Data Portfolio">
+
+
+  <meta name="twitter:url" content="http://minimaxir.com/data-portfolio/">
+
+
+  <meta name="twitter:description" content="A blog by Max Woolf about startups, technology, and blogging. It's so meta, even this acronym.">
+
+
+  <meta name="twitter:image:src" content="http://minimaxir.com/img/page_portfolio.jpg">
+
+ 
+ <meta content="minimaxir | Max Woolf's Blog" property="og:site_name">
+
+  <meta content="Max Woolf's Data Portfolio" property="og:title">
+
+
+  <meta content="article" property="og:type">
+
+
+  <meta content="A blog by Max Woolf about startups, technology, and blogging. It's so meta, even this acronym." property="og:description">
+
+
+  <meta content="http://minimaxir.com/data-portfolio/" property="og:url">
+
+
+
+  <meta content="http://minimaxir.com/img/page_portfolio.jpg" property="og:image">
+
+
+
+
+
+      <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="white">
+    <meta name="apple-mobile-web-app-title" content="minimaxir">
+    <link rel="apple-touch-icon-precomposed" href="apple-touch-icon-precomposed.png">
+
+<link rel="apple-touch-icon" sizes="57x57" href="http://minimaxir.com/favicon/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="http://minimaxir.com/favicon/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="http://minimaxir.com/favicon/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="http://minimaxir.com/favicon/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="http://minimaxir.com/favicon/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="http://minimaxir.com/favicon/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="http://minimaxir.com/favicon/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="http://minimaxir.com/favicon/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="http://minimaxir.com/favicon/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192"  href="http://minimaxir.com/favicon/android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://minimaxir.com/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="http://minimaxir.com/favicon/favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="http://minimaxir.com/favicon/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="http://minimaxir.com/favicon/ms-icon-144x144.png">
+<meta name="theme-color" content="#ffffff">
+
+<!-- BEGIN GLOBAL MANDATORY STYLES -->
+  <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400,400italic,700' rel='stylesheet' type='text/css'>
+
+<link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+<link href="/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
+<link href="/css/minimaxir.css" rel="stylesheet" type="text/css"/>
+<!-- END GLOBAL MANDATORY STYLES -->
+
+<!-- BEGIN THEME STYLES -->
+<link href="/css/global.css" rel="stylesheet" type="text/css"/>
+<!-- END THEME STYLES -->
+
+<!-- BEGIN JQUERY -->
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<!-- END JQUERY -->
+
+
+
+  <script>
+   $(document).ready(function() {
+ 
+  // LinkedIn
+	$( ".social.linkedin" ).children().each(function(index,value) {
+	var linkedin_button = $(this);
+	var url = linkedin_button.attr("data");
+
+  jQuery.getJSON("http://www.linkedin.com/countserv/count/share?url="+url+"&format=jsonp&callback=?", function(data) {
+  linkedin_button.html("<i class=\"fa fa-linkedin\"></i><span class=\"count hidden-xs\"> " + data.count + "</span>");
+  });
+  });
+  });
+  </script>
+  
+</head>
+<!-- END HEAD -->
+  <!-- WRAPPER -->
+<div class="wrapper">
+    <!--========== HEADER TRANSPARENT ==========-->
+    <header class="header-transparent header-transparent-bb navbar-fixed-top header-sticky">
+        <!-- Navbar -->
+        <nav class="navbar mega-menu" role="navigation">
+            <div class="container">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="menu-container">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="toggle-icon"></span>
+                    </button>
+
+                    <!-- Navbar Actions -->
+                    <div class="navbar-actions">
+
+                    </div>
+                    <!-- End Navbar Actions -->
+
+                    <!-- Logo -->
+                    <div class="navbar-logo">
+                        <a class="navbar-logo-wrap" href="/">
+                            <img class="navbar-logo-img navbar-logo-img-white" src="/minimaxir-light.png" alt="minimaxir">
+                            <img class="navbar-logo-img navbar-logo-img-dark" src="/minimaxir-dark.png" alt="minimaxir">
+                        </a>
+                    </div>
+                    <!-- End Logo -->
+                </div>
+
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse nav-collapse">
+                    <div class="menu-container">
+                        <ul class="nav navbar-nav">
+
+                            <li class="nav-item">
+                                <a class="nav-item-child" href="/about">
+                                    About
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-item-child" href="/portfolio">
+                                    Code Portfolio
+                                </a>
+
+
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-item-child" href="/data-portfolio">
+                                    Data Portfolio
+                                </a>
+
+
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+                <!-- End Navbar Collapse -->
+            </div>
+            <!--// End Container-->
+        </nav>
+        <!-- Navbar -->
+    </header>
+    <!--========== END HEADER TRANSPARENT ==========-->
+
+        <!--========== BREADCRUMBS V5 ==========-->
+    
+    
+	
+	
+    
+    
+    
+    <section class="breadcrumbs-v5" style="background: url('/img/page_portfolio.jpg') no-repeat center center; background-size: cover;">
+    
+        <div class="container">
+            <h1 class="breadcrumbs-v5-title">Max Woolf's Data Portfolio</h1>
+            <span class="breadcrumbs-v5-subtitle">
+            
+    
+			</span>
+            
+            </span>
+        </div>
+    </section>
+    
+    
+    <!--========== END BREADCRUMBS V5 ==========-->
+  
+  <!-- BEGIN BODY -->
+<body>
+
+  
+      <!--========== PAGE CONTENT ==========-->
+    <div class="bg-color-sky-light">
+        <div class="content-md container" id="main">
+        
+        <div class="heading-v1 text-center margin-b-80">
+            <h2 class="heading-v1-title"><h2>This is a list of Max Woolf&rsquo;s top data analysis projects, in the form of Jupyter/IPython Notebooks and R Notebooks. Most notebooks are available fully open-sourced on GitHub, with a MIT license.</h2>
+
+<h2>If you want to learn more about Max&rsquo;s technical projects, see his <a href="/portfolio/">coding portfolio</a>.</h2>
+</h2>
+        </div>
+            
+            
+            <div class="row margin-b-30">
+            
+            
+            
+            
+			<div class="col-md-4 md-margin-b-30">
+    <!-- Blog Classic -->
+    <article class="blog-classic portfolio">
+        <img class="img-responsive" src="/img/char-tsne-embed.png" alt="">
+        <div class="blog-classic-body">
+            <h2 class="blog-classic-title">Pretrained Character Embeddings for Deep Learning and Automatic Text Generation</h2>
+            <span class="blog-classic-subtitle">R Notebook with visualizations of character embeddings from derived 300D character vectors.</span>
+            <p class="blog-classic-paragraph"><i class="fa fa-cogs"></i> R, ggplot2</p>
+        </div>
+        <div class="blog-classic-overlay">
+            <div class="blog-classic-hover">
+                <img class="blog-classic-hover-img" src="/img/char-tsne-embed.png" alt="">
+            </div>
+            <div class="blog-classic-overlay-body">
+                <h2 class="blog-classic-title">Pretrained Character Embeddings for Deep Learning and Automatic Text Generation</h2>
+                <span class="blog-classic-subtitle">R Notebook with visualizations of character embeddings from derived 300D character vectors.</span>
+                <a class="blog-classic-paragraph" href="http://minimaxir.com/notebooks/char-tsne/" target="_blank"><i class="fa fa-cogs"></i> R, ggplot2</a>
+            </div>
+        </div>
+        <a href="http://minimaxir.com/notebooks/char-tsne/" class="blog-classic-link" target="_blank"></a>
+    </article>
+    <!-- End Blog Classic -->
+</div> 
+            
+			<div class="col-md-4 md-margin-b-30">
+    <!-- Blog Classic -->
+    <article class="blog-classic portfolio">
+        <img class="img-responsive" src="/img/confusionMatrix.png" alt="">
+        <div class="blog-classic-body">
+            <h2 class="blog-classic-title">Predicting And Mapping Arrest Types in San Francisco</h2>
+            <span class="blog-classic-subtitle">R Notebook for predicting arrest types in San Francisco.</span>
+            <p class="blog-classic-paragraph"><i class="fa fa-cogs"></i> R, ggplot2, LightGBM</p>
+        </div>
+        <div class="blog-classic-overlay">
+            <div class="blog-classic-hover">
+                <img class="blog-classic-hover-img" src="/img/confusionMatrix.png" alt="">
+            </div>
+            <div class="blog-classic-overlay-body">
+                <h2 class="blog-classic-title">Predicting And Mapping Arrest Types in San Francisco</h2>
+                <span class="blog-classic-subtitle">R Notebook for predicting arrest types in San Francisco.</span>
+                <a class="blog-classic-paragraph" href="http://minimaxir.com/notebooks/predicting-arrests/" target="_blank"><i class="fa fa-cogs"></i> R, ggplot2, LightGBM</a>
+            </div>
+        </div>
+        <a href="http://minimaxir.com/notebooks/predicting-arrests/" class="blog-classic-link" target="_blank"></a>
+    </article>
+    <!-- End Blog Classic -->
+</div> 
+            
+			<div class="col-md-4 md-margin-b-30">
+    <!-- Blog Classic -->
+    <article class="blog-classic portfolio">
+        <img class="img-responsive" src="/img/item_nth_breakdown.png" alt="">
+        <div class="blog-classic-body">
+            <h2 class="blog-classic-title">Playing with 80 Million Amazon Product Review Ratings</h2>
+            <span class="blog-classic-subtitle">R Notebook for analyzing millions of Amazon reviews using Apache Spark.</span>
+            <p class="blog-classic-paragraph"><i class="fa fa-cogs"></i> R, ggplot2, Spark</p>
+        </div>
+        <div class="blog-classic-overlay">
+            <div class="blog-classic-hover">
+                <img class="blog-classic-hover-img" src="/img/item_nth_breakdown.png" alt="">
+            </div>
+            <div class="blog-classic-overlay-body">
+                <h2 class="blog-classic-title">Playing with 80 Million Amazon Product Review Ratings</h2>
+                <span class="blog-classic-subtitle">R Notebook for analyzing millions of Amazon reviews using Apache Spark.</span>
+                <a class="blog-classic-paragraph" href="http://minimaxir.com/notebooks/amazon-spark/" target="_blank"><i class="fa fa-cogs"></i> R, ggplot2, Spark</a>
+            </div>
+        </div>
+        <a href="http://minimaxir.com/notebooks/amazon-spark/" class="blog-classic-link" target="_blank"></a>
+    </article>
+    <!-- End Blog Classic -->
+</div> 
+
+            <!--// end row -->
+            </div>      
+            
+            <div class="row margin-b-30">
+            
+            
+            
+            
+			<div class="col-md-4 md-margin-b-30">
+    <!-- Blog Classic -->
+    <article class="blog-classic portfolio">
+        <img class="img-responsive" src="/img/ggplot-interactive.png" alt="">
+        <div class="blog-classic-body">
+            <h2 class="blog-classic-title">How to Create an Interactive WebGL Network Graph</h2>
+            <span class="blog-classic-subtitle">R Notebook with a tutorial on how to create an interactive graph network using R and Plotly.</span>
+            <p class="blog-classic-paragraph"><i class="fa fa-cogs"></i> R, ggplot2, plotly</p>
+        </div>
+        <div class="blog-classic-overlay">
+            <div class="blog-classic-hover">
+                <img class="blog-classic-hover-img" src="/img/ggplot-interactive.png" alt="">
+            </div>
+            <div class="blog-classic-overlay-body">
+                <h2 class="blog-classic-title">How to Create an Interactive WebGL Network Graph</h2>
+                <span class="blog-classic-subtitle">R Notebook with a tutorial on how to create an interactive graph network using R and Plotly.</span>
+                <a class="blog-classic-paragraph" href="http://minimaxir.com/notebooks/interactive-network/" target="_blank"><i class="fa fa-cogs"></i> R, ggplot2, plotly</a>
+            </div>
+        </div>
+        <a href="http://minimaxir.com/notebooks/interactive-network/" class="blog-classic-link" target="_blank"></a>
+    </article>
+    <!-- End Blog Classic -->
+</div> 
+            
+			<div class="col-md-4 md-margin-b-30">
+    <!-- Blog Classic -->
+    <article class="blog-classic portfolio">
+        <img class="img-responsive" src="/img/reddit-first-2a.png" alt="">
+        <div class="blog-classic-body">
+            <h2 class="blog-classic-title">What Percent of the Top-Voted Comments in Reddit Threads Were Also 1st Comment?</h2>
+            <span class="blog-classic-subtitle">R Notebook for querying, analyzing, and visualizing the Reddit data to determine the impact of the first comment in a Reddit thread.</span>
+            <p class="blog-classic-paragraph"><i class="fa fa-cogs"></i> R, ggplot2</p>
+        </div>
+        <div class="blog-classic-overlay">
+            <div class="blog-classic-hover">
+                <img class="blog-classic-hover-img" src="/img/reddit-first-2a.png" alt="">
+            </div>
+            <div class="blog-classic-overlay-body">
+                <h2 class="blog-classic-title">What Percent of the Top-Voted Comments in Reddit Threads Were Also 1st Comment?</h2>
+                <span class="blog-classic-subtitle">R Notebook for querying, analyzing, and visualizing the Reddit data to determine the impact of the first comment in a Reddit thread.</span>
+                <a class="blog-classic-paragraph" href="http://minimaxir.com/notebooks/first-comment/" target="_blank"><i class="fa fa-cogs"></i> R, ggplot2</a>
+            </div>
+        </div>
+        <a href="http://minimaxir.com/notebooks/first-comment/" class="blog-classic-link" target="_blank"></a>
+    </article>
+    <!-- End Blog Classic -->
+</div> 
+            
+			<div class="col-md-4 md-margin-b-30">
+    <!-- Blog Classic -->
+    <article class="blog-classic portfolio">
+        <img class="img-responsive" src="/img//clickbait-cluster/cc-3.png" alt="">
+        <div class="blog-classic-body">
+            <h2 class="blog-classic-title">Processing Clusters of Clickbait Headlines </h2>
+            <span class="blog-classic-subtitle">Jupyter Notebook for processing Facebook headline data in preparation for plotting word embeddings.</span>
+            <p class="blog-classic-paragraph"><i class="fa fa-cogs"></i> Python, Spark, word2vec</p>
+        </div>
+        <div class="blog-classic-overlay">
+            <div class="blog-classic-hover">
+                <img class="blog-classic-hover-img" src="/img//clickbait-cluster/cc-3.png" alt="">
+            </div>
+            <div class="blog-classic-overlay-body">
+                <h2 class="blog-classic-title">Processing Clusters of Clickbait Headlines </h2>
+                <span class="blog-classic-subtitle">Jupyter Notebook for processing Facebook headline data in preparation for plotting word embeddings.</span>
+                <a class="blog-classic-paragraph" href="https://github.com/minimaxir/clickbait-cluster/blob/master/fb_news_53D_spark.ipynb" target="_blank"><i class="fa fa-cogs"></i> Python, Spark, word2vec</a>
+            </div>
+        </div>
+        <a href="https://github.com/minimaxir/clickbait-cluster/blob/master/fb_news_53D_spark.ipynb" class="blog-classic-link" target="_blank"></a>
+    </article>
+    <!-- End Blog Classic -->
+</div> 
+
+            <!--// end row -->
+            </div>      
+            
+            <div class="row margin-b-30">
+            
+            
+            
+            
+			<div class="col-md-4 md-margin-b-30">
+    <!-- Blog Classic -->
+    <article class="blog-classic portfolio">
+        <img class="img-responsive" src="/img/cnn-clickbait.png" alt="">
+        <div class="blog-classic-body">
+            <h2 class="blog-classic-title">Visualizing Clusters of Clickbait Headlines </h2>
+            <span class="blog-classic-subtitle">Jupyter Notebook for visualizing Facebook data interactively.</span>
+            <p class="blog-classic-paragraph"><i class="fa fa-cogs"></i> R, plotly</p>
+        </div>
+        <div class="blog-classic-overlay">
+            <div class="blog-classic-hover">
+                <img class="blog-classic-hover-img" src="/img/cnn-clickbait.png" alt="">
+            </div>
+            <div class="blog-classic-overlay-body">
+                <h2 class="blog-classic-title">Visualizing Clusters of Clickbait Headlines </h2>
+                <span class="blog-classic-subtitle">Jupyter Notebook for visualizing Facebook data interactively.</span>
+                <a class="blog-classic-paragraph" href="https://github.com/minimaxir/clickbait-cluster/blob/master/fb_news_53D_plotly.ipynb" target="_blank"><i class="fa fa-cogs"></i> R, plotly</a>
+            </div>
+        </div>
+        <a href="https://github.com/minimaxir/clickbait-cluster/blob/master/fb_news_53D_plotly.ipynb" class="blog-classic-link" target="_blank"></a>
+    </article>
+    <!-- End Blog Classic -->
+</div> 
+            
+			<div class="col-md-4 md-margin-b-30">
+    <!-- Blog Classic -->
+    <article class="blog-classic portfolio">
+        <img class="img-responsive" src="/img//pokemon-3d/height-weight.png" alt="">
+        <div class="blog-classic-body">
+            <h2 class="blog-classic-title">
+Processing Pokémon Data With Apache Spark</h2>
+            <span class="blog-classic-subtitle">Jupyter Notebook for processing Pokémon data in preparation for visualization.</span>
+            <p class="blog-classic-paragraph"><i class="fa fa-cogs"></i> Python, Spark</p>
+        </div>
+        <div class="blog-classic-overlay">
+            <div class="blog-classic-hover">
+                <img class="blog-classic-hover-img" src="/img//pokemon-3d/height-weight.png" alt="">
+            </div>
+            <div class="blog-classic-overlay-body">
+                <h2 class="blog-classic-title">
+Processing Pokémon Data With Apache Spark</h2>
+                <span class="blog-classic-subtitle">Jupyter Notebook for processing Pokémon data in preparation for visualization.</span>
+                <a class="blog-classic-paragraph" href="https://github.com/minimaxir/pokemon-3d/blob/master/pokemon_spark_pca.ipynb" target="_blank"><i class="fa fa-cogs"></i> Python, Spark</a>
+            </div>
+        </div>
+        <a href="https://github.com/minimaxir/pokemon-3d/blob/master/pokemon_spark_pca.ipynb" class="blog-classic-link" target="_blank"></a>
+    </article>
+    <!-- End Blog Classic -->
+</div> 
+            
+			<div class="col-md-4 md-margin-b-30">
+    <!-- Blog Classic -->
+    <article class="blog-classic portfolio">
+        <img class="img-responsive" src="/img//pokemon-3d.png" alt="">
+        <div class="blog-classic-body">
+            <h2 class="blog-classic-title">Interactive 3D Clusters of all 721 Pokémon </h2>
+            <span class="blog-classic-subtitle">Jupyter Notebook for visualizing Pokémon data in 3D.</span>
+            <p class="blog-classic-paragraph"><i class="fa fa-cogs"></i> R, ggplot2, plotly</p>
+        </div>
+        <div class="blog-classic-overlay">
+            <div class="blog-classic-hover">
+                <img class="blog-classic-hover-img" src="/img//pokemon-3d.png" alt="">
+            </div>
+            <div class="blog-classic-overlay-body">
+                <h2 class="blog-classic-title">Interactive 3D Clusters of all 721 Pokémon </h2>
+                <span class="blog-classic-subtitle">Jupyter Notebook for visualizing Pokémon data in 3D.</span>
+                <a class="blog-classic-paragraph" href="https://github.com/minimaxir/pokemon-3d/blob/master/pokemon_3d_plotly.ipynb" target="_blank"><i class="fa fa-cogs"></i> R, ggplot2, plotly</a>
+            </div>
+        </div>
+        <a href="https://github.com/minimaxir/pokemon-3d/blob/master/pokemon_3d_plotly.ipynb" class="blog-classic-link" target="_blank"></a>
+    </article>
+    <!-- End Blog Classic -->
+</div> 
+
+            <!--// end row -->
+            </div>      
+            
+            <div class="row margin-b-30">
+            
+            
+            
+            
+			<div class="col-md-4 md-margin-b-30">
+    <!-- Blog Classic -->
+    <article class="blog-classic portfolio">
+        <img class="img-responsive" src="/img/so-programming-8.png" alt="">
+        <div class="blog-classic-body">
+            <h2 class="blog-classic-title">Visualizing How Developers Rate Their Own Programming Skills</h2>
+            <span class="blog-classic-subtitle">Jupyter Notebook for visualizing Stack Overflow 2016 Survey data.</span>
+            <p class="blog-classic-paragraph"><i class="fa fa-cogs"></i> R, ggplot2</p>
+        </div>
+        <div class="blog-classic-overlay">
+            <div class="blog-classic-hover">
+                <img class="blog-classic-hover-img" src="/img/so-programming-8.png" alt="">
+            </div>
+            <div class="blog-classic-overlay-body">
+                <h2 class="blog-classic-title">Visualizing How Developers Rate Their Own Programming Skills</h2>
+                <span class="blog-classic-subtitle">Jupyter Notebook for visualizing Stack Overflow 2016 Survey data.</span>
+                <a class="blog-classic-paragraph" href="https://github.com/minimaxir/stack-overflow-survey/blob/master/stack_overflow_dev_survey.ipynb" target="_blank"><i class="fa fa-cogs"></i> R, ggplot2</a>
+            </div>
+        </div>
+        <a href="https://github.com/minimaxir/stack-overflow-survey/blob/master/stack_overflow_dev_survey.ipynb" class="blog-classic-link" target="_blank"></a>
+    </article>
+    <!-- End Blog Classic -->
+</div> 
+            
+			<div class="col-md-4 md-margin-b-30">
+    <!-- Blog Classic -->
+    <article class="blog-classic portfolio">
+        <img class="img-responsive" src="/img/facebook-reaction-1.png" alt="">
+        <div class="blog-classic-body">
+            <h2 class="blog-classic-title">Classifying the Emotions of Facebook Posts Using Reactions Data</h2>
+            <span class="blog-classic-subtitle">Jupyter Notebook for visualizing different sentiments of Facebook headline data.</span>
+            <p class="blog-classic-paragraph"><i class="fa fa-cogs"></i> R, ggplot2, plotly</p>
+        </div>
+        <div class="blog-classic-overlay">
+            <div class="blog-classic-hover">
+                <img class="blog-classic-hover-img" src="/img/facebook-reaction-1.png" alt="">
+            </div>
+            <div class="blog-classic-overlay-body">
+                <h2 class="blog-classic-title">Classifying the Emotions of Facebook Posts Using Reactions Data</h2>
+                <span class="blog-classic-subtitle">Jupyter Notebook for visualizing different sentiments of Facebook headline data.</span>
+                <a class="blog-classic-paragraph" href="https://github.com/minimaxir/interactive-facebook-reactions/blob/master/facebook_reactions_classification.ipynb" target="_blank"><i class="fa fa-cogs"></i> R, ggplot2, plotly</a>
+            </div>
+        </div>
+        <a href="https://github.com/minimaxir/interactive-facebook-reactions/blob/master/facebook_reactions_classification.ipynb" class="blog-classic-link" target="_blank"></a>
+    </article>
+    <!-- End Blog Classic -->
+</div> 
+            
+			<div class="col-md-4 md-margin-b-30">
+    <!-- Blog Classic -->
+    <article class="blog-classic portfolio">
+        <img class="img-responsive" src="/img/movie-gender-10.png" alt="">
+        <div class="blog-classic-body">
+            <h2 class="blog-classic-title">Blockbuster Movies with Male Leads Earn More Than Those with Female Leads</h2>
+            <span class="blog-classic-subtitle">Jupyter Notebook for visualizing Box Office grosses between male-led and female-led movies.</span>
+            <p class="blog-classic-paragraph"><i class="fa fa-cogs"></i> R, ggplot2</p>
+        </div>
+        <div class="blog-classic-overlay">
+            <div class="blog-classic-hover">
+                <img class="blog-classic-hover-img" src="/img/movie-gender-10.png" alt="">
+            </div>
+            <div class="blog-classic-overlay-body">
+                <h2 class="blog-classic-title">Blockbuster Movies with Male Leads Earn More Than Those with Female Leads</h2>
+                <span class="blog-classic-subtitle">Jupyter Notebook for visualizing Box Office grosses between male-led and female-led movies.</span>
+                <a class="blog-classic-paragraph" href="https://github.com/minimaxir/movie-gender/blob/master/movie_gender.ipynb" target="_blank"><i class="fa fa-cogs"></i> R, ggplot2</a>
+            </div>
+        </div>
+        <a href="https://github.com/minimaxir/movie-gender/blob/master/movie_gender.ipynb" class="blog-classic-link" target="_blank"></a>
+    </article>
+    <!-- End Blog Classic -->
+</div> 
+
+            <!--// end row -->
+            </div>      
+            
+            <div class="row margin-b-30">
+            
+            
+            
+            
+			<div class="col-md-4 md-margin-b-30">
+    <!-- Blog Classic -->
+    <article class="blog-classic portfolio">
+        <img class="img-responsive" src="/img/reddit-bigquery-3.png" alt="">
+        <div class="blog-classic-body">
+            <h2 class="blog-classic-title">How to Analyze Every Reddit Submission and Comment, in Seconds, for Free</h2>
+            <span class="blog-classic-subtitle">Jupyter notebook for analyzing and visualizing Reddit Data quickly and easily.</span>
+            <p class="blog-classic-paragraph"><i class="fa fa-cogs"></i> R, ggplot2</p>
+        </div>
+        <div class="blog-classic-overlay">
+            <div class="blog-classic-hover">
+                <img class="blog-classic-hover-img" src="/img/reddit-bigquery-3.png" alt="">
+            </div>
+            <div class="blog-classic-overlay-body">
+                <h2 class="blog-classic-title">How to Analyze Every Reddit Submission and Comment, in Seconds, for Free</h2>
+                <span class="blog-classic-subtitle">Jupyter notebook for analyzing and visualizing Reddit Data quickly and easily.</span>
+                <a class="blog-classic-paragraph" href="https://github.com/minimaxir/reddit-bigquery/blob/master/reddit_bigquery.ipynb" target="_blank"><i class="fa fa-cogs"></i> R, ggplot2</a>
+            </div>
+        </div>
+        <a href="https://github.com/minimaxir/reddit-bigquery/blob/master/reddit_bigquery.ipynb" class="blog-classic-link" target="_blank"></a>
+    </article>
+    <!-- End Blog Classic -->
+</div> 
+            
+			<div class="col-md-4 md-margin-b-30">
+    <!-- Blog Classic -->
+    <article class="blog-classic portfolio">
+        <img class="img-responsive" src="/img/sf-arrest-when-2.png" alt="">
+        <div class="blog-classic-body">
+            <h2 class="blog-classic-title">Analyzing When and Where San Francisco Criminal Arrests Occur</h2>
+            <span class="blog-classic-subtitle">Jupyter notebook for replicating analysis of when and where arrests in San Francisco occur.</span>
+            <p class="blog-classic-paragraph"><i class="fa fa-cogs"></i> R, ggplot2</p>
+        </div>
+        <div class="blog-classic-overlay">
+            <div class="blog-classic-hover">
+                <img class="blog-classic-hover-img" src="/img/sf-arrest-when-2.png" alt="">
+            </div>
+            <div class="blog-classic-overlay-body">
+                <h2 class="blog-classic-title">Analyzing When and Where San Francisco Criminal Arrests Occur</h2>
+                <span class="blog-classic-subtitle">Jupyter notebook for replicating analysis of when and where arrests in San Francisco occur.</span>
+                <a class="blog-classic-paragraph" href="https://github.com/minimaxir/sf-arrests-when-where/blob/master/crime_data_sf.ipynb" target="_blank"><i class="fa fa-cogs"></i> R, ggplot2</a>
+            </div>
+        </div>
+        <a href="https://github.com/minimaxir/sf-arrests-when-where/blob/master/crime_data_sf.ipynb" class="blog-classic-link" target="_blank"></a>
+    </article>
+    <!-- End Blog Classic -->
+</div> 
+            
+			<div class="col-md-4 md-margin-b-30">
+    <!-- Blog Classic -->
+    <article class="blog-classic portfolio">
+        <img class="img-responsive" src="/img/nyc-taxi-3.png" alt="">
+        <div class="blog-classic-body">
+            <h2 class="blog-classic-title">How to Visualize New York City Using Taxi Location Data</h2>
+            <span class="blog-classic-subtitle">Jupyter notebook for analyzing and visualizing NYC Yellow Taxi data.</span>
+            <p class="blog-classic-paragraph"><i class="fa fa-cogs"></i> R, ggplot2</p>
+        </div>
+        <div class="blog-classic-overlay">
+            <div class="blog-classic-hover">
+                <img class="blog-classic-hover-img" src="/img/nyc-taxi-3.png" alt="">
+            </div>
+            <div class="blog-classic-overlay-body">
+                <h2 class="blog-classic-title">How to Visualize New York City Using Taxi Location Data</h2>
+                <span class="blog-classic-subtitle">Jupyter notebook for analyzing and visualizing NYC Yellow Taxi data.</span>
+                <a class="blog-classic-paragraph" href="https://github.com/minimaxir/nyc-taxi-notebook/blob/master/nyc_taxi_map.ipynb" target="_blank"><i class="fa fa-cogs"></i> R, ggplot2</a>
+            </div>
+        </div>
+        <a href="https://github.com/minimaxir/nyc-taxi-notebook/blob/master/nyc_taxi_map.ipynb" class="blog-classic-link" target="_blank"></a>
+    </article>
+    <!-- End Blog Classic -->
+</div> 
+
+            <!--// end row -->
+            </div>      
+            
+            <div class="row margin-b-30">
+            
+            
+              
+
+
+
+    </div>
+    </div>
+    </div>
+    <!--========== END PAGE CONTENT ==========-->
+  
+      <!--========== FOOTER V8 ==========-->
+    <footer id="footer" class="footer-v8">
+        <div class="content-sm container">
+            <div class="row">
+                <!-- Logo -->
+                <div class="col-md-6">
+                    
+                    <p>You can contact through any of the following channels, although e-mail is preferred. Following me on Facebook and Twitter certainly doesn't hurt either!</p>
+                     <!-- <h2 class="footer-v8-title">Follow Me</h2> -->
+                    <!-- Theme Icons White Background -->
+                   <!-- <ul class="list-inline ul-li-lr-0">
+                        <li class="theme-icons-wrap"><a title="Facebook" href="https://facebook.com/max.woolf" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-facebook"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="Twitter" href="https://twitter.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-twitter"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="LinkedIn" href="https://linkedin.com/in/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-linkedin"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="GitHub" href="https://github.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-github"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="YouTube" href="https://youtube.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-youtube"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="E-Mail" href="mailto:max@minimaxir.com"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-envelope"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="RSS" href="/rss.xml"><i class="theme-icons theme-icons-white-bg theme-icons-sm radius-3 fa fa-rss"></i></a></li> -->
+                    <!-- End Theme Icons White Background -->
+                </div>
+                <!-- End Logo -->
+
+                <!-- Contact Info -->
+                <div class="col-md-6">
+                    <h3 class="footer-v8-title">Contact Info</h3>
+                    <div class="footer-v8-contact-info-bg">
+                        <ul class="list-unstyled footer-v8-contact-info">
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-map-marker"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <p class="footer-v8-contact-info-text">SOMA, San Francisco, CA</p>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-facebook"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="Facebook" href="https://facebook.com/max.woolf" target="_blank">max.woolf</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-twitter"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="Twitter" href="https://twitter.com/minimaxir" target="_blank"">@minimaxir</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-linkedin"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="LinkedIn" href="https://linkedin.com/in/minimaxir" target="_blank"">minimaxir</a>
+                                </div>
+                            </li>
+                            <li class="footer-v8-contact-info-item">
+                                <i class="footer-v8-contact-info-icon fa fa-envelope"></i>
+                                <div class="footer-v8-contact-info-media">
+                                    <a class="footer-v8-contact-info-text" title="E-Mail" href="mailto:max@minimaxir.com">max@minimaxir.com</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- End Contact Info -->
+
+            </div>
+            <!--// end row -->
+        </div>
+
+        <!-- Copyright -->
+        <div class="footer-v8-copyright">
+            <div class="container text-center">
+				Copyright &#169; 2017 Max Woolf. All Rights Reserved. 
+                minimaxir.com is powered by Jekyll and GitHub Pages.
+            </div>
+        </div>
+        <!-- Copyright -->
+    </footer>
+    <!--========== END FOOTER V8 ==========-->
+</div>
+<!-- END WRAPPER -->
+
+<!-- Sidebar Content Overlay -->
+<div class="sidebar-content-overlay"></div>
+<!-- End Sidebar Content Overlay -->
+
+<!-- Back To Top -->
+<a href="javascript:void(0);" class="js-back-to-top back-to-top-theme"></a>
+<!-- End Back To Top -->
+
+<!--========== JAVASCRIPTS(Load javascripts at bottom, this will reduce page load time) ==========-->
+<!-- BEGIN CORE PLUGINS -->
+<!--[if lt IE 9]>
+<script src="/assets/plugins/html5shiv.js"></script>
+<script src="/assets/plugins/respond.min.js"></script>
+<![endif]-->
+<script type="text/javascript" src="/js/jquery.migrate.min.js"></script>
+<script type="text/javascript" src="/js/bootstrap.min.js"></script>
+<!-- END CORE PLUGINS -->
+
+<!-- BEGIN PAGE LEVEL PLUGINS -->
+<script type="text/javascript" src="/js/jquery.back-to-top.js"></script>
+<!-- END PAGE LEVEL PLUGINS -->
+
+<!-- BEGIN PAGE LEVEL SCRIPTS -->
+<script type="text/javascript" src="/js/app.min.js"></script>
+<script type="text/javascript" src="/js/header-sticky.js"></script>
+<!-- END PAGE LEVEL SCRIPTS -->
+
+
+<!--========== END JAVASCRIPTS ==========-->
+  
+</body>
+<!-- END BODY -->
+
+</html>
