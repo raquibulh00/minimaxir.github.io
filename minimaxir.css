@@ -110,12 +110,25 @@ text-decoration: underline;
 	margin-top: 40px;
 }
 
+h2 a, h2 a:hover {
+	text-decoration: underline !important;
+}
+
 
 em, li, li a, p {
 font-weight: 400 !important;
 font-family: Source Sans Pro, sans-serif !important;
 font-size: 19px !important;
 }
+
+.blog-grid-content li {
+	padding: 10px 0px !important;
+}
+
+.blog-grid-content ul {
+	margin-bottom: 40px !important;
+}
+
 
 p {
 margin: 0 0 40px !important;
@@ -166,7 +179,7 @@ font-size: 15px !important
 
 .blog-classic-paragraph {
 font-family: 'Source Sans Pro', sans-serif !important;
-font-size: 20px !important
+font-size: 16px !important
 }
 
 .blog-classic .img-responsive {
@@ -191,7 +204,7 @@ background: rgba(52, 52, 60, 0.75) !important;
 .row.hero-index p,  .row.hero-index a {
 color: white !important;
 line-height: 2 !important;
-font-size: 17px;
+font-size: 19px;
 }
 
 .promo-block-v10-content p,  .promo-block-v10-content a {

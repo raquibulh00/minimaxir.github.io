@@ -5,9 +5,65 @@
     <description>A blog by Max Woolf about startups, technology, and blogging. It's so meta, even this acronym.</description>
     <link>http://minimaxir.com/</link>
     <atom:link href="http://minimaxir.com/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Fri, 21 Apr 2017 11:13:44 -0700</pubDate>
-    <lastBuildDate>Fri, 21 Apr 2017 11:13:44 -0700</lastBuildDate>
+    <pubDate>Thu, 04 May 2017 09:40:08 -0700</pubDate>
+    <lastBuildDate>Thu, 04 May 2017 09:40:08 -0700</lastBuildDate>
     <generator>Jekyll v3.4.3</generator>
+    
+      <item>
+        <title>Leaving Apple Inc.</title>
+        <description>&lt;p&gt;I’ve been working in the San Francisco Bay Area for about 5 years, but I’ve never publicly said where I’ve worked. Well, I was a Software QA Engineer at &lt;a href=&quot;https://www.apple.com&quot;&gt;Apple Inc.&lt;/a&gt;, on the Applications team.&lt;/p&gt;
+
+&lt;p&gt;As of last week, I handed in my resignation. While I am thankful for the opportunities I have had at Apple, it is time for me to pursue working in other areas I am passionate about and search for other companies to further my personal growth and technical skills. Resigning from a good job to look for something new might defy conventional wisdom, but the time is right for me to make this bold career move.&lt;/p&gt;
+
+&lt;h2&gt;My Apple Story&lt;/h2&gt;
+
+&lt;p&gt;I graduated with university honors at &lt;a href=&quot;http://www.cmu.edu&quot;&gt;Carnegie Mellon University&lt;/a&gt;, from the &lt;a href=&quot;http://tepper.cmu.edu&quot;&gt;Tepper School of Business&lt;/a&gt; with a focus on Computing and Information Technology (i.e. data architecture and coding algorithms), and a minor in Statistics.&lt;/p&gt;
+
+&lt;p&gt;At the end of my senior year, I received an e-mail from a Software QA Manager at Apple (who followed my &lt;a href=&quot;http://techcommntr.tumblr.com&quot;&gt;comments&lt;/a&gt; at the bottom of &lt;a href=&quot;https://techcrunch.com&quot;&gt;TechCrunch&lt;/a&gt; articles) inviting me for an on-site interview. Following an offer, I moved to the Bay Area to start my first post-undergrad job in Cupertino.&lt;/p&gt;
+
+&lt;p&gt;While I can&amp;rsquo;t really talk about what I worked on at Apple, I genuinely enjoyed the work, the product, and team. I had a high impact on the final result and I successfully helped qualify many major software releases. However, after a few years, I realized that my technical skill growth was stalling, so I looked for an an internal transfer to another department, ideally in a data analysis/software engineering role.&lt;/p&gt;
+
+&lt;p&gt;Having received no responses internally, I realized I would have to expand my search to outside of Apple.&lt;/p&gt;
+
+&lt;h2&gt;My Job Hunt&lt;/h2&gt;
+
+&lt;p&gt;I have a strong technical background from my CMU classes, but not having an explicit Computer Science degree has made it difficult to prove aptitude despite my positive annual reviews and proven experience / technical skills at Apple. So I made the decision to blog with a technical focus here at &lt;a href=&quot;http://minimaxir.com&quot;&gt;minimaxir.com&lt;/a&gt;, which gave me an avenue to showcase my programmatic skills and the opportunity to self-learn practical new tools not covered during the school curriculum, such as &lt;a href=&quot;https://www.python.org&quot;&gt;Python&lt;/a&gt;, &lt;a href=&quot;http://ggplot2.org&quot;&gt;ggplot2&lt;/a&gt;, version control with &lt;a href=&quot;https://git-scm.com&quot;&gt;git&lt;/a&gt;, and reproducible analyses via &lt;a href=&quot;http://jupyter.org&quot;&gt;Jupyter/IPython Notebooks&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;This approach has been successful and many readers have liked my my blog posts: often topping &lt;a href=&quot;https://www.reddit.com/r/dataisbeautiful/comments/4bwr7o/relationship_between_rotten_tomatoes_tomatometer/&quot;&gt;Reddit&lt;/a&gt; and &lt;a href=&quot;https://news.ycombinator.com/item?id=13429656&quot;&gt;Hacker News&lt;/a&gt;, driving hundreds of thousands of pageviews. Additionally, a couple of my posts were even cited in larger publications such as the &lt;a href=&quot;https://www.washingtonpost.com/news/the-intersect/wp/2016/06/30/facebook-news-feed-and-the-tyranny-of-positive-content/&quot;&gt;Washington Post&lt;/a&gt; and &lt;a href=&quot;https://www.buzzfeed.com/tomphillips/photos-that-prove-game-of-thrones-happened-in-real-life&quot;&gt;BuzzFeed&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;I also published many open-source technical projects to my &lt;a href=&quot;https://github.com/minimaxir&quot;&gt;GitHub&lt;/a&gt;. My &lt;a href=&quot;https://github.com/minimaxir/big-list-of-naughty-strings&quot;&gt;Big List of Naughty Strings&lt;/a&gt;, a project I made in a couple hours on a weekend inspired by my QA-ing at work, is now at &lt;strong&gt;20,000+ Stars&lt;/strong&gt; on GitHub. My &lt;a href=&quot;https://github.com/minimaxir/facebook-page-post-scraper&quot;&gt;Facebook Page Post Scraper&lt;/a&gt;, which does what the name implies, is now at 1,000+ Stars and has been used by many other businesses and journalists.&lt;/p&gt;
+
+&lt;p&gt;Developers have long argued that job seekers should have a strong public portfolio, as demonstrated experience can account for the lack of a relevant degree. After years of building up my portfolio, it became apparent that most outside recruiters I talked with never looked at my blog/GitHub, despite a strong emphasis of both on my résumé.&lt;/p&gt;
+
+&lt;p&gt;I subsequently rededicated my blog as a pragmatic demonstration of relevant skills in the data analysis job market, focusing more on practical analysis instead of quirky insights and thoughts. In the process, I obtained proficiency in a number of modern tools, including &lt;a href=&quot;http://minimaxir.com/2016/08/clickbait-cluster/&quot;&gt;interactive data visualizations&lt;/a&gt; on the web with &lt;a href=&quot;https://plot.ly&quot;&gt;Plotly&lt;/a&gt;, processing &lt;a href=&quot;http://minimaxir.com/2017/01/amazon-spark/&quot;&gt;big data&lt;/a&gt; with &lt;a href=&quot;http://spark.apache.org&quot;&gt;Apache Spark&lt;/a&gt;, high-performance &lt;a href=&quot;http://minimaxir.com/2017/02/predicting-arrests/&quot;&gt;machine learning&lt;/a&gt; with &lt;a href=&quot;https://github.com/dmlc/xgboost&quot;&gt;xgboost&lt;/a&gt; and &lt;a href=&quot;https://github.com/Microsoft/LightGBM&quot;&gt;LightGBM&lt;/a&gt;, and even &lt;a href=&quot;http://minimaxir.com/2017/04/char-embeddings/&quot;&gt;deep learning&lt;/a&gt; with &lt;a href=&quot;https://github.com/fchollet/keras&quot;&gt;Keras&lt;/a&gt; and &lt;a href=&quot;https://github.com/tensorflow/tensorflow&quot;&gt;TensorFlow&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;I am now actively looking for a &lt;strong&gt;data analyst/software engineering job within San Francisco&lt;/strong&gt;. If you are interested or if you know of companies who are looking for qualified people, please send me an email at &lt;strong&gt;&lt;a href=&quot;mailto:max@minimaxir.com&quot;&gt;max@minimaxir.com&lt;/a&gt;&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;h2&gt;Next Steps&lt;/h2&gt;
+
+&lt;p&gt;So I’ll be using my time over the next couple weeks to openly look for a new job, and to network with others in relevant industries (and be able to interview without taking a day off of work). Things have been improving: my &lt;a href=&quot;https://news.ycombinator.com/item?id=14238066&quot;&gt;comment&lt;/a&gt; in the Hacker News &amp;ldquo;Who wants to be hired?&amp;rdquo; thread generated many leads who really liked my blog/portfolio. If you’d like to meet up in San Francisco and talk about tech and data stuff, just let me know.&lt;/p&gt;
+
+&lt;p&gt;I still intend to continue blogging, not as a hobby but in a more purposeful way. I have very ambitious goals and now have more time to execute them at a deeper level. Plans include:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Web applications leveraging deep learning models, deployed at scale with &lt;a href=&quot;https://www.docker.com&quot;&gt;Docker&lt;/a&gt;/&lt;a href=&quot;https://kubernetes.io&quot;&gt;Kubernetes&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Interactive data dashboards accompanying every analytical blog post with &lt;a href=&quot;https://shiny.rstudio.com&quot;&gt;Shiny&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Code screencasts at 4k resolution on &lt;a href=&quot;https://youtube.com/minimaxir&quot;&gt;YouTube&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Data analysis live-streaming with augmented functionality on &lt;a href=&quot;https://www.twitch.tv/minimaxir&quot;&gt;Twitch&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;I have set up a &lt;strong&gt;&lt;a href=&quot;https://www.patreon.com/minimaxir&quot;&gt;Patreon&lt;/a&gt;&lt;/strong&gt; in order to subsidize my machine learning/deep learning/software/hardware needs for my blog posts. If you have found any of my blog posts useful, a monetary contribution to my Patreon would be appreciated and will be put to good creative use.&lt;/p&gt;
+
+&lt;p&gt;If you want to keep up with me and my projects, feel free to follow me on &lt;strong&gt;&lt;a href=&quot;https://www.facebook.com/max.woolf&quot;&gt;Facebook&lt;/a&gt;&lt;/strong&gt; and &lt;strong&gt;&lt;a href=&quot;https://twitter.com/minimaxir&quot;&gt;Twitter&lt;/a&gt;&lt;/strong&gt; too.&lt;/p&gt;
+</description>
+        <pubDate>Thu, 04 May 2017 09:30:00 -0700</pubDate>
+        <link>http://minimaxir.com/2017/05/leaving-apple/</link>
+        <guid isPermaLink="true">http://minimaxir.com/2017/05/leaving-apple/</guid>
+        
+        
+        <category>Personal</category>
+        
+      </item>
     
       <item>
         <title>Pretrained Character Embeddings for Deep Learning and Automatic Text Generation</title>
@@ -1033,89 +1089,6 @@ Performing an exploratory data analysis of both is helpful to determine at a gla
         <category>Data</category>
         
         <category>Interactive</category>
-        
-      </item>
-    
-      <item>
-        <title>Visualizing How Developers Rate Their Own Programming Skills</title>
-        <description>&lt;p&gt;&lt;a href=&quot;http://stackoverflow.com&quot;&gt;Stack Overflow&lt;/a&gt;, the favorite destination for software developers when something breaks for no apparent reason, recently released their &lt;a href=&quot;http://stackoverflow.com/research/developer-survey-2016&quot;&gt;2016 Stack Overflow Survey Results&lt;/a&gt; with responses to the questions of &amp;ldquo;where they work, what they build, and who they are.&amp;rdquo; You can download the released dataset containing all 56,030 cleaned responses &lt;a href=&quot;http://stackoverflow.com/research&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;One variable present in the dataset but surprisingly unaddressed in the official Stack Overflow analysis is the &lt;code&gt;programming_ability&lt;/code&gt; field — &lt;em&gt;On a scale of 1-10, how would you rate your programming ability?&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;I took a look at the 46,982 users who identified their programming ability in the survey. On average, developers rate themselves 7.09 / 10. And like most 1-10 rating scales, the distribution of self-assessments is unimodal around 7 and 8, with relatively rare 9&amp;rsquo;s and 10&amp;rsquo;s.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/stack-overflow/so-programming-0.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;We can aggregate the programming ability data by other relevant metrics in the Stack Overflow dataset, such as experience and commit activity, and hopefully find interesting trends.&lt;/p&gt;
-
-&lt;h2&gt;Sanity Checking&lt;/h2&gt;
-
-&lt;p&gt;I normally dislike working with survey data since there is a high possibility of &lt;a href=&quot;https://en.wikipedia.org/wiki/Selection_bias&quot;&gt;selection bias&lt;/a&gt; among the respondents. In Stack Overflow&amp;rsquo;s case, their marketing of the survey on Facebook and Twitter may cause a high proportion of social-media savvy respondents and discount the insight of developers who are not likely to use those services. For this reason, I will show &lt;a href=&quot;https://en.wikipedia.org/wiki/Confidence_interval&quot;&gt;confidence intervals&lt;/a&gt; whenever possible to reflect the proportionate uncertainty for groupings with insufficient data, and to also account for possibility that a minority of respondents may be dishonest and nudge their programming ability a few points higher than the truth.&lt;/p&gt;
-
-&lt;p&gt;Let&amp;rsquo;s compare programming skill to the developer&amp;rsquo;s experience in the field. In the survey, the user could classify their IT / programming experience as a range, from &amp;ldquo;Less than 1 year&amp;rdquo;, &amp;ldquo;1 - 2 years&amp;rdquo;, &amp;ldquo;2 - 5 years&amp;rdquo;, &amp;ldquo;6 - 10 years&amp;rdquo;, and &amp;ldquo;11+ years.&amp;rdquo; Since we would expect a positive correlation between skill and experience, identifying such a positive correlation visually gives a quick indication that the analysis is on the right track.&lt;/p&gt;
-
-&lt;p&gt;We can plot the average programming-ability rating for developers which fall into each of those five groups, and a confidence interval for that average. Additionally, we can make a &lt;a href=&quot;https://en.wikipedia.org/wiki/Violin_plot&quot;&gt;violin plot&lt;/a&gt; of each group to give a sense of the underlying distribution of ratings.&lt;/p&gt;
-
-&lt;p&gt;Putting it all together:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/stack-overflow/so-programming-5.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;The color dot for each group represents the average rating from the sample which the developers in the group give to themselves. The black error bars on the dot represent a 95% confidence interval for the true value of the average, obtained via &lt;a href=&quot;http://minimaxir.com/2015/09/bootstrap-resample/&quot;&gt;percentile bootstrap&lt;/a&gt; with 10,000 resamples of the dataset with replacement (since there is a large amount of source data, the confidence intervals end up being very narrow in most cases; this is one legitimate advantage of big data).&lt;/p&gt;
-
-&lt;p&gt;The violin plot for each group represents the normalized overall distribution of ratings. The narrowness of the per-value ratings reflect the amount of data available for that group: the more data available, the more narrow/precise the kernel smoothing is. Overall flat plots represent a wide selection of self-ratings, while an overall narrow plot represents a more-constrained selection (for the plot above, you can easily see the distribution shift to the right as the experience range increases).&lt;/p&gt;
-
-&lt;p&gt;Also, keep in mind that these groupings alone do not imply a &lt;strong&gt;causal relationship&lt;/strong&gt; between the two variables. Employing traditional &lt;a href=&quot;https://en.wikipedia.org/wiki/Regression_analysis&quot;&gt;regression analysis&lt;/a&gt; to build a model for predicting programming ability would be tricky: does having more experience cause programming skill to improve, or does having strong innate technical skill cause developers to remain in the industry and grow?&lt;/p&gt;
-
-&lt;p&gt;Back to the plot at hand. We can easily confirm that a positive correlation exists between programming activity and experience, with newbie developers rating their skills 5.02 / 10 on average, and extremely experienced developers rating their skills three whole ranks higher at 8.13 / 10. What&amp;rsquo;s also notable is the range of values selected: for developers with &lt;strong&gt;less than 1 years&lt;/strong&gt; of experience, the distribution is almost completely flat between 1-7, showing that they are more honest with the self-assessment of their programming skills. Inversely, developers with &lt;strong&gt;11+ years&lt;/strong&gt; of experience select 9 and 10 ratings almost as much as 7 and 8 ratings.&lt;/p&gt;
-
-&lt;p&gt;It&amp;rsquo;s a good start. We can also compare developer skill to their age, which by construction (older developers have more experience) should have parallel behavior to experience levels.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/stack-overflow/so-programming-4.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;Yes, the plot is indeed similar, with average ratings ranging from 6 to about 8. What&amp;rsquo;s interesting is the behavior for &lt;strong&gt;&amp;gt; 60&lt;/strong&gt; vs. &lt;strong&gt;50-59&lt;/strong&gt; is that the &amp;gt; 60 age programmers occasionally rate their skills at the low end of the scale, which is why the confidence interval is larger and the average is lower for that group.&lt;/p&gt;
-
-&lt;p&gt;Lastly, we can look at the salary the developer is paid (in USD) as a validation of skill. This particular chart will only focus on developers in the United States (n = 13,539), so that the salary follows expected behavior with the specified currency and cost-of-living. In this case, there are many more groups, but that makes the distribution shift more apparent, and more interesting.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/stack-overflow/so-programming-6.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;The large amount of &amp;gt;$100k earners in the dataset shows how the Stack Overflow demographic can skew toward Silicon Valley engineers. The $90k—$100k group serves as a convenient inflection point on how the distribution of self-ratings becomes a &lt;a href=&quot;http://tvtropes.org/pmwiki/pmwiki.php/Main/FourPointScale&quot;&gt;Four Point Scale&lt;/a&gt; between 7 and 10 for those who earn more than $100k.&lt;/p&gt;
-
-&lt;h2&gt;Do better developers rate themselves better?&lt;/h2&gt;
-
-&lt;p&gt;So far, the data is internally consistent. There are a few other developer-relevant statistics are available in the dataset which can easily be aggregated. A good one is the &lt;em&gt;type&lt;/em&gt; of employment. For example, do &lt;strong&gt;freelance / contract&lt;/strong&gt; developers believe they are better programmers than &lt;strong&gt;full-time&lt;/strong&gt; developers?&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/stack-overflow/so-programming-7.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;As it turns out, that guess is indeed the case, albeit it&amp;rsquo;s only a slight difference (7.53 / 10 for &lt;strong&gt;freelance / contract&lt;/strong&gt; vs. 7.29 / 10 for &lt;strong&gt;full-time&lt;/strong&gt;).&lt;/p&gt;
-
-&lt;p&gt;What about repository commit activity by developers? Are developers who commit more better? One could argue that a developer who commits code often is either vigilant with accounting for functional code changes, or polluting the codebase in an attempt to show productivity.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/stack-overflow/so-programming-8.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;Yes, developers who commit lots of code rate themselves better.&lt;/p&gt;
-
-&lt;p&gt;Lastly, let&amp;rsquo;s remember that the source of data is Stack Overflow. Are developers who use Stack Overflow as a resource better developers who know how to properly use external references in times of crisis, or are they developers who use it as a crutch to compensate for weak coding skills?&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/stack-overflow/so-programming-9.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;As it turns out, there is &lt;strong&gt;no correlation between programming ability and and the frequency of Stack Overflow visits&lt;/strong&gt;, as the averages and distributions are virtually identical across all groups.&lt;/p&gt;
-
-&lt;p&gt;There are many, many other answers available in the dataset; some allow multiple responses and are harder to parse, while others have zero correlation with programming ability as with the Stack Overflow visits, and therefore do not provide much additional insight. Although we cannot establish causal relationships with this methodology, there may be other important insights obtainable from aggregating programming ability data, but the charts presented in this post are a good start.&lt;/p&gt;
-
-&lt;hr&gt;
-
-&lt;p&gt;&lt;em&gt;As always, the full code used to process the comment data and generate the visualizations is available in &lt;a href=&quot;https://github.com/minimaxir/stack-overflow-survey/blob/master/stack_overflow_dev_survey.ipynb&quot;&gt;this Jupyter notebook&lt;/a&gt;, open-sourced &lt;a href=&quot;https://github.com/minimaxir/stack-overflow-survey&quot;&gt;on GitHub&lt;/a&gt;. The repository also contains a few unused bonus charts!&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;You are free to use the charts from this article however you wish, but it would be greatly appreciated if proper attribution is given to this article and/or myself!&lt;/em&gt;&lt;/p&gt;
-</description>
-        <pubDate>Thu, 21 Jul 2016 06:30:00 -0700</pubDate>
-        <link>http://minimaxir.com/2016/07/stack-overflow/</link>
-        <guid isPermaLink="true">http://minimaxir.com/2016/07/stack-overflow/</guid>
-        
-        
-        <category>Visualization</category>
-        
-        <category>Data</category>
         
       </item>
     

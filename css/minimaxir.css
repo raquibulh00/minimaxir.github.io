@@ -121,6 +121,15 @@ font-family: Source Sans Pro, sans-serif !important;
 font-size: 19px !important;
 }
 
+.blog-grid-content li {
+	padding: 10px 0px !important;
+}
+
+.blog-grid-content ul {
+	margin-bottom: 40px !important;
+}
+
+
 p {
 margin: 0 0 40px !important;
 color: #34343c !important;
