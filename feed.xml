@@ -5,9 +5,137 @@
     <description>A blog by Max Woolf about startups, technology, and blogging. It's so meta, even this acronym.</description>
     <link>http://minimaxir.com/</link>
     <atom:link href="http://minimaxir.com/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Thu, 04 May 2017 09:40:08 -0700</pubDate>
-    <lastBuildDate>Thu, 04 May 2017 09:40:08 -0700</lastBuildDate>
+    <pubDate>Tue, 06 Jun 2017 08:27:41 -0700</pubDate>
+    <lastBuildDate>Tue, 06 Jun 2017 08:27:41 -0700</lastBuildDate>
     <generator>Jekyll v3.4.3</generator>
+    
+      <item>
+        <title>Advantages of Using R Notebooks For Data Analysis Instead of Jupyter Notebooks</title>
+        <description>&lt;p&gt;&lt;a href=&quot;http://jupyter.org&quot;&gt;Jupyter Notebooks&lt;/a&gt;, formerly known as &lt;a href=&quot;https://ipython.org/notebook.html&quot;&gt;IPython Notebooks&lt;/a&gt;, are ubiquitous in modern data analysis. The Notebook format allows statistical code and its output to be viewed on any computer in a logical and &lt;em&gt;reproducible&lt;/em&gt; manner, avoiding both the confusion caused by unclear code and the inevitable &amp;ldquo;it only works on my system&amp;rdquo; curse.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/r-notebooks/jupyterdemo.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;In Jupyter Notebooks, each block of Python input code executes in its own cell, and the output of the block appears inline; this allows the user to iterate on the results, both to make the data transformations explicit and to and make sure the results are as expected.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/r-notebooks/jupyter.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;In addition to code blocks, Jupyter Notebooks support &lt;a href=&quot;https://en.wikipedia.org/wiki/Markdown&quot;&gt;Markdown&lt;/a&gt; cells, allowing for more detailed write-ups with easy formatting. The final Notebook can be exported as a HTML file displayable in a browser, or the raw Notebook file can be shared and &lt;a href=&quot;https://github.com/blog/1995-github-jupyter-notebooks-3&quot;&gt;rendered&lt;/a&gt; on sites like &lt;a href=&quot;https://github.com&quot;&gt;GitHub&lt;/a&gt;. Although Jupyter is a Python application, it can run kernels of &lt;a href=&quot;https://irkernel.github.io&quot;&gt;non-Python languages&lt;/a&gt;, such as &lt;a href=&quot;https://www.r-project.org&quot;&gt;R&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Over the years, there have a been a few new competitors in the reproducible data analysis field, such as &lt;a href=&quot;http://beakernotebook.com/features&quot;&gt;Beaker Notebook&lt;/a&gt; and, for heavy-duty business problems, &lt;a href=&quot;https://zeppelin.apache.org&quot;&gt;Apache Zeppelin&lt;/a&gt;. However, today we&amp;rsquo;ll look at the relatively new &lt;a href=&quot;http://rmarkdown.rstudio.com/r_notebooks.html&quot;&gt;R Notebooks&lt;/a&gt;, and how they help improve the workflows of common data analysis in ways Jupyter Notebooks can&amp;rsquo;t without third-party extensions.&lt;/p&gt;
+
+&lt;h2&gt;About R Notebooks&lt;/h2&gt;
+
+&lt;p&gt;R Notebooks are a format maintained by &lt;a href=&quot;https://www.rstudio.com&quot;&gt;RStudio&lt;/a&gt;, which develops and maintains a large number of open source R packages and tools, most notably the free-for-consumer RStudio R IDE. More specifically, R Notebooks are an extension of the earlier &lt;a href=&quot;http://rmarkdown.rstudio.com&quot;&gt;R Markdown&lt;/a&gt; &lt;code&gt;.Rmd&lt;/code&gt; format, useful for rendering analyses into HTML/PDFs, or other cool formats like &lt;a href=&quot;http://rmarkdown.rstudio.com/tufte_handout_format.html&quot;&gt;Tufte handouts&lt;/a&gt; or even &lt;a href=&quot;https://bookdown.org&quot;&gt;books&lt;/a&gt;. The default output of an R Notebook file is a &lt;code&gt;.nb.html&lt;/code&gt; file, which can be viewed as a webpage on any system. (&lt;a href=&quot;https://rpubs.com&quot;&gt;RPubs&lt;/a&gt; has many examples of R Notebooks, although I recommend using &lt;a href=&quot;https://pages.github.com&quot;&gt;GitHub Pages&lt;/a&gt; to host notebooks publicly).&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/r-notebooks/RNotebookAnimation.gif&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;Instead of having separate cells for code and text, a R Markdown file is all plain text. The cells are indicated by three backticks and a gray background in RStudio, which makes it easy to enter a code block, easy to identify code blocks at a glance, and easy to execute a notebook block-by-block. Each cell also has a green indicator bar which shows which code is running and which code is queued, line-by-line.&lt;/p&gt;
+
+&lt;p&gt;For Notebook files, a HTML webpage is automatically generated whenever the file is saved, which can immediately be viewed in any browser (the generated webpage stores the cell output and any necessary dependencies).&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/r-notebooks/notebooktest.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;R Notebooks can only be created and edited in RStudio, but this is a case where tight vertical integration of open-source software is a good thing. Among many other features, RStudio includes a file manager, a function help, a variable explorer, and a project manager; all of which make analysis much easier and faster as opposed to the browser-only Jupyter.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/r-notebooks/rstudio.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;I&amp;rsquo;ve made many, many Jupyter Notebooks and R Notebooks &lt;a href=&quot;http://minimaxir.com/data-portfolio&quot;&gt;over the years&lt;/a&gt;, which has given me insight into the strengths and weaknesses of both formats. Here are a few native features of R Notebooks which present an objective advantage over Jupyter Notebooks, particularly those not highlighted in the documentation:&lt;/p&gt;
+
+&lt;h2&gt;Version Control&lt;/h2&gt;
+
+&lt;p&gt;Version control of files with tools such as &lt;a href=&quot;https://en.wikipedia.org/wiki/Git&quot;&gt;git&lt;/a&gt; is important as it both maintains an explorable database of changes to the code files and also improves collaboration by using a centralized server (e.g. GitHub) where anyone with access to the repository can pull and push changes to the code. In the data science world, large startups such as &lt;a href=&quot;https://stripe.com/blog/reproducible-research&quot;&gt;Stripe&lt;/a&gt; and &lt;a href=&quot;https://medium.com/airbnb-engineering/scaling-knowledge-at-airbnb-875d73eff091&quot;&gt;Airbnb&lt;/a&gt; have seen a lot of success with this approach.&lt;/p&gt;
+
+&lt;p&gt;RStudio incidentally has a native git client for tracking and committing changes to a &lt;code&gt;.Rmd&lt;/code&gt; file, which is easy since &lt;code&gt;.Rmd&lt;/code&gt; files are effectively plain text files where you can see differences between versions at a per-line level. (You may not want to store the changes to the generated &lt;code&gt;.nb.html&lt;/code&gt; Notebook since they will be large and redundant to the changes made in the corresponding &lt;code&gt;.Rmd&lt;/code&gt;; I recommend adding a &lt;code&gt;*.nb.html&lt;/code&gt; rule to a &lt;code&gt;.gitignore&lt;/code&gt; file during analysis).&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/r-notebooks/git.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;The &lt;code&gt;.ipynb&lt;/code&gt; Jupyter Notebook files are blobs of JSON that also store cell output, which will result in large diffs if you keep them in version control and make any changes which result in different output. This can cause the git database to balloon and makes reading per-line diffs hard if not impossible.&lt;/p&gt;
+
+&lt;p&gt;On Hacker News, the version control issues in Jupyter are &lt;a href=&quot;https://news.ycombinator.com/item?id=14034341&quot;&gt;a common complaint&lt;/a&gt;, however a Jupyter developer noted of a possibility of &lt;a href=&quot;https://news.ycombinator.com/item?id=14035158&quot;&gt;working with RStudio&lt;/a&gt; on solving this issue.&lt;/p&gt;
+
+&lt;h2&gt;Inline Code Rendering&lt;/h2&gt;
+
+&lt;p&gt;A common practice in Jupyter Notebooks is to print common values as a part of a write-up or testing statistical code. In Jupyter Notebooks, if you want to verify the number of rows in a dataset for exploratory data analysis, you have to add an appropriate print statement to the cell to get the number &lt;code&gt;n&lt;/code&gt; rows, and then add a Markdown cell to redundantly describe what you just print in the output. &lt;/p&gt;
+
+&lt;p&gt;In R Notebooks, you can skip a step by calling such print statements in-line in the Markdown text, which will then be rendered with the Notebook. This also avoids hard-coding such numbers in the Markdown text if you change the data beforehand (e.g. parameter tuning) or if the values are nontrivial to calculate by hand.&lt;/p&gt;
+
+&lt;p&gt;For example, these lines of R Markdown from my &lt;a href=&quot;http://minimaxir.com/notebooks/first-comment/&quot;&gt;Reddit First Comment Notebook&lt;/a&gt;:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/r-notebooks/inline.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;translate into:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/r-notebooks/reddit.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;h2&gt;Metadata&lt;/h2&gt;
+
+&lt;p&gt;R Notebooks are configured with a &lt;a href=&quot;http://yaml.org&quot;&gt;YAML&lt;/a&gt; header, which can include common attributes such as title, author, date published, and other relevant options. These fields will then be configured correctly in the metadata for HTML/PDF/Handouts output. Here&amp;rsquo;s an example from &lt;a href=&quot;http://minimaxir.com/notebooks/amazon-spark/&quot;&gt;one of my notebooks&lt;/a&gt;:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-yaml&quot; data-lang=&quot;yaml&quot;&gt;&lt;span class=&quot;nn&quot;&gt;---&lt;/span&gt;
+&lt;span class=&quot;l-Scalar-Plain&quot;&gt;title&lt;/span&gt;&lt;span class=&quot;p-Indicator&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Playing&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;with&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;80&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Million&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Amazon&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Product&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Review&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Ratings&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Using&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Apache&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Spark&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;l-Scalar-Plain&quot;&gt;author&lt;/span&gt;&lt;span class=&quot;p-Indicator&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Max&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Woolf&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;(@minimaxir)&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;l-Scalar-Plain&quot;&gt;date&lt;/span&gt;&lt;span class=&quot;p-Indicator&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;January&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;2nd,&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;2017&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;l-Scalar-Plain&quot;&gt;output&lt;/span&gt;&lt;span class=&quot;p-Indicator&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;l-Scalar-Plain&quot;&gt;html_notebook&lt;/span&gt;&lt;span class=&quot;p-Indicator&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;l-Scalar-Plain&quot;&gt;highlight&lt;/span&gt;&lt;span class=&quot;p-Indicator&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;l-Scalar-Plain&quot;&gt;tango&lt;/span&gt;
+    &lt;span class=&quot;l-Scalar-Plain&quot;&gt;mathjax&lt;/span&gt;&lt;span class=&quot;p-Indicator&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;l-Scalar-Plain&quot;&gt;null&lt;/span&gt;
+    &lt;span class=&quot;l-Scalar-Plain&quot;&gt;number_sections&lt;/span&gt;&lt;span class=&quot;p-Indicator&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;l-Scalar-Plain&quot;&gt;yes&lt;/span&gt;
+    &lt;span class=&quot;l-Scalar-Plain&quot;&gt;theme&lt;/span&gt;&lt;span class=&quot;p-Indicator&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;l-Scalar-Plain&quot;&gt;spacelab&lt;/span&gt;
+    &lt;span class=&quot;l-Scalar-Plain&quot;&gt;toc&lt;/span&gt;&lt;span class=&quot;p-Indicator&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;l-Scalar-Plain&quot;&gt;yes&lt;/span&gt;
+    &lt;span class=&quot;l-Scalar-Plain&quot;&gt;toc_float&lt;/span&gt;&lt;span class=&quot;p-Indicator&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;l-Scalar-Plain&quot;&gt;yes&lt;/span&gt;
+&lt;span class=&quot;nn&quot;&gt;---&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Said metadata features are &lt;a href=&quot;https://github.com/ipython/ipython/issues/6073&quot;&gt;often requested but unimplemented&lt;/a&gt; in Jupyter.&lt;/p&gt;
+
+&lt;h2&gt;Notebook Theming&lt;/h2&gt;
+
+&lt;p&gt;As noted in the example metadata above, R Notebooks allow extensive theming. Jupyter Notebooks do &lt;a href=&quot;https://github.com/dunovank/jupyter-themes&quot;&gt;support themes&lt;/a&gt;, but with a third-party Python package, or placing custom CSS in an &lt;a href=&quot;https://stackoverflow.com/a/32158550&quot;&gt;odd location&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Like Jupyter Notebooks, the front-end of browser-based R Notebooks is based off of the &lt;a href=&quot;http://getbootstrap.com&quot;&gt;Bootstrap&lt;/a&gt; HTML framework. R Notebooks, however, allow you to natively select the style of code syntax highlighting via &lt;code&gt;highlight&lt;/code&gt; (similar options as &lt;a href=&quot;https://help.farbox.com/pygments.html&quot;&gt;pygments&lt;/a&gt;) and also the entire Bootstrap theme via &lt;code&gt;theme&lt;/code&gt; (with a selection from the excellent &lt;a href=&quot;https://bootswatch.com&quot;&gt;Bootswatch&lt;/a&gt; themes by &lt;a href=&quot;https://twitter.com/thomashpark&quot;&gt;Thomas Park&lt;/a&gt;), giving your Notebook a unique look without adding dependencies.&lt;/p&gt;
+
+&lt;h2&gt;Data Tables&lt;/h2&gt;
+
+&lt;p&gt;When you print a data frame in a Jupyter Notebook, the output appears as a standard &lt;em&gt;boring&lt;/em&gt; HTML table:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/r-notebooks/htmltable.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;No cell block output is ever truncated. Accidentally printing an entire 100,000+ row table to a Jupyter Notebook is a mistake you only make &lt;em&gt;once&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;R Notebook tables are pretty tables with pagination for both rows and columns, and can support large amounts of data if necessary.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/r-notebooks/rtable.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;The R Notebook output table also includes the data type of the column, which is helpful for debugging unexpected issues where a column has an unintended data type (e.g. a numeric &lt;code&gt;&amp;lt;dbl&amp;gt;&lt;/code&gt; column or a datetime &lt;code&gt;&amp;lt;S3: POSIXct&amp;gt;&lt;/code&gt; column is parsed as a text-based &lt;code&gt;&amp;lt;chr&amp;gt;&lt;/code&gt; column).&lt;/p&gt;
+
+&lt;h2&gt;Table of Contents&lt;/h2&gt;
+
+&lt;p&gt;A Table of Contents always helps navigating, particularly in a PDF export. Jupyter Notebooks &lt;a href=&quot;https://github.com/minrk/ipython_extensions&quot;&gt;requires an extension&lt;/a&gt; for a ToC, while R Notebooks will natively create one from section headers (controllable via &lt;code&gt;toc&lt;/code&gt; and &lt;code&gt;number_sections&lt;/code&gt;). An optional &lt;code&gt;toc_float&lt;/code&gt; parameter causes the Table of Contents to float on the left in the browser, making it always accessible.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/r-notebooks/notebookheader.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;In conclusion, R Notebooks haven&amp;rsquo;t received much publicity since the benefits aren&amp;rsquo;t immediately obvious, but for the purpose of reproducible analyses, the breadth of native features allows for excellent utility while avoiding dependency hell. Running R in an R Notebook is a significantly better experience than running R in a Jupyter Notebook. The advantages present in R Notebooks can also provide guidance for feature development in other Notebook software, which improves the data analysis ecosystem as a whole.&lt;/p&gt;
+
+&lt;p&gt;However, there&amp;rsquo;s an elephant in the room&amp;hellip;&lt;/p&gt;
+
+&lt;h2&gt;What About Python?&lt;/h2&gt;
+
+&lt;p&gt;So you might be thinking &amp;ldquo;an R Notebook forces you to use R, but &lt;em&gt;serious&lt;/em&gt; data science work is done using Python!&amp;rdquo; Plot twist: you can use Python in an R Notebook!&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/r-notebooks/python.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;Well, sort of. The Python session ends after the cell executes, making it unhelpful for tasks other than &lt;em&gt;ad hoc&lt;/em&gt; scripts.&lt;/p&gt;
+
+&lt;p&gt;The topic on whether R or Python is better for data analysis is a &lt;a href=&quot;https://news.ycombinator.com/item?id=14056098&quot;&gt;common&lt;/a&gt; &lt;a href=&quot;https://news.ycombinator.com/item?id=13239530&quot;&gt;religious&lt;/a&gt; &lt;a href=&quot;https://news.ycombinator.com/item?id=12301996&quot;&gt;flamewar&lt;/a&gt; topic which is best saved for a separate blog post (tl;dr: I disagree with the paraphrased quote above in that both languages have their advantages and you&amp;rsquo;ll benefit significantly from knowing both ecosystems).&lt;/p&gt;
+
+&lt;p&gt;And I wouldn&amp;rsquo;t count R out of &amp;ldquo;serious data science&amp;rdquo;. You can use R &lt;a href=&quot;http://spark.rstudio.com&quot;&gt;seamlessly&lt;/a&gt; with big data tools like &lt;a href=&quot;https://spark.apache.org&quot;&gt;Apache Spark&lt;/a&gt;, and R can &lt;a href=&quot;https://rstudio.github.io/keras/&quot;&gt;now&lt;/a&gt; use &lt;a href=&quot;https://keras.io&quot;&gt;Keras&lt;/a&gt;/&lt;a href=&quot;https://www.tensorflow.org&quot;&gt;TensorFlow&lt;/a&gt; for deep learning with near-API-parity to the Python version. &lt;em&gt;Hmm&lt;/em&gt;.&lt;/p&gt;
+</description>
+        <pubDate>Tue, 06 Jun 2017 08:30:00 -0700</pubDate>
+        <link>http://minimaxir.com/2017/06/r-notebooks/</link>
+        <guid isPermaLink="true">http://minimaxir.com/2017/06/r-notebooks/</guid>
+        
+        
+        <category>Data</category>
+        
+      </item>
     
       <item>
         <title>Leaving Apple Inc.</title>
@@ -988,100 +1116,6 @@ Performing an exploratory data analysis of both is helpful to determine at a gla
         <pubDate>Tue, 16 Aug 2016 06:30:00 -0700</pubDate>
         <link>http://minimaxir.com/2016/08/clickbait-cluster/</link>
         <guid isPermaLink="true">http://minimaxir.com/2016/08/clickbait-cluster/</guid>
-        
-        
-        <category>Visualization</category>
-        
-        <category>Data</category>
-        
-        <category>Interactive</category>
-        
-      </item>
-    
-      <item>
-        <title>Interactive 3D Clusters of all 721 Pokémon Using Spark and Plotly</title>
-        <description>&lt;p&gt;There has been a lot of talk lately about &lt;a href=&quot;http://www.pokemon.com/us/&quot;&gt;Pokémon&lt;/a&gt; due to the runaway success of &lt;a href=&quot;http://www.pokemongo.com&quot;&gt;Pokémon GO&lt;/a&gt; (I myself am Trainer Level 18 and on &lt;span style=&quot;color: #e74c3c&quot;&gt;Team Valor&lt;/span&gt;). Players revel in the nostalgia of 1996 by now having the ability catching the original 151 Pokémon in real life.&lt;/p&gt;
-
-&lt;p&gt;However, while players most-fondly remember the first generation, Pokémon is currently on its &lt;em&gt;sixth&lt;/em&gt; generation, with the seventh generation beginning later this year with &lt;a href=&quot;http://www.pokemon-sunmoon.com/en-us/&quot;&gt;Pokémon Sun and Moon&lt;/a&gt;. As of now, there are &lt;em&gt;721&lt;/em&gt; total Pokémon &lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_National_Pok%C3%A9dex_number&quot;&gt;in the Pokédex&lt;/a&gt;, from &lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Bulbasaur_(Pok%C3%A9mon)&quot;&gt;Bulbasaur&lt;/a&gt; to &lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Volcanion_(Pok%C3%A9mon)&quot;&gt;Volcanion&lt;/a&gt;, not counting alternate Forms of several Pokémon such as &lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Mega_Evolution&quot;&gt;Mega Evolutions&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;In the meantime, I&amp;rsquo;ve seen a few interesting data visualizations which capitalize on the frenzy. A &lt;a href=&quot;https://www.reddit.com/r/dataisbeautiful/comments/4uumqs/gotta_plot_em_all_the_height_versus_weight_of/&quot;&gt;highly-upvoted post&lt;/a&gt; on the Reddit subreddit /r/dataisbeautiful by &lt;a href=&quot;https://www.reddit.com/user/nvvknvvk&quot;&gt;/u/nvvknvvk&lt;/a&gt; charts the Height vs. Weight of the original 151 Pokémon. Anh Le of Duke University posted a &lt;a href=&quot;http://people.duke.edu/%7Eaql3/gotta-plot-them-all/&quot;&gt;cluster analysis&lt;/a&gt; of the original 151 Pokémon using &lt;a href=&quot;https://en.wikipedia.org/wiki/Principal_component_analysis&quot;&gt;principal component analysis&lt;/a&gt; (PCA), by compressing the 6 primary Pokémon stats into 2 dimensions.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/pokemon-3d/pokemon-2d.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;However, those visualizations think too small, and only on a small subset of Pokémon. Why not capture &lt;em&gt;every single aspect&lt;/em&gt; of &lt;em&gt;every Pokémon&lt;/em&gt; and violently crush that data into &lt;em&gt;three&lt;/em&gt; dimensions?&lt;/p&gt;
-
-&lt;h2&gt;Spark (30% chance of paralyzing the target)&lt;/h2&gt;
-
-&lt;p&gt;Last week, &lt;a href=&quot;http://spark.apache.org&quot;&gt;Apache Spark 2.0.0&lt;/a&gt; was released, a major milestone in big data analysis. Spark 2.0 is potentially &lt;a href=&quot;https://databricks.com/blog/2016/05/11/apache-spark-2-0-technical-preview-easier-faster-and-smarter.html&quot;&gt;10x as fast&lt;/a&gt; as the previous 1.6 version, with much improved APIs and documentation (you can actually import CSVs now!). The Python interface (which I use for this post), &lt;a href=&quot;http://spark.apache.org/docs/latest/api/python/&quot;&gt;PySpark&lt;/a&gt;, is now almost as functionally capable as the leading &lt;a href=&quot;http://scikit-learn.org/stable/&quot;&gt;scikit-learn&lt;/a&gt; machine learning tool, but with the ability to scale to terabyte-size datasets. &lt;/p&gt;
-
-&lt;p&gt;The data source of both visualizations above is the &lt;a href=&quot;https://pokeapi.co&quot;&gt;PokéAPI&lt;/a&gt;, whose data is open-source and &lt;a href=&quot;https://github.com/PokeAPI/pokeapi/tree/master/data/v2/csv&quot;&gt;available as CSVs&lt;/a&gt; on GitHub, and &lt;em&gt;unusually&lt;/em&gt; clean with proper normalization. The dump is thorough, with full coverage of all the up-to-date  Pokémon information available in the games up to the current generation.&lt;/p&gt;
-
-&lt;p&gt;The PokéAPI data includes numerical variables representing each Pokémon, including the six primary Pokémon stats (HP, Attack, Defense, Special Attack, Special Defense, Speed) and Height/Weight. We can aggregate those variables for all Pokémon and normalize them so that they are within [&lt;strong&gt;0.0&lt;/strong&gt;, &lt;strong&gt;1.0&lt;/strong&gt;] for easier computation when the data is eventually reduced into 3 dimensions. &lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/pokemon-3d/height-weight.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;But a tool like Spark is overkill for just normalization. What Spark &lt;em&gt;isn&amp;rsquo;t&lt;/em&gt; overkill for is working with categorical variables. Something we can do is encode variables as &lt;a href=&quot;https://en.wikipedia.org/wiki/Dummy_variable_(statistics)&quot;&gt;dummy variables&lt;/a&gt;, as Spark has a few tools especially helpful for that workflow. For example, let&amp;rsquo;s say we want to encode a Pokémon&amp;rsquo;s type(s) as binary variables.&lt;/p&gt;
-
-&lt;p&gt;There are currently 18 &lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Type&quot;&gt;different types&lt;/a&gt; of Pokémon, and a Pokémon can have either 1 or 2 types. We can encode a Pokémon&amp;rsquo;s type(s) in the field by setting a &lt;strong&gt;1.0&lt;/strong&gt; in columns which represent a given&amp;rsquo;s Pokémon&amp;rsquo;s type, and &lt;strong&gt;0.0&lt;/strong&gt; in all other columns. Bulbasaur, for example, is a Grass/Poison type. We set &lt;strong&gt;1.0&lt;/strong&gt; to the column representing Grass for Bulbasaur, and &lt;strong&gt;1.0&lt;/strong&gt; to the column representing Poison, and 16 total &lt;strong&gt;0.0&lt;/strong&gt; for all other columns (in the end, the data representing a Pokémon&amp;rsquo;s type is a 721x18 matrix). This approach is similar to the &lt;a href=&quot;https://en.wikipedia.org/wiki/One-hot&quot;&gt;one-hot encoding&lt;/a&gt; technique used for high-level data analysis. Spark allows the use of sparse data structures, so Spark does not have to store each &lt;strong&gt;0.0&lt;/strong&gt; in memory; just the indices of each &lt;strong&gt;1.0&lt;/strong&gt; and the size of the vector itself. Printing the table confirms that data structure.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/pokemon-3d/sparse.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;Here are the other Pokémon attributes present in the PokéAPI data dump that we can encode as binary columns:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Pokémon &lt;strong&gt;moves&lt;/strong&gt;, including all moves the Pokémon is capable of learning via leveling up/TMs/egg moves in any version of the game. This variable results in 613 added columns.&lt;/li&gt;
-&lt;li&gt;Pokémon &lt;strong&gt;abilities&lt;/strong&gt;, which are passive effects, and each Pokémon can have one of up to 3 unique abilities (adds 191 columns)&lt;/li&gt;
-&lt;li&gt;Pokémon &lt;strong&gt;color&lt;/strong&gt;, which is just as it sounds (10 columns)&lt;/li&gt;
-&lt;li&gt;Pokémon &lt;strong&gt;shape&lt;/strong&gt;, which apparently includes classifications such as &amp;ldquo;ball,&amp;rdquo; &amp;ldquo;quadruped,&amp;rdquo; and &amp;ldquo;squiggle&amp;rdquo;? (14 columns)&lt;/li&gt;
-&lt;li&gt;Pokémon &lt;strong&gt;habitat&lt;/strong&gt; where the Pokémon can generally be found (or &lt;em&gt;not&lt;/em&gt; found in the case of Event Pokémon) (10 columns)&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Combining all the sparse vectors with special Spark functions, we have a dataframe of 863 features. Using PCA, we reduce the dimensionality that data from 863 dimensions to 50 dimensions (we&amp;rsquo;re not going down to 3 dimensions &lt;em&gt;just&lt;/em&gt; yet)&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/pokemon-3d/pca.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;The top 3 principal components of this 50D model explain only 12.8% of the data variance in the 3D space, which means that clusters would likely not be apparent if plotted as-is. A smart thing to do would be to use a clustering algorithm. t-SNE is a &lt;a href=&quot;https://lvdmaaten.github.io/tsne/&quot;&gt;relatively new algorithm&lt;/a&gt; by Laurens van der Maaten that is surprisingly effective at clustering high-dimensional data into low-dimensional space, without causing high amounts of blending between points (unfortunately, it can be computationally intensive, which is one of the reason I reduced the dimensionality of the data to 50D first). Most academic papers focus on 2D representations of the data resulting from t-SNE, but there&amp;rsquo;s nothing preventing users from projecting the data to 3D!&lt;/p&gt;
-
-&lt;p&gt;Running &lt;a href=&quot;https://github.com/danielfrg/tsne&quot;&gt;a Python wrapper&lt;/a&gt; of t-SNE on the PCA-reduced dataset results in magic.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/pokemon-3d/t-sne.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;As you can see, the Pokémon along the same evolutionary track have very close [x,y,z] values, which indicates that the clustering algorithm accurately placed them close together. Notably, it classified the preevolutions of the common bug Pokémon all together (&lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Caterpie_(Pok%C3%A9mon)&quot;&gt;Caterpie&lt;/a&gt;/&lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Metapod_(Pok%C3%A9mon)&quot;&gt;Metapod&lt;/a&gt;/&lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Weedle_(Pok%C3%A9mon)&quot;&gt;Weedle&lt;/a&gt;/&lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Kakuna_(Pok%C3%A9mon)&quot;&gt;Kakuna&lt;/a&gt;) even though they are of different evolutionary lines, but have similar attributes/movesets. The final evolutions of these Bug Pokémon, &lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Butterfree_(Pok%C3%A9mon)&quot;&gt;Butterfree&lt;/a&gt; and &lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Beedrill_(Pok%C3%A9mon)&quot;&gt;Beedrill&lt;/a&gt;, are clustered much differently than their pre-evolution stages, because the preevolutions are statistically useless while Butterfree/Beedrill are not as useless.&lt;/p&gt;
-
-&lt;p&gt;How do you best visualize these clusters? That&amp;rsquo;s where Plotly comes in.&lt;/p&gt;
-
-&lt;h2&gt;Nasty Plotly (Sharply raises Special Attack)&lt;/h2&gt;
-
-&lt;p&gt;Plotly is a data visualization tool, now open-source, which allows users to create interactive visualizations with a robust API. I previously used it for &lt;a href=&quot;http://minimaxir.com/2016/06/interactive-reactions/&quot;&gt;visualizations with R&lt;/a&gt;, but as it turns out, the Python API to Plotly is much more powerful. Simply plotting a static 3D chart using something like &lt;a href=&quot;http://matplotlib.org&quot;&gt;matplotlib&lt;/a&gt; with the default settings is not insightful.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/pokemon-3d/pokemon_pca_test.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;In this case, the ability to manipulate the perspective of the data is very important. And so with a little bit of Plotly documentation-delving, I managed to create the 3D chart that you  hopefully saw at the top of this page.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/pokemon-3d.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;Each dot is colored by the Pokémon&amp;rsquo;s type in the first slot for simplicity (one exception is Normal/Flying Pokémon like &lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Pidgey_(Pok%C3%A9mon)&quot;&gt;Pidgey&lt;/a&gt;; I manually converted their displayed type to Flying because the omission was notable due to Game Freak&amp;rsquo;s addiction to that particular pairing in the early generations). This gives a surprisingly coherent visualization of the groups of Pokémon types present. But it&amp;rsquo;s also important to note the groups &lt;em&gt;outside&lt;/em&gt; the clusters, in order to identify incorrect clusters, or to identify Pokémon which have been clusters as &lt;em&gt;especially&lt;/em&gt; unique.&lt;/p&gt;
-
-&lt;p&gt;A few interesting observations I&amp;rsquo;ve noted:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;There are two far-away colocated clusters for Pokémon which are useless: gimmick Pokémon with limited movesets like &lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Wobbuffet_(Pok%C3%A9mon)&quot;&gt;Wobbuffet&lt;/a&gt;, &lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Ditto_(Pok%C3%A9mon)&quot;&gt;Ditto&lt;/a&gt;, &lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Smeargle_(Pok%C3%A9mon)&quot;&gt;Smeargle&lt;/a&gt;, and &lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Magikarp_(Pok%C3%A9mon)&quot;&gt;Magikarp&lt;/a&gt;, and &lt;em&gt;Bug&lt;/em&gt; Pokémon with limited movesets, as mentioned before, like &lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Burmy_(Pok%C3%A9mon)&quot;&gt;Burmy&lt;/a&gt; and &lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Kricketot_(Pok%C3%A9mon)&quot;&gt;Kricketot&lt;/a&gt;.&lt;/li&gt;
-&lt;li&gt;There are often close clusters for Legendary Pokémon trios (&lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Articuno_(Pok%C3%A9mon)&quot;&gt;Articuno&lt;/a&gt;, &lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Zapdos_(Pok%C3%A9mon)&quot;&gt;Zapdos&lt;/a&gt;, &lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Moltres_(Pok%C3%A9mon)&quot;&gt;Moltres&lt;/a&gt;; the Pokémon which represent the teams in Pokémon GO) due to similar stats/moves.&lt;/li&gt;
-&lt;li&gt;The Flying cluster is interesting due to the presence of other Types of Pokémon which have a different first type, but the location correctly implies that they are closer to their Flying secondary type (&lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Zubat_(Pok%C3%A9mon)&quot;&gt;Zubat&lt;/a&gt;, &lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Murkrow_(Pok%C3%A9mon)&quot;&gt;Murkrow&lt;/a&gt;, &lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Xatu_(Pok%C3%A9mon)&quot;&gt;Xatu&lt;/a&gt;, &lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Wingull_(Pok%C3%A9mon)&quot;&gt;Wingull&lt;/a&gt;)&lt;/li&gt;
-&lt;li&gt;Lastly, the Pokémon God &lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Arceus_(Pok%C3%A9mon)&quot;&gt;Arceus&lt;/a&gt;, which has the highest stat total of the base Pokémon, is located in its own cluster alongside similarly-statistically-powerful Pokémon such as &lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Dialga_(Pok%C3%A9mon)&quot;&gt;Dialga&lt;/a&gt;, &lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Dragonite_(Pok%C3%A9mon)&quot;&gt;Dragonite&lt;/a&gt;, and &lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Gyarados_(Pok%C3%A9mon)&quot;&gt;Gyarados&lt;/a&gt;. &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Interactive 3D was definitely a good idea for this type of visualization, as a 2D visualization would be difficult to read, and even more difficult to discern the clusters. And this project was a good reason to test out the capabilities of Spark 2.0 and prototype code for future data analysis projects (the next dataset I use will be &lt;em&gt;much&lt;/em&gt; larger, I promise). I do have a few ideas for improvements to the 3D chart in the pipeline, but maybe I&amp;rsquo;ll save them for when the seventh generation is fully released.&lt;/p&gt;
-
-&lt;hr&gt;
-
-&lt;p&gt;&lt;em&gt;The full code used to process the Pokémon data using Spark is available in &lt;a href=&quot;https://github.com/minimaxir/pokemon-3d/blob/master/pokemon_spark_pca.ipynb&quot;&gt;this Jupyter notebook&lt;/a&gt;, and the code used to generate the Plotly visualizations is available in &lt;a href=&quot;https://github.com/minimaxir/pokemon-3d/blob/master/pokemon_3d_plotly.ipynb&quot;&gt;this Jupyter notebook&lt;/a&gt;, both open-sourced &lt;a href=&quot;https://github.com/minimaxir/pokemon-3d&quot;&gt;on GitHub&lt;/a&gt;.  In the GitHub repository, you can download standalone, offline versions of the 3D chart; including an extra chart with cluster meshes, which was unused for this post due to performance issues.&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;You are free to use the data visualizations from this article however you wish, but it would be greatly appreciated if proper attribution is given to this article and/or myself!&lt;/em&gt;&lt;/p&gt;
-</description>
-        <pubDate>Wed, 03 Aug 2016 06:30:00 -0700</pubDate>
-        <link>http://minimaxir.com/2016/08/pokemon-3d/</link>
-        <guid isPermaLink="true">http://minimaxir.com/2016/08/pokemon-3d/</guid>
         
         
         <category>Visualization</category>

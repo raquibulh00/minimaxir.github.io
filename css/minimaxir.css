@@ -136,6 +136,10 @@ color: #34343c !important;
 line-height: 1.8 !important;
 }
 
+.alert>p {
+margin: 0px !important;
+}
+
 .breadcrumbs-v5 .breadcrumbs-v5-title, .breadcrumbs-v5 .breadcrumbs-v5-subtitle {
 text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
 font-family: 'Source Sans Pro', sans-serif !important;
