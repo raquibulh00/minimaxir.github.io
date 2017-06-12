@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+
+  <!-- HEAD -->
+<head>
+<meta charset="utf-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Benchmarking CNTK on Keras: is it Better at Deep Learning than TensorFlow?</title>
+<meta property="article:author" content="https://www.facebook.com/max.woolf" />
+<meta name="description" content="">
+<link href="/rss.xml" rel="alternate" title="minimaxir | Max Woolf's Blog" type="application/atom+xml">
+<link rel="canonical" href="http://minimaxir.com/2017/06/keras-cntk/">
+
+<!-- Mobile Metas -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+ <meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@minimaxir">
+<meta name="twitter:creator" content="@minimaxir">
+
+  <meta name="twitter:title" content="Benchmarking CNTK on Keras: is it Better at Deep Learning than TensorFlow?">
+
+
+  <meta name="twitter:url" content="http://minimaxir.com/2017/06/keras-cntk/">
+
+
+  <meta name="twitter:description" content="Microsoft employees commented that simply changing the backend of Keras to CNTK would result in a boost. So let's put that to the test.">
+
+
+  <meta name="twitter:image:src" content="http://minimaxir.com/img/keras-cntk.png">
+
+ 
+ <meta content="minimaxir | Max Woolf's Blog" property="og:site_name">
+
+  <meta content="Benchmarking CNTK on Keras: is it Better at Deep Learning than TensorFlow?" property="og:title">
+
+
+  <meta content="article" property="og:type">
+
+
+  <meta content="Microsoft employees commented that simply changing the backend of Keras to CNTK would result in a boost. So let's put that to the test." property="og:description">
+
+
+  <meta content="http://minimaxir.com/2017/06/keras-cntk/" property="og:url">
+
+
+
+  <meta content="http://minimaxir.com/img/keras-cntk.png" property="og:image">
+
+
+  
+  <meta content="Data" property="article:section">
+  
+
+
+  
+
+
+
+      <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="white">
+    <meta name="apple-mobile-web-app-title" content="minimaxir">
+    <link rel="apple-touch-icon-precomposed" href="apple-touch-icon-precomposed.png">
+
+<link rel="apple-touch-icon" sizes="57x57" href="http://minimaxir.com/favicon/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="http://minimaxir.com/favicon/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="http://minimaxir.com/favicon/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="http://minimaxir.com/favicon/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="http://minimaxir.com/favicon/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="http://minimaxir.com/favicon/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="http://minimaxir.com/favicon/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="http://minimaxir.com/favicon/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="http://minimaxir.com/favicon/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192"  href="http://minimaxir.com/favicon/android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://minimaxir.com/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="http://minimaxir.com/favicon/favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="http://minimaxir.com/favicon/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="http://minimaxir.com/favicon/ms-icon-144x144.png">
+<meta name="theme-color" content="#ffffff">
+
+<!-- BEGIN GLOBAL MANDATORY STYLES -->
+  <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400,400italic,700' rel='stylesheet' type='text/css'>
+
+<link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+<link href="/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
+<link href="/css/minimaxir.css" rel="stylesheet" type="text/css"/>
+<!-- END GLOBAL MANDATORY STYLES -->
+
+<!-- BEGIN THEME STYLES -->
+<link href="/css/global.css" rel="stylesheet" type="text/css"/>
+<!-- END THEME STYLES -->
+
+<!-- BEGIN JQUERY -->
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<!-- END JQUERY -->
+
+
+<script src="/js/htmlwidgets.js"></script>
+<script src="/js/plotly.js"></script>
+<script src="/js/typedarray.min.js"></script>
+<link href="/js/crosstalk.css" rel="stylesheet" />
+<script src="/js/crosstalk.min.js"></script>
+<link href="/js/plotly-htmlwidgets.css" rel="stylesheet" />
+<script src="/js/plotly-latest.min.js"></script>
+
+
+
+
+  <script>
+   $(document).ready(function() {
+ 
+  // LinkedIn
+	$( ".social.linkedin" ).children().each(function(index,value) {
+	var linkedin_button = $(this);
+	var url = linkedin_button.attr("data");
+
+  jQuery.getJSON("http://www.linkedin.com/countserv/count/share?url="+url+"&format=jsonp&callback=?", function(data) {
+  linkedin_button.html("<i class=\"fa fa-linkedin\"></i><span class=\"count hidden-xs\"> " + data.count + "</span>");
+  });
+  });
+  });
+  </script>
+  
+</head>
+<!-- END HEAD -->
+  <!-- WRAPPER -->
+<div class="wrapper">
+    <!--========== HEADER TRANSPARENT ==========-->
+    <header class="header-transparent header-transparent-bb navbar-fixed-top header-sticky">
+        <!-- Navbar -->
+        <nav class="navbar mega-menu" role="navigation">
+            <div class="container">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="menu-container">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="toggle-icon"></span>
+                    </button>
+
+                    <!-- Navbar Actions -->
+                    <div class="navbar-actions">
+
+                    </div>
+                    <!-- End Navbar Actions -->
+
+                    <!-- Logo -->
+                    <div class="navbar-logo">
+                        <a class="navbar-logo-wrap" href="/">
+                            <img class="navbar-logo-img navbar-logo-img-white" src="/minimaxir-light.png" alt="minimaxir">
+                            <img class="navbar-logo-img navbar-logo-img-dark" src="/minimaxir-dark.png" alt="minimaxir">
+                        </a>
+                    </div>
+                    <!-- End Logo -->
+                </div>
+
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse nav-collapse">
+                    <div class="menu-container">
+                        <ul class="nav navbar-nav">
+
+                            <li class="nav-item">
+                                <a class="nav-item-child" href="/about">
+                                    About
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-item-child" href="/portfolio">
+                                    Code Portfolio
+                                </a>
+
+
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-item-child" href="/data-portfolio">
+                                    Data Portfolio
+                                </a>
+
+
+                            </li>
+                             <li class="nav-item">
+                                <a class="nav-item-child" href="https://www.patreon.com/minimaxir" target="_blank">
+                                    Patreon
+                                </a>
+
+
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+                <!-- End Navbar Collapse -->
+            </div>
+            <!--// End Container-->
+        </nav>
+        <!-- Navbar -->
+    </header>
+    <!--========== END HEADER TRANSPARENT ==========-->
+
+        <!--========== BREADCRUMBS V5 ==========-->
+    
+    
+	
+	
+    
+    
+    
+    <section class="breadcrumbs-v5" style="background: url('/img/keras-cntk.png') no-repeat center center; background-size: cover;">
+    
+        <div class="container">
+            <h1 class="breadcrumbs-v5-title">Benchmarking CNTK on Keras: is it Better at Deep Learning than TensorFlow?</h1>
+            <span class="breadcrumbs-v5-subtitle">June 12, 2017
+            
+    
+              <span class="sharing index" style="float: right">
+  
+		  <span class="social facebook"><a href="https://www.facebook.com/share.php?u=http://minimaxir.com/2017/06/keras-cntk/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data="http://minimaxir.com/2017/06/keras-cntk/"><i class="fa fa-facebook"></i><span class="count hidden-xs"></span></a></span>
+  
+		<span class="social twitter"><a href="http://twitter.com/home/?status=Benchmarking CNTK on Keras: is it Better at Deep Learning than TensorFlow? - http://minimaxir.com/2017/06/keras-cntk/ - via @minimaxir"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data=http://minimaxir.com/2017/06/keras-cntk/><i class="fa fa-twitter"></i><span class="count hidden-xs"></span></a> </span>
+
+  <span  class="social linkedin"><a href="http://www.linkedin.com/shareArticle?mini=true&title=&url=http://minimaxir.com/2017/06/keras-cntk/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=600');return false;" data=http://minimaxir.com/2017/06/keras-cntk/><i class="fa fa-linkedin"></i><span class="count hidden-xs"> -</span></a> </span>
+   
+			</span>
+            
+            </span>
+        </div>
+    </section>
+    
+    
+    <!--========== END BREADCRUMBS V5 ==========-->
+  
+  <!-- BEGIN BODY -->
+<body>
+
+  
+      <!--========== BACKGROUND COLOR SKY LIGHT ==========-->
+    <div class="bg-color-sky-light">
+
+        
+        <!--========== PAGE CONTENT ==========-->
+        <div class="content-sm container">
+        
+            
+		
+        
+            <div class="row">
+                <div class="col-md-9 md-margin-b-50">
+                    <!-- Blog Grid -->
+                    <article class="blog-grid margin-b-30">
+                        <!-- Image -->
+                        <!--<img class="img-responsive" src="/assets/img/1920x1080/20.jpg" alt="">-->
+                        <!-- End Image -->
+
+                        <!-- Blog Grid Content -->
+						<div class="blog-grid-content">
+						<style>
+div#htmlwidget_container {
+  margin-bottom: 20px;
+}
+</style>
+
+<p><a href="https://github.com/fchollet/keras">Keras</a> is a high-level open-source framework for deep learning, maintained by François Chollet, that abstracts the massive amounts of configuration and matrix algebra needed to build production-quality deep learning models. The Keras API abstracts a lower-level deep learning framework like <a href="https://github.com/Theano/Theano">Theano</a> or Google&rsquo;s <a href="https://www.tensorflow.org">TensorFlow</a> framework. Switching between these backends is only a matter of <a href="https://keras.io/backend/">setting flags</a>; no front-end code changes necessary.</p>
+
+<p>But while Google has received a lot of publicity with TensorFlow, Microsoft has been quietly releasing their own machine learning frameworks open-source. There is <a href="https://github.com/Microsoft/LightGBM">LightGBM</a>, presented as an alternative to the extremely famous <a href="https://github.com/dmlc/xgboost">xgboost</a> framework. Now, there is <a href="https://github.com/Microsoft/CNTK">CNTK</a> (Microsoft Cognitive Toolkit), released at v2.0 a <a href="https://docs.microsoft.com/en-us/cognitive-toolkit/ReleaseNotes/CNTK_2_0_Release_Notes">couple weeks ago</a>, which markets strong performance in both accuracy and speed even when <a href="https://docs.microsoft.com/en-us/cognitive-toolkit/reasons-to-switch-from-tensorflow-to-cntk">compared</a> to TensorFlow.</p>
+
+<p>CNTK v2.0 also has a key feature: Keras compatibility. And just last week, support for the CNTK backend <a href="https://github.com/fchollet/keras/pull/6800">was merged</a> into the official Keras repository.</p>
+
+<p>Microsoft employees <a href="https://news.ycombinator.com/item?id=14470967">commented on Hacker News</a> that simply changing the backend of Keras from TensorFlow to CNTK would result in a performance boost. So let&rsquo;s put that to the test.</p>
+
+<h2>Deep Learning in the Cloud</h2>
+
+<p>Setting up a GPU-instance for deep learning in the cloud is surprisingly underdiscussed. Most recommend simply using a <a href="https://blog.keras.io/running-jupyter-notebooks-on-gpu-on-aws-a-starter-guide.html">premade image</a> from Amazon which includes all the necessary GPU drivers. However, Amazon EC2 <a href="https://aws.amazon.com/ec2/pricing/on-demand/">charges</a> $0.90/hr (not-prorated) for a NVIDIA Tesla K80 GPU instance, while Google Compute Engine <a href="https://cloud.google.com/compute/pricing#gpus">charges</a> $0.75/hr (prorated to the minute) for the same GPU, which is a nontrivial discount for the <em>many</em> hours necessary to train deep learning models.</p>
+
+<p>The catch with GCE is you have to setup the deep learning drivers and frameworks from a blank Linux instance. I did that for my <a href="http://minimaxir.com/2017/04/char-embeddings/">first adventure</a> with Keras and it was not fun. However, I recently found <a href="https://medium.com/google-cloud/containerized-jupyter-notebooks-on-gpu-on-google-cloud-8e86ef7f31e9">a blog post</a> by Durgesh Mankekar which takes a more modern approach to managing such dependencies with <a href="https://www.docker.com">Docker</a> containers, and also provides a setup script plus <a href="https://github.com/durgeshm/dockerfiles/blob/master/jupyter-keras-gpu/Dockerfile">container</a> with the necessary deep learning drivers/frameworks for Keras. This container can then be loaded using <a href="https://github.com/NVIDIA/nvidia-docker">nvidia-docker</a>, which allows Docker containers to access the GPU on the host. Running a deep learning script in the container is simply a matter of running a Docker command. After the script completes, the container is destroyed. This approach incidentally ensures that separate executions are independent; perfect for benchmarking/reproducibility.</p>
+
+<p>I <a href="https://github.com/minimaxir/keras-cntk-docker">tweaked the container</a> to include an installation of CNTK, a CNTK-compatable version of Keras, and made CNTK the default backend for Keras.</p>
+
+<p><img src="/img/keras-cntk/cntk_keras.gif" alt=""></p>
+
+<h2>Benchmark Methodology</h2>
+
+<p>The Keras <a href="https://github.com/fchollet/keras/tree/master/examples">examples</a> are robust and solve real-world deep learning problems; perfect for simulating real-world performance. I took <a href="https://github.com/minimaxir/keras-cntk-benchmark/tree/master/test_files">a variety</a> of those examples, emphasizing different neural network architectures, and added a <a href="https://github.com/minimaxir/keras-cntk-benchmark/blob/master/test_files/CustomCallback.py">custom logger</a> which outputs a CSV containing both model performance and elapsed time as the training progresses.</p>
+
+<p>As mentioned earlier, the only change needed to switch between backends is setting a flag. Even though CNTK is the default backend for Keras in the container, a simple <code>-e KERAS_BACKEND=&#39;tensorflow&#39;</code> argument in the Docker command switches it to TensorFlow.</p>
+
+<p><img src="/img/keras-cntk/tensorflow_keras_2.gif" alt=""></p>
+
+<p>I wrote a Python <a href="https://github.com/minimaxir/keras-cntk-benchmark/blob/master/keras_cntk_benchmark.py">benchmark script</a> (executed on the host) to administrate and run all the examples in their own Docker containers, with both CNTK and TensorFlow, and collected the resulting logs.</p>
+
+<p>Here are the results.</p>
+
+<h2>IMDb Review Dataset</h2>
+
+<p>The <a href="http://ai.stanford.edu/%7Eamaas/data/sentiment/">IMDb review dataset</a> is a famous dataset for benchmarking natural language processing (NLP) for sentiment analysis. The 25,000 reviews in the dataset are tagged as positive or negative. Good machine learning models developed <a href="http://ai.stanford.edu/%7Eamaas/papers/wvSent_acl2011.pdf">before deep learning became mainstream</a> score about 88% classification accuracy on the test dataset.</p>
+
+<p>The first <a href="https://github.com/minimaxir/keras-cntk-benchmark/blob/master/test_files/imdb_bidirectional_lstm.py">model approach</a> is with a <strong>Bidirectional LSTM</strong>, which weights the model by the sequence of words, both forward <em>and</em> backward.</p>
+
+<p>First, let&rsquo;s look at the classification accuracy of the test set at various points in time while the model is being trained:</p>
+
+<p><em>Note: all charts in this blog post are interactive <a href="https://plot.ly">Plotly</a> charts; feel free to mouse-over data points for exact values and use the controls in the upper-right to manipulate the chart.</em></p>
+
+<div id="htmlwidget_container">
+  <div id="d5e3793d2a4e" style="width:100%;height:400px;" class="plotly html-widget"></div>
+</div>
+
+<script type="application/json" data-for="d5e3793d2a4e">{"x":{"data":[{"x":[1,2,3,4],"y":[0.85196,0.84492,0.83352,0.83544],"text":["epoch: 1<br />val_acc: 0.85196<br />framework: CNTK","epoch: 2<br />val_acc: 0.84492<br />framework: CNTK","epoch: 3<br />val_acc: 0.83352<br />framework: CNTK","epoch: 4<br />val_acc: 0.83544<br />framework: CNTK"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(41,128,185,1)","dash":"solid"},"hoveron":"points","name":"CNTK","legendgroup":"CNTK","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[1,2,3,4],"y":[0.84356,0.84584,0.836,0.83432],"text":["epoch: 1<br />val_acc: 0.84356<br />framework: TensorFlow","epoch: 2<br />val_acc: 0.84584<br />framework: TensorFlow","epoch: 3<br />val_acc: 0.83600<br />framework: TensorFlow","epoch: 4<br />val_acc: 0.83432<br />framework: TensorFlow"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(192,57,43,1)","dash":"solid"},"hoveron":"points","name":"TensorFlow","legendgroup":"TensorFlow","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[4,3,2,1],"y":[0.83544,0.83352,0.84492,0.85196],"text":["epoch: 4<br />val_acc: 0.83544<br />framework: CNTK","epoch: 3<br />val_acc: 0.83352<br />framework: CNTK","epoch: 2<br />val_acc: 0.84492<br />framework: CNTK","epoch: 1<br />val_acc: 0.85196<br />framework: CNTK"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(41,128,185,1)","opacity":1,"size":7.55905511811024,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(41,128,185,1)"}},"hoveron":"points","name":"CNTK","legendgroup":"CNTK","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[4,3,2,1],"y":[0.83432,0.836,0.84584,0.84356],"text":["epoch: 4<br />val_acc: 0.83432<br />framework: TensorFlow","epoch: 3<br />val_acc: 0.83600<br />framework: TensorFlow","epoch: 2<br />val_acc: 0.84584<br />framework: TensorFlow","epoch: 1<br />val_acc: 0.84356<br />framework: TensorFlow"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(192,57,43,1)","opacity":1,"size":7.55905511811024,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(192,57,43,1)"}},"hoveron":"points","name":"TensorFlow","legendgroup":"TensorFlow","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":53.3612287256123,"r":9.29846409298464,"b":53.1686176836862,"l":69.7384806973848},"font":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":18.5969281859693},"title":"Performance of Bidirectional LSTM Approach on IMDb Data","titlefont":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":22.3163138231631},"xaxis":{"domain":[0,1],"type":"linear","autorange":false,"range":[0.85,4.15],"tickmode":"array","ticktext":["1","2","3","4"],"tickvals":[1,2,3,4],"categoryorder":"array","categoryarray":["1","2","3","4"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":4.64923204649232,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"Source Sans Pro","size":14.8775425487754},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y","title":"Epoch","titlefont":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":18.5969281859693},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"type":"linear","autorange":false,"range":[0.832598,0.852882],"tickmode":"array","ticktext":["83.5%","84.0%","84.5%","85.0%"],"tickvals":[0.835,0.84,0.845,0.85],"categoryorder":"array","categoryarray":["83.5%","84.0%","84.5%","85.0%"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":4.64923204649232,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"Source Sans Pro","size":14.8775425487754},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"x","title":"Test Accuracy (Higher is Better)","titlefont":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":18.5969281859693},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":14.8775425487754},"y":0.877694488188976},"hovermode":"closest","width":null,"height":400,"barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":[{"name":"Collaborate","icon":{"width":1000,"ascent":500,"descent":-50,"path":"M487 375c7-10 9-23 5-36l-79-259c-3-12-11-23-22-31-11-8-22-12-35-12l-263 0c-15 0-29 5-43 15-13 10-23 23-28 37-5 13-5 25-1 37 0 0 0 3 1 7 1 5 1 8 1 11 0 2 0 4-1 6 0 3-1 5-1 6 1 2 2 4 3 6 1 2 2 4 4 6 2 3 4 5 5 7 5 7 9 16 13 26 4 10 7 19 9 26 0 2 0 5 0 9-1 4-1 6 0 8 0 2 2 5 4 8 3 3 5 5 5 7 4 6 8 15 12 26 4 11 7 19 7 26 1 1 0 4 0 9-1 4-1 7 0 8 1 2 3 5 6 8 4 4 6 6 6 7 4 5 8 13 13 24 4 11 7 20 7 28 1 1 0 4 0 7-1 3-1 6-1 7 0 2 1 4 3 6 1 1 3 4 5 6 2 3 3 5 5 6 1 2 3 5 4 9 2 3 3 7 5 10 1 3 2 6 4 10 2 4 4 7 6 9 2 3 4 5 7 7 3 2 7 3 11 3 3 0 8 0 13-1l0-1c7 2 12 2 14 2l218 0c14 0 25-5 32-16 8-10 10-23 6-37l-79-259c-7-22-13-37-20-43-7-7-19-10-37-10l-248 0c-5 0-9-2-11-5-2-3-2-7 0-12 4-13 18-20 41-20l264 0c5 0 10 2 16 5 5 3 8 6 10 11l85 282c2 5 2 10 2 17 7-3 13-7 17-13z m-304 0c-1-3-1-5 0-7 1-1 3-2 6-2l174 0c2 0 4 1 7 2 2 2 4 4 5 7l6 18c0 3 0 5-1 7-1 1-3 2-6 2l-173 0c-3 0-5-1-8-2-2-2-4-4-4-7z m-24-73c-1-3-1-5 0-7 2-2 3-2 6-2l174 0c2 0 5 0 7 2 3 2 4 4 5 7l6 18c1 2 0 5-1 6-1 2-3 3-5 3l-174 0c-3 0-5-1-7-3-3-1-4-4-5-6z"},"click":"function(gd) { \n        // is this being viewed in RStudio?\n        if (location.search == '?viewer_pane=1') {\n          alert('To learn about plotly for collaboration, visit:\\n https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html');\n        } else {\n          window.open('https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html', '_blank');\n        }\n      }"}],"cloud":false},"source":"A","attrs":{"d5e33b9e64b4":{"x":{},"y":{},"colour":{},"type":"scatter"},"d5e31be58400":{"x":{},"y":{},"colour":{}}},"cur_data":"d5e33b9e64b4","visdat":{"d5e33b9e64b4":["function (y) ","x"],"d5e31be58400":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1}},"base_url":"https://plot.ly"},"evals":["config.modeBarButtonsToAdd.0.click"],"jsHooks":{"render":[{"code":"function(el, x) { var ctConfig = crosstalk.var('plotlyCrosstalkOpts').set({\"on\":\"plotly_click\",\"persistent\":false,\"dynamic\":false,\"selectize\":false,\"opacityDim\":0.2,\"selected\":{\"opacity\":1}}); }","data":null}]}}</script>
+
+<script type="application/htmlwidget-sizing" data-for="d5e3793d2a4e">{"viewer":{"width":"100%","height":400,"padding":15,"fill":false},"browser":{"width":"100%","height":400,"padding":0,"fill":false}}</script>
+
+<p>Normally the accuracy <em>increases</em> as training proceeds; Bidirectional LSTMs take a long time to train to get improving results, but at the least both frameworks are equally performant.</p>
+
+<p>To gauge the speed of algorithm, we can calculate the average amount of time it takes to train an epoch (i.e. each time the model sees the entire training set). The time is mostly consistent per epoch but there is some variability; each measurement will have a 95% confidence interval for the true average, obtained via <a href="https://en.wikipedia.org/wiki/Bootstrapping_(statistics)">nonparametric bootstrapping</a>. In the case of the Bidirectional LSTM:</p>
+
+<div id="htmlwidget_container">
+  <div id="d5e353d0aad9" style="width:100%;height:400px;" class="plotly html-widget"></div>
+</div>
+
+<script type="application/json" data-for="d5e353d0aad9">{"x":{"data":[{"orientation":"v","width":0.25,"base":0,"x":[1],"y":[152.378944575787],"text":"framework: CNTK<br />mean: 152.3789","type":"bar","marker":{"autocolorscale":false,"color":"rgba(41,128,185,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"CNTK","legendgroup":"CNTK","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":0.25,"base":0,"x":[2],"y":[276.647240757942],"text":"framework: TensorFlow<br />mean: 276.6472","type":"bar","marker":{"autocolorscale":false,"color":"rgba(192,57,43,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"TensorFlow","legendgroup":"TensorFlow","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[1],"y":[152.378944575787],"text":"framework: CNTK<br />mean: 152.3789","type":"scatter","mode":"lines","opacity":1,"line":{"color":"transparent"},"error_y":{"array":[4.1145806312561],"arrayminus":[2.95618027448654],"type":"data","width":19.8863636363636,"symmetric":false,"color":"rgba(0,0,0,1)"},"name":"CNTK","legendgroup":"CNTK","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[2],"y":[276.647240757942],"text":"framework: TensorFlow<br />mean: 276.6472","type":"scatter","mode":"lines","opacity":1,"line":{"color":"transparent"},"error_y":{"array":[7.57349234819412],"arrayminus":[4.70573216676712],"type":"data","width":19.8863636363636,"symmetric":false,"color":"rgba(0,0,0,1)"},"name":"TensorFlow","legendgroup":"TensorFlow","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":53.3612287256123,"r":9.29846409298464,"b":53.1686176836862,"l":54.8609381486094},"font":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":18.5969281859693},"title":"Speed of Bidirectional LSTM Approach on IMDb Data","titlefont":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":22.3163138231631},"xaxis":{"domain":[0,1],"type":"linear","autorange":false,"range":[0.4,2.6],"tickmode":"array","ticktext":["CNTK","TensorFlow"],"tickvals":[1,2],"categoryorder":"array","categoryarray":["CNTK","TensorFlow"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":4.64923204649232,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"Source Sans Pro","size":14.8775425487754},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y","title":"Keras Backend","titlefont":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":18.5969281859693},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"type":"linear","autorange":false,"range":[-14.2110366553068,298.431769761443],"tickmode":"array","ticktext":["0","100","200"],"tickvals":[0,100,200],"categoryorder":"array","categoryarray":["0","100","200"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":4.64923204649232,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"Source Sans Pro","size":14.8775425487754},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"x","title":"Average Epoch Runtime (seconds)","titlefont":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":18.5969281859693},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":14.8775425487754},"y":0.877694488188976},"hovermode":"closest","width":null,"height":400,"barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":[{"name":"Collaborate","icon":{"width":1000,"ascent":500,"descent":-50,"path":"M487 375c7-10 9-23 5-36l-79-259c-3-12-11-23-22-31-11-8-22-12-35-12l-263 0c-15 0-29 5-43 15-13 10-23 23-28 37-5 13-5 25-1 37 0 0 0 3 1 7 1 5 1 8 1 11 0 2 0 4-1 6 0 3-1 5-1 6 1 2 2 4 3 6 1 2 2 4 4 6 2 3 4 5 5 7 5 7 9 16 13 26 4 10 7 19 9 26 0 2 0 5 0 9-1 4-1 6 0 8 0 2 2 5 4 8 3 3 5 5 5 7 4 6 8 15 12 26 4 11 7 19 7 26 1 1 0 4 0 9-1 4-1 7 0 8 1 2 3 5 6 8 4 4 6 6 6 7 4 5 8 13 13 24 4 11 7 20 7 28 1 1 0 4 0 7-1 3-1 6-1 7 0 2 1 4 3 6 1 1 3 4 5 6 2 3 3 5 5 6 1 2 3 5 4 9 2 3 3 7 5 10 1 3 2 6 4 10 2 4 4 7 6 9 2 3 4 5 7 7 3 2 7 3 11 3 3 0 8 0 13-1l0-1c7 2 12 2 14 2l218 0c14 0 25-5 32-16 8-10 10-23 6-37l-79-259c-7-22-13-37-20-43-7-7-19-10-37-10l-248 0c-5 0-9-2-11-5-2-3-2-7 0-12 4-13 18-20 41-20l264 0c5 0 10 2 16 5 5 3 8 6 10 11l85 282c2 5 2 10 2 17 7-3 13-7 17-13z m-304 0c-1-3-1-5 0-7 1-1 3-2 6-2l174 0c2 0 4 1 7 2 2 2 4 4 5 7l6 18c0 3 0 5-1 7-1 1-3 2-6 2l-173 0c-3 0-5-1-8-2-2-2-4-4-4-7z m-24-73c-1-3-1-5 0-7 2-2 3-2 6-2l174 0c2 0 5 0 7 2 3 2 4 4 5 7l6 18c1 2 0 5-1 6-1 2-3 3-5 3l-174 0c-3 0-5-1-7-3-3-1-4-4-5-6z"},"click":"function(gd) { \n        // is this being viewed in RStudio?\n        if (location.search == '?viewer_pane=1') {\n          alert('To learn about plotly for collaboration, visit:\\n https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html');\n        } else {\n          window.open('https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html', '_blank');\n        }\n      }"}],"cloud":false},"source":"A","attrs":{"d5e310f8be0a":{"x":{},"y":{},"ymin":{},"ymax":{},"fill":{},"type":"bar"},"d5e33a848b3a":{"x":{},"y":{},"ymin":{},"ymax":{},"fill":{}}},"cur_data":"d5e310f8be0a","visdat":{"d5e310f8be0a":["function (y) ","x"],"d5e33a848b3a":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1}},"base_url":"https://plot.ly"},"evals":["config.modeBarButtonsToAdd.0.click"],"jsHooks":{"render":[{"code":"function(el, x) { var ctConfig = crosstalk.var('plotlyCrosstalkOpts').set({\"on\":\"plotly_click\",\"persistent\":false,\"dynamic\":false,\"selectize\":false,\"opacityDim\":0.2,\"selected\":{\"opacity\":1}}); }","data":null}]}}</script>
+
+<script type="application/htmlwidget-sizing" data-for="d5e353d0aad9">{"viewer":{"width":"100%","height":400,"padding":15,"fill":false},"browser":{"width":"100%","height":400,"padding":0,"fill":false}}</script>
+
+<p>Wow, CNTK is much faster! Not the 5x-10x speedup the <a href="https://arxiv.org/abs/1608.07249">benchmarks</a> highlighted for working with LSTMs, but nearly halving the runtime by simply setting a backend flag is still impressive.</p>
+
+<p>Next, we&rsquo;ll look at the modern <strong>fasttext</strong> <a href="https://github.com/minimaxir/keras-cntk-benchmark/blob/master/test_files/imdb_fasttext.py">approach</a> on the same dataset. Fasttext is a newer algorithm that averages word vector Embeddings together (irrespective of order), but gets incredible results at incredible speeds even when using the CPU only, as with Facebook&rsquo;s <a href="https://github.com/facebookresearch/fastText">official implementation</a> for fasttext. (for this benchmark, I opt to include bigrams)</p>
+
+<div id="htmlwidget_container">
+  <div id="d5e3d468e4c" style="width:100%;height:400px;" class="plotly html-widget"></div>
+</div>
+
+<script type="application/json" data-for="d5e3d468e4c">{"x":{"data":[{"x":[1,2,3,4,5],"y":[0.85992,0.89428,0.90168,0.904,0.90636],"text":["epoch: 1<br />val_acc: 0.85992<br />framework: CNTK","epoch: 2<br />val_acc: 0.89428<br />framework: CNTK","epoch: 3<br />val_acc: 0.90168<br />framework: CNTK","epoch: 4<br />val_acc: 0.90400<br />framework: CNTK","epoch: 5<br />val_acc: 0.90636<br />framework: CNTK"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(41,128,185,1)","dash":"solid"},"hoveron":"points","name":"CNTK","legendgroup":"CNTK","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[1,2,3,4,5],"y":[0.86024,0.89416,0.90144,0.90384,0.90684],"text":["epoch: 1<br />val_acc: 0.86024<br />framework: TensorFlow","epoch: 2<br />val_acc: 0.89416<br />framework: TensorFlow","epoch: 3<br />val_acc: 0.90144<br />framework: TensorFlow","epoch: 4<br />val_acc: 0.90384<br />framework: TensorFlow","epoch: 5<br />val_acc: 0.90684<br />framework: TensorFlow"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(192,57,43,1)","dash":"solid"},"hoveron":"points","name":"TensorFlow","legendgroup":"TensorFlow","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[5,4,3,2,1],"y":[0.90636,0.904,0.90168,0.89428,0.85992],"text":["epoch: 5<br />val_acc: 0.90636<br />framework: CNTK","epoch: 4<br />val_acc: 0.90400<br />framework: CNTK","epoch: 3<br />val_acc: 0.90168<br />framework: CNTK","epoch: 2<br />val_acc: 0.89428<br />framework: CNTK","epoch: 1<br />val_acc: 0.85992<br />framework: CNTK"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(41,128,185,1)","opacity":1,"size":7.55905511811024,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(41,128,185,1)"}},"hoveron":"points","name":"CNTK","legendgroup":"CNTK","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[5,4,3,2,1],"y":[0.90684,0.90384,0.90144,0.89416,0.86024],"text":["epoch: 5<br />val_acc: 0.90684<br />framework: TensorFlow","epoch: 4<br />val_acc: 0.90384<br />framework: TensorFlow","epoch: 3<br />val_acc: 0.90144<br />framework: TensorFlow","epoch: 2<br />val_acc: 0.89416<br />framework: TensorFlow","epoch: 1<br />val_acc: 0.86024<br />framework: TensorFlow"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(192,57,43,1)","opacity":1,"size":7.55905511811024,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(192,57,43,1)"}},"hoveron":"points","name":"TensorFlow","legendgroup":"TensorFlow","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":53.3612287256123,"r":9.29846409298464,"b":53.1686176836862,"l":54.8609381486094},"font":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":18.5969281859693},"title":"Performance of fasttext Approach on IMDb Data","titlefont":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":22.3163138231631},"xaxis":{"domain":[0,1],"type":"linear","autorange":false,"range":[0.8,5.2],"tickmode":"array","ticktext":["1","2","3","4","5"],"tickvals":[1,2,3,4,5],"categoryorder":"array","categoryarray":["1","2","3","4","5"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":4.64923204649232,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"Source Sans Pro","size":14.8775425487754},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y","title":"Epoch","titlefont":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":18.5969281859693},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"type":"linear","autorange":false,"range":[0.857574,0.909186],"tickmode":"array","ticktext":["86%","87%","88%","89%","90%"],"tickvals":[0.86,0.87,0.88,0.89,0.9],"categoryorder":"array","categoryarray":["86%","87%","88%","89%","90%"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":4.64923204649232,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"Source Sans Pro","size":14.8775425487754},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"x","title":"Test Accuracy (Higher is Better)","titlefont":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":18.5969281859693},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":14.8775425487754},"y":0.877694488188976},"hovermode":"closest","width":null,"height":400,"barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":[{"name":"Collaborate","icon":{"width":1000,"ascent":500,"descent":-50,"path":"M487 375c7-10 9-23 5-36l-79-259c-3-12-11-23-22-31-11-8-22-12-35-12l-263 0c-15 0-29 5-43 15-13 10-23 23-28 37-5 13-5 25-1 37 0 0 0 3 1 7 1 5 1 8 1 11 0 2 0 4-1 6 0 3-1 5-1 6 1 2 2 4 3 6 1 2 2 4 4 6 2 3 4 5 5 7 5 7 9 16 13 26 4 10 7 19 9 26 0 2 0 5 0 9-1 4-1 6 0 8 0 2 2 5 4 8 3 3 5 5 5 7 4 6 8 15 12 26 4 11 7 19 7 26 1 1 0 4 0 9-1 4-1 7 0 8 1 2 3 5 6 8 4 4 6 6 6 7 4 5 8 13 13 24 4 11 7 20 7 28 1 1 0 4 0 7-1 3-1 6-1 7 0 2 1 4 3 6 1 1 3 4 5 6 2 3 3 5 5 6 1 2 3 5 4 9 2 3 3 7 5 10 1 3 2 6 4 10 2 4 4 7 6 9 2 3 4 5 7 7 3 2 7 3 11 3 3 0 8 0 13-1l0-1c7 2 12 2 14 2l218 0c14 0 25-5 32-16 8-10 10-23 6-37l-79-259c-7-22-13-37-20-43-7-7-19-10-37-10l-248 0c-5 0-9-2-11-5-2-3-2-7 0-12 4-13 18-20 41-20l264 0c5 0 10 2 16 5 5 3 8 6 10 11l85 282c2 5 2 10 2 17 7-3 13-7 17-13z m-304 0c-1-3-1-5 0-7 1-1 3-2 6-2l174 0c2 0 4 1 7 2 2 2 4 4 5 7l6 18c0 3 0 5-1 7-1 1-3 2-6 2l-173 0c-3 0-5-1-8-2-2-2-4-4-4-7z m-24-73c-1-3-1-5 0-7 2-2 3-2 6-2l174 0c2 0 5 0 7 2 3 2 4 4 5 7l6 18c1 2 0 5-1 6-1 2-3 3-5 3l-174 0c-3 0-5-1-7-3-3-1-4-4-5-6z"},"click":"function(gd) { \n        // is this being viewed in RStudio?\n        if (location.search == '?viewer_pane=1') {\n          alert('To learn about plotly for collaboration, visit:\\n https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html');\n        } else {\n          window.open('https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html', '_blank');\n        }\n      }"}],"cloud":false},"source":"A","attrs":{"d5e317b24b8b":{"x":{},"y":{},"colour":{},"type":"scatter"},"d5e33a7d9ed4":{"x":{},"y":{},"colour":{}}},"cur_data":"d5e317b24b8b","visdat":{"d5e317b24b8b":["function (y) ","x"],"d5e33a7d9ed4":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1}},"base_url":"https://plot.ly"},"evals":["config.modeBarButtonsToAdd.0.click"],"jsHooks":{"render":[{"code":"function(el, x) { var ctConfig = crosstalk.var('plotlyCrosstalkOpts').set({\"on\":\"plotly_click\",\"persistent\":false,\"dynamic\":false,\"selectize\":false,\"opacityDim\":0.2,\"selected\":{\"opacity\":1}}); }","data":null}]}}</script>
+
+<script type="application/htmlwidget-sizing" data-for="d5e3d468e4c">{"viewer":{"width":"100%","height":400,"padding":15,"fill":false},"browser":{"width":"100%","height":400,"padding":0,"fill":false}}</script>
+
+<div id="htmlwidget_container">
+  <div id="d5e34103705b" style="width:100%;height:400px;" class="plotly html-widget"></div>
+</div>
+
+<script type="application/json" data-for="d5e34103705b">{"x":{"data":[{"orientation":"v","width":0.5,"base":0,"x":[1],"y":[69.4701688766479],"text":"framework: CNTK<br />mean: 69.47017","type":"bar","marker":{"autocolorscale":false,"color":"rgba(41,128,185,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"CNTK","legendgroup":"CNTK","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":0.5,"base":0,"x":[2],"y":[58.3061577320099],"text":"framework: TensorFlow<br />mean: 58.30616","type":"bar","marker":{"autocolorscale":false,"color":"rgba(192,57,43,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"TensorFlow","legendgroup":"TensorFlow","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[1],"y":[69.4701688766479],"text":"framework: CNTK<br />mean: 69.47017","type":"scatter","mode":"lines","opacity":1,"line":{"color":"transparent"},"error_y":{"array":[0.0613580703735437],"arrayminus":[0.0351073741912842],"type":"data","width":19.8863636363636,"symmetric":false,"color":"rgba(0,0,0,1)"},"name":"CNTK","legendgroup":"CNTK","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[2],"y":[58.3061577320099],"text":"framework: TensorFlow<br />mean: 58.30616","type":"scatter","mode":"lines","opacity":1,"line":{"color":"transparent"},"error_y":{"array":[0.416218662261961],"arrayminus":[0.21453107081912],"type":"data","width":19.8863636363636,"symmetric":false,"color":"rgba(0,0,0,1)"},"name":"TensorFlow","legendgroup":"TensorFlow","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":53.3612287256123,"r":9.29846409298464,"b":53.1686176836862,"l":47.4221668742217},"font":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":18.5969281859693},"title":"Speed of fasttext Approach on IMDb Data","titlefont":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":22.3163138231631},"xaxis":{"domain":[0,1],"type":"linear","autorange":false,"range":[0.4,2.6],"tickmode":"array","ticktext":["CNTK","TensorFlow"],"tickvals":[1,2],"categoryorder":"array","categoryarray":["CNTK","TensorFlow"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":4.64923204649232,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"Source Sans Pro","size":14.8775425487754},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y","title":"Keras Backend","titlefont":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":18.5969281859693},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"type":"linear","autorange":false,"range":[-3.47657634735107,73.0081032943726],"tickmode":"array","ticktext":["0","20","40","60"],"tickvals":[0,20,40,60],"categoryorder":"array","categoryarray":["0","20","40","60"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":4.64923204649232,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"Source Sans Pro","size":14.8775425487754},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"x","title":"Average Epoch Runtime (seconds)","titlefont":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":18.5969281859693},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":14.8775425487754},"y":0.877694488188976},"hovermode":"closest","width":null,"height":400,"barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":[{"name":"Collaborate","icon":{"width":1000,"ascent":500,"descent":-50,"path":"M487 375c7-10 9-23 5-36l-79-259c-3-12-11-23-22-31-11-8-22-12-35-12l-263 0c-15 0-29 5-43 15-13 10-23 23-28 37-5 13-5 25-1 37 0 0 0 3 1 7 1 5 1 8 1 11 0 2 0 4-1 6 0 3-1 5-1 6 1 2 2 4 3 6 1 2 2 4 4 6 2 3 4 5 5 7 5 7 9 16 13 26 4 10 7 19 9 26 0 2 0 5 0 9-1 4-1 6 0 8 0 2 2 5 4 8 3 3 5 5 5 7 4 6 8 15 12 26 4 11 7 19 7 26 1 1 0 4 0 9-1 4-1 7 0 8 1 2 3 5 6 8 4 4 6 6 6 7 4 5 8 13 13 24 4 11 7 20 7 28 1 1 0 4 0 7-1 3-1 6-1 7 0 2 1 4 3 6 1 1 3 4 5 6 2 3 3 5 5 6 1 2 3 5 4 9 2 3 3 7 5 10 1 3 2 6 4 10 2 4 4 7 6 9 2 3 4 5 7 7 3 2 7 3 11 3 3 0 8 0 13-1l0-1c7 2 12 2 14 2l218 0c14 0 25-5 32-16 8-10 10-23 6-37l-79-259c-7-22-13-37-20-43-7-7-19-10-37-10l-248 0c-5 0-9-2-11-5-2-3-2-7 0-12 4-13 18-20 41-20l264 0c5 0 10 2 16 5 5 3 8 6 10 11l85 282c2 5 2 10 2 17 7-3 13-7 17-13z m-304 0c-1-3-1-5 0-7 1-1 3-2 6-2l174 0c2 0 4 1 7 2 2 2 4 4 5 7l6 18c0 3 0 5-1 7-1 1-3 2-6 2l-173 0c-3 0-5-1-8-2-2-2-4-4-4-7z m-24-73c-1-3-1-5 0-7 2-2 3-2 6-2l174 0c2 0 5 0 7 2 3 2 4 4 5 7l6 18c1 2 0 5-1 6-1 2-3 3-5 3l-174 0c-3 0-5-1-7-3-3-1-4-4-5-6z"},"click":"function(gd) { \n        // is this being viewed in RStudio?\n        if (location.search == '?viewer_pane=1') {\n          alert('To learn about plotly for collaboration, visit:\\n https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html');\n        } else {\n          window.open('https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html', '_blank');\n        }\n      }"}],"cloud":false},"source":"A","attrs":{"d5e320cea520":{"x":{},"y":{},"ymin":{},"ymax":{},"fill":{},"type":"bar"},"d5e35ebae8b3":{"x":{},"y":{},"ymin":{},"ymax":{},"fill":{}}},"cur_data":"d5e320cea520","visdat":{"d5e320cea520":["function (y) ","x"],"d5e35ebae8b3":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1}},"base_url":"https://plot.ly"},"evals":["config.modeBarButtonsToAdd.0.click"],"jsHooks":{"render":[{"code":"function(el, x) { var ctConfig = crosstalk.var('plotlyCrosstalkOpts').set({\"on\":\"plotly_click\",\"persistent\":false,\"dynamic\":false,\"selectize\":false,\"opacityDim\":0.2,\"selected\":{\"opacity\":1}}); }","data":null}]}}</script>
+
+<script type="application/htmlwidget-sizing" data-for="d5e34103705b">{"viewer":{"width":"100%","height":400,"padding":15,"fill":false},"browser":{"width":"100%","height":400,"padding":0,"fill":false}}</script>
+
+<p>Both frameworks have nearly identical accuracy due to model simplicity, but in this case, TensorFlow is faster at working with Embeddings. (at the least, fasttext clearly much faster than the Bidirectional LSTM approach!) In addition, fasttext blows away the 88% benchmark, which may be worth considering for other machine learning projects.</p>
+
+<h2>MNIST Dataset</h2>
+
+<p>The <a href="http://yann.lecun.com/exdb/mnist/">MNIST dataset</a> is another famous dataset of handwritten digits, good for testing computer vision (60,000 training images, 10,000 test images). Generally, good models get above 99% classification accuracy on the test set.</p>
+
+<p>The <strong>multilayer perceptron (MLP)</strong> <a href="https://github.com/minimaxir/keras-cntk-benchmark/blob/master/test_files/mnist_mlp.py">approach</a> just uses a large fully-connected network and lets <em>Deep Learning Magic &trade;</em> take over. Sometimes that can be enough.</p>
+
+<div id="htmlwidget_container">
+  <div id="d5e3134e61e6" style="width:100%;height:400px;" class="plotly html-widget"></div>
+</div>
+
+<script type="application/json" data-for="d5e3134e61e6">{"x":{"data":[{"x":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20],"y":[0.9584,0.9709,0.976,0.9802,0.9789,0.9831,0.984,0.9842,0.9835,0.9825,0.9823,0.9819,0.9842,0.9832,0.9839,0.9835,0.9838,0.9825,0.9833,0.9796],"text":["epoch:  1<br />val_acc: 0.9584<br />framework: CNTK","epoch:  2<br />val_acc: 0.9709<br />framework: CNTK","epoch:  3<br />val_acc: 0.9760<br />framework: CNTK","epoch:  4<br />val_acc: 0.9802<br />framework: CNTK","epoch:  5<br />val_acc: 0.9789<br />framework: CNTK","epoch:  6<br />val_acc: 0.9831<br />framework: CNTK","epoch:  7<br />val_acc: 0.9840<br />framework: CNTK","epoch:  8<br />val_acc: 0.9842<br />framework: CNTK","epoch:  9<br />val_acc: 0.9835<br />framework: CNTK","epoch: 10<br />val_acc: 0.9825<br />framework: CNTK","epoch: 11<br />val_acc: 0.9823<br />framework: CNTK","epoch: 12<br />val_acc: 0.9819<br />framework: CNTK","epoch: 13<br />val_acc: 0.9842<br />framework: CNTK","epoch: 14<br />val_acc: 0.9832<br />framework: CNTK","epoch: 15<br />val_acc: 0.9839<br />framework: CNTK","epoch: 16<br />val_acc: 0.9835<br />framework: CNTK","epoch: 17<br />val_acc: 0.9838<br />framework: CNTK","epoch: 18<br />val_acc: 0.9825<br />framework: CNTK","epoch: 19<br />val_acc: 0.9833<br />framework: CNTK","epoch: 20<br />val_acc: 0.9796<br />framework: CNTK"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(41,128,185,1)","dash":"solid"},"hoveron":"points","name":"CNTK","legendgroup":"CNTK","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20],"y":[0.9664,0.9773,0.9788,0.9764,0.981,0.9788,0.9792,0.9823,0.9823,0.984,0.9851,0.982,0.9838,0.9843,0.9855,0.9841,0.9818,0.9837,0.9832,0.9839],"text":["epoch:  1<br />val_acc: 0.9664<br />framework: TensorFlow","epoch:  2<br />val_acc: 0.9773<br />framework: TensorFlow","epoch:  3<br />val_acc: 0.9788<br />framework: TensorFlow","epoch:  4<br />val_acc: 0.9764<br />framework: TensorFlow","epoch:  5<br />val_acc: 0.9810<br />framework: TensorFlow","epoch:  6<br />val_acc: 0.9788<br />framework: TensorFlow","epoch:  7<br />val_acc: 0.9792<br />framework: TensorFlow","epoch:  8<br />val_acc: 0.9823<br />framework: TensorFlow","epoch:  9<br />val_acc: 0.9823<br />framework: TensorFlow","epoch: 10<br />val_acc: 0.9840<br />framework: TensorFlow","epoch: 11<br />val_acc: 0.9851<br />framework: TensorFlow","epoch: 12<br />val_acc: 0.9820<br />framework: TensorFlow","epoch: 13<br />val_acc: 0.9838<br />framework: TensorFlow","epoch: 14<br />val_acc: 0.9843<br />framework: TensorFlow","epoch: 15<br />val_acc: 0.9855<br />framework: TensorFlow","epoch: 16<br />val_acc: 0.9841<br />framework: TensorFlow","epoch: 17<br />val_acc: 0.9818<br />framework: TensorFlow","epoch: 18<br />val_acc: 0.9837<br />framework: TensorFlow","epoch: 19<br />val_acc: 0.9832<br />framework: TensorFlow","epoch: 20<br />val_acc: 0.9839<br />framework: TensorFlow"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(192,57,43,1)","dash":"solid"},"hoveron":"points","name":"TensorFlow","legendgroup":"TensorFlow","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1],"y":[0.9796,0.9833,0.9825,0.9838,0.9835,0.9839,0.9832,0.9842,0.9819,0.9823,0.9825,0.9835,0.9842,0.984,0.9831,0.9789,0.9802,0.976,0.9709,0.9584],"text":["epoch: 20<br />val_acc: 0.9796<br />framework: CNTK","epoch: 19<br />val_acc: 0.9833<br />framework: CNTK","epoch: 18<br />val_acc: 0.9825<br />framework: CNTK","epoch: 17<br />val_acc: 0.9838<br />framework: CNTK","epoch: 16<br />val_acc: 0.9835<br />framework: CNTK","epoch: 15<br />val_acc: 0.9839<br />framework: CNTK","epoch: 14<br />val_acc: 0.9832<br />framework: CNTK","epoch: 13<br />val_acc: 0.9842<br />framework: CNTK","epoch: 12<br />val_acc: 0.9819<br />framework: CNTK","epoch: 11<br />val_acc: 0.9823<br />framework: CNTK","epoch: 10<br />val_acc: 0.9825<br />framework: CNTK","epoch:  9<br />val_acc: 0.9835<br />framework: CNTK","epoch:  8<br />val_acc: 0.9842<br />framework: CNTK","epoch:  7<br />val_acc: 0.9840<br />framework: CNTK","epoch:  6<br />val_acc: 0.9831<br />framework: CNTK","epoch:  5<br />val_acc: 0.9789<br />framework: CNTK","epoch:  4<br />val_acc: 0.9802<br />framework: CNTK","epoch:  3<br />val_acc: 0.9760<br />framework: CNTK","epoch:  2<br />val_acc: 0.9709<br />framework: CNTK","epoch:  1<br />val_acc: 0.9584<br />framework: CNTK"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(41,128,185,1)","opacity":1,"size":7.55905511811024,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(41,128,185,1)"}},"hoveron":"points","name":"CNTK","legendgroup":"CNTK","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,3,2,1,4],"y":[0.9839,0.9832,0.9837,0.9818,0.9841,0.9855,0.9843,0.9838,0.982,0.9851,0.984,0.9823,0.9823,0.9792,0.9788,0.981,0.9788,0.9773,0.9664,0.9764],"text":["epoch: 20<br />val_acc: 0.9839<br />framework: TensorFlow","epoch: 19<br />val_acc: 0.9832<br />framework: TensorFlow","epoch: 18<br />val_acc: 0.9837<br />framework: TensorFlow","epoch: 17<br />val_acc: 0.9818<br />framework: TensorFlow","epoch: 16<br />val_acc: 0.9841<br />framework: TensorFlow","epoch: 15<br />val_acc: 0.9855<br />framework: TensorFlow","epoch: 14<br />val_acc: 0.9843<br />framework: TensorFlow","epoch: 13<br />val_acc: 0.9838<br />framework: TensorFlow","epoch: 12<br />val_acc: 0.9820<br />framework: TensorFlow","epoch: 11<br />val_acc: 0.9851<br />framework: TensorFlow","epoch: 10<br />val_acc: 0.9840<br />framework: TensorFlow","epoch:  9<br />val_acc: 0.9823<br />framework: TensorFlow","epoch:  8<br />val_acc: 0.9823<br />framework: TensorFlow","epoch:  7<br />val_acc: 0.9792<br />framework: TensorFlow","epoch:  6<br />val_acc: 0.9788<br />framework: TensorFlow","epoch:  5<br />val_acc: 0.9810<br />framework: TensorFlow","epoch:  3<br />val_acc: 0.9788<br />framework: TensorFlow","epoch:  2<br />val_acc: 0.9773<br />framework: TensorFlow","epoch:  1<br />val_acc: 0.9664<br />framework: TensorFlow","epoch:  4<br />val_acc: 0.9764<br />framework: TensorFlow"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(192,57,43,1)","opacity":1,"size":7.55905511811024,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(192,57,43,1)"}},"hoveron":"points","name":"TensorFlow","legendgroup":"TensorFlow","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":53.3612287256123,"r":9.29846409298464,"b":53.1686176836862,"l":54.8609381486094},"font":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":18.5969281859693},"title":"Performance of MLP Approach on MNIST Data","titlefont":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":22.3163138231631},"xaxis":{"domain":[0,1],"type":"linear","autorange":false,"range":[0.0499999999999999,20.95],"tickmode":"array","ticktext":["5","10","15","20"],"tickvals":[5,10,15,20],"categoryorder":"array","categoryarray":["5","10","15","20"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":4.64923204649232,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"Source Sans Pro","size":14.8775425487754},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y","title":"Epoch","titlefont":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":18.5969281859693},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"type":"linear","autorange":false,"range":[0.957045,0.986855],"tickmode":"array","ticktext":["96%","97%","98%"],"tickvals":[0.96,0.97,0.98],"categoryorder":"array","categoryarray":["96%","97%","98%"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":4.64923204649232,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"Source Sans Pro","size":14.8775425487754},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"x","title":"Test Accuracy (Higher is Better)","titlefont":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":18.5969281859693},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":14.8775425487754},"y":0.877694488188976},"hovermode":"closest","width":null,"height":400,"barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":[{"name":"Collaborate","icon":{"width":1000,"ascent":500,"descent":-50,"path":"M487 375c7-10 9-23 5-36l-79-259c-3-12-11-23-22-31-11-8-22-12-35-12l-263 0c-15 0-29 5-43 15-13 10-23 23-28 37-5 13-5 25-1 37 0 0 0 3 1 7 1 5 1 8 1 11 0 2 0 4-1 6 0 3-1 5-1 6 1 2 2 4 3 6 1 2 2 4 4 6 2 3 4 5 5 7 5 7 9 16 13 26 4 10 7 19 9 26 0 2 0 5 0 9-1 4-1 6 0 8 0 2 2 5 4 8 3 3 5 5 5 7 4 6 8 15 12 26 4 11 7 19 7 26 1 1 0 4 0 9-1 4-1 7 0 8 1 2 3 5 6 8 4 4 6 6 6 7 4 5 8 13 13 24 4 11 7 20 7 28 1 1 0 4 0 7-1 3-1 6-1 7 0 2 1 4 3 6 1 1 3 4 5 6 2 3 3 5 5 6 1 2 3 5 4 9 2 3 3 7 5 10 1 3 2 6 4 10 2 4 4 7 6 9 2 3 4 5 7 7 3 2 7 3 11 3 3 0 8 0 13-1l0-1c7 2 12 2 14 2l218 0c14 0 25-5 32-16 8-10 10-23 6-37l-79-259c-7-22-13-37-20-43-7-7-19-10-37-10l-248 0c-5 0-9-2-11-5-2-3-2-7 0-12 4-13 18-20 41-20l264 0c5 0 10 2 16 5 5 3 8 6 10 11l85 282c2 5 2 10 2 17 7-3 13-7 17-13z m-304 0c-1-3-1-5 0-7 1-1 3-2 6-2l174 0c2 0 4 1 7 2 2 2 4 4 5 7l6 18c0 3 0 5-1 7-1 1-3 2-6 2l-173 0c-3 0-5-1-8-2-2-2-4-4-4-7z m-24-73c-1-3-1-5 0-7 2-2 3-2 6-2l174 0c2 0 5 0 7 2 3 2 4 4 5 7l6 18c1 2 0 5-1 6-1 2-3 3-5 3l-174 0c-3 0-5-1-7-3-3-1-4-4-5-6z"},"click":"function(gd) { \n        // is this being viewed in RStudio?\n        if (location.search == '?viewer_pane=1') {\n          alert('To learn about plotly for collaboration, visit:\\n https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html');\n        } else {\n          window.open('https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html', '_blank');\n        }\n      }"}],"cloud":false},"source":"A","attrs":{"d5e3506d9704":{"x":{},"y":{},"colour":{},"type":"scatter"},"d5e34ad5b0dc":{"x":{},"y":{},"colour":{}}},"cur_data":"d5e3506d9704","visdat":{"d5e3506d9704":["function (y) ","x"],"d5e34ad5b0dc":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1}},"base_url":"https://plot.ly"},"evals":["config.modeBarButtonsToAdd.0.click"],"jsHooks":{"render":[{"code":"function(el, x) { var ctConfig = crosstalk.var('plotlyCrosstalkOpts').set({\"on\":\"plotly_click\",\"persistent\":false,\"dynamic\":false,\"selectize\":false,\"opacityDim\":0.2,\"selected\":{\"opacity\":1}}); }","data":null}]}}</script>
+
+<script type="application/htmlwidget-sizing" data-for="d5e3134e61e6">{"viewer":{"width":"100%","height":400,"padding":15,"fill":false},"browser":{"width":"100%","height":400,"padding":0,"fill":false}}</script>
+
+<div id="htmlwidget_container">
+  <div id="d5e37c954f2c" style="width:100%;height:400px;" class="plotly html-widget"></div>
+</div>
+
+<script type="application/json" data-for="d5e37c954f2c">{"x":{"data":[{"orientation":"v","width":0.5,"base":0,"x":[1],"y":[2.76817538738251],"text":"framework: CNTK<br />mean: 2.768175","type":"bar","marker":{"autocolorscale":false,"color":"rgba(41,128,185,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"CNTK","legendgroup":"CNTK","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":0.5,"base":0,"x":[2],"y":[3.37409842014313],"text":"framework: TensorFlow<br />mean: 3.374098","type":"bar","marker":{"autocolorscale":false,"color":"rgba(192,57,43,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"TensorFlow","legendgroup":"TensorFlow","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[1],"y":[2.76817538738251],"text":"framework: CNTK<br />mean: 2.768175","type":"scatter","mode":"lines","opacity":1,"line":{"color":"transparent"},"error_y":{"array":[0.0490834009408876],"arrayminus":[0.0264339576589818],"type":"data","width":19.8863636363636,"symmetric":false,"color":"rgba(0,0,0,1)"},"name":"CNTK","legendgroup":"CNTK","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[2],"y":[3.37409842014313],"text":"framework: TensorFlow<br />mean: 3.374098","type":"scatter","mode":"lines","opacity":1,"line":{"color":"transparent"},"error_y":{"array":[0.122406645406047],"arrayminus":[0.039851210974144],"type":"data","width":19.8863636363636,"symmetric":false,"color":"rgba(0,0,0,1)"},"name":"TensorFlow","legendgroup":"TensorFlow","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":53.3612287256123,"r":9.29846409298464,"b":53.1686176836862,"l":39.983395599834},"font":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":18.5969281859693},"title":"Speed of MLP Approach on MNIST Data","titlefont":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":22.3163138231631},"xaxis":{"domain":[0,1],"type":"linear","autorange":false,"range":[0.4,2.6],"tickmode":"array","ticktext":["CNTK","TensorFlow"],"tickvals":[1,2],"categoryorder":"array","categoryarray":["CNTK","TensorFlow"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":4.64923204649232,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"Source Sans Pro","size":14.8775425487754},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y","title":"Keras Backend","titlefont":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":18.5969281859693},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"type":"linear","autorange":false,"range":[-0.174825253277459,3.67133031882663],"tickmode":"array","ticktext":["0","1","2","3"],"tickvals":[0,1,2,3],"categoryorder":"array","categoryarray":["0","1","2","3"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":4.64923204649232,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"Source Sans Pro","size":14.8775425487754},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"x","title":"Average Epoch Runtime (seconds)","titlefont":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":18.5969281859693},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":14.8775425487754},"y":0.877694488188976},"hovermode":"closest","width":null,"height":400,"barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":[{"name":"Collaborate","icon":{"width":1000,"ascent":500,"descent":-50,"path":"M487 375c7-10 9-23 5-36l-79-259c-3-12-11-23-22-31-11-8-22-12-35-12l-263 0c-15 0-29 5-43 15-13 10-23 23-28 37-5 13-5 25-1 37 0 0 0 3 1 7 1 5 1 8 1 11 0 2 0 4-1 6 0 3-1 5-1 6 1 2 2 4 3 6 1 2 2 4 4 6 2 3 4 5 5 7 5 7 9 16 13 26 4 10 7 19 9 26 0 2 0 5 0 9-1 4-1 6 0 8 0 2 2 5 4 8 3 3 5 5 5 7 4 6 8 15 12 26 4 11 7 19 7 26 1 1 0 4 0 9-1 4-1 7 0 8 1 2 3 5 6 8 4 4 6 6 6 7 4 5 8 13 13 24 4 11 7 20 7 28 1 1 0 4 0 7-1 3-1 6-1 7 0 2 1 4 3 6 1 1 3 4 5 6 2 3 3 5 5 6 1 2 3 5 4 9 2 3 3 7 5 10 1 3 2 6 4 10 2 4 4 7 6 9 2 3 4 5 7 7 3 2 7 3 11 3 3 0 8 0 13-1l0-1c7 2 12 2 14 2l218 0c14 0 25-5 32-16 8-10 10-23 6-37l-79-259c-7-22-13-37-20-43-7-7-19-10-37-10l-248 0c-5 0-9-2-11-5-2-3-2-7 0-12 4-13 18-20 41-20l264 0c5 0 10 2 16 5 5 3 8 6 10 11l85 282c2 5 2 10 2 17 7-3 13-7 17-13z m-304 0c-1-3-1-5 0-7 1-1 3-2 6-2l174 0c2 0 4 1 7 2 2 2 4 4 5 7l6 18c0 3 0 5-1 7-1 1-3 2-6 2l-173 0c-3 0-5-1-8-2-2-2-4-4-4-7z m-24-73c-1-3-1-5 0-7 2-2 3-2 6-2l174 0c2 0 5 0 7 2 3 2 4 4 5 7l6 18c1 2 0 5-1 6-1 2-3 3-5 3l-174 0c-3 0-5-1-7-3-3-1-4-4-5-6z"},"click":"function(gd) { \n        // is this being viewed in RStudio?\n        if (location.search == '?viewer_pane=1') {\n          alert('To learn about plotly for collaboration, visit:\\n https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html');\n        } else {\n          window.open('https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html', '_blank');\n        }\n      }"}],"cloud":false},"source":"A","attrs":{"d5e3533c155a":{"x":{},"y":{},"ymin":{},"ymax":{},"fill":{},"type":"bar"},"d5e3d9df267":{"x":{},"y":{},"ymin":{},"ymax":{},"fill":{}}},"cur_data":"d5e3533c155a","visdat":{"d5e3533c155a":["function (y) ","x"],"d5e3d9df267":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1}},"base_url":"https://plot.ly"},"evals":["config.modeBarButtonsToAdd.0.click"],"jsHooks":{"render":[{"code":"function(el, x) { var ctConfig = crosstalk.var('plotlyCrosstalkOpts').set({\"on\":\"plotly_click\",\"persistent\":false,\"dynamic\":false,\"selectize\":false,\"opacityDim\":0.2,\"selected\":{\"opacity\":1}}); }","data":null}]}}</script>
+
+<script type="application/htmlwidget-sizing" data-for="d5e37c954f2c">{"viewer":{"width":"100%","height":400,"padding":15,"fill":false},"browser":{"width":"100%","height":400,"padding":0,"fill":false}}</script>
+
+<p>Both frameworks train the model extremely quickly taking only a few seconds per epoch; there&rsquo;s no clear winner in terms of accuracy (although neither broke 99%), but CNTK is faster.</p>
+
+<p>Another <a href="https://github.com/minimaxir/keras-cntk-benchmark/blob/master/test_files/mnist_cnn.py">approach</a> is the <strong>convolutional neural network (CNN)</strong>, which utilizes the inherent relationships between adjacent pixels and is a more logical architecture for image data.</p>
+
+<div id="htmlwidget_container">
+  <div id="d5e32ffdeaf8" style="width:100%;height:400px;" class="plotly html-widget"></div>
+</div>
+
+<script type="application/json" data-for="d5e32ffdeaf8">{"x":{"data":[{"x":[1,2,3,4,5,6,7,8,9,10,11,12],"y":[0.9768,0.9827,0.9853,0.9865,0.9882,0.9883,0.9899,0.9899,0.9894,0.9895,0.9893,0.9892],"text":["epoch:  1<br />val_acc: 0.9768<br />framework: CNTK","epoch:  2<br />val_acc: 0.9827<br />framework: CNTK","epoch:  3<br />val_acc: 0.9853<br />framework: CNTK","epoch:  4<br />val_acc: 0.9865<br />framework: CNTK","epoch:  5<br />val_acc: 0.9882<br />framework: CNTK","epoch:  6<br />val_acc: 0.9883<br />framework: CNTK","epoch:  7<br />val_acc: 0.9899<br />framework: CNTK","epoch:  8<br />val_acc: 0.9899<br />framework: CNTK","epoch:  9<br />val_acc: 0.9894<br />framework: CNTK","epoch: 10<br />val_acc: 0.9895<br />framework: CNTK","epoch: 11<br />val_acc: 0.9893<br />framework: CNTK","epoch: 12<br />val_acc: 0.9892<br />framework: CNTK"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(41,128,185,1)","dash":"solid"},"hoveron":"points","name":"CNTK","legendgroup":"CNTK","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[1,2,3,4,5,6,7,8,9,10,11,12],"y":[0.9745,0.983,0.9866,0.9884,0.989,0.9891,0.9901,0.9899,0.9911,0.9911,0.9918,0.9916],"text":["epoch:  1<br />val_acc: 0.9745<br />framework: TensorFlow","epoch:  2<br />val_acc: 0.9830<br />framework: TensorFlow","epoch:  3<br />val_acc: 0.9866<br />framework: TensorFlow","epoch:  4<br />val_acc: 0.9884<br />framework: TensorFlow","epoch:  5<br />val_acc: 0.9890<br />framework: TensorFlow","epoch:  6<br />val_acc: 0.9891<br />framework: TensorFlow","epoch:  7<br />val_acc: 0.9901<br />framework: TensorFlow","epoch:  8<br />val_acc: 0.9899<br />framework: TensorFlow","epoch:  9<br />val_acc: 0.9911<br />framework: TensorFlow","epoch: 10<br />val_acc: 0.9911<br />framework: TensorFlow","epoch: 11<br />val_acc: 0.9918<br />framework: TensorFlow","epoch: 12<br />val_acc: 0.9916<br />framework: TensorFlow"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(192,57,43,1)","dash":"solid"},"hoveron":"points","name":"TensorFlow","legendgroup":"TensorFlow","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[12,11,10,9,7,6,5,4,3,8,2,1],"y":[0.9892,0.9893,0.9895,0.9894,0.9899,0.9883,0.9882,0.9865,0.9853,0.9899,0.9827,0.9768],"text":["epoch: 12<br />val_acc: 0.9892<br />framework: CNTK","epoch: 11<br />val_acc: 0.9893<br />framework: CNTK","epoch: 10<br />val_acc: 0.9895<br />framework: CNTK","epoch:  9<br />val_acc: 0.9894<br />framework: CNTK","epoch:  7<br />val_acc: 0.9899<br />framework: CNTK","epoch:  6<br />val_acc: 0.9883<br />framework: CNTK","epoch:  5<br />val_acc: 0.9882<br />framework: CNTK","epoch:  4<br />val_acc: 0.9865<br />framework: CNTK","epoch:  3<br />val_acc: 0.9853<br />framework: CNTK","epoch:  8<br />val_acc: 0.9899<br />framework: CNTK","epoch:  2<br />val_acc: 0.9827<br />framework: CNTK","epoch:  1<br />val_acc: 0.9768<br />framework: CNTK"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(41,128,185,1)","opacity":1,"size":7.55905511811024,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(41,128,185,1)"}},"hoveron":"points","name":"CNTK","legendgroup":"CNTK","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[12,11,10,9,8,7,6,5,4,3,2,1],"y":[0.9916,0.9918,0.9911,0.9911,0.9899,0.9901,0.9891,0.989,0.9884,0.9866,0.983,0.9745],"text":["epoch: 12<br />val_acc: 0.9916<br />framework: TensorFlow","epoch: 11<br />val_acc: 0.9918<br />framework: TensorFlow","epoch: 10<br />val_acc: 0.9911<br />framework: TensorFlow","epoch:  9<br />val_acc: 0.9911<br />framework: TensorFlow","epoch:  8<br />val_acc: 0.9899<br />framework: TensorFlow","epoch:  7<br />val_acc: 0.9901<br />framework: TensorFlow","epoch:  6<br />val_acc: 0.9891<br />framework: TensorFlow","epoch:  5<br />val_acc: 0.9890<br />framework: TensorFlow","epoch:  4<br />val_acc: 0.9884<br />framework: TensorFlow","epoch:  3<br />val_acc: 0.9866<br />framework: TensorFlow","epoch:  2<br />val_acc: 0.9830<br />framework: TensorFlow","epoch:  1<br />val_acc: 0.9745<br />framework: TensorFlow"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(192,57,43,1)","opacity":1,"size":7.55905511811024,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(192,57,43,1)"}},"hoveron":"points","name":"TensorFlow","legendgroup":"TensorFlow","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":53.3612287256123,"r":9.29846409298464,"b":53.1686176836862,"l":69.7384806973848},"font":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":18.5969281859693},"title":"Performance of CNN Approach on MNIST Data","titlefont":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":22.3163138231631},"xaxis":{"domain":[0,1],"type":"linear","autorange":false,"range":[0.45,12.55],"tickmode":"array","ticktext":["2.5","5.0","7.5","10.0","12.5"],"tickvals":[2.5,5,7.5,10,12.5],"categoryorder":"array","categoryarray":["2.5","5.0","7.5","10.0","12.5"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":4.64923204649232,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"Source Sans Pro","size":14.8775425487754},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y","title":"Epoch","titlefont":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":18.5969281859693},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"type":"linear","autorange":false,"range":[0.973635,0.992665],"tickmode":"array","ticktext":["97.5%","98.0%","98.5%","99.0%"],"tickvals":[0.975,0.98,0.985,0.99],"categoryorder":"array","categoryarray":["97.5%","98.0%","98.5%","99.0%"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":4.64923204649232,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"Source Sans Pro","size":14.8775425487754},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"x","title":"Test Accuracy (Higher is Better)","titlefont":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":18.5969281859693},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":14.8775425487754},"y":0.877694488188976},"hovermode":"closest","width":null,"height":400,"barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":[{"name":"Collaborate","icon":{"width":1000,"ascent":500,"descent":-50,"path":"M487 375c7-10 9-23 5-36l-79-259c-3-12-11-23-22-31-11-8-22-12-35-12l-263 0c-15 0-29 5-43 15-13 10-23 23-28 37-5 13-5 25-1 37 0 0 0 3 1 7 1 5 1 8 1 11 0 2 0 4-1 6 0 3-1 5-1 6 1 2 2 4 3 6 1 2 2 4 4 6 2 3 4 5 5 7 5 7 9 16 13 26 4 10 7 19 9 26 0 2 0 5 0 9-1 4-1 6 0 8 0 2 2 5 4 8 3 3 5 5 5 7 4 6 8 15 12 26 4 11 7 19 7 26 1 1 0 4 0 9-1 4-1 7 0 8 1 2 3 5 6 8 4 4 6 6 6 7 4 5 8 13 13 24 4 11 7 20 7 28 1 1 0 4 0 7-1 3-1 6-1 7 0 2 1 4 3 6 1 1 3 4 5 6 2 3 3 5 5 6 1 2 3 5 4 9 2 3 3 7 5 10 1 3 2 6 4 10 2 4 4 7 6 9 2 3 4 5 7 7 3 2 7 3 11 3 3 0 8 0 13-1l0-1c7 2 12 2 14 2l218 0c14 0 25-5 32-16 8-10 10-23 6-37l-79-259c-7-22-13-37-20-43-7-7-19-10-37-10l-248 0c-5 0-9-2-11-5-2-3-2-7 0-12 4-13 18-20 41-20l264 0c5 0 10 2 16 5 5 3 8 6 10 11l85 282c2 5 2 10 2 17 7-3 13-7 17-13z m-304 0c-1-3-1-5 0-7 1-1 3-2 6-2l174 0c2 0 4 1 7 2 2 2 4 4 5 7l6 18c0 3 0 5-1 7-1 1-3 2-6 2l-173 0c-3 0-5-1-8-2-2-2-4-4-4-7z m-24-73c-1-3-1-5 0-7 2-2 3-2 6-2l174 0c2 0 5 0 7 2 3 2 4 4 5 7l6 18c1 2 0 5-1 6-1 2-3 3-5 3l-174 0c-3 0-5-1-7-3-3-1-4-4-5-6z"},"click":"function(gd) { \n        // is this being viewed in RStudio?\n        if (location.search == '?viewer_pane=1') {\n          alert('To learn about plotly for collaboration, visit:\\n https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html');\n        } else {\n          window.open('https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html', '_blank');\n        }\n      }"}],"cloud":false},"source":"A","attrs":{"d5e31f8815b8":{"x":{},"y":{},"colour":{},"type":"scatter"},"d5e31f49f334":{"x":{},"y":{},"colour":{}}},"cur_data":"d5e31f8815b8","visdat":{"d5e31f8815b8":["function (y) ","x"],"d5e31f49f334":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1}},"base_url":"https://plot.ly"},"evals":["config.modeBarButtonsToAdd.0.click"],"jsHooks":{"render":[{"code":"function(el, x) { var ctConfig = crosstalk.var('plotlyCrosstalkOpts').set({\"on\":\"plotly_click\",\"persistent\":false,\"dynamic\":false,\"selectize\":false,\"opacityDim\":0.2,\"selected\":{\"opacity\":1}}); }","data":null}]}}</script>
+
+<script type="application/htmlwidget-sizing" data-for="d5e32ffdeaf8">{"viewer":{"width":"100%","height":400,"padding":15,"fill":false},"browser":{"width":"100%","height":400,"padding":0,"fill":false}}</script>
+
+<div id="htmlwidget_container">
+  <div id="d5e3638d0839" style="width:100%;height:400px;" class="plotly html-widget"></div>
+</div>
+
+<script type="application/json" data-for="d5e3638d0839">{"x":{"data":[{"orientation":"v","width":0.5,"base":0,"x":[1],"y":[15.8528816103935],"text":"framework: CNTK<br />mean: 15.85288","type":"bar","marker":{"autocolorscale":false,"color":"rgba(41,128,185,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"CNTK","legendgroup":"CNTK","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":0.5,"base":0,"x":[2],"y":[11.0993242661158],"text":"framework: TensorFlow<br />mean: 11.09932","type":"bar","marker":{"autocolorscale":false,"color":"rgba(192,57,43,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"TensorFlow","legendgroup":"TensorFlow","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[1],"y":[15.8528816103935],"text":"framework: CNTK<br />mean: 15.85288","type":"scatter","mode":"lines","opacity":1,"line":{"color":"transparent"},"error_y":{"array":[0.431788841883343],"arrayminus":[0.114179053223424],"type":"data","width":19.8863636363636,"symmetric":false,"color":"rgba(0,0,0,1)"},"name":"CNTK","legendgroup":"CNTK","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[2],"y":[11.0993242661158],"text":"framework: TensorFlow<br />mean: 11.09932","type":"scatter","mode":"lines","opacity":1,"line":{"color":"transparent"},"error_y":{"array":[0.42946408474802],"arrayminus":[0.116898433586767],"type":"data","width":19.8863636363636,"symmetric":false,"color":"rgba(0,0,0,1)"},"name":"TensorFlow","legendgroup":"TensorFlow","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":53.3612287256123,"r":9.29846409298464,"b":53.1686176836862,"l":47.4221668742217},"font":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":18.5969281859693},"title":"Speed of CNN Approach on MNIST Data","titlefont":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":22.3163138231631},"xaxis":{"domain":[0,1],"type":"linear","autorange":false,"range":[0.4,2.6],"tickmode":"array","ticktext":["CNTK","TensorFlow"],"tickvals":[1,2],"categoryorder":"array","categoryarray":["CNTK","TensorFlow"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":4.64923204649232,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"Source Sans Pro","size":14.8775425487754},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y","title":"Keras Backend","titlefont":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":18.5969281859693},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"type":"linear","autorange":false,"range":[-0.814233522613843,17.0989039748907],"tickmode":"array","ticktext":["0","5","10","15"],"tickvals":[0,5,10,15],"categoryorder":"array","categoryarray":["0","5","10","15"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":4.64923204649232,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"Source Sans Pro","size":14.8775425487754},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"x","title":"Average Epoch Runtime (seconds)","titlefont":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":18.5969281859693},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":14.8775425487754},"y":0.877694488188976},"hovermode":"closest","width":null,"height":400,"barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":[{"name":"Collaborate","icon":{"width":1000,"ascent":500,"descent":-50,"path":"M487 375c7-10 9-23 5-36l-79-259c-3-12-11-23-22-31-11-8-22-12-35-12l-263 0c-15 0-29 5-43 15-13 10-23 23-28 37-5 13-5 25-1 37 0 0 0 3 1 7 1 5 1 8 1 11 0 2 0 4-1 6 0 3-1 5-1 6 1 2 2 4 3 6 1 2 2 4 4 6 2 3 4 5 5 7 5 7 9 16 13 26 4 10 7 19 9 26 0 2 0 5 0 9-1 4-1 6 0 8 0 2 2 5 4 8 3 3 5 5 5 7 4 6 8 15 12 26 4 11 7 19 7 26 1 1 0 4 0 9-1 4-1 7 0 8 1 2 3 5 6 8 4 4 6 6 6 7 4 5 8 13 13 24 4 11 7 20 7 28 1 1 0 4 0 7-1 3-1 6-1 7 0 2 1 4 3 6 1 1 3 4 5 6 2 3 3 5 5 6 1 2 3 5 4 9 2 3 3 7 5 10 1 3 2 6 4 10 2 4 4 7 6 9 2 3 4 5 7 7 3 2 7 3 11 3 3 0 8 0 13-1l0-1c7 2 12 2 14 2l218 0c14 0 25-5 32-16 8-10 10-23 6-37l-79-259c-7-22-13-37-20-43-7-7-19-10-37-10l-248 0c-5 0-9-2-11-5-2-3-2-7 0-12 4-13 18-20 41-20l264 0c5 0 10 2 16 5 5 3 8 6 10 11l85 282c2 5 2 10 2 17 7-3 13-7 17-13z m-304 0c-1-3-1-5 0-7 1-1 3-2 6-2l174 0c2 0 4 1 7 2 2 2 4 4 5 7l6 18c0 3 0 5-1 7-1 1-3 2-6 2l-173 0c-3 0-5-1-8-2-2-2-4-4-4-7z m-24-73c-1-3-1-5 0-7 2-2 3-2 6-2l174 0c2 0 5 0 7 2 3 2 4 4 5 7l6 18c1 2 0 5-1 6-1 2-3 3-5 3l-174 0c-3 0-5-1-7-3-3-1-4-4-5-6z"},"click":"function(gd) { \n        // is this being viewed in RStudio?\n        if (location.search == '?viewer_pane=1') {\n          alert('To learn about plotly for collaboration, visit:\\n https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html');\n        } else {\n          window.open('https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html', '_blank');\n        }\n      }"}],"cloud":false},"source":"A","attrs":{"d5e3421703f2":{"x":{},"y":{},"ymin":{},"ymax":{},"fill":{},"type":"bar"},"d5e3750426c3":{"x":{},"y":{},"ymin":{},"ymax":{},"fill":{}}},"cur_data":"d5e3421703f2","visdat":{"d5e3421703f2":["function (y) ","x"],"d5e3750426c3":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1}},"base_url":"https://plot.ly"},"evals":["config.modeBarButtonsToAdd.0.click"],"jsHooks":{"render":[{"code":"function(el, x) { var ctConfig = crosstalk.var('plotlyCrosstalkOpts').set({\"on\":\"plotly_click\",\"persistent\":false,\"dynamic\":false,\"selectize\":false,\"opacityDim\":0.2,\"selected\":{\"opacity\":1}}); }","data":null}]}}</script>
+
+<script type="application/htmlwidget-sizing" data-for="d5e3638d0839">{"viewer":{"width":"100%","height":400,"padding":15,"fill":false},"browser":{"width":"100%","height":400,"padding":0,"fill":false}}</script>
+
+<p>In this case, TensorFlow performs better, both in accuracy <em>and</em> speed (and it breaks 99% too).</p>
+
+<h2>CIFAR-10</h2>
+
+<p>Going more into complex real-world models, the <a href="https://www.cs.toronto.edu/%7Ekriz/cifar.html">CIFAR-10 dataset</a> is a dataset used for image classification of 10 different objects. The architecture in the <a href="https://github.com/minimaxir/keras-cntk-benchmark/blob/master/test_files/cifar10_cnn.py">benchmark script</a> is a <strong>Deep CNN + MLP</strong> of many layers similar in architecture to the famous <a href="https://gist.github.com/baraldilorenzo/07d7802847aaad0a35d3">VGG-16</a> model, but more simple since most people do not have a super-computer cluster to train it.</p>
+
+<div id="htmlwidget_container">
+  <div id="d5e33466a90c" style="width:100%;height:400px;" class="plotly html-widget"></div>
+</div>
+
+<script type="application/json" data-for="d5e33466a90c">{"x":{"data":[{"x":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20],"y":[0.4301,0.4885,0.5267,0.5329,0.6017,0.6228,0.6412,0.6423,0.6695,0.6745,0.675,0.6939,0.7043,0.7066,0.6976,0.7036,0.7328,0.7259,0.7279,0.74],"text":["epoch:  1<br />val_acc: 0.4301<br />framework: CNTK","epoch:  2<br />val_acc: 0.4885<br />framework: CNTK","epoch:  3<br />val_acc: 0.5267<br />framework: CNTK","epoch:  4<br />val_acc: 0.5329<br />framework: CNTK","epoch:  5<br />val_acc: 0.6017<br />framework: CNTK","epoch:  6<br />val_acc: 0.6228<br />framework: CNTK","epoch:  7<br />val_acc: 0.6412<br />framework: CNTK","epoch:  8<br />val_acc: 0.6423<br />framework: CNTK","epoch:  9<br />val_acc: 0.6695<br />framework: CNTK","epoch: 10<br />val_acc: 0.6745<br />framework: CNTK","epoch: 11<br />val_acc: 0.6750<br />framework: CNTK","epoch: 12<br />val_acc: 0.6939<br />framework: CNTK","epoch: 13<br />val_acc: 0.7043<br />framework: CNTK","epoch: 14<br />val_acc: 0.7066<br />framework: CNTK","epoch: 15<br />val_acc: 0.6976<br />framework: CNTK","epoch: 16<br />val_acc: 0.7036<br />framework: CNTK","epoch: 17<br />val_acc: 0.7328<br />framework: CNTK","epoch: 18<br />val_acc: 0.7259<br />framework: CNTK","epoch: 19<br />val_acc: 0.7279<br />framework: CNTK","epoch: 20<br />val_acc: 0.7400<br />framework: CNTK"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(41,128,185,1)","dash":"solid"},"hoveron":"points","name":"CNTK","legendgroup":"CNTK","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20],"y":[0.4381,0.5066,0.5545,0.5603,0.6146,0.6296,0.6458,0.6396,0.6652,0.6786,0.6943,0.7035,0.7055,0.699,0.7159,0.7171,0.7327,0.7348,0.737,0.7453],"text":["epoch:  1<br />val_acc: 0.4381<br />framework: TensorFlow","epoch:  2<br />val_acc: 0.5066<br />framework: TensorFlow","epoch:  3<br />val_acc: 0.5545<br />framework: TensorFlow","epoch:  4<br />val_acc: 0.5603<br />framework: TensorFlow","epoch:  5<br />val_acc: 0.6146<br />framework: TensorFlow","epoch:  6<br />val_acc: 0.6296<br />framework: TensorFlow","epoch:  7<br />val_acc: 0.6458<br />framework: TensorFlow","epoch:  8<br />val_acc: 0.6396<br />framework: TensorFlow","epoch:  9<br />val_acc: 0.6652<br />framework: TensorFlow","epoch: 10<br />val_acc: 0.6786<br />framework: TensorFlow","epoch: 11<br />val_acc: 0.6943<br />framework: TensorFlow","epoch: 12<br />val_acc: 0.7035<br />framework: TensorFlow","epoch: 13<br />val_acc: 0.7055<br />framework: TensorFlow","epoch: 14<br />val_acc: 0.6990<br />framework: TensorFlow","epoch: 15<br />val_acc: 0.7159<br />framework: TensorFlow","epoch: 16<br />val_acc: 0.7171<br />framework: TensorFlow","epoch: 17<br />val_acc: 0.7327<br />framework: TensorFlow","epoch: 18<br />val_acc: 0.7348<br />framework: TensorFlow","epoch: 19<br />val_acc: 0.7370<br />framework: TensorFlow","epoch: 20<br />val_acc: 0.7453<br />framework: TensorFlow"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(192,57,43,1)","dash":"solid"},"hoveron":"points","name":"TensorFlow","legendgroup":"TensorFlow","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1],"y":[0.74,0.7279,0.7259,0.7328,0.7036,0.6976,0.7066,0.7043,0.6939,0.675,0.6745,0.6695,0.6423,0.6412,0.6228,0.6017,0.5329,0.5267,0.4885,0.4301],"text":["epoch: 20<br />val_acc: 0.7400<br />framework: CNTK","epoch: 19<br />val_acc: 0.7279<br />framework: CNTK","epoch: 18<br />val_acc: 0.7259<br />framework: CNTK","epoch: 17<br />val_acc: 0.7328<br />framework: CNTK","epoch: 16<br />val_acc: 0.7036<br />framework: CNTK","epoch: 15<br />val_acc: 0.6976<br />framework: CNTK","epoch: 14<br />val_acc: 0.7066<br />framework: CNTK","epoch: 13<br />val_acc: 0.7043<br />framework: CNTK","epoch: 12<br />val_acc: 0.6939<br />framework: CNTK","epoch: 11<br />val_acc: 0.6750<br />framework: CNTK","epoch: 10<br />val_acc: 0.6745<br />framework: CNTK","epoch:  9<br />val_acc: 0.6695<br />framework: CNTK","epoch:  8<br />val_acc: 0.6423<br />framework: CNTK","epoch:  7<br />val_acc: 0.6412<br />framework: CNTK","epoch:  6<br />val_acc: 0.6228<br />framework: CNTK","epoch:  5<br />val_acc: 0.6017<br />framework: CNTK","epoch:  4<br />val_acc: 0.5329<br />framework: CNTK","epoch:  3<br />val_acc: 0.5267<br />framework: CNTK","epoch:  2<br />val_acc: 0.4885<br />framework: CNTK","epoch:  1<br />val_acc: 0.4301<br />framework: CNTK"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(41,128,185,1)","opacity":1,"size":7.55905511811024,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(41,128,185,1)"}},"hoveron":"points","name":"CNTK","legendgroup":"CNTK","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1],"y":[0.7453,0.737,0.7348,0.7327,0.7171,0.7159,0.699,0.7055,0.7035,0.6943,0.6786,0.6652,0.6396,0.6458,0.6296,0.6146,0.5603,0.5545,0.5066,0.4381],"text":["epoch: 20<br />val_acc: 0.7453<br />framework: TensorFlow","epoch: 19<br />val_acc: 0.7370<br />framework: TensorFlow","epoch: 18<br />val_acc: 0.7348<br />framework: TensorFlow","epoch: 17<br />val_acc: 0.7327<br />framework: TensorFlow","epoch: 16<br />val_acc: 0.7171<br />framework: TensorFlow","epoch: 15<br />val_acc: 0.7159<br />framework: TensorFlow","epoch: 14<br />val_acc: 0.6990<br />framework: TensorFlow","epoch: 13<br />val_acc: 0.7055<br />framework: TensorFlow","epoch: 12<br />val_acc: 0.7035<br />framework: TensorFlow","epoch: 11<br />val_acc: 0.6943<br />framework: TensorFlow","epoch: 10<br />val_acc: 0.6786<br />framework: TensorFlow","epoch:  9<br />val_acc: 0.6652<br />framework: TensorFlow","epoch:  8<br />val_acc: 0.6396<br />framework: TensorFlow","epoch:  7<br />val_acc: 0.6458<br />framework: TensorFlow","epoch:  6<br />val_acc: 0.6296<br />framework: TensorFlow","epoch:  5<br />val_acc: 0.6146<br />framework: TensorFlow","epoch:  4<br />val_acc: 0.5603<br />framework: TensorFlow","epoch:  3<br />val_acc: 0.5545<br />framework: TensorFlow","epoch:  2<br />val_acc: 0.5066<br />framework: TensorFlow","epoch:  1<br />val_acc: 0.4381<br />framework: TensorFlow"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(192,57,43,1)","opacity":1,"size":7.55905511811024,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(192,57,43,1)"}},"hoveron":"points","name":"TensorFlow","legendgroup":"TensorFlow","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":53.3612287256123,"r":9.29846409298464,"b":53.1686176836862,"l":54.8609381486094},"font":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":18.5969281859693},"title":"Performance of CNN Approach on CIFAR-10 Data","titlefont":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":22.3163138231631},"xaxis":{"domain":[0,1],"type":"linear","autorange":false,"range":[0.0499999999999999,20.95],"tickmode":"array","ticktext":["5","10","15","20"],"tickvals":[5,10,15,20],"categoryorder":"array","categoryarray":["5","10","15","20"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":4.64923204649232,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"Source Sans Pro","size":14.8775425487754},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y","title":"Epoch","titlefont":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":18.5969281859693},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"type":"linear","autorange":false,"range":[0.41434,0.76106],"tickmode":"array","ticktext":["50%","60%","70%"],"tickvals":[0.5,0.6,0.7],"categoryorder":"array","categoryarray":["50%","60%","70%"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":4.64923204649232,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"Source Sans Pro","size":14.8775425487754},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"x","title":"Test Accuracy (Higher is Better)","titlefont":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":18.5969281859693},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":14.8775425487754},"y":0.877694488188976},"hovermode":"closest","width":null,"height":400,"barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":[{"name":"Collaborate","icon":{"width":1000,"ascent":500,"descent":-50,"path":"M487 375c7-10 9-23 5-36l-79-259c-3-12-11-23-22-31-11-8-22-12-35-12l-263 0c-15 0-29 5-43 15-13 10-23 23-28 37-5 13-5 25-1 37 0 0 0 3 1 7 1 5 1 8 1 11 0 2 0 4-1 6 0 3-1 5-1 6 1 2 2 4 3 6 1 2 2 4 4 6 2 3 4 5 5 7 5 7 9 16 13 26 4 10 7 19 9 26 0 2 0 5 0 9-1 4-1 6 0 8 0 2 2 5 4 8 3 3 5 5 5 7 4 6 8 15 12 26 4 11 7 19 7 26 1 1 0 4 0 9-1 4-1 7 0 8 1 2 3 5 6 8 4 4 6 6 6 7 4 5 8 13 13 24 4 11 7 20 7 28 1 1 0 4 0 7-1 3-1 6-1 7 0 2 1 4 3 6 1 1 3 4 5 6 2 3 3 5 5 6 1 2 3 5 4 9 2 3 3 7 5 10 1 3 2 6 4 10 2 4 4 7 6 9 2 3 4 5 7 7 3 2 7 3 11 3 3 0 8 0 13-1l0-1c7 2 12 2 14 2l218 0c14 0 25-5 32-16 8-10 10-23 6-37l-79-259c-7-22-13-37-20-43-7-7-19-10-37-10l-248 0c-5 0-9-2-11-5-2-3-2-7 0-12 4-13 18-20 41-20l264 0c5 0 10 2 16 5 5 3 8 6 10 11l85 282c2 5 2 10 2 17 7-3 13-7 17-13z m-304 0c-1-3-1-5 0-7 1-1 3-2 6-2l174 0c2 0 4 1 7 2 2 2 4 4 5 7l6 18c0 3 0 5-1 7-1 1-3 2-6 2l-173 0c-3 0-5-1-8-2-2-2-4-4-4-7z m-24-73c-1-3-1-5 0-7 2-2 3-2 6-2l174 0c2 0 5 0 7 2 3 2 4 4 5 7l6 18c1 2 0 5-1 6-1 2-3 3-5 3l-174 0c-3 0-5-1-7-3-3-1-4-4-5-6z"},"click":"function(gd) { \n        // is this being viewed in RStudio?\n        if (location.search == '?viewer_pane=1') {\n          alert('To learn about plotly for collaboration, visit:\\n https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html');\n        } else {\n          window.open('https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html', '_blank');\n        }\n      }"}],"cloud":false},"source":"A","attrs":{"d5e37bf8b19a":{"x":{},"y":{},"colour":{},"type":"scatter"},"d5e3454350c":{"x":{},"y":{},"colour":{}}},"cur_data":"d5e37bf8b19a","visdat":{"d5e37bf8b19a":["function (y) ","x"],"d5e3454350c":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1}},"base_url":"https://plot.ly"},"evals":["config.modeBarButtonsToAdd.0.click"],"jsHooks":{"render":[{"code":"function(el, x) { var ctConfig = crosstalk.var('plotlyCrosstalkOpts').set({\"on\":\"plotly_click\",\"persistent\":false,\"dynamic\":false,\"selectize\":false,\"opacityDim\":0.2,\"selected\":{\"opacity\":1}}); }","data":null}]}}</script>
+
+<script type="application/htmlwidget-sizing" data-for="d5e33466a90c">{"viewer":{"width":"100%","height":400,"padding":15,"fill":false},"browser":{"width":"100%","height":400,"padding":0,"fill":false}}</script>
+
+<div id="htmlwidget_container">
+  <div id="d5e33bb3e726" style="width:100%;height:400px;" class="plotly html-widget"></div>
+</div>
+
+<script type="application/json" data-for="d5e33bb3e726">{"x":{"data":[{"orientation":"v","width":0.5,"base":0,"x":[1],"y":[40.2903408885002],"text":"framework: CNTK<br />mean: 40.29034","type":"bar","marker":{"autocolorscale":false,"color":"rgba(41,128,185,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"CNTK","legendgroup":"CNTK","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":0.5,"base":0,"x":[2],"y":[39.2076283454895],"text":"framework: TensorFlow<br />mean: 39.20763","type":"bar","marker":{"autocolorscale":false,"color":"rgba(192,57,43,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"TensorFlow","legendgroup":"TensorFlow","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[1],"y":[40.2903408885002],"text":"framework: CNTK<br />mean: 40.29034","type":"scatter","mode":"lines","opacity":1,"line":{"color":"transparent"},"error_y":{"array":[0.629282373999914],"arrayminus":[0.678987689315889],"type":"data","width":19.8863636363636,"symmetric":false,"color":"rgba(0,0,0,1)"},"name":"CNTK","legendgroup":"CNTK","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[2],"y":[39.2076283454895],"text":"framework: TensorFlow<br />mean: 39.20763","type":"scatter","mode":"lines","opacity":1,"line":{"color":"transparent"},"error_y":{"array":[1.48350351100346],"arrayminus":[0.962176468314958],"type":"data","width":19.8863636363636,"symmetric":false,"color":"rgba(0,0,0,1)"},"name":"TensorFlow","legendgroup":"TensorFlow","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":53.3612287256123,"r":9.29846409298464,"b":53.1686176836862,"l":47.4221668742217},"font":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":18.5969281859693},"title":"Speed of CNN Approach on CIFAR-10 Data","titlefont":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":22.3163138231631},"xaxis":{"domain":[0,1],"type":"linear","autorange":false,"range":[0.4,2.6],"tickmode":"array","ticktext":["CNTK","TensorFlow"],"tickvals":[1,2],"categoryorder":"array","categoryarray":["CNTK","TensorFlow"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":4.64923204649232,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"Source Sans Pro","size":14.8775425487754},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y","title":"Keras Backend","titlefont":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":18.5969281859693},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"type":"linear","autorange":false,"range":[-2.04598116312501,42.9656044256251],"tickmode":"array","ticktext":["0","10","20","30","40"],"tickvals":[0,10,20,30,40],"categoryorder":"array","categoryarray":["0","10","20","30","40"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":4.64923204649232,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"Source Sans Pro","size":14.8775425487754},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"x","title":"Average Epoch Runtime (seconds)","titlefont":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":18.5969281859693},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":14.8775425487754},"y":0.877694488188976},"hovermode":"closest","width":null,"height":400,"barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":[{"name":"Collaborate","icon":{"width":1000,"ascent":500,"descent":-50,"path":"M487 375c7-10 9-23 5-36l-79-259c-3-12-11-23-22-31-11-8-22-12-35-12l-263 0c-15 0-29 5-43 15-13 10-23 23-28 37-5 13-5 25-1 37 0 0 0 3 1 7 1 5 1 8 1 11 0 2 0 4-1 6 0 3-1 5-1 6 1 2 2 4 3 6 1 2 2 4 4 6 2 3 4 5 5 7 5 7 9 16 13 26 4 10 7 19 9 26 0 2 0 5 0 9-1 4-1 6 0 8 0 2 2 5 4 8 3 3 5 5 5 7 4 6 8 15 12 26 4 11 7 19 7 26 1 1 0 4 0 9-1 4-1 7 0 8 1 2 3 5 6 8 4 4 6 6 6 7 4 5 8 13 13 24 4 11 7 20 7 28 1 1 0 4 0 7-1 3-1 6-1 7 0 2 1 4 3 6 1 1 3 4 5 6 2 3 3 5 5 6 1 2 3 5 4 9 2 3 3 7 5 10 1 3 2 6 4 10 2 4 4 7 6 9 2 3 4 5 7 7 3 2 7 3 11 3 3 0 8 0 13-1l0-1c7 2 12 2 14 2l218 0c14 0 25-5 32-16 8-10 10-23 6-37l-79-259c-7-22-13-37-20-43-7-7-19-10-37-10l-248 0c-5 0-9-2-11-5-2-3-2-7 0-12 4-13 18-20 41-20l264 0c5 0 10 2 16 5 5 3 8 6 10 11l85 282c2 5 2 10 2 17 7-3 13-7 17-13z m-304 0c-1-3-1-5 0-7 1-1 3-2 6-2l174 0c2 0 4 1 7 2 2 2 4 4 5 7l6 18c0 3 0 5-1 7-1 1-3 2-6 2l-173 0c-3 0-5-1-8-2-2-2-4-4-4-7z m-24-73c-1-3-1-5 0-7 2-2 3-2 6-2l174 0c2 0 5 0 7 2 3 2 4 4 5 7l6 18c1 2 0 5-1 6-1 2-3 3-5 3l-174 0c-3 0-5-1-7-3-3-1-4-4-5-6z"},"click":"function(gd) { \n        // is this being viewed in RStudio?\n        if (location.search == '?viewer_pane=1') {\n          alert('To learn about plotly for collaboration, visit:\\n https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html');\n        } else {\n          window.open('https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html', '_blank');\n        }\n      }"}],"cloud":false},"source":"A","attrs":{"d5e362e819c7":{"x":{},"y":{},"ymin":{},"ymax":{},"fill":{},"type":"bar"},"d5e373f48a8b":{"x":{},"y":{},"ymin":{},"ymax":{},"fill":{}}},"cur_data":"d5e362e819c7","visdat":{"d5e362e819c7":["function (y) ","x"],"d5e373f48a8b":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1}},"base_url":"https://plot.ly"},"evals":["config.modeBarButtonsToAdd.0.click"],"jsHooks":{"render":[{"code":"function(el, x) { var ctConfig = crosstalk.var('plotlyCrosstalkOpts').set({\"on\":\"plotly_click\",\"persistent\":false,\"dynamic\":false,\"selectize\":false,\"opacityDim\":0.2,\"selected\":{\"opacity\":1}}); }","data":null}]}}</script>
+
+<script type="application/htmlwidget-sizing" data-for="d5e33bb3e726">{"viewer":{"width":"100%","height":400,"padding":15,"fill":false},"browser":{"width":"100%","height":400,"padding":0,"fill":false}}</script>
+
+<p>In this case, performance between the two backends is <em>equal</em>, both in accuracy and speed. Perhaps the MLP benefits of CNTK and the CNN benefits of TensorFlow canceled each other out.</p>
+
+<h2>Nietzsche Text Generation</h2>
+
+<p><a href="https://github.com/minimaxir/keras-cntk-benchmark/blob/master/test_files/lstm_text_generation.py">Text generation</a> based off of <a href="https://github.com/karpathy/char-rnn">char-rnn</a> is popular. Specifically, it uses a <strong>LSTM</strong> to &ldquo;learn&rdquo; the text and sample new text. In the Keras example using <a href="https://en.wikipedia.org/wiki/Friedrich_Nietzsche">Nietzsche&rsquo;s</a> <a href="https://s3.amazonaws.com/text-datasets/nietzsche.txt">ramblings</a> as the source dataset, the model attempts to predict the next character using the previous 40 characters, and minimize the training loss. Ideally you want below 1.00 loss before generated text is grammatically coherent.</p>
+
+<div id="htmlwidget_container">
+  <div id="d5e39946fc" style="width:100%;height:400px;" class="plotly html-widget"></div>
+</div>
+
+<script type="application/json" data-for="d5e39946fc">{"x":{"data":[{"x":[1,2,3,4,5,6,7,8,9,10],"y":[2.00440777019,1.64802151896,1.55469932735,1.50813395339,1.47896788624,1.45615055283,1.44040952227,1.42692558066,1.41612182536,1.40472281286],"text":["epoch:  1<br />loss: 2.004408<br />framework: CNTK","epoch:  2<br />loss: 1.648022<br />framework: CNTK","epoch:  3<br />loss: 1.554699<br />framework: CNTK","epoch:  4<br />loss: 1.508134<br />framework: CNTK","epoch:  5<br />loss: 1.478968<br />framework: CNTK","epoch:  6<br />loss: 1.456151<br />framework: CNTK","epoch:  7<br />loss: 1.440410<br />framework: CNTK","epoch:  8<br />loss: 1.426926<br />framework: CNTK","epoch:  9<br />loss: 1.416122<br />framework: CNTK","epoch: 10<br />loss: 1.404723<br />framework: CNTK"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(41,128,185,1)","dash":"solid"},"hoveron":"points","name":"CNTK","legendgroup":"CNTK","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[1,2,3,4,5,6,7,8,9,10],"y":[2.01015738712,1.66685410016,1.55497078145,1.50765904726,1.47890785292,1.45558360526,1.44119170534,1.42519511551,1.41509616279,1.40604660672],"text":["epoch:  1<br />loss: 2.010157<br />framework: TensorFlow","epoch:  2<br />loss: 1.666854<br />framework: TensorFlow","epoch:  3<br />loss: 1.554971<br />framework: TensorFlow","epoch:  4<br />loss: 1.507659<br />framework: TensorFlow","epoch:  5<br />loss: 1.478908<br />framework: TensorFlow","epoch:  6<br />loss: 1.455584<br />framework: TensorFlow","epoch:  7<br />loss: 1.441192<br />framework: TensorFlow","epoch:  8<br />loss: 1.425195<br />framework: TensorFlow","epoch:  9<br />loss: 1.415096<br />framework: TensorFlow","epoch: 10<br />loss: 1.406047<br />framework: TensorFlow"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(192,57,43,1)","dash":"solid"},"hoveron":"points","name":"TensorFlow","legendgroup":"TensorFlow","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[10,9,8,7,6,5,4,2,3,1],"y":[1.40472281286,1.41612182536,1.42692558066,1.44040952227,1.45615055283,1.47896788624,1.50813395339,1.64802151896,1.55469932735,2.00440777019],"text":["epoch: 10<br />loss: 1.404723<br />framework: CNTK","epoch:  9<br />loss: 1.416122<br />framework: CNTK","epoch:  8<br />loss: 1.426926<br />framework: CNTK","epoch:  7<br />loss: 1.440410<br />framework: CNTK","epoch:  6<br />loss: 1.456151<br />framework: CNTK","epoch:  5<br />loss: 1.478968<br />framework: CNTK","epoch:  4<br />loss: 1.508134<br />framework: CNTK","epoch:  2<br />loss: 1.648022<br />framework: CNTK","epoch:  3<br />loss: 1.554699<br />framework: CNTK","epoch:  1<br />loss: 2.004408<br />framework: CNTK"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(41,128,185,1)","opacity":1,"size":7.55905511811024,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(41,128,185,1)"}},"hoveron":"points","name":"CNTK","legendgroup":"CNTK","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[10,9,8,7,6,5,4,3,2,1],"y":[1.40604660672,1.41509616279,1.42519511551,1.44119170534,1.45558360526,1.47890785292,1.50765904726,1.55497078145,1.66685410016,2.01015738712],"text":["epoch: 10<br />loss: 1.406047<br />framework: TensorFlow","epoch:  9<br />loss: 1.415096<br />framework: TensorFlow","epoch:  8<br />loss: 1.425195<br />framework: TensorFlow","epoch:  7<br />loss: 1.441192<br />framework: TensorFlow","epoch:  6<br />loss: 1.455584<br />framework: TensorFlow","epoch:  5<br />loss: 1.478908<br />framework: TensorFlow","epoch:  4<br />loss: 1.507659<br />framework: TensorFlow","epoch:  3<br />loss: 1.554971<br />framework: TensorFlow","epoch:  2<br />loss: 1.666854<br />framework: TensorFlow","epoch:  1<br />loss: 2.010157<br />framework: TensorFlow"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(192,57,43,1)","opacity":1,"size":7.55905511811024,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(192,57,43,1)"}},"hoveron":"points","name":"TensorFlow","legendgroup":"TensorFlow","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":53.3612287256123,"r":9.29846409298464,"b":53.1686176836862,"l":54.8609381486094},"font":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":18.5969281859693},"title":"Performance of Text Generation via LSTM","titlefont":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":22.3163138231631},"xaxis":{"domain":[0,1],"type":"linear","autorange":false,"range":[0.55,10.45],"tickmode":"array","ticktext":["2.5","5.0","7.5","10.0"],"tickvals":[2.5,5,7.5,10],"categoryorder":"array","categoryarray":["2.5","5.0","7.5","10.0"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":4.64923204649232,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"Source Sans Pro","size":14.8775425487754},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y","title":"Epoch","titlefont":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":18.5969281859693},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"type":"linear","autorange":false,"range":[1.374451084147,2.040429115833],"tickmode":"array","ticktext":["1.4","1.6","1.8","2.0"],"tickvals":[1.4,1.6,1.8,2],"categoryorder":"array","categoryarray":["1.4","1.6","1.8","2.0"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":4.64923204649232,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"Source Sans Pro","size":14.8775425487754},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"x","title":"Loss (Lower is Better)","titlefont":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":18.5969281859693},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":14.8775425487754},"y":0.877694488188976},"hovermode":"closest","width":null,"height":400,"barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":[{"name":"Collaborate","icon":{"width":1000,"ascent":500,"descent":-50,"path":"M487 375c7-10 9-23 5-36l-79-259c-3-12-11-23-22-31-11-8-22-12-35-12l-263 0c-15 0-29 5-43 15-13 10-23 23-28 37-5 13-5 25-1 37 0 0 0 3 1 7 1 5 1 8 1 11 0 2 0 4-1 6 0 3-1 5-1 6 1 2 2 4 3 6 1 2 2 4 4 6 2 3 4 5 5 7 5 7 9 16 13 26 4 10 7 19 9 26 0 2 0 5 0 9-1 4-1 6 0 8 0 2 2 5 4 8 3 3 5 5 5 7 4 6 8 15 12 26 4 11 7 19 7 26 1 1 0 4 0 9-1 4-1 7 0 8 1 2 3 5 6 8 4 4 6 6 6 7 4 5 8 13 13 24 4 11 7 20 7 28 1 1 0 4 0 7-1 3-1 6-1 7 0 2 1 4 3 6 1 1 3 4 5 6 2 3 3 5 5 6 1 2 3 5 4 9 2 3 3 7 5 10 1 3 2 6 4 10 2 4 4 7 6 9 2 3 4 5 7 7 3 2 7 3 11 3 3 0 8 0 13-1l0-1c7 2 12 2 14 2l218 0c14 0 25-5 32-16 8-10 10-23 6-37l-79-259c-7-22-13-37-20-43-7-7-19-10-37-10l-248 0c-5 0-9-2-11-5-2-3-2-7 0-12 4-13 18-20 41-20l264 0c5 0 10 2 16 5 5 3 8 6 10 11l85 282c2 5 2 10 2 17 7-3 13-7 17-13z m-304 0c-1-3-1-5 0-7 1-1 3-2 6-2l174 0c2 0 4 1 7 2 2 2 4 4 5 7l6 18c0 3 0 5-1 7-1 1-3 2-6 2l-173 0c-3 0-5-1-8-2-2-2-4-4-4-7z m-24-73c-1-3-1-5 0-7 2-2 3-2 6-2l174 0c2 0 5 0 7 2 3 2 4 4 5 7l6 18c1 2 0 5-1 6-1 2-3 3-5 3l-174 0c-3 0-5-1-7-3-3-1-4-4-5-6z"},"click":"function(gd) { \n        // is this being viewed in RStudio?\n        if (location.search == '?viewer_pane=1') {\n          alert('To learn about plotly for collaboration, visit:\\n https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html');\n        } else {\n          window.open('https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html', '_blank');\n        }\n      }"}],"cloud":false},"source":"A","attrs":{"d5e32c23029d":{"x":{},"y":{},"colour":{},"type":"scatter"},"d5e32e80a80e":{"x":{},"y":{},"colour":{}}},"cur_data":"d5e32c23029d","visdat":{"d5e32c23029d":["function (y) ","x"],"d5e32e80a80e":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1}},"base_url":"https://plot.ly"},"evals":["config.modeBarButtonsToAdd.0.click"],"jsHooks":{"render":[{"code":"function(el, x) { var ctConfig = crosstalk.var('plotlyCrosstalkOpts').set({\"on\":\"plotly_click\",\"persistent\":false,\"dynamic\":false,\"selectize\":false,\"opacityDim\":0.2,\"selected\":{\"opacity\":1}}); }","data":null}]}}</script>
+
+<script type="application/htmlwidget-sizing" data-for="d5e39946fc">{"viewer":{"width":"100%","height":400,"padding":15,"fill":false},"browser":{"width":"100%","height":400,"padding":0,"fill":false}}</script>
+
+<div id="htmlwidget_container">
+  <div id="d5e31d02de77" style="width:100%;height:400px;" class="plotly html-widget"></div>
+</div>
+
+<script type="application/json" data-for="d5e31d02de77">{"x":{"data":[{"orientation":"v","width":0.5,"base":0,"x":[1],"y":[46.3590185880661],"text":"framework: CNTK<br />mean: 46.35902","type":"bar","marker":{"autocolorscale":false,"color":"rgba(41,128,185,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"CNTK","legendgroup":"CNTK","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":0.5,"base":0,"x":[2],"y":[87.6180793523788],"text":"framework: TensorFlow<br />mean: 87.61808","type":"bar","marker":{"autocolorscale":false,"color":"rgba(192,57,43,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"TensorFlow","legendgroup":"TensorFlow","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[1],"y":[46.3590185880661],"text":"framework: CNTK<br />mean: 46.35902","type":"scatter","mode":"lines","opacity":1,"line":{"color":"transparent"},"error_y":{"array":[1.3510494601399],"arrayminus":[0.473184503636254],"type":"data","width":19.8863636363636,"symmetric":false,"color":"rgba(0,0,0,1)"},"name":"CNTK","legendgroup":"CNTK","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[2],"y":[87.6180793523788],"text":"framework: TensorFlow<br />mean: 87.61808","type":"scatter","mode":"lines","opacity":1,"line":{"color":"transparent"},"error_y":{"array":[1.02050027749789],"arrayminus":[0.707233857780466],"type":"data","width":19.8863636363636,"symmetric":false,"color":"rgba(0,0,0,1)"},"name":"TensorFlow","legendgroup":"TensorFlow","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":53.3612287256123,"r":9.29846409298464,"b":53.1686176836862,"l":47.4221668742217},"font":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":18.5969281859693},"title":"Speed of Text Generation via LSTM","titlefont":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":22.3163138231631},"xaxis":{"domain":[0,1],"type":"linear","autorange":false,"range":[0.4,2.6],"tickmode":"array","ticktext":["CNTK","TensorFlow"],"tickvals":[1,2],"categoryorder":"array","categoryarray":["CNTK","TensorFlow"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":4.64923204649232,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"Source Sans Pro","size":14.8775425487754},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y","title":"Keras Backend","titlefont":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":18.5969281859693},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"type":"linear","autorange":false,"range":[-4.43192898149384,93.0705086113706],"tickmode":"array","ticktext":["0","25","50","75"],"tickvals":[0,25,50,75],"categoryorder":"array","categoryarray":["0","25","50","75"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":4.64923204649232,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"Source Sans Pro","size":14.8775425487754},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"x","title":"Average Epoch Runtime (seconds)","titlefont":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":18.5969281859693},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":14.8775425487754},"y":0.877694488188976},"hovermode":"closest","width":null,"height":400,"barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":[{"name":"Collaborate","icon":{"width":1000,"ascent":500,"descent":-50,"path":"M487 375c7-10 9-23 5-36l-79-259c-3-12-11-23-22-31-11-8-22-12-35-12l-263 0c-15 0-29 5-43 15-13 10-23 23-28 37-5 13-5 25-1 37 0 0 0 3 1 7 1 5 1 8 1 11 0 2 0 4-1 6 0 3-1 5-1 6 1 2 2 4 3 6 1 2 2 4 4 6 2 3 4 5 5 7 5 7 9 16 13 26 4 10 7 19 9 26 0 2 0 5 0 9-1 4-1 6 0 8 0 2 2 5 4 8 3 3 5 5 5 7 4 6 8 15 12 26 4 11 7 19 7 26 1 1 0 4 0 9-1 4-1 7 0 8 1 2 3 5 6 8 4 4 6 6 6 7 4 5 8 13 13 24 4 11 7 20 7 28 1 1 0 4 0 7-1 3-1 6-1 7 0 2 1 4 3 6 1 1 3 4 5 6 2 3 3 5 5 6 1 2 3 5 4 9 2 3 3 7 5 10 1 3 2 6 4 10 2 4 4 7 6 9 2 3 4 5 7 7 3 2 7 3 11 3 3 0 8 0 13-1l0-1c7 2 12 2 14 2l218 0c14 0 25-5 32-16 8-10 10-23 6-37l-79-259c-7-22-13-37-20-43-7-7-19-10-37-10l-248 0c-5 0-9-2-11-5-2-3-2-7 0-12 4-13 18-20 41-20l264 0c5 0 10 2 16 5 5 3 8 6 10 11l85 282c2 5 2 10 2 17 7-3 13-7 17-13z m-304 0c-1-3-1-5 0-7 1-1 3-2 6-2l174 0c2 0 4 1 7 2 2 2 4 4 5 7l6 18c0 3 0 5-1 7-1 1-3 2-6 2l-173 0c-3 0-5-1-8-2-2-2-4-4-4-7z m-24-73c-1-3-1-5 0-7 2-2 3-2 6-2l174 0c2 0 5 0 7 2 3 2 4 4 5 7l6 18c1 2 0 5-1 6-1 2-3 3-5 3l-174 0c-3 0-5-1-7-3-3-1-4-4-5-6z"},"click":"function(gd) { \n        // is this being viewed in RStudio?\n        if (location.search == '?viewer_pane=1') {\n          alert('To learn about plotly for collaboration, visit:\\n https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html');\n        } else {\n          window.open('https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html', '_blank');\n        }\n      }"}],"cloud":false},"source":"A","attrs":{"d5e32f5a5bdc":{"x":{},"y":{},"ymin":{},"ymax":{},"fill":{},"type":"bar"},"d5e35544e0cd":{"x":{},"y":{},"ymin":{},"ymax":{},"fill":{}}},"cur_data":"d5e32f5a5bdc","visdat":{"d5e32f5a5bdc":["function (y) ","x"],"d5e35544e0cd":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1}},"base_url":"https://plot.ly"},"evals":["config.modeBarButtonsToAdd.0.click"],"jsHooks":{"render":[{"code":"function(el, x) { var ctConfig = crosstalk.var('plotlyCrosstalkOpts').set({\"on\":\"plotly_click\",\"persistent\":false,\"dynamic\":false,\"selectize\":false,\"opacityDim\":0.2,\"selected\":{\"opacity\":1}}); }","data":null}]}}</script>
+
+<script type="application/htmlwidget-sizing" data-for="d5e31d02de77">{"viewer":{"width":"100%","height":400,"padding":15,"fill":false},"browser":{"width":"100%","height":400,"padding":0,"fill":false}}</script>
+
+<p>Both have similar changes in loss over time (unfortunately, a loss of 1.40 will still result in gibberish text generated), although performance on CTNK is again fast due to the LSTM architecture.</p>
+
+<p>For this next benchmark, I will <em>not</em> use a official Keras example script, but instead use my <em>own</em> <a href="https://github.com/minimaxir/keras-cntk-benchmark/blob/master/test_files/text_generator_keras.py">text generator architecture</a>, created during <a href="http://minimaxir.com/2017/04/char-embeddings/">my previous Keras post</a>.</p>
+
+<div id="htmlwidget_container">
+  <div id="d5e33e1d4f93" style="width:100%;height:400px;" class="plotly html-widget"></div>
+</div>
+
+<script type="application/json" data-for="d5e33e1d4f93">{"x":{"data":[{"x":[1,2,3,4,5,6,7,8,9,10],"y":[2.00351653112,1.72485264239,1.60276587148,1.51993696254,1.46022373265,1.41141036682,1.37179022428,1.33587299931,1.3062139421,1.27900991821],"text":["epoch:  1<br />loss: 2.003517<br />framework: CNTK","epoch:  2<br />loss: 1.724853<br />framework: CNTK","epoch:  3<br />loss: 1.602766<br />framework: CNTK","epoch:  4<br />loss: 1.519937<br />framework: CNTK","epoch:  5<br />loss: 1.460224<br />framework: CNTK","epoch:  6<br />loss: 1.411410<br />framework: CNTK","epoch:  7<br />loss: 1.371790<br />framework: CNTK","epoch:  8<br />loss: 1.335873<br />framework: CNTK","epoch:  9<br />loss: 1.306214<br />framework: CNTK","epoch: 10<br />loss: 1.279010<br />framework: CNTK"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(41,128,185,1)","dash":"solid"},"hoveron":"points","name":"CNTK","legendgroup":"CNTK","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[1,2,3,4,5,6,7,8,9,10],"y":[2.00852505003,1.73037641162,1.60431502849,1.52106773144,1.45870362669,1.40930885724,1.36821400507,1.33404665547,1.30228422424,1.27453109394],"text":["epoch:  1<br />loss: 2.008525<br />framework: TensorFlow","epoch:  2<br />loss: 1.730376<br />framework: TensorFlow","epoch:  3<br />loss: 1.604315<br />framework: TensorFlow","epoch:  4<br />loss: 1.521068<br />framework: TensorFlow","epoch:  5<br />loss: 1.458704<br />framework: TensorFlow","epoch:  6<br />loss: 1.409309<br />framework: TensorFlow","epoch:  7<br />loss: 1.368214<br />framework: TensorFlow","epoch:  8<br />loss: 1.334047<br />framework: TensorFlow","epoch:  9<br />loss: 1.302284<br />framework: TensorFlow","epoch: 10<br />loss: 1.274531<br />framework: TensorFlow"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(192,57,43,1)","dash":"solid"},"hoveron":"points","name":"TensorFlow","legendgroup":"TensorFlow","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[10,9,8,7,6,5,4,3,2,1],"y":[1.27900991821,1.3062139421,1.33587299931,1.37179022428,1.41141036682,1.46022373265,1.51993696254,1.60276587148,1.72485264239,2.00351653112],"text":["epoch: 10<br />loss: 1.279010<br />framework: CNTK","epoch:  9<br />loss: 1.306214<br />framework: CNTK","epoch:  8<br />loss: 1.335873<br />framework: CNTK","epoch:  7<br />loss: 1.371790<br />framework: CNTK","epoch:  6<br />loss: 1.411410<br />framework: CNTK","epoch:  5<br />loss: 1.460224<br />framework: CNTK","epoch:  4<br />loss: 1.519937<br />framework: CNTK","epoch:  3<br />loss: 1.602766<br />framework: CNTK","epoch:  2<br />loss: 1.724853<br />framework: CNTK","epoch:  1<br />loss: 2.003517<br />framework: CNTK"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(41,128,185,1)","opacity":1,"size":7.55905511811024,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(41,128,185,1)"}},"hoveron":"points","name":"CNTK","legendgroup":"CNTK","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[10,9,8,7,6,5,4,3,2,1],"y":[1.27453109394,1.30228422424,1.33404665547,1.36821400507,1.40930885724,1.45870362669,1.52106773144,1.60431502849,1.73037641162,2.00852505003],"text":["epoch: 10<br />loss: 1.274531<br />framework: TensorFlow","epoch:  9<br />loss: 1.302284<br />framework: TensorFlow","epoch:  8<br />loss: 1.334047<br />framework: TensorFlow","epoch:  7<br />loss: 1.368214<br />framework: TensorFlow","epoch:  6<br />loss: 1.409309<br />framework: TensorFlow","epoch:  5<br />loss: 1.458704<br />framework: TensorFlow","epoch:  4<br />loss: 1.521068<br />framework: TensorFlow","epoch:  3<br />loss: 1.604315<br />framework: TensorFlow","epoch:  2<br />loss: 1.730376<br />framework: TensorFlow","epoch:  1<br />loss: 2.008525<br />framework: TensorFlow"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(192,57,43,1)","opacity":1,"size":7.55905511811024,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(192,57,43,1)"}},"hoveron":"points","name":"TensorFlow","legendgroup":"TensorFlow","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":53.3612287256123,"r":9.29846409298464,"b":53.1686176836862,"l":54.8609381486094},"font":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":18.5969281859693},"title":"Performance of Text Generation via Custom Keras Model","titlefont":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":22.3163138231631},"xaxis":{"domain":[0,1],"type":"linear","autorange":false,"range":[0.55,10.45],"tickmode":"array","ticktext":["2.5","5.0","7.5","10.0"],"tickvals":[2.5,5,7.5,10],"categoryorder":"array","categoryarray":["2.5","5.0","7.5","10.0"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":4.64923204649232,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"Source Sans Pro","size":14.8775425487754},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y","title":"Epoch","titlefont":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":18.5969281859693},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"type":"linear","autorange":false,"range":[1.2378313961355,2.0452247478345],"tickmode":"array","ticktext":["1.4","1.6","1.8","2.0"],"tickvals":[1.4,1.6,1.8,2],"categoryorder":"array","categoryarray":["1.4","1.6","1.8","2.0"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":4.64923204649232,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"Source Sans Pro","size":14.8775425487754},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"x","title":"Loss (Lower is Better)","titlefont":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":18.5969281859693},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":14.8775425487754},"y":0.877694488188976},"hovermode":"closest","width":null,"height":400,"barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":[{"name":"Collaborate","icon":{"width":1000,"ascent":500,"descent":-50,"path":"M487 375c7-10 9-23 5-36l-79-259c-3-12-11-23-22-31-11-8-22-12-35-12l-263 0c-15 0-29 5-43 15-13 10-23 23-28 37-5 13-5 25-1 37 0 0 0 3 1 7 1 5 1 8 1 11 0 2 0 4-1 6 0 3-1 5-1 6 1 2 2 4 3 6 1 2 2 4 4 6 2 3 4 5 5 7 5 7 9 16 13 26 4 10 7 19 9 26 0 2 0 5 0 9-1 4-1 6 0 8 0 2 2 5 4 8 3 3 5 5 5 7 4 6 8 15 12 26 4 11 7 19 7 26 1 1 0 4 0 9-1 4-1 7 0 8 1 2 3 5 6 8 4 4 6 6 6 7 4 5 8 13 13 24 4 11 7 20 7 28 1 1 0 4 0 7-1 3-1 6-1 7 0 2 1 4 3 6 1 1 3 4 5 6 2 3 3 5 5 6 1 2 3 5 4 9 2 3 3 7 5 10 1 3 2 6 4 10 2 4 4 7 6 9 2 3 4 5 7 7 3 2 7 3 11 3 3 0 8 0 13-1l0-1c7 2 12 2 14 2l218 0c14 0 25-5 32-16 8-10 10-23 6-37l-79-259c-7-22-13-37-20-43-7-7-19-10-37-10l-248 0c-5 0-9-2-11-5-2-3-2-7 0-12 4-13 18-20 41-20l264 0c5 0 10 2 16 5 5 3 8 6 10 11l85 282c2 5 2 10 2 17 7-3 13-7 17-13z m-304 0c-1-3-1-5 0-7 1-1 3-2 6-2l174 0c2 0 4 1 7 2 2 2 4 4 5 7l6 18c0 3 0 5-1 7-1 1-3 2-6 2l-173 0c-3 0-5-1-8-2-2-2-4-4-4-7z m-24-73c-1-3-1-5 0-7 2-2 3-2 6-2l174 0c2 0 5 0 7 2 3 2 4 4 5 7l6 18c1 2 0 5-1 6-1 2-3 3-5 3l-174 0c-3 0-5-1-7-3-3-1-4-4-5-6z"},"click":"function(gd) { \n        // is this being viewed in RStudio?\n        if (location.search == '?viewer_pane=1') {\n          alert('To learn about plotly for collaboration, visit:\\n https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html');\n        } else {\n          window.open('https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html', '_blank');\n        }\n      }"}],"cloud":false},"source":"A","attrs":{"d5e3711b058f":{"x":{},"y":{},"colour":{},"type":"scatter"},"d5e3250a294c":{"x":{},"y":{},"colour":{}}},"cur_data":"d5e3711b058f","visdat":{"d5e3711b058f":["function (y) ","x"],"d5e3250a294c":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1}},"base_url":"https://plot.ly"},"evals":["config.modeBarButtonsToAdd.0.click"],"jsHooks":{"render":[{"code":"function(el, x) { var ctConfig = crosstalk.var('plotlyCrosstalkOpts').set({\"on\":\"plotly_click\",\"persistent\":false,\"dynamic\":false,\"selectize\":false,\"opacityDim\":0.2,\"selected\":{\"opacity\":1}}); }","data":null}]}}</script>
+
+<script type="application/htmlwidget-sizing" data-for="d5e33e1d4f93">{"viewer":{"width":"100%","height":400,"padding":15,"fill":false},"browser":{"width":"100%","height":400,"padding":0,"fill":false}}</script>
+
+<div id="htmlwidget_container">
+  <div id="d5e357be0802" style="width:100%;height:400px;" class="plotly html-widget"></div>
+</div>
+
+<script type="application/json" data-for="d5e357be0802">{"x":{"data":[{"orientation":"v","width":0.5,"base":0,"x":[1],"y":[100.614623141289],"text":"framework: CNTK<br />mean: 100.6146","type":"bar","marker":{"autocolorscale":false,"color":"rgba(41,128,185,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"CNTK","legendgroup":"CNTK","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":0.5,"base":0,"x":[2],"y":[108.959185552597],"text":"framework: TensorFlow<br />mean: 108.9592","type":"bar","marker":{"autocolorscale":false,"color":"rgba(192,57,43,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"TensorFlow","legendgroup":"TensorFlow","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[1],"y":[100.614623141289],"text":"framework: CNTK<br />mean: 100.6146","type":"scatter","mode":"lines","opacity":1,"line":{"color":"transparent"},"error_y":{"array":[1.08758223846512],"arrayminus":[0.724098751095781],"type":"data","width":19.8863636363636,"symmetric":false,"color":"rgba(0,0,0,1)"},"name":"CNTK","legendgroup":"CNTK","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[2],"y":[108.959185552597],"text":"framework: TensorFlow<br />mean: 108.9592","type":"scatter","mode":"lines","opacity":1,"line":{"color":"transparent"},"error_y":{"array":[0.933447687045287],"arrayminus":[0.662856574837988],"type":"data","width":19.8863636363636,"symmetric":false,"color":"rgba(0,0,0,1)"},"name":"TensorFlow","legendgroup":"TensorFlow","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":53.3612287256123,"r":9.29846409298464,"b":53.1686176836862,"l":47.4221668742217},"font":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":18.5969281859693},"title":"Speed of Text Generation via Custom Keras Model","titlefont":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":22.3163138231631},"xaxis":{"domain":[0,1],"type":"linear","autorange":false,"range":[0.4,2.6],"tickmode":"array","ticktext":["CNTK","TensorFlow"],"tickvals":[1,2],"categoryorder":"array","categoryarray":["CNTK","TensorFlow"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":4.64923204649232,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"Source Sans Pro","size":14.8775425487754},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y","title":"Keras Backend","titlefont":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":18.5969281859693},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"type":"linear","autorange":false,"range":[-5.49463166198212,115.387264901624],"tickmode":"array","ticktext":["0","30","60","90"],"tickvals":[0,30,60,90],"categoryorder":"array","categoryarray":["0","30","60","90"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":4.64923204649232,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"Source Sans Pro","size":14.8775425487754},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"x","title":"Average Epoch Runtime (seconds)","titlefont":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":18.5969281859693},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"Source Sans Pro","size":14.8775425487754},"y":0.877694488188976},"hovermode":"closest","width":null,"height":400,"barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":[{"name":"Collaborate","icon":{"width":1000,"ascent":500,"descent":-50,"path":"M487 375c7-10 9-23 5-36l-79-259c-3-12-11-23-22-31-11-8-22-12-35-12l-263 0c-15 0-29 5-43 15-13 10-23 23-28 37-5 13-5 25-1 37 0 0 0 3 1 7 1 5 1 8 1 11 0 2 0 4-1 6 0 3-1 5-1 6 1 2 2 4 3 6 1 2 2 4 4 6 2 3 4 5 5 7 5 7 9 16 13 26 4 10 7 19 9 26 0 2 0 5 0 9-1 4-1 6 0 8 0 2 2 5 4 8 3 3 5 5 5 7 4 6 8 15 12 26 4 11 7 19 7 26 1 1 0 4 0 9-1 4-1 7 0 8 1 2 3 5 6 8 4 4 6 6 6 7 4 5 8 13 13 24 4 11 7 20 7 28 1 1 0 4 0 7-1 3-1 6-1 7 0 2 1 4 3 6 1 1 3 4 5 6 2 3 3 5 5 6 1 2 3 5 4 9 2 3 3 7 5 10 1 3 2 6 4 10 2 4 4 7 6 9 2 3 4 5 7 7 3 2 7 3 11 3 3 0 8 0 13-1l0-1c7 2 12 2 14 2l218 0c14 0 25-5 32-16 8-10 10-23 6-37l-79-259c-7-22-13-37-20-43-7-7-19-10-37-10l-248 0c-5 0-9-2-11-5-2-3-2-7 0-12 4-13 18-20 41-20l264 0c5 0 10 2 16 5 5 3 8 6 10 11l85 282c2 5 2 10 2 17 7-3 13-7 17-13z m-304 0c-1-3-1-5 0-7 1-1 3-2 6-2l174 0c2 0 4 1 7 2 2 2 4 4 5 7l6 18c0 3 0 5-1 7-1 1-3 2-6 2l-173 0c-3 0-5-1-8-2-2-2-4-4-4-7z m-24-73c-1-3-1-5 0-7 2-2 3-2 6-2l174 0c2 0 5 0 7 2 3 2 4 4 5 7l6 18c1 2 0 5-1 6-1 2-3 3-5 3l-174 0c-3 0-5-1-7-3-3-1-4-4-5-6z"},"click":"function(gd) { \n        // is this being viewed in RStudio?\n        if (location.search == '?viewer_pane=1') {\n          alert('To learn about plotly for collaboration, visit:\\n https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html');\n        } else {\n          window.open('https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html', '_blank');\n        }\n      }"}],"cloud":false},"source":"A","attrs":{"d5e3314208e1":{"x":{},"y":{},"ymin":{},"ymax":{},"fill":{},"type":"bar"},"d5e36655050a":{"x":{},"y":{},"ymin":{},"ymax":{},"fill":{}}},"cur_data":"d5e3314208e1","visdat":{"d5e3314208e1":["function (y) ","x"],"d5e36655050a":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1}},"base_url":"https://plot.ly"},"evals":["config.modeBarButtonsToAdd.0.click"],"jsHooks":{"render":[{"code":"function(el, x) { var ctConfig = crosstalk.var('plotlyCrosstalkOpts').set({\"on\":\"plotly_click\",\"persistent\":false,\"dynamic\":false,\"selectize\":false,\"opacityDim\":0.2,\"selected\":{\"opacity\":1}}); }","data":null}]}}</script>
+
+<script type="application/htmlwidget-sizing" data-for="d5e357be0802">{"viewer":{"width":"100%","height":400,"padding":15,"fill":false},"browser":{"width":"100%","height":400,"padding":0,"fill":false}}</script>
+
+<p>My network avoids converging early with only a minor cost to training speed in the TensorFlow case; unfortunately, CNTK speed is <em>much</em> slower than the simple model, but still faster than TensorFlow in the advanced model.</p>
+
+<p>Here&rsquo;s the generated text output from the TensorFlow-trained model on my architecture:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">hinks the rich man must be wholly perverity and connection of the english sin of the philosophers of the basis of the same profound of his placed and evil and exception of fear to plants to me such as the case of the will seems to the will to be every such a remark as a primates of a strong of
+[...]
+</code></pre></div>
+<p>And here&rsquo;s the output from the CNTK-trained model:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">(_x2js1hevjg4z_?z_aæ?q_gpmj:sn![?(f3_ch=lhw4y n6)gkh
+kujau
+momu,?!ljë7g)k,!?[45 0as9[d.68éhhptvsx jd_næi,ä_z!cwkr&quot;_f6ë-mu_(epp
+[...]
+</code></pre></div>
+<p>Wait, what? Apparently my model architecture caused CNTK to hit a legitimate bug when making predictions, which did not happen with CNTK + the simple LSTM architecture. Thanks to my QA skills, I found that <a href="https://keras.io/layers/normalization/">batch normalization</a> was the cause of the bug and <a href="https://github.com/Microsoft/CNTK/issues/1994">filed the issue</a> appropriately.</p>
+
+<h2>Conclusion</h2>
+
+<p>In all, the title of this post does not follow <a href="https://en.wikipedia.org/wiki/Betteridge%27s_law_of_headlines">Betteridge&rsquo;s law of headlines</a>; deciding the better Keras framework is not as clear cut as expected. Accuracy is mostly identical between the two frameworks. CNTK is faster at LSTMs/MLPs, TensorFlow is faster at CNNs/Embeddings, but when networks implement <em>both</em>, it&rsquo;s a tie.</p>
+
+<p>Random bug aside, it&rsquo;s possible that CNTK is not fully optimized for running on Keras (indeed, the 1bit-SGD functionality <a href="https://github.com/Microsoft/CNTK/issues/1975">does not work</a> yet) so there is still room for future improvement. Despite that, the results for simply setting a flag are <em>extremely</em> impressive, and it is worth testing Keras models on both CNTK and TensorFlow now to see which is better before deploying them to production.</p>
+
+<hr>
+
+<p><em>All scripts for running the benchmark are available in <a href="https://github.com/minimaxir/keras-cntk-benchmark">this GitHub repo</a>. You can view the R/ggplot2 code used to process the logs and create the interactive visualizations in <a href="http://minimaxir.com/notebooks/keras-cntk/">this R Notebook</a>.</em></p>
+
+                        
+                        
+                        <div class="alert alert-warning" role="alert">
+
+     <p>I currently do not have a full-time salary to fund my machine learning/deep learning/software/hardware needs for my crazy yet cool projects. If you liked this blog post, I have set up a <a href="https://www.patreon.com/minimaxir">Patreon</a>, and any monetary contributions to the Patreon are appreciated and will be put to good creative use.</p>
+
+    
+</div>
+                        
+						
+            			 <div class="breadcrumbs-v5-subtitle sharing-post" style="color: #999 !important; padding-top:10px; border-top: 1px solid #eee">Share this article!
+
+
+              <span class="sharing index" style="float: right; color: #999 !important;">
+  
+		  <span class="social facebook"><a href="https://www.facebook.com/share.php?u=http://minimaxir.com/2017/06/keras-cntk/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data="http://minimaxir.com/2017/06/keras-cntk/"><i class="fa fa-facebook"></i><span class="count hidden-xs"></span></a></span>
+  
+		<span class="social twitter"><a href="http://twitter.com/home/?status=Benchmarking CNTK on Keras: is it Better at Deep Learning than TensorFlow? - http://minimaxir.com/2017/06/keras-cntk/ - via @minimaxir"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data=http://minimaxir.com/2017/06/keras-cntk/><i class="fa fa-twitter"></i><span class="count hidden-xs"></span></a> </span>
+
+  <span  class="social linkedin"><a href="http://www.linkedin.com/shareArticle?mini=true&title=&url=http://minimaxir.com/2017/06/keras-cntk/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=600');return false;" data=http://minimaxir.com/2017/06/keras-cntk/><i class="fa fa-linkedin"></i><span class="count hidden-xs"> -</span></a> </span>
+
+   </span>
+   </div>
+						</div>
+                        <!-- End Blog Grid Content -->
+                        
+                        
+                        
+                    </article>
+                    <!-- End Blog Grid -->
+
+ 					
+
+                    <!-- Blog Comment -->
+                    <div class="blog-comments bg-color-white margin-b-30">
+                        <div class="blog-single-post-content">
+
+						
+
+<script type="text/javascript">
+      var disqus_shortname = 'minimaxir';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://minimaxir.com/2017/06/keras-cntk/';
+        var disqus_url = 'http://minimaxir.com/2017/06/keras-cntk/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+<div id="disqus_thread"></div>
+
+
+
+                        </div>
+                    </div>
+                    <!-- End Blog Comment -->
+                    
+                    
+                </div>
+
+			<!--========== BLOG SIDEBAR ==========-->
+<div class="col-md-3">
+
+
+
+    <!-- Blog Author -->
+    <div class="blog-sidebar margin-b-30">
+        <div class="blog-sidebar-heading">
+            <h4 class="blog-sidebar-heading-title">Author</h4>
+        </div>
+
+        <img src="/MaxFB.jpg" title="Stop mousing over me! I'm not a XKCD comic!" class="img-responsive hidden-xs hidden-sm"></img>
+
+        <div class="blog-sidebar-content">
+            <!-- Blog Author Bio -->
+             <p><strong>Max Woolf (@minimaxir)</strong> is a former Apple Software QA Engineer living in San Francisco and a Carnegie Mellon University graduate.</p>
+
+<p>In his spare time, Max uses <a href="https://www.python.org/">Python</a> to gather data from public APIs and <a href="http://ggplot2.org/">ggplot2</a> to plot plenty of pretty charts from that data.</p>
+
+<p>You can learn more about Max <a href="/about">here</a>, view his data analysis portfolio <a href="/data-portfolio">here</a>, or view his coding portfolio <a href="/portfolio">here</a>. </p>
+
+
+            <ul class="list-inline" style="padding-top:10px; margin-top: 20px; border-top: 1px solid #ebeef6">
+                <li class="theme-icons-wrap"><a title="Facebook" href="https://facebook.com/max.woolf" target="_blank"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-facebook"></i></a></li>
+                <li class="theme-icons-wrap"><a title="Twitter" href="https://twitter.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-twitter"></i></a></li>
+                <li class="theme-icons-wrap"><a title="LinkedIn" href="https://linkedin.com/in/minimaxir" target="_blank"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-linkedin"></i></a></li>
+                <li class="theme-icons-wrap"><a title="E-Mail" href="mailto:max@minimaxir.com"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-envelope"></i></a></li>
+                <li class="theme-icons-wrap"><a title="GitHub" href="https://github.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-github"></i></a></li>
+                <li class="theme-icons-wrap"><a title="YouTube" href="https://youtube.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-youtube"></i></a></li>
+                <li class="theme-icons-wrap"><a title="RSS" href="/rss.xml"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-rss"></i></a></li>
+            </ul>
+            <!-- End Blog Author Bio -->
+        </div>
+    </div>
+    <!-- End Blog Author -->
+
+    <!-- Blog Recent Posts -->
+    <div class="blog-sidebar margin-b-30">
+        <div class="blog-sidebar-heading">
+            <h4 class="blog-sidebar-heading-title">Recent Posts</h4>
+        </div>
+        <div class="blog-sidebar-content" style="position: relative; overflow: visible;">
+
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="/2017/06/keras-cntk/">Benchmarking CNTK on Keras: is it Better at Deep Learning than TensorFlow?</a></h5>
+                    <small class="latest-tuts-content-time"> Jun 12, 2017</small>
+                </div>
+            </article>
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="/2017/06/r-notebooks/">Advantages of Using R Notebooks For Data Analysis Instead of Jupyter Notebooks</a></h5>
+                    <small class="latest-tuts-content-time"> Jun 6, 2017</small>
+                </div>
+            </article>
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="/2017/05/leaving-apple/">Leaving Apple Inc.</a></h5>
+                    <small class="latest-tuts-content-time"> May 4, 2017</small>
+                </div>
+            </article>
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="/2017/04/char-embeddings/">Pretrained Character Embeddings for Deep Learning and Automatic Text Generation</a></h5>
+                    <small class="latest-tuts-content-time"> Apr 4, 2017</small>
+                </div>
+            </article>
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="/2017/02/predicting-arrests/">Predicting And Mapping Arrest Types in San Francisco with LightGBM, R, ggplot2</a></h5>
+                    <small class="latest-tuts-content-time"> Feb 8, 2017</small>
+                </div>
+            </article>
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="/2017/01/amazon-spark/">Playing with 80 Million Amazon Product Review Ratings Using Apache Spark</a></h5>
+                    <small class="latest-tuts-content-time"> Jan 2, 2017</small>
+                </div>
+            </article>
+            
+        </div>
+        <!-- End Blog Recent Posts -->
+    </div>
+
+    <!-- GitHub Top Repositories -->
+    <div class="blog-sidebar margin-b-30">
+        <div class="blog-sidebar-heading">
+            <h4 class="blog-sidebar-heading-title">GitHub Code Repositories</h4>
+        </div>
+        <div class="blog-sidebar-content" style="position: relative; overflow: visible;">
+
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/big-list-of-naughty-strings" target="_blank">Big List of Naughty Strings</a></h5>
+                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 20,142+</small>
+                </div>
+            </article>
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/facebook-page-post-scraper" target="_blank">Facebook Page Post Scraper</a></h5>
+                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 1,035+</small>
+                </div>
+            </article>
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/system-dashboard" target="_blank">Multiplatform System Dashboard</a></h5>
+                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 100+</small>
+                </div>
+            </article>
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/tritonize" target="_blank">Tritonize</a></h5>
+                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 9+</small>
+                </div>
+            </article>
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/stylistic-word-clouds" target="_blank">Stylistic Word Clouds</a></h5>
+                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 30+</small>
+                </div>
+            </article>
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/char-embeddings" target="_blank">Pretrained Character Embeddings for Deep Learning and Automatic Text Generation</a></h5>
+                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 8+</small>
+                </div>
+            </article>
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/get-profile-data-of-repo-stargazers" target="_blank">Get GitHub Profile Data of All Stargazers of a GitHub Repo</a></h5>
+                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 15+</small>
+                </div>
+            </article>
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/copy-syntax-highlight-osx" target="_blank">Copy Syntax Highlight for OS X</a></h5>
+                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 349+</small>
+                </div>
+            </article>
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/video-to-gif-osx" target="_blank">Convert Video to GIF on OS X</a></h5>
+                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 262+</small>
+                </div>
+            </article>
+            
+        </div>
+    </div>
+
+    <!-- End GitHub Top Repositories -->
+
+    <!-- Data Top Repositories -->
+    <div class="blog-sidebar margin-b-30">
+        <div class="blog-sidebar-heading">
+            <h4 class="blog-sidebar-heading-title">Data Analysis Notebooks</h4>
+        </div>
+        <div class="blog-sidebar-content" style="position: relative; overflow: visible;">
+
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="http://minimaxir.com/notebooks/char-tsne/" target="_blank">Pretrained Character Embeddings for Deep Learning and Automatic Text Generation</a></h5>
+                    <small class="latest-tuts-content-time"><i class="fa fa-cogs"></i> R, ggplot2</small>
+                </div>
+            </article>
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="http://minimaxir.com/notebooks/predicting-arrests/" target="_blank">Predicting And Mapping Arrest Types in San Francisco</a></h5>
+                    <small class="latest-tuts-content-time"><i class="fa fa-cogs"></i> R, ggplot2, LightGBM</small>
+                </div>
+            </article>
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="http://minimaxir.com/notebooks/amazon-spark/" target="_blank">Playing with 80 Million Amazon Product Review Ratings</a></h5>
+                    <small class="latest-tuts-content-time"><i class="fa fa-cogs"></i> R, ggplot2, Spark</small>
+                </div>
+            </article>
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="http://minimaxir.com/notebooks/interactive-network/" target="_blank">How to Create an Interactive WebGL Network Graph</a></h5>
+                    <small class="latest-tuts-content-time"><i class="fa fa-cogs"></i> R, ggplot2, plotly</small>
+                </div>
+            </article>
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="http://minimaxir.com/notebooks/first-comment/" target="_blank">What Percent of the Top-Voted Comments in Reddit Threads Were Also 1st Comment?</a></h5>
+                    <small class="latest-tuts-content-time"><i class="fa fa-cogs"></i> R, ggplot2</small>
+                </div>
+            </article>
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="https://github.com/minimaxir/clickbait-cluster/blob/master/fb_news_53D_spark.ipynb" target="_blank">Processing Clusters of Clickbait Headlines </a></h5>
+                    <small class="latest-tuts-content-time"><i class="fa fa-cogs"></i> Python, Spark, word2vec</small>
+                </div>
+            </article>
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="https://github.com/minimaxir/clickbait-cluster/blob/master/fb_news_53D_plotly.ipynb" target="_blank">Visualizing Clusters of Clickbait Headlines </a></h5>
+                    <small class="latest-tuts-content-time"><i class="fa fa-cogs"></i> R, plotly</small>
+                </div>
+            </article>
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="https://github.com/minimaxir/pokemon-3d/blob/master/pokemon_spark_pca.ipynb" target="_blank">
+Processing Pokémon Data With Apache Spark</a></h5>
+                    <small class="latest-tuts-content-time"><i class="fa fa-cogs"></i> Python, Spark</small>
+                </div>
+            </article>
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="https://github.com/minimaxir/pokemon-3d/blob/master/pokemon_3d_plotly.ipynb" target="_blank">Interactive 3D Clusters of all 721 Pokémon </a></h5>
+                    <small class="latest-tuts-content-time"><i class="fa fa-cogs"></i> R, ggplot2, plotly</small>
+                </div>
+            </article>
+            
+        </div>
+    </div>
+
+    <!-- End GitHub Top Repositories -->
+
+
+
+</div>
+<!--========== END BLOG SIDEBAR ==========-->
+			</div>
+            <!--// end row -->
+        </div>
+        <!--========== END PAGE CONTENT ==========-->
+
+    </div>
+    <!--========== END BACKGROUND COLOR SKY LIGHT ==========-->
+    
+
+
+
+  
+              <div class="wrapper">
+    
+	
+	
+    	 <section class="breadcrumbs-v5 bg-position-fixed" style="background: #2c3e50;  padding: 20px 0 20px !important;">
+        <div class="container">
+            <div class="row hero-index">
+            <div class="col-sm-6 sm-margin-b-30 hidden-xs">
+                <img src="/MaxFBInvert.png" title="Stop mousing over me! I'm not a XKCD comic!" class="img-responsive" style="border-radius: 30px; margin: 0 auto; max-height: 400px"></img>
+            </div>
+            <div class="col-sm-6 col-xs-12">
+
+			
+			<p><strong>Max Woolf (@minimaxir)</strong> is a former Apple Software QA Engineer living in San Francisco and a Carnegie Mellon University graduate.</p>
+
+<p>In his spare time, Max uses <a href="https://www.python.org/">Python</a> to gather data from public APIs and <a href="http://ggplot2.org/">ggplot2</a> to plot plenty of pretty charts from that data.</p>
+
+<p>You can learn more about Max <a href="/about">here</a>, view his data analysis portfolio <a href="/data-portfolio">here</a>, or view his coding portfolio <a href="/portfolio">here</a>. </p>
+
+  
+  
+  <ul class="list-inline" style="padding-top:20px; margin-top: 40px; border-top: 1px solid white;">
+                        <li class="theme-icons-wrap"><a title="Facebook" href="https://facebook.com/max.woolf" target="_blank"><i class="theme-icons theme-icons-white-brd theme-icons-md radius-circle fa fa-facebook"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="Twitter" href="https://twitter.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-brd theme-icons-md radius-circle fa fa-twitter"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="LinkedIn" href="https://linkedin.com/in/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-brd theme-icons-md radius-circle fa fa-linkedin"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="E-Mail" href="mailto:max@minimaxir.com"><i class="theme-icons theme-icons-white-brd theme-icons-md radius-circle fa fa-envelope"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="GitHub" href="https://github.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-brd theme-icons-md radius-circle fa fa-github"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="YouTube" href="https://youtube.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-brd theme-icons-md radius-circle fa fa-youtube"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="RSS" href="/rss.xml"><i class="theme-icons theme-icons-white-brd theme-icons-md radius-circle fa fa-rss"></i></a></li>
+
+                    </ul>
+            </div>
+        </div>
+        </div>
+    </section>
+    
+	
+
+	
+    
+
+            </div>
+    
+    <!--========== FOOTER V8 ==========-->
+    <footer id="footer" class="footer-v8">
+
+
+
+        <!-- Copyright -->
+        <div class="footer-v8-copyright">
+            <div class="container text-center">
+				Copyright &#169; 2017 Max Woolf. All Rights Reserved. 
+                minimaxir.com is powered by Jekyll and GitHub Pages.
+            </div>
+        </div>
+        <!-- Copyright -->
+    </footer>
+    <!--========== END FOOTER V8 ==========-->
+</div>
+<!-- END WRAPPER -->
+
+<!-- Sidebar Content Overlay -->
+<div class="sidebar-content-overlay"></div>
+<!-- End Sidebar Content Overlay -->
+
+<!-- Back To Top -->
+<a href="javascript:void(0);" class="js-back-to-top back-to-top-theme"></a>
+<!-- End Back To Top -->
+
+<!--========== JAVASCRIPTS(Load javascripts at bottom, this will reduce page load time) ==========-->
+<!-- BEGIN CORE PLUGINS -->
+<!--[if lt IE 9]>
+<script src="/assets/plugins/html5shiv.js"></script>
+<script src="/assets/plugins/respond.min.js"></script>
+<![endif]-->
+<script type="text/javascript" src="/js/jquery.migrate.min.js"></script>
+<script type="text/javascript" src="/js/bootstrap.min.js"></script>
+<!-- END CORE PLUGINS -->
+
+<!-- BEGIN PAGE LEVEL PLUGINS -->
+<script type="text/javascript" src="/js/jquery.back-to-top.js"></script>
+<!-- END PAGE LEVEL PLUGINS -->
+
+<!-- BEGIN PAGE LEVEL SCRIPTS -->
+<script type="text/javascript" src="/js/app.min.js"></script>
+<script type="text/javascript" src="/js/header-sticky.js"></script>
+<!-- END PAGE LEVEL SCRIPTS -->
+
+
+<script src="/js/htmlwidgets.js"></script>
+<script src="/js/plotly.js"></script>
+<script src="/js/typedarray.min.js"></script>
+<link href="/js/crosstalk.css" rel="stylesheet" />
+<script src="/js/crosstalk.min.js"></script>
+<link href="/js/plotly-htmlwidgets.css" rel="stylesheet" />
+<script src="/js/plotly-latest.min.js"></script>
+
+
+
+<!--========== END JAVASCRIPTS ==========-->
+  
+</body>
+<!-- END BODY -->
+
+</html>
