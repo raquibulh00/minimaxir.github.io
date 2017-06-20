@@ -4,7 +4,7 @@
   <title><![CDATA[minimaxir | Max Woolf's Blog]]></title>
   <link href="http://minimaxir.com/rss.xml" rel="self"/>
   <link href="http://minimaxir.com/"/>
-  <updated>2017-06-12T08:29:21-07:00</updated>
+  <updated>2017-06-20T08:07:23-07:00</updated>
   <id>http://minimaxir.com/</id>
   <author>
     <name><![CDATA[Max Woolf]]></name>
@@ -12,6 +12,88 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[The Decline of Imgur on Reddit and the Rise of Reddit's Native Image Hosting]]></title>
+    <link href="http://minimaxir.com/2017/06/imgur-decline/"/>
+    <updated>2017-06-20T08:00:00-07:00</updated>
+    <id>http://minimaxir.com/2017/06/imgur-decline</id>
+    <content type="html"><![CDATA[<p>Last week, Bloomberg <a href="https://www.bloomberg.com/news/articles/2017-06-17/reddit-said-to-be-raising-funds-valuing-startup-at-1-7-billion">reported</a> that Reddit was raising about $150 Million in venture capital at a valuation of $1.7 billion. Since Reddit&rsquo;s data is <a href="http://minimaxir.com/2015/10/reddit-bigquery/">public on BigQuery</a>, I quickly checked if there were any recent user engagement growth spurts which could justify such a high worth. Here&rsquo;s an example BigQuery which aggregates the total number of Reddit submissions made for each month until the end of April 2017:</p>
+<div class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="o">#</span><span class="n">standardSQL</span> 
+<span class="k">SELECT</span> <span class="n">DATE_TRUNC</span><span class="p">(</span><span class="nb">DATE</span><span class="p">(</span><span class="n">TIMESTAMP_SECONDS</span><span class="p">(</span><span class="n">created_utc</span><span class="p">)),</span> <span class="k">MONTH</span><span class="p">)</span> <span class="k">as</span> <span class="n">mon</span><span class="p">,</span>
+  <span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">as</span> <span class="n">num_submissions</span><span class="p">,</span>
+  <span class="k">FROM</span> <span class="o">`</span><span class="n">fh</span><span class="o">-</span><span class="n">bigquery</span><span class="p">.</span><span class="n">reddit_posts</span><span class="p">.</span><span class="o">*`</span>
+  <span class="k">WHERE</span> <span class="p">(</span><span class="n">_TABLE_SUFFIX</span> <span class="k">BETWEEN</span> <span class="s1">&#39;2016_01&#39;</span> <span class="k">AND</span> <span class="s1">&#39;2017_04&#39;</span> <span class="k">OR</span> <span class="n">_TABLE_SUFFIX</span> <span class="o">=</span> <span class="s1">&#39;full_corpus_201512&#39;</span><span class="p">)</span>
+  <span class="k">GROUP</span> <span class="k">BY</span> <span class="n">mon</span>
+  <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">mon</span>
+</code></pre></div>
+<p><img src="/img/imgur-decline/reddit-1.png" alt=""></p>
+
+<p>As it turns out, Reddit did indeed get a large boost in activity toward the end of 2016, likely due to the <em>heated</em> discussions and events around the <a href="https://en.wikipedia.org/wiki/United_States_presidential_election,_2016">U.S. Presidential Election</a>. But Reddit has maintained the growth rate since then, which is very appealing to potential investors.</p>
+
+<p>How are other sites benefiting from Reddit&rsquo;s growth? <a href="http://imgur.com">Imgur</a>, an image-host developed to be the <em>de facto</em> image hosting service for Reddit, shared in Reddit&rsquo;s continual growth&hellip;</p>
+
+<p><img src="/img/imgur-decline/reddit-2.png" alt=""></p>
+
+<p>&hellip;until mid-2016, when Imgur submission activity abruptly dropped. What happened?</p>
+
+<p>Coincidentally in mid-2016, Reddit <a href="https://techcrunch.com/2016/05/25/reddit-image-uploads/">made itself</a> an image host for submissions to the site. Initially limited to uploads via the iOS/Android apps, Reddit then allowed desktop users to upload images through a <a href="https://www.reddit.com/r/changelog/comments/4kuk2j/reddit_change_introducing_image_uploading_beta/">beta rollout</a> starting May 24th, and a full <a href="https://www.reddit.com/r/announcements/comments/4p5dm9/image_hosting_on_reddit/">sitewide release</a> on June 21st.</p>
+
+<p>How many Reddit-hosted image submissions are there compared to the number of Imgur submissions?</p>
+
+<p><img src="/img/imgur-decline/reddit-3.png" alt=""></p>
+
+<p>Wow, native Reddit images caught on.</p>
+
+<h2>Market Share</h2>
+
+<p><img src="/img/imgur-decline/pics.png" alt=""></p>
+
+<p>Did the rise of Reddit-hosted images cause the decline of Imgur on Reddit? Let&rsquo;s look at the daily number of Imgur submissions and Reddit-hosted Image submissions from December 2015 to April 2017, normalized by the total number of sitewide submissions on that day. This gives us a Reddit &ldquo;market share&rdquo; metric for both services. </p>
+
+<p>Additionally, we can plot vertical lines representing the dates when Reddit-hosted images rolled out in the limited beta release and the full sitewide release to see if there is a link between those events and submission behavior.</p>
+
+<p><img src="/img/imgur-decline/reddit-4.png" alt=""></p>
+
+<p>Before Reddit added native image hosting, Imgur accounted for 15% of all submissions to Reddit. Now it&rsquo;s below 9%. More Reddit-hosted images are being shared on Reddit than images from Imgur.</p>
+
+<p>Instead of looking at all of Reddit, where spam subreddits could skew the results, we can also look at the largest image-only subreddits: <a href="https://www.reddit.com/r/pics/">/r/pics</a> and <a href="https://www.reddit.com/r/gifs/">/r/gifs</a>, both of which were a part of the beta rollout.</p>
+
+<p><img src="/img/imgur-decline/reddit-5.png" alt=""></p>
+
+<p>Here, the impact of the two rollouts is much noticeable, with immediate increases in Reddit-hosted image market share after each rollout, and proportional decreases in Imgur market share. The growth rate after the beta release is flat for both services, but when Reddit image hosting becomes sitewide, the market shares of Reddit-hosted/Imgur images increase/decrease linearly over time once users officially learn that the native image upload functionality exists. And these trends do not appear to be slowing down.</p>
+
+<h2>A Silver Lining?</h2>
+
+<p>Obviously Imgur does not like losing a <em>large</em> chunk of traffic, but there&rsquo;s a possibility that this outcome will be better for the business than what&rsquo;s implied from the charts above.</p>
+
+<p>Hosting images on the internet isn&rsquo;t free, and bandwidth costs are the primary reason dedicated image hosts have died off over the years. Direct image links which show the user only the image and nothing else are convenient, but they are pure loss for the service. That&rsquo;s why image hosts encourage linking to the image on a landing page of the website, filled with ads which generate an expected revenue greater than the cost of serving the image.</p>
+
+<p>After a user uploads an image to Imgur on the desktop, the user is given two share links that can be submitted to sites like Reddit: an image link that goes to the image + ads, and a direct link to the image.</p>
+
+<p><img src="/img/imgur-decline/imgur_direct.png" alt=""></p>
+
+<p>Recently, Imgur has <a href="https://www.reddit.com/r/assholedesign/comments/5gs96k/just_show_me_the_fucking_image_imgur/">pushed app downloads</a> when visiting the site on an iOS/Android device, including <a href="https://www.reddit.com/r/assholedesign/comments/695efj/upload_image_on_imgur_mobile_has_been_replaced_by/">disabling uploads</a> in the mobile browser. When sharing an image from the Imgur app, the <em>only</em> way to share an image is through the image link, which could lead to an increase in the proportion of ad-filled Imgur image links on Reddit. Said increase could counteract the decrease in total Imgur submissions, and Imgur could actually come out ahead.</p>
+
+<p>With BigQuery, we can check the percentage of all Imgur submissions to Reddit which are direct links and the percentage which are indirect/lead to a landing page, and see if the ratio changes along the same time horizon used above:</p>
+
+<p><img src="/img/imgur-decline/reddit-6.png" alt=""></p>
+
+<p>Welp. No significant change in the ratio over time, eliminating that possible silver lining.</p>
+
+<h2>Conclusion</h2>
+
+<p>Note that the decline of Imgur on Reddit says nothing about Imgur as a business; it&rsquo;s entirely possible that Imgur&rsquo;s traffic on the main site itself is sufficient for growth. But the loss of Reddit traffic certainly can&rsquo;t be ignored, and it&rsquo;s interesting to visualize how quickly a service can be replaced when there&rsquo;s an equivalent native feature.</p>
+
+<p>It&rsquo;s worth nothing that new competitors in the image space such as <a href="https://giphy.com">Giphy</a> utilize image hosting as a <em>secondary</em> service. Instead, they focus on building a repository of images which can be licensed and accessed programmatically by other services like Slack, Facebook, and Twitter. And Giphy has raised <a href="https://www.crunchbase.com/organization/giphy#/entity">$150 Million</a> total with this approach, so perhaps the image hosting market itself has indeed changed.</p>
+
+<hr>
+
+<p><em>You can view the R, ggplot2 code, and BigQueries used to visualize the Reddit data in <a href="http://minimaxir.com/notebooks/imgur-decline/">this R Notebook</a>. You can also view the images/data used for this post in <a href="https://github.com/minimaxir/imgur-decline">this GitHub repository</a></em>.</p>
+
+<p><em>You are free to use the data visualizations from this article however you wish, but it would be greatly appreciated if proper attribution is given to this article and/or myself!</em></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Benchmarking CNTK on Keras: is it Better at Deep Learning than TensorFlow?]]></title>
@@ -1073,109 +1155,6 @@ Performing an exploratory data analysis of both is helpful to determine at a gla
 <hr>
 
 <p><em>You can view all the R and ggplot2 code used to visualize the data in <a href="http://minimaxir.com/notebooks/interactive-network/">this R Notebook</a>. You can also view the images/data used for this post in <a href="https://github.com/minimaxir/interactive-network">this GitHub repository</a></em>.</p>
-
-<p><em>You are free to use the data visualizations from this article however you wish, but it would be greatly appreciated if proper attribution is given to this article and/or myself!</em></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[What Percent of the Top-Voted Comments in Reddit Threads Were Also 1st Comment?]]></title>
-    <link href="http://minimaxir.com/2016/11/first-comment/"/>
-    <updated>2016-11-07T06:30:00-08:00</updated>
-    <id>http://minimaxir.com/2016/11/first-comment</id>
-    <content type="html"><![CDATA[<p><a href="https://www.reddit.com">Reddit</a> threads can be a crowded place. In popular subreddits such as <a href="https://www.reddit.com/r/AskReddit/">/r/AskReddit</a> and <a href="https://www.reddit.com/r/pics/">/r/pics</a>, Reddit submissions can receive hundreds, even <em>thousands</em> of unique comments. Some comments inevitably become lost in the noise. Reddit&rsquo;s <a href="https://redditblog.com/2009/10/15/reddits-new-comment-sorting-system/">ranking algorithm</a> attempts to rectify this by determining comment ranking using both time and community voting; comments in a thread, by default, are ordered based on the <strong>points score</strong> (upvotes - downvotes) the comment receives, subject to a rank decay based on the age of the comment.</p>
-
-<p><img src="/img/first-comment/reddit_askreddit.png" alt=""></p>
-
-<p>In theory, this system should allow comments that posted later in the thread&rsquo;s lifetime to rank much higher temporarily, then Redditors can vote on the new comment; if the new comment is good, it can now rise to the top and therefore the content which would otherwise be buried is now surfaced. Anecdotally, that doesn&rsquo;t be the case with Reddit&rsquo;s modern algorithm; comments made late in the thread appear at the bottom, where they likely will not receive any upvotes (this led to a minor &ldquo;<a href="https://www.google.com/#q=site:reddit.com+%22late+to+this+thread%22">I know I&rsquo;m late to this thread but&hellip;</a>&rdquo; meme).</p>
-
-<p>I, of course, am not satisfied with anecdotes. A month ago, a Redditor asked &ldquo;<a href="https://www.reddit.com/r/TheoryOfReddit/comments/53d5ep/what_percentage_of_the_top_comment_in_threads/">What percentage of the top comment in threads were also the first comment?</a>&rdquo; Why not calculate it <em>exactly</em> using big data?</p>
-
-<h2>Getting the Reddit Data</h2>
-
-<p><em>You can view all the <a href="https://www.r-project.org">R</a> and <a href="http://ggplot2.org">ggplot2</a> code used to query, analyze, and visualize the Reddit data in <a href="http://minimaxir.com/notebooks/first-comment/">this R Notebook</a>.</em></p>
-
-<p>In order to process a great amount of Reddit data, I turned to <a href="https://cloud.google.com/bigquery/">BigQuery</a>, which now has data for <a href="https://www.reddit.com/r/datasets/comments/590re2/updated_reddit_comments_and_posts_updated_on/">all Reddit comments</a> until September 2016.</p>
-
-<p>For this analysis, I will only look at the <strong>top-level comments</strong> (i.e. comments which are not replies to other comments), since those are the ones most affected by the ordering and submission of new comments. Additionally I will only look at comments within Reddit threads with <strong>atleast 30 top-level comments</strong> to ensure I only look at threads with sufficient discussion and where late posts are more likely to become hidden. It also mirrors the &ldquo;late to this thread&rdquo; meme: can posts be <em>too</em> late?</p>
-
-<p>The queried data will be all comments posted from January 2015 to September 2016: this give a good balance of sample size and foundation around the modern comment ranking algorithms. The total number of Reddit comments analyzed, after filtering on threads with sufficient conversation and limiting the scope to the first 100 comments of a thread scoring within the Top 100, is <strong>n = 86,561,476</strong>.</p>
-
-<p>With clever use of BigQuery window functions, I obtained the aggregate data, counting the number of comments from the filtered Reddit threads at each voting rank and created rank.</p>
-
-<p><img src="/img/first-comment/data.png" alt=""></p>
-
-<h2>Visualizing the Discussion</h2>
-
-<p>Filtering on the top-voted comments (<code>score_rank = 1</code>) only, <em>what percent of the top-voted comments in Reddit threads were also 1st Comment?</em></p>
-
-<p><img src="/img/first-comment/reddit-first-4.png" alt=""></p>
-
-<p>The answer is <strong>17.24%</strong> of all top-voted comments! That&rsquo;s certainly more than what I expected! Additionally, 56% of the top-voted comments were posted within the first 5 comments, and 77% within the first 10 comments. The chart follows a <a href="https://en.wikipedia.org/wiki/Power_law">power-law distribution</a>.</p>
-
-<p>Let&rsquo;s invert it: filtering on only the first comments (<code>created_rank = 1</code>) made in comment threads, <em>what percentage of the 1st Comments in Reddit threads were also the top-voted comment?</em></p>
-
-<p><img src="/img/first-comment/reddit-first-3.png" alt=""></p>
-
-<p>By construction, the answer is the same as before (17.24%), however the followup proportions are slightly different, with the first comment ranking within the Top 5 comments 46% of the time, and within the Top 10 comments 62% of the time.</p>
-
-<p>It may be worth it to visualize both dimensions at the same time using a heatmap, with the created rank on one axis, score rank on the other, and a z-axis representing the number of comments at each rank pairing. We can also add a faint contour line to help visualize clusters of the data. Putting it together:</p>
-
-<p><img src="/img/first-comment/reddit-first-2.png" alt=""></p>
-
-<p>Woah, most of the values are constrained between the semisquare constrained by the first 5 comments and the top 5 comments! But it&rsquo;s harder to see trends, so let&rsquo;s try applying a logarithmic base-10 scaling on the comment count:</p>
-
-<p><img src="/img/first-comment/reddit-first-2a.png" alt=""></p>
-
-<p>Much better! We can see a grouping of the 5x5 semisquare, but also smaller groupings of a 30x30 shape (this may possibly be due to the 30 comment filter threshold), a faint 60x60 shape, and <em>voids</em> in the upper-left and lower-right corners.</p>
-
-<p>From the 2D heatmap, there appears to be a <strong>positive correlation</strong> between the rank of the comment and the time it was submitted. Ideally, if Reddit&rsquo;s algorithm correctly cycled posts so that each comment gets a fair chance at going viral, then there should be <strong>no correlation</strong> between score rank and time posted.</p>
-
-<h2>Analysis by Subreddit</h2>
-
-<p>When working with Reddit data, it is always important to facet the analysis by subreddit, as subreddits can have idiosyncratic behaviors which deviate from general Reddit behavior. As noted in the original Reddit thread with the initial question, it is possible that the percentage of first comments becoming top comment is &ldquo;higher in lighter subs (funny, pics, videos) than more serious subs (askscience, history, etc).&rdquo;</p>
-
-<p>I tweaked the BigQuery above to retrieve the same data for each of the Top 100 subreddits (determined by unique commenter count over the same time period). Afterward, via scripting, I created a 1D proportion-of-first-comments-by-score-rank and 2D heatmaps for each subreddit. You can view and download the 1D charts <a href="https://github.com/minimaxir/first-comment/tree/master/img-1d">here</a>, and the 2D heatmaps <a href="https://github.com/minimaxir/first-comment/tree/master/img-2d">here</a>.</p>
-
-<p>For example, here&rsquo;s the chart of first-comment-rankings for <a href="https://www.reddit.com/r/IAmA/">/r/IAmA</a>, one of Reddit&rsquo;s biggest subreddits where normal Redditors can ask celebrities any question they want.</p>
-
-<p><img src="/img/first-comment/IAmA-1d.png" alt=""></p>
-
-<p>Unlike the all-Reddit chart, the distribution of first-comment proportions is more uniform instead of following a power law. It makes sense in theory; people would likely upvote top-level questions which the original poster replied to, so there should be less of a bias toward the first top-level comment.</p>
-
-<p>What does the 2D heatmap show?</p>
-
-<p><img src="/img/first-comment/IAmA-2d.png" alt=""></p>
-
-<p>Damn it.</p>
-
-<p>While the 1D behavior is different, the overall 2D behavior is the same albeit with larger voids (indeed, in the heatmap, you can see at <code>created_rank = 1</code>, the vertical strip doesn&rsquo;t fit the pattern).</p>
-
-<p>It turns out that most /r/IAmA threads have this comment:</p>
-
-<p><img src="/img/first-comment/automoderator.png" alt=""></p>
-
-<p>As it&rsquo;s made by a robot, it&rsquo;s always the first comment, and it gets ignored/downvoted in normal circumstances. Other subreddits with the same pattern of 1D irregularities, 2D regularities, and AutoModerator usage are <a href="https://www.reddit.com/r/gameofthrones/">/r/gameofthrones</a>, <a href="https://www.reddit.com/r/photoshopbattles/">/r/photoshopbattles</a>, and <a href="https://www.reddit.com/r/WritingPrompts/">/r/WritingPrompts</a>.</p>
-
-<p>Some subreddits have more uniformity than typical Reddit rank behavior. In <a href="https://www.reddit.com/r/funny/">/r/funny</a>, <a href="https://www.reddit.com/r/leagueoflegends/">/r/leagueoflegends</a>, <a href="https://www.reddit.com/r/pics/">/r/pics</a>, <a href="https://www.reddit.com/r/todayilearned/">/r/todayilearned</a>, and <a href="https://www.reddit.com/r/video/">/r/videos</a> (i.e. many default subreddits), there is no upper-left void (early comments can be poorly ranked) and the bottom-right void is minimized but still present.</p>
-
-<p><img src="/img/first-comment/funny-2d.png" alt=""></p>
-
-<p><img src="/img/first-comment/leagueoflegends-2d.png" alt=""></p>
-
-<p>Inversely, there are subreddits where the correlation is obvious. <a href="https://www.reddit.com/r/pcmasterrace/">/r/pcmasterrace</a> and /r/gonewild both exhibit very straight lines, and are subreddits where the comments themselves are not very constructive, so whatever gets posted gets upvoted anyways.</p>
-
-<p><img src="/img/first-comment/pcmasterrace-2d.png" alt=""></p>
-
-<p><img src="/img/first-comment/gonewild-2d.png" alt=""></p>
-
-<p>Rushing to say <strong>FIRST!!1!11!</strong> in a comments section of a blog post or forum thread is a meme that long predates Reddit. However, rushing to make the first comment in a Reddit thread may have strategic merit if you want to get your voice heard.</p>
-
-<p>Even in the most optimistic circumstances, comments that are late to a thread have a very, very low probability of becoming one of the top comments. In fairness, it&rsquo;s hard to determine with public Reddit data if tweaking the ranking algorithm such that new comments will always rank at the top initially will actually improve the Reddit user experience as a whole. On the other hand, this behavior presents an opportunity: if there is a <a href="https://en.wikipedia.org/wiki/Long_tail">long tail</a> of Reddit content that is unjustifiably being buried due to lack of attention, then perhaps there is a <em>business opportunity</em> in creating a service to discover and resurface quality comments&hellip;</p>
-
-<hr>
-
-<p><em>You can view all the <a href="https://www.r-project.org">R</a> and <a href="http://ggplot2.org">ggplot2</a> code used to query, analyze, and visualize the Reddit data in <a href="http://minimaxir.com/notebooks/first-comment/">this R Notebook</a>. You can also view the images/data used for this post in <a href="https://github.com/minimaxir/first-comment">this GitHub repository</a></em>.</p>
 
 <p><em>You are free to use the data visualizations from this article however you wish, but it would be greatly appreciated if proper attribution is given to this article and/or myself!</em></p>
 ]]></content>

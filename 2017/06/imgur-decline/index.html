@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+
+  <!-- HEAD -->
+<head>
+<meta charset="utf-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>The Decline of Imgur on Reddit and the Rise of Reddit's Native Image Hosting</title>
+<meta property="article:author" content="https://www.facebook.com/max.woolf" />
+<meta name="description" content="Last week, Bloomberg reported that Reddit was raising about $150 Million in venture capital at a valuation of $1.7 billion. Since Reddit&rsquo;s data is publ...">
+<link href="/rss.xml" rel="alternate" title="minimaxir | Max Woolf's Blog" type="application/atom+xml">
+<link rel="canonical" href="http://minimaxir.com/2017/06/imgur-decline/">
+
+<!-- Mobile Metas -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+ <meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@minimaxir">
+<meta name="twitter:creator" content="@minimaxir">
+
+  <meta name="twitter:title" content="The Decline of Imgur on Reddit and the Rise of Reddit's Native Image Hosting">
+
+
+  <meta name="twitter:url" content="http://minimaxir.com/2017/06/imgur-decline/">
+
+
+  <meta name="twitter:description" content="Before Reddit added native image hosting, Imgur accounted for 15% of all submissions to Reddit. Now it's below 9%.">
+
+
+  <meta name="twitter:image:src" content="http://minimaxir.com/img/reddit-imgur-decline.png">
+
+ 
+ <meta content="minimaxir | Max Woolf's Blog" property="og:site_name">
+
+  <meta content="The Decline of Imgur on Reddit and the Rise of Reddit's Native Image Hosting" property="og:title">
+
+
+  <meta content="article" property="og:type">
+
+
+  <meta content="Before Reddit added native image hosting, Imgur accounted for 15% of all submissions to Reddit. Now it's below 9%." property="og:description">
+
+
+  <meta content="http://minimaxir.com/2017/06/imgur-decline/" property="og:url">
+
+
+
+  <meta content="http://minimaxir.com/img/reddit-imgur-decline.png" property="og:image">
+
+
+  
+  <meta content="Data" property="article:section">
+  
+
+
+  
+
+
+
+      <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="white">
+    <meta name="apple-mobile-web-app-title" content="minimaxir">
+    <link rel="apple-touch-icon-precomposed" href="apple-touch-icon-precomposed.png">
+
+<link rel="apple-touch-icon" sizes="57x57" href="http://minimaxir.com/favicon/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="http://minimaxir.com/favicon/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="http://minimaxir.com/favicon/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="http://minimaxir.com/favicon/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="http://minimaxir.com/favicon/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="http://minimaxir.com/favicon/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="http://minimaxir.com/favicon/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="http://minimaxir.com/favicon/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="http://minimaxir.com/favicon/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192"  href="http://minimaxir.com/favicon/android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://minimaxir.com/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="http://minimaxir.com/favicon/favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="http://minimaxir.com/favicon/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="http://minimaxir.com/favicon/ms-icon-144x144.png">
+<meta name="theme-color" content="#ffffff">
+
+<!-- BEGIN GLOBAL MANDATORY STYLES -->
+  <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400,400italic,700' rel='stylesheet' type='text/css'>
+
+<link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+<link href="/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
+<link href="/css/minimaxir.css" rel="stylesheet" type="text/css"/>
+<!-- END GLOBAL MANDATORY STYLES -->
+
+<!-- BEGIN THEME STYLES -->
+<link href="/css/global.css" rel="stylesheet" type="text/css"/>
+<!-- END THEME STYLES -->
+
+<!-- BEGIN JQUERY -->
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<!-- END JQUERY -->
+
+
+
+  <script>
+   $(document).ready(function() {
+ 
+  // LinkedIn
+	$( ".social.linkedin" ).children().each(function(index,value) {
+	var linkedin_button = $(this);
+	var url = linkedin_button.attr("data");
+
+  jQuery.getJSON("http://www.linkedin.com/countserv/count/share?url="+url+"&format=jsonp&callback=?", function(data) {
+  linkedin_button.html("<i class=\"fa fa-linkedin\"></i><span class=\"count hidden-xs\"> " + data.count + "</span>");
+  });
+  });
+  });
+  </script>
+  
+</head>
+<!-- END HEAD -->
+  <!-- WRAPPER -->
+<div class="wrapper">
+    <!--========== HEADER TRANSPARENT ==========-->
+    <header class="header-transparent header-transparent-bb navbar-fixed-top header-sticky">
+        <!-- Navbar -->
+        <nav class="navbar mega-menu" role="navigation">
+            <div class="container">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="menu-container">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="toggle-icon"></span>
+                    </button>
+
+                    <!-- Navbar Actions -->
+                    <div class="navbar-actions">
+
+                    </div>
+                    <!-- End Navbar Actions -->
+
+                    <!-- Logo -->
+                    <div class="navbar-logo">
+                        <a class="navbar-logo-wrap" href="/">
+                            <img class="navbar-logo-img navbar-logo-img-white" src="/minimaxir-light.png" alt="minimaxir">
+                            <img class="navbar-logo-img navbar-logo-img-dark" src="/minimaxir-dark.png" alt="minimaxir">
+                        </a>
+                    </div>
+                    <!-- End Logo -->
+                </div>
+
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse nav-collapse">
+                    <div class="menu-container">
+                        <ul class="nav navbar-nav">
+
+                            <li class="nav-item">
+                                <a class="nav-item-child" href="/about">
+                                    About
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-item-child" href="/portfolio">
+                                    Code Portfolio
+                                </a>
+
+
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-item-child" href="/data-portfolio">
+                                    Data Portfolio
+                                </a>
+
+
+                            </li>
+                             <li class="nav-item">
+                                <a class="nav-item-child" href="https://www.patreon.com/minimaxir" target="_blank">
+                                    Patreon
+                                </a>
+
+
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+                <!-- End Navbar Collapse -->
+            </div>
+            <!--// End Container-->
+        </nav>
+        <!-- Navbar -->
+    </header>
+    <!--========== END HEADER TRANSPARENT ==========-->
+
+        <!--========== BREADCRUMBS V5 ==========-->
+    
+    
+	
+	
+    
+    
+    
+    <section class="breadcrumbs-v5" style="background: url('/img/reddit-imgur-decline.png') no-repeat center center; background-size: cover;">
+    
+        <div class="container">
+            <h1 class="breadcrumbs-v5-title">The Decline of Imgur on Reddit and the Rise of Reddit's Native Image Hosting</h1>
+            <span class="breadcrumbs-v5-subtitle">June 20, 2017
+            
+    
+              <span class="sharing index" style="float: right">
+  
+		  <span class="social facebook"><a href="https://www.facebook.com/share.php?u=http://minimaxir.com/2017/06/imgur-decline/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data="http://minimaxir.com/2017/06/imgur-decline/"><i class="fa fa-facebook"></i><span class="count hidden-xs"></span></a></span>
+  
+		<span class="social twitter"><a href="http://twitter.com/home/?status=The Decline of Imgur on Reddit and the Rise of Reddit's Native Image Hosting - http://minimaxir.com/2017/06/imgur-decline/ - via @minimaxir"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data=http://minimaxir.com/2017/06/imgur-decline/><i class="fa fa-twitter"></i><span class="count hidden-xs"></span></a> </span>
+
+  <span  class="social linkedin"><a href="http://www.linkedin.com/shareArticle?mini=true&title=&url=http://minimaxir.com/2017/06/imgur-decline/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=600');return false;" data=http://minimaxir.com/2017/06/imgur-decline/><i class="fa fa-linkedin"></i><span class="count hidden-xs"> -</span></a> </span>
+   
+			</span>
+            
+            </span>
+        </div>
+    </section>
+    
+    
+    <!--========== END BREADCRUMBS V5 ==========-->
+  
+  <!-- BEGIN BODY -->
+<body>
+
+  
+      <!--========== BACKGROUND COLOR SKY LIGHT ==========-->
+    <div class="bg-color-sky-light">
+
+        
+        <!--========== PAGE CONTENT ==========-->
+        <div class="content-sm container">
+        
+            
+		
+        
+            <div class="row">
+                <div class="col-md-9 md-margin-b-50">
+                    <!-- Blog Grid -->
+                    <article class="blog-grid margin-b-30">
+                        <!-- Image -->
+                        <!--<img class="img-responsive" src="/assets/img/1920x1080/20.jpg" alt="">-->
+                        <!-- End Image -->
+
+                        <!-- Blog Grid Content -->
+						<div class="blog-grid-content">
+						<p>Last week, Bloomberg <a href="https://www.bloomberg.com/news/articles/2017-06-17/reddit-said-to-be-raising-funds-valuing-startup-at-1-7-billion">reported</a> that Reddit was raising about $150 Million in venture capital at a valuation of $1.7 billion. Since Reddit&rsquo;s data is <a href="http://minimaxir.com/2015/10/reddit-bigquery/">public on BigQuery</a>, I quickly checked if there were any recent user engagement growth spurts which could justify such a high worth. Here&rsquo;s an example BigQuery which aggregates the total number of Reddit submissions made for each month until the end of April 2017:</p>
+<div class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="o">#</span><span class="n">standardSQL</span> 
+<span class="k">SELECT</span> <span class="n">DATE_TRUNC</span><span class="p">(</span><span class="nb">DATE</span><span class="p">(</span><span class="n">TIMESTAMP_SECONDS</span><span class="p">(</span><span class="n">created_utc</span><span class="p">)),</span> <span class="k">MONTH</span><span class="p">)</span> <span class="k">as</span> <span class="n">mon</span><span class="p">,</span>
+  <span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">as</span> <span class="n">num_submissions</span><span class="p">,</span>
+  <span class="k">FROM</span> <span class="o">`</span><span class="n">fh</span><span class="o">-</span><span class="n">bigquery</span><span class="p">.</span><span class="n">reddit_posts</span><span class="p">.</span><span class="o">*`</span>
+  <span class="k">WHERE</span> <span class="p">(</span><span class="n">_TABLE_SUFFIX</span> <span class="k">BETWEEN</span> <span class="s1">&#39;2016_01&#39;</span> <span class="k">AND</span> <span class="s1">&#39;2017_04&#39;</span> <span class="k">OR</span> <span class="n">_TABLE_SUFFIX</span> <span class="o">=</span> <span class="s1">&#39;full_corpus_201512&#39;</span><span class="p">)</span>
+  <span class="k">GROUP</span> <span class="k">BY</span> <span class="n">mon</span>
+  <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">mon</span>
+</code></pre></div>
+<p><img src="/img/imgur-decline/reddit-1.png" alt=""></p>
+
+<p>As it turns out, Reddit did indeed get a large boost in activity toward the end of 2016, likely due to the <em>heated</em> discussions and events around the <a href="https://en.wikipedia.org/wiki/United_States_presidential_election,_2016">U.S. Presidential Election</a>. But Reddit has maintained the growth rate since then, which is very appealing to potential investors.</p>
+
+<p>How are other sites benefiting from Reddit&rsquo;s growth? <a href="http://imgur.com">Imgur</a>, an image-host developed to be the <em>de facto</em> image hosting service for Reddit, shared in Reddit&rsquo;s continual growth&hellip;</p>
+
+<p><img src="/img/imgur-decline/reddit-2.png" alt=""></p>
+
+<p>&hellip;until mid-2016, when Imgur submission activity abruptly dropped. What happened?</p>
+
+<p>Coincidentally in mid-2016, Reddit <a href="https://techcrunch.com/2016/05/25/reddit-image-uploads/">made itself</a> an image host for submissions to the site. Initially limited to uploads via the iOS/Android apps, Reddit then allowed desktop users to upload images through a <a href="https://www.reddit.com/r/changelog/comments/4kuk2j/reddit_change_introducing_image_uploading_beta/">beta rollout</a> starting May 24th, and a full <a href="https://www.reddit.com/r/announcements/comments/4p5dm9/image_hosting_on_reddit/">sitewide release</a> on June 21st.</p>
+
+<p>How many Reddit-hosted image submissions are there compared to the number of Imgur submissions?</p>
+
+<p><img src="/img/imgur-decline/reddit-3.png" alt=""></p>
+
+<p>Wow, native Reddit images caught on.</p>
+
+<h2>Market Share</h2>
+
+<p><img src="/img/imgur-decline/pics.png" alt=""></p>
+
+<p>Did the rise of Reddit-hosted images cause the decline of Imgur on Reddit? Let&rsquo;s look at the daily number of Imgur submissions and Reddit-hosted Image submissions from December 2015 to April 2017, normalized by the total number of sitewide submissions on that day. This gives us a Reddit &ldquo;market share&rdquo; metric for both services. </p>
+
+<p>Additionally, we can plot vertical lines representing the dates when Reddit-hosted images rolled out in the limited beta release and the full sitewide release to see if there is a link between those events and submission behavior.</p>
+
+<p><img src="/img/imgur-decline/reddit-4.png" alt=""></p>
+
+<p>Before Reddit added native image hosting, Imgur accounted for 15% of all submissions to Reddit. Now it&rsquo;s below 9%. More Reddit-hosted images are being shared on Reddit than images from Imgur.</p>
+
+<p>Instead of looking at all of Reddit, where spam subreddits could skew the results, we can also look at the largest image-only subreddits: <a href="https://www.reddit.com/r/pics/">/r/pics</a> and <a href="https://www.reddit.com/r/gifs/">/r/gifs</a>, both of which were a part of the beta rollout.</p>
+
+<p><img src="/img/imgur-decline/reddit-5.png" alt=""></p>
+
+<p>Here, the impact of the two rollouts is much noticeable, with immediate increases in Reddit-hosted image market share after each rollout, and proportional decreases in Imgur market share. The growth rate after the beta release is flat for both services, but when Reddit image hosting becomes sitewide, the market shares of Reddit-hosted/Imgur images increase/decrease linearly over time once users officially learn that the native image upload functionality exists. And these trends do not appear to be slowing down.</p>
+
+<h2>A Silver Lining?</h2>
+
+<p>Obviously Imgur does not like losing a <em>large</em> chunk of traffic, but there&rsquo;s a possibility that this outcome will be better for the business than what&rsquo;s implied from the charts above.</p>
+
+<p>Hosting images on the internet isn&rsquo;t free, and bandwidth costs are the primary reason dedicated image hosts have died off over the years. Direct image links which show the user only the image and nothing else are convenient, but they are pure loss for the service. That&rsquo;s why image hosts encourage linking to the image on a landing page of the website, filled with ads which generate an expected revenue greater than the cost of serving the image.</p>
+
+<p>After a user uploads an image to Imgur on the desktop, the user is given two share links that can be submitted to sites like Reddit: an image link that goes to the image + ads, and a direct link to the image.</p>
+
+<p><img src="/img/imgur-decline/imgur_direct.png" alt=""></p>
+
+<p>Recently, Imgur has <a href="https://www.reddit.com/r/assholedesign/comments/5gs96k/just_show_me_the_fucking_image_imgur/">pushed app downloads</a> when visiting the site on an iOS/Android device, including <a href="https://www.reddit.com/r/assholedesign/comments/695efj/upload_image_on_imgur_mobile_has_been_replaced_by/">disabling uploads</a> in the mobile browser. When sharing an image from the Imgur app, the <em>only</em> way to share an image is through the image link, which could lead to an increase in the proportion of ad-filled Imgur image links on Reddit. Said increase could counteract the decrease in total Imgur submissions, and Imgur could actually come out ahead.</p>
+
+<p>With BigQuery, we can check the percentage of all Imgur submissions to Reddit which are direct links and the percentage which are indirect/lead to a landing page, and see if the ratio changes along the same time horizon used above:</p>
+
+<p><img src="/img/imgur-decline/reddit-6.png" alt=""></p>
+
+<p>Welp. No significant change in the ratio over time, eliminating that possible silver lining.</p>
+
+<h2>Conclusion</h2>
+
+<p>Note that the decline of Imgur on Reddit says nothing about Imgur as a business; it&rsquo;s entirely possible that Imgur&rsquo;s traffic on the main site itself is sufficient for growth. But the loss of Reddit traffic certainly can&rsquo;t be ignored, and it&rsquo;s interesting to visualize how quickly a service can be replaced when there&rsquo;s an equivalent native feature.</p>
+
+<p>It&rsquo;s worth nothing that new competitors in the image space such as <a href="https://giphy.com">Giphy</a> utilize image hosting as a <em>secondary</em> service. Instead, they focus on building a repository of images which can be licensed and accessed programmatically by other services like Slack, Facebook, and Twitter. And Giphy has raised <a href="https://www.crunchbase.com/organization/giphy#/entity">$150 Million</a> total with this approach, so perhaps the image hosting market itself has indeed changed.</p>
+
+<hr>
+
+<p><em>You can view the R, ggplot2 code, and BigQueries used to visualize the Reddit data in <a href="http://minimaxir.com/notebooks/imgur-decline/">this R Notebook</a>. You can also view the images/data used for this post in <a href="https://github.com/minimaxir/imgur-decline">this GitHub repository</a></em>.</p>
+
+<p><em>You are free to use the data visualizations from this article however you wish, but it would be greatly appreciated if proper attribution is given to this article and/or myself!</em></p>
+
+                        
+                        
+                        <div class="alert alert-warning" role="alert">
+
+     <p>I currently do not have a full-time salary to fund my machine learning/deep learning/software/hardware needs for my crazy yet cool projects. If you liked this blog post, I have set up a <a href="https://www.patreon.com/minimaxir">Patreon</a>, and any monetary contributions to the Patreon are appreciated and will be put to good creative use.</p>
+
+    
+</div>
+                        
+						
+            			 <div class="breadcrumbs-v5-subtitle sharing-post" style="color: #999 !important; padding-top:10px; border-top: 1px solid #eee">Share this article!
+
+
+              <span class="sharing index" style="float: right; color: #999 !important;">
+  
+		  <span class="social facebook"><a href="https://www.facebook.com/share.php?u=http://minimaxir.com/2017/06/imgur-decline/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data="http://minimaxir.com/2017/06/imgur-decline/"><i class="fa fa-facebook"></i><span class="count hidden-xs"></span></a></span>
+  
+		<span class="social twitter"><a href="http://twitter.com/home/?status=The Decline of Imgur on Reddit and the Rise of Reddit's Native Image Hosting - http://minimaxir.com/2017/06/imgur-decline/ - via @minimaxir"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=350,width=600');return false;" data=http://minimaxir.com/2017/06/imgur-decline/><i class="fa fa-twitter"></i><span class="count hidden-xs"></span></a> </span>
+
+  <span  class="social linkedin"><a href="http://www.linkedin.com/shareArticle?mini=true&title=&url=http://minimaxir.com/2017/06/imgur-decline/"  onclick="javascript:window.open(this.href,
+  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=450,width=600');return false;" data=http://minimaxir.com/2017/06/imgur-decline/><i class="fa fa-linkedin"></i><span class="count hidden-xs"> -</span></a> </span>
+
+   </span>
+   </div>
+						</div>
+                        <!-- End Blog Grid Content -->
+                        
+                        
+                        
+                    </article>
+                    <!-- End Blog Grid -->
+
+ 					
+
+                    <!-- Blog Comment -->
+                    <div class="blog-comments bg-color-white margin-b-30">
+                        <div class="blog-single-post-content">
+
+						
+
+<script type="text/javascript">
+      var disqus_shortname = 'minimaxir';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://minimaxir.com/2017/06/imgur-decline/';
+        var disqus_url = 'http://minimaxir.com/2017/06/imgur-decline/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+<div id="disqus_thread"></div>
+
+
+
+                        </div>
+                    </div>
+                    <!-- End Blog Comment -->
+                    
+                    
+                </div>
+
+			<!--========== BLOG SIDEBAR ==========-->
+<div class="col-md-3">
+
+
+
+    <!-- Blog Author -->
+    <div class="blog-sidebar margin-b-30">
+        <div class="blog-sidebar-heading">
+            <h4 class="blog-sidebar-heading-title">Author</h4>
+        </div>
+
+        <img src="/MaxFB.jpg" title="Stop mousing over me! I'm not a XKCD comic!" class="img-responsive hidden-xs hidden-sm"></img>
+
+        <div class="blog-sidebar-content">
+            <!-- Blog Author Bio -->
+             <p><strong>Max Woolf (@minimaxir)</strong> is a <a href="http://minimaxir.com/2017/05/leaving-apple/">former</a> Apple Software QA Engineer living in San Francisco and a Carnegie Mellon University graduate.</p>
+
+<p>In his spare time, Max uses <a href="https://www.python.org/">Python</a> to gather data from public APIs and <a href="http://ggplot2.org/">ggplot2</a> to plot plenty of pretty charts from that data.</p>
+
+<p>You can learn more about Max <a href="/about">here</a>, view his data analysis portfolio <a href="/data-portfolio">here</a>, or view his coding portfolio <a href="/portfolio">here</a>. </p>
+
+
+            <ul class="list-inline" style="padding-top:10px; margin-top: 20px; border-top: 1px solid #ebeef6">
+                <li class="theme-icons-wrap"><a title="Facebook" href="https://facebook.com/max.woolf" target="_blank"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-facebook"></i></a></li>
+                <li class="theme-icons-wrap"><a title="Twitter" href="https://twitter.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-twitter"></i></a></li>
+                <li class="theme-icons-wrap"><a title="LinkedIn" href="https://linkedin.com/in/minimaxir" target="_blank"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-linkedin"></i></a></li>
+                <li class="theme-icons-wrap"><a title="E-Mail" href="mailto:max@minimaxir.com"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-envelope"></i></a></li>
+                <li class="theme-icons-wrap"><a title="GitHub" href="https://github.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-github"></i></a></li>
+                <li class="theme-icons-wrap"><a title="YouTube" href="https://youtube.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-youtube"></i></a></li>
+                <li class="theme-icons-wrap"><a title="RSS" href="/rss.xml"><i class="theme-icons theme-icons-grey-light-bg theme-icons-xs radius-circle fa fa-rss"></i></a></li>
+            </ul>
+            <!-- End Blog Author Bio -->
+        </div>
+    </div>
+    <!-- End Blog Author -->
+
+    <!-- Blog Recent Posts -->
+    <div class="blog-sidebar margin-b-30">
+        <div class="blog-sidebar-heading">
+            <h4 class="blog-sidebar-heading-title">Recent Posts</h4>
+        </div>
+        <div class="blog-sidebar-content" style="position: relative; overflow: visible;">
+
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="/2017/06/imgur-decline/">The Decline of Imgur on Reddit and the Rise of Reddit's Native Image Hosting</a></h5>
+                    <small class="latest-tuts-content-time"> Jun 20, 2017</small>
+                </div>
+            </article>
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="/2017/06/keras-cntk/">Benchmarking CNTK on Keras: is it Better at Deep Learning than TensorFlow?</a></h5>
+                    <small class="latest-tuts-content-time"> Jun 12, 2017</small>
+                </div>
+            </article>
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="/2017/06/r-notebooks/">Advantages of Using R Notebooks For Data Analysis Instead of Jupyter Notebooks</a></h5>
+                    <small class="latest-tuts-content-time"> Jun 6, 2017</small>
+                </div>
+            </article>
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="/2017/05/leaving-apple/">Leaving Apple Inc.</a></h5>
+                    <small class="latest-tuts-content-time"> May 4, 2017</small>
+                </div>
+            </article>
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="/2017/04/char-embeddings/">Pretrained Character Embeddings for Deep Learning and Automatic Text Generation</a></h5>
+                    <small class="latest-tuts-content-time"> Apr 4, 2017</small>
+                </div>
+            </article>
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="/2017/02/predicting-arrests/">Predicting And Mapping Arrest Types in San Francisco with LightGBM, R, ggplot2</a></h5>
+                    <small class="latest-tuts-content-time"> Feb 8, 2017</small>
+                </div>
+            </article>
+            
+        </div>
+        <!-- End Blog Recent Posts -->
+    </div>
+
+    <!-- GitHub Top Repositories -->
+    <div class="blog-sidebar margin-b-30">
+        <div class="blog-sidebar-heading">
+            <h4 class="blog-sidebar-heading-title">GitHub Code Repositories</h4>
+        </div>
+        <div class="blog-sidebar-content" style="position: relative; overflow: visible;">
+
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/big-list-of-naughty-strings" target="_blank">Big List of Naughty Strings</a></h5>
+                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 20,142+</small>
+                </div>
+            </article>
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/facebook-page-post-scraper" target="_blank">Facebook Page Post Scraper</a></h5>
+                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 1,035+</small>
+                </div>
+            </article>
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/system-dashboard" target="_blank">Multiplatform System Dashboard</a></h5>
+                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 100+</small>
+                </div>
+            </article>
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/tritonize" target="_blank">Tritonize</a></h5>
+                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 9+</small>
+                </div>
+            </article>
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/stylistic-word-clouds" target="_blank">Stylistic Word Clouds</a></h5>
+                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 30+</small>
+                </div>
+            </article>
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/char-embeddings" target="_blank">Pretrained Character Embeddings for Deep Learning and Automatic Text Generation</a></h5>
+                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 8+</small>
+                </div>
+            </article>
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/get-profile-data-of-repo-stargazers" target="_blank">Get GitHub Profile Data of All Stargazers of a GitHub Repo</a></h5>
+                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 15+</small>
+                </div>
+            </article>
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/copy-syntax-highlight-osx" target="_blank">Copy Syntax Highlight for OS X</a></h5>
+                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 349+</small>
+                </div>
+            </article>
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="http://github.com/minimaxir/video-to-gif-osx" target="_blank">Convert Video to GIF on OS X</a></h5>
+                    <small class="latest-tuts-content-time"><i class="fa fa-star"></i> 262+</small>
+                </div>
+            </article>
+            
+        </div>
+    </div>
+
+    <!-- End GitHub Top Repositories -->
+
+    <!-- Data Top Repositories -->
+    <div class="blog-sidebar margin-b-30">
+        <div class="blog-sidebar-heading">
+            <h4 class="blog-sidebar-heading-title">Data Analysis Notebooks</h4>
+        </div>
+        <div class="blog-sidebar-content" style="position: relative; overflow: visible;">
+
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="http://minimaxir.com/notebooks/imgur-decline/" target="_blank">The Decline of Imgur on Reddit and the Rise of Reddit's Native Image Hosting</a></h5>
+                    <small class="latest-tuts-content-time"><i class="fa fa-cogs"></i> R, ggplot2</small>
+                </div>
+            </article>
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="http://minimaxir.com/notebooks/keras-cntk/" target="_blank">Benchmarking CNTK on Keras: is it Better at Deep Learning than TensorFlow?</a></h5>
+                    <small class="latest-tuts-content-time"><i class="fa fa-cogs"></i> R, ggplot2</small>
+                </div>
+            </article>
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="http://minimaxir.com/notebooks/char-tsne/" target="_blank">Pretrained Character Embeddings for Deep Learning and Automatic Text Generation</a></h5>
+                    <small class="latest-tuts-content-time"><i class="fa fa-cogs"></i> R, ggplot2</small>
+                </div>
+            </article>
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="http://minimaxir.com/notebooks/predicting-arrests/" target="_blank">Predicting And Mapping Arrest Types in San Francisco</a></h5>
+                    <small class="latest-tuts-content-time"><i class="fa fa-cogs"></i> R, ggplot2, LightGBM</small>
+                </div>
+            </article>
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="http://minimaxir.com/notebooks/amazon-spark/" target="_blank">Playing with 80 Million Amazon Product Review Ratings</a></h5>
+                    <small class="latest-tuts-content-time"><i class="fa fa-cogs"></i> R, ggplot2, Spark</small>
+                </div>
+            </article>
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="http://minimaxir.com/notebooks/interactive-network/" target="_blank">How to Create an Interactive WebGL Network Graph</a></h5>
+                    <small class="latest-tuts-content-time"><i class="fa fa-cogs"></i> R, ggplot2, plotly</small>
+                </div>
+            </article>
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="http://minimaxir.com/notebooks/first-comment/" target="_blank">What Percent of the Top-Voted Comments in Reddit Threads Were Also 1st Comment?</a></h5>
+                    <small class="latest-tuts-content-time"><i class="fa fa-cogs"></i> R, ggplot2</small>
+                </div>
+            </article>
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="https://github.com/minimaxir/clickbait-cluster/blob/master/fb_news_53D_spark.ipynb" target="_blank">Processing Clusters of Clickbait Headlines </a></h5>
+                    <small class="latest-tuts-content-time"><i class="fa fa-cogs"></i> Python, Spark, word2vec</small>
+                </div>
+            </article>
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="https://github.com/minimaxir/clickbait-cluster/blob/master/fb_news_53D_plotly.ipynb" target="_blank">Visualizing Clusters of Clickbait Headlines </a></h5>
+                    <small class="latest-tuts-content-time"><i class="fa fa-cogs"></i> R, plotly</small>
+                </div>
+            </article>
+            
+        </div>
+    </div>
+
+    <!-- End GitHub Top Repositories -->
+
+
+
+</div>
+<!--========== END BLOG SIDEBAR ==========-->
+			</div>
+            <!--// end row -->
+        </div>
+        <!--========== END PAGE CONTENT ==========-->
+
+    </div>
+    <!--========== END BACKGROUND COLOR SKY LIGHT ==========-->
+    
+
+
+
+  
+              <div class="wrapper">
+    
+	
+	
+    	 <section class="breadcrumbs-v5 bg-position-fixed" style="background: #2c3e50;  padding: 20px 0 20px !important;">
+        <div class="container">
+            <div class="row hero-index">
+            <div class="col-sm-6 sm-margin-b-30 hidden-xs">
+                <img src="/MaxFBInvert.png" title="Stop mousing over me! I'm not a XKCD comic!" class="img-responsive" style="border-radius: 30px; margin: 0 auto; max-height: 400px"></img>
+            </div>
+            <div class="col-sm-6 col-xs-12">
+
+			
+			<p><strong>Max Woolf (@minimaxir)</strong> is a <a href="http://minimaxir.com/2017/05/leaving-apple/">former</a> Apple Software QA Engineer living in San Francisco and a Carnegie Mellon University graduate.</p>
+
+<p>In his spare time, Max uses <a href="https://www.python.org/">Python</a> to gather data from public APIs and <a href="http://ggplot2.org/">ggplot2</a> to plot plenty of pretty charts from that data.</p>
+
+<p>You can learn more about Max <a href="/about">here</a>, view his data analysis portfolio <a href="/data-portfolio">here</a>, or view his coding portfolio <a href="/portfolio">here</a>. </p>
+
+  
+  
+  <ul class="list-inline" style="padding-top:20px; margin-top: 40px; border-top: 1px solid white;">
+                        <li class="theme-icons-wrap"><a title="Facebook" href="https://facebook.com/max.woolf" target="_blank"><i class="theme-icons theme-icons-white-brd theme-icons-md radius-circle fa fa-facebook"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="Twitter" href="https://twitter.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-brd theme-icons-md radius-circle fa fa-twitter"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="LinkedIn" href="https://linkedin.com/in/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-brd theme-icons-md radius-circle fa fa-linkedin"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="E-Mail" href="mailto:max@minimaxir.com"><i class="theme-icons theme-icons-white-brd theme-icons-md radius-circle fa fa-envelope"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="GitHub" href="https://github.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-brd theme-icons-md radius-circle fa fa-github"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="YouTube" href="https://youtube.com/minimaxir" target="_blank"><i class="theme-icons theme-icons-white-brd theme-icons-md radius-circle fa fa-youtube"></i></a></li>
+                        <li class="theme-icons-wrap"><a title="RSS" href="/rss.xml"><i class="theme-icons theme-icons-white-brd theme-icons-md radius-circle fa fa-rss"></i></a></li>
+
+                    </ul>
+            </div>
+        </div>
+        </div>
+    </section>
+    
+	
+
+	
+    
+
+            </div>
+    
+    <!--========== FOOTER V8 ==========-->
+    <footer id="footer" class="footer-v8">
+
+
+
+        <!-- Copyright -->
+        <div class="footer-v8-copyright">
+            <div class="container text-center">
+				Copyright &#169; 2017 Max Woolf. All Rights Reserved. 
+                minimaxir.com is powered by Jekyll and GitHub Pages.
+            </div>
+        </div>
+        <!-- Copyright -->
+    </footer>
+    <!--========== END FOOTER V8 ==========-->
+</div>
+<!-- END WRAPPER -->
+
+<!-- Sidebar Content Overlay -->
+<div class="sidebar-content-overlay"></div>
+<!-- End Sidebar Content Overlay -->
+
+<!-- Back To Top -->
+<a href="javascript:void(0);" class="js-back-to-top back-to-top-theme"></a>
+<!-- End Back To Top -->
+
+<!--========== JAVASCRIPTS(Load javascripts at bottom, this will reduce page load time) ==========-->
+<!-- BEGIN CORE PLUGINS -->
+<!--[if lt IE 9]>
+<script src="/assets/plugins/html5shiv.js"></script>
+<script src="/assets/plugins/respond.min.js"></script>
+<![endif]-->
+<script type="text/javascript" src="/js/jquery.migrate.min.js"></script>
+<script type="text/javascript" src="/js/bootstrap.min.js"></script>
+<!-- END CORE PLUGINS -->
+
+<!-- BEGIN PAGE LEVEL PLUGINS -->
+<script type="text/javascript" src="/js/jquery.back-to-top.js"></script>
+<!-- END PAGE LEVEL PLUGINS -->
+
+<!-- BEGIN PAGE LEVEL SCRIPTS -->
+<script type="text/javascript" src="/js/app.min.js"></script>
+<script type="text/javascript" src="/js/header-sticky.js"></script>
+<!-- END PAGE LEVEL SCRIPTS -->
+
+
+<!--========== END JAVASCRIPTS ==========-->
+  
+</body>
+<!-- END BODY -->
+
+</html>
