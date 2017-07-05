@@ -5,9 +5,114 @@
     <description>A blog by Max Woolf about startups, technology, and blogging. It's so meta, even this acronym.</description>
     <link>http://minimaxir.com/</link>
     <atom:link href="http://minimaxir.com/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Mon, 26 Jun 2017 09:02:27 -0700</pubDate>
-    <lastBuildDate>Mon, 26 Jun 2017 09:02:27 -0700</lastBuildDate>
+    <pubDate>Wed, 05 Jul 2017 09:03:42 -0700</pubDate>
+    <lastBuildDate>Wed, 05 Jul 2017 09:03:42 -0700</lastBuildDate>
     <generator>Jekyll v3.4.3</generator>
+    
+      <item>
+        <title>Benchmarking TensorFlow on Cloud CPUs: Cheaper Deep Learning than Cloud GPUs</title>
+        <description>&lt;p&gt;I&amp;rsquo;ve been working on a few personal deep learning projects with &lt;a href=&quot;https://github.com/fchollet/keras&quot;&gt;Keras&lt;/a&gt; and &lt;a href=&quot;https://www.tensorflow.org&quot;&gt;TensorFlow&lt;/a&gt;. However, training models for deep learning with cloud services such as &lt;a href=&quot;https://aws.amazon.com/ec2/&quot;&gt;Amazon EC2&lt;/a&gt; and &lt;a href=&quot;https://cloud.google.com/compute/&quot;&gt;Google Compute Engine&lt;/a&gt; isn&amp;rsquo;t free, and as someone who is currently unemployed, I have to keep an eye on extraneous spending and be as cost-efficient as possible (please support my work on &lt;a href=&quot;https://www.patreon.com/minimaxir&quot;&gt;Patreon&lt;/a&gt;!). I tried deep learning on the cheaper CPU instances instead of GPU instances to save money, and to my surprise, my model training was only slightly slower. As a result, I took a deeper look at the pricing mechanisms of these two types of instances to see if CPUs are more useful for my needs.&lt;/p&gt;
+
+&lt;p&gt;The &lt;a href=&quot;https://cloud.google.com/compute/pricing#gpus&quot;&gt;pricing of GPU instances&lt;/a&gt; on Google Compute Engine starts at &lt;strong&gt;$0.745/hr&lt;/strong&gt; (by attaching a $0.700/hr GPU die to a $0.045/hr n1-standard-1 instance). A couple months ago, Google &lt;a href=&quot;https://cloudplatform.googleblog.com/2017/05/Compute-Engine-machine-types-with-up-to-64-vCPUs-now-ready-for-your-production-workloads.html&quot;&gt;announced&lt;/a&gt; CPU instances with up to 64 vCPUs on the modern Intel &lt;a href=&quot;https://en.wikipedia.org/wiki/Skylake_(microarchitecture)&quot;&gt;Skylake&lt;/a&gt; CPU architecture. More importantly, they can also be used in &lt;a href=&quot;https://cloud.google.com/compute/docs/instances/preemptible&quot;&gt;preemptible CPU instances&lt;/a&gt;, which live at most for 24 hours on GCE and can be terminated at any time (very rarely), but cost about &lt;em&gt;20%&lt;/em&gt; of the price of a standard instance. A preemptible n1-highcpu-64 instance with 64 vCPUs and 57.6GB RAM plus the premium for using Skylake CPUs is &lt;strong&gt;$0.509/hr&lt;/strong&gt;, about 2/3rds of the cost of the GPU instance.&lt;/p&gt;
+
+&lt;p&gt;If the model training speed of 64 vCPUs is comparable to that of a GPU (or even slightly slower), it would be more cost-effective to use the CPUs instead. But that&amp;rsquo;s assuming the deep learning software and the GCE platform hardware operate at 100% efficiency; if they don&amp;rsquo;t (and they likely don&amp;rsquo;t), there may be &lt;em&gt;even more savings&lt;/em&gt; by scaling down the number of vCPUs and cost accordingly (a 32 vCPU instance with same parameters is half the price at &lt;strong&gt;$0.254/hr&lt;/strong&gt;, 16 vCPU at &lt;strong&gt;$0.127/hr&lt;/strong&gt;, etc).&lt;/p&gt;
+
+&lt;p&gt;There aren&amp;rsquo;t any benchmarks for deep learning libraries with tons and tons of CPUs since there&amp;rsquo;s no demand, as GPUs are the &lt;a href=&quot;https://en.wikipedia.org/wiki/Occam%27s_razor&quot;&gt;Occam&amp;rsquo;s razor&lt;/a&gt; solution to deep learning hardware. But what might make counterintuitive but economical sense is to use CPUs instead of GPUs for deep learning training because of the massive cost differential afforded by preemptible instances, thanks to Google&amp;rsquo;s &lt;a href=&quot;https://en.wikipedia.org/wiki/Economies_of_scale&quot;&gt;economies of scale&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2&gt;Setup&lt;/h2&gt;
+
+&lt;p&gt;I already have &lt;a href=&quot;https://github.com/minimaxir/deep-learning-cpu-gpu-benchmark&quot;&gt;benchmarking scripts&lt;/a&gt; of real-world deep learning use cases, &lt;a href=&quot;https://github.com/minimaxir/keras-cntk-docker&quot;&gt;Docker container environments&lt;/a&gt;, and results logging from my &lt;a href=&quot;http://minimaxir.com/2017/06/keras-cntk/&quot;&gt;TensorFlow vs. CNTK article&lt;/a&gt;. A few minor tweaks allow the scripts to be utilized for both CPU and GPU instances by setting CLI arguments. I also rebuilt &lt;a href=&quot;https://github.com/minimaxir/keras-cntk-docker/blob/master/Dockerfile&quot;&gt;the Docker container&lt;/a&gt; to support the latest version of TensorFlow (1.2.1), and created a &lt;a href=&quot;https://github.com/minimaxir/keras-cntk-docker/blob/master/Dockerfile-cpu&quot;&gt;CPU version&lt;/a&gt; of the container which installs the CPU-appropriate TensorFlow library instead.&lt;/p&gt;
+
+&lt;p&gt;There is a notable CPU-specific TensorFlow behavior; if you install from &lt;code&gt;pip&lt;/code&gt; (as the&lt;a href=&quot;https://www.tensorflow.org/install/&quot;&gt; official instructions&lt;/a&gt; and tutorials recommend) and begin training a model in TensorFlow, you&amp;rsquo;ll see these warnings in the console:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/cpu-or-gpu/tensorflow-console.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;In order to fix the warnings and benefit from these &lt;a href=&quot;https://en.wikipedia.org/wiki/SSE4#SSE4.2&quot;&gt;SSE4.2&lt;/a&gt;/&lt;a href=&quot;https://en.wikipedia.org/wiki/Advanced_Vector_Extensions&quot;&gt;AVX&lt;/a&gt;/&lt;a href=&quot;https://en.wikipedia.org/wiki/FMA_instruction_set&quot;&gt;FMA&lt;/a&gt; optimizations, we &lt;a href=&quot;https://stackoverflow.com/questions/41293077/how-to-compile-tensorflow-with-sse4-2-and-avx-instructions&quot;&gt;compile TensorFlow from source&lt;/a&gt;, and I created a &lt;a href=&quot;https://github.com/minimaxir/keras-cntk-docker/blob/master/Dockerfile-cpu-compiled&quot;&gt;third Docker container&lt;/a&gt; to do just that. When training models in the new container, &lt;a href=&quot;https://github.com/tensorflow/tensorflow/issues/10689&quot;&gt;most&lt;/a&gt; of the warnings no longer show, and (spoiler alert) there is indeed a speed boost in training time.&lt;/p&gt;
+
+&lt;p&gt;Therefore, we can test three major cases with Google Compute Engine:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;A Tesla K80 GPU instance.&lt;/li&gt;
+&lt;li&gt;A 64 Skylake vCPU instance where TensorFlow is installed via &lt;code&gt;pip&lt;/code&gt; (along with testings at 8/16/32 vCPUs).&lt;/li&gt;
+&lt;li&gt;A 64 Skylake vCPU instance where TensorFlow is compiled (&lt;code&gt;cmp&lt;/code&gt;) with CPU instructions (+ 8/16/32 vCPUs).&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2&gt;Results&lt;/h2&gt;
+
+&lt;p&gt;For each model architecture and software/hardware configuration, I calculate the &lt;strong&gt;total training time relative to the GPU instance training&lt;/strong&gt; for running the model training for the provided test script. In all cases, the GPU &lt;em&gt;should&lt;/em&gt; be the fastest training configuration, and systems with more processors should train faster than those with fewer processors.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s start using the &lt;a href=&quot;http://yann.lecun.com/exdb/mnist/&quot;&gt;MNIST dataset&lt;/a&gt; of handwritten digits plus the common multilayer perceptron (MLP) architecture, with dense fully-connected layers. Lower training time is better. All configurations below the horizontal dotted line are better than GPUs; all configurations above the dotted line are worse than GPUs.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/cpu-or-gpu/dl-cpu-gpu-5.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;Here, the GPU is the fastest out of all the platform configurations, but there are other curious trends: the performance between 32 vCPUs and 64 vCPUs is similar, and the compiled TensorFlow library is indeed a significant improvement in training speed &lt;em&gt;but only for 8 and 16 vCPUs&lt;/em&gt;. Perhaps there are overheads negotiating information between vCPUs that eliminate the performance advantages of more vCPUs, and perhaps these overheads are &lt;em&gt;different&lt;/em&gt; with the CPU instructions of the compiled TensorFlow. In the end, it&amp;rsquo;s a &lt;a href=&quot;https://en.wikipedia.org/wiki/Black_box&quot;&gt;black box&lt;/a&gt;, which is why I prefer black box benchmarking all configurations of hardware instead of theorycrafting.&lt;/p&gt;
+
+&lt;p&gt;Since the difference between training speeds of different vCPU counts is minimal, there is definitely an advantage by scaling down. For each model architecture and configuration, I calculate a &lt;strong&gt;normalized training cost relative to the cost of GPU instance training&lt;/strong&gt;. Because GCE instance costs are prorated (unlike Amazon EC2), we can simply calculate experiment cost by multiplying the total number of seconds the experiment runs by the cost of the instance (per second). Ideally, we want to &lt;em&gt;minimize&lt;/em&gt; cost.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/cpu-or-gpu/dl-cpu-gpu-6.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;Lower CPU counts are &lt;em&gt;much&lt;/em&gt; more cost-effective for this problem, when going as low as possible is better.&lt;/p&gt;
+
+&lt;p&gt;Now, let&amp;rsquo;s look at the same dataset with a convolutional neural network (CNN) approach for digit classification:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/cpu-or-gpu/dl-cpu-gpu-7.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/cpu-or-gpu/dl-cpu-gpu-8.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;GPUs are unsurprisingly more than twice as fast as any CPU approach at CNNs, but cost structures are still the same, except that 64 vCPUs are &lt;em&gt;worse&lt;/em&gt; than GPUs cost-wise, with 32 vCPUs training even faster than with 64 vCPUs.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s go deeper with CNNs and look at the &lt;a href=&quot;https://www.cs.toronto.edu/%7Ekriz/cifar.html&quot;&gt;CIFAR-10&lt;/a&gt; image classification dataset, and a model which utilizes a deep covnet + a multilayer perceptron and ideal for image classification (similar to the &lt;a href=&quot;https://gist.github.com/baraldilorenzo/07d7802847aaad0a35d3&quot;&gt;VGG-16&lt;/a&gt; architecture).&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/cpu-or-gpu/dl-cpu-gpu-9.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/cpu-or-gpu/dl-cpu-gpu-10.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;Similar behaviors as in the simple CNN case, although in this instance all CPUs perform better with the compiled TensorFlow library.&lt;/p&gt;
+
+&lt;p&gt;The fasttext algorithm, used here on the &lt;a href=&quot;http://ai.stanford.edu/%7Eamaas/data/sentiment/&quot;&gt;IMDb reviews dataset&lt;/a&gt; to determine whether a review is positive or negative, classifies text extremely quickly relative to other methods. &lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/cpu-or-gpu/dl-cpu-gpu-3.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/cpu-or-gpu/dl-cpu-gpu-4.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;In this case, GPUs are much, much faster than CPUs. The benefit of lower numbers of CPU isn&amp;rsquo;t as dramatic; although as an aside, the &lt;a href=&quot;https://github.com/facebookresearch/fastText&quot;&gt;official fasttext implementation&lt;/a&gt; is &lt;em&gt;designed&lt;/em&gt; for large amounts of CPUs and handles parallelization much better.&lt;/p&gt;
+
+&lt;p&gt;The Bidirectional long-short-term memory (LSTM) architecture is great for working with text data like IMDb reviews, but after my previous benchmark article, &lt;a href=&quot;https://news.ycombinator.com/item?id=14538086&quot;&gt;commenters on Hacker News&lt;/a&gt; noted that TensorFlow uses an inefficient implementation of the LSTM on the GPU, so perhaps the difference will be more notable.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/cpu-or-gpu/dl-cpu-gpu-1.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/cpu-or-gpu/dl-cpu-gpu-2.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;Wait, what? GPU training of Bidirectional LSTMs is &lt;em&gt;twice as slow&lt;/em&gt; as any CPU configuration? Wow. (In fairness, the benchmark uses the Keras LSTM default of &lt;code&gt;implementation=0&lt;/code&gt; which is better on CPUs while &lt;code&gt;implementation=2&lt;/code&gt; is better on GPUs, but it shouldn&amp;rsquo;t result in that much of a differential)&lt;/p&gt;
+
+&lt;p&gt;Lastly, LSTM text generation of &lt;a href=&quot;https://en.wikipedia.org/wiki/Friedrich_Nietzsche&quot;&gt;Nietzsche&amp;rsquo;s&lt;/a&gt; &lt;a href=&quot;https://s3.amazonaws.com/text-datasets/nietzsche.txt&quot;&gt;writings&lt;/a&gt; follows similar patterns to the other architectures, but without the drastic hit to the GPU.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/cpu-or-gpu/dl-cpu-gpu-11.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/cpu-or-gpu/dl-cpu-gpu-12.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;h2&gt;Conclusion&lt;/h2&gt;
+
+&lt;p&gt;As it turns out, using 64 vCPUs is &lt;em&gt;bad&lt;/em&gt; for deep learning as current software/hardware architectures can&amp;rsquo;t fully utilize all of them, and it often results in the exact same performance (or &lt;em&gt;worse&lt;/em&gt;) than with 32 vCPUs. In terms balancing both training speed and cost, training models with &lt;strong&gt;16 vCPUs + compiled TensorFlow&lt;/strong&gt; seems like the winner. The 30%-40% speed boost of the compiled TensorFlow library was an unexpected surprise, and I&amp;rsquo;m shocked Google doesn&amp;rsquo;t offer a precompiled version of TensorFlow with these CPU speedups since the gains are nontrivial.&lt;/p&gt;
+
+&lt;p&gt;It&amp;rsquo;s worth nothing that the cost advantages shown here are &lt;em&gt;only&lt;/em&gt; possible with preemptible instances; regular high-CPU instances on Google Compute Engine are about 5x as expensive, and as a result eliminate the cost benefits completely. Hooray for economies of scale!&lt;/p&gt;
+
+&lt;p&gt;A major implicit assumption with the cloud CPU training approach is that you don&amp;rsquo;t need a trained model ASAP. In professional use cases, time may be too valuable to waste, but in personal use cases where someone can just leave a model training overnight, it&amp;rsquo;s a very, very good and cost-effective option, and one that I&amp;rsquo;ll now utilize.&lt;/p&gt;
+
+&lt;hr&gt;
+
+&lt;p&gt;&lt;em&gt;All scripts for running the benchmark are available in &lt;a href=&quot;https://github.com/minimaxir/deep-learning-cpu-gpu-benchmark&quot;&gt;this GitHub repo&lt;/a&gt;. You can view the R/ggplot2 code used to process the logs and create the visualizations in &lt;a href=&quot;http://minimaxir.com/notebooks/deep-learning-cpu-gpu/&quot;&gt;this R Notebook&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
+</description>
+        <pubDate>Wed, 05 Jul 2017 09:00:00 -0700</pubDate>
+        <link>http://minimaxir.com/2017/07/cpu-or-gpu/</link>
+        <guid isPermaLink="true">http://minimaxir.com/2017/07/cpu-or-gpu/</guid>
+        
+        
+        <category>Data</category>
+        
+        <category>Visualization</category>
+        
+      </item>
     
       <item>
         <title>Predicting the Success of a Reddit Submission with Deep Learning and Keras</title>
@@ -1101,89 +1206,6 @@ Performing an exploratory data analysis of both is helpful to determine at a gla
         
         
         <category>Interactive</category>
-        
-        <category>Visualization</category>
-        
-        <category>Data</category>
-        
-      </item>
-    
-      <item>
-        <title>Infinite-Quality Abstract Art and Animations with Primitive</title>
-        <description>&lt;p&gt;4k media (&amp;ldquo;&lt;a href=&quot;https://en.wikipedia.org/wiki/Ultra-high-definition_television&quot;&gt;Ultra HD&lt;/a&gt;&amp;rdquo;) is the new big thing. &lt;a href=&quot;https://www.youtube.com&quot;&gt;YouTube&lt;/a&gt; and &lt;a href=&quot;https://www.netflix.com/&quot;&gt;Netflix&lt;/a&gt; now offer 4k video streaming, cell phones such as the &lt;a href=&quot;http://www.apple.com/iphone-7/&quot;&gt;iPhone 7&lt;/a&gt; can now record 4k video, gaming consoles such as the &lt;a href=&quot;https://www.playstation.com/en-us/explore/ps4-pro/&quot;&gt;PlayStation 4 Pro&lt;/a&gt; can play video games in native 4k, and 4k-compatible computer monitors and television sets are now priced reasonably.&lt;/p&gt;
-
-&lt;p&gt;However, the improvements offered by 4k do not come for free. From 1080p, 4k media requires much more resources to store the media on disk, much more resources to read from disk or stream over the Internet, and much more resources to store in memory. And Moore&amp;rsquo;s Law has been slowing down.&lt;/p&gt;
-
-&lt;p&gt;Another option worth considering in light of these potential constraints is vector graphics, which can be scaled to &lt;em&gt;any&lt;/em&gt; resolution at a significant fraction of the storage space. Although graphic formats such as &lt;a href=&quot;https://en.wikipedia.org/wiki/Scalable_Vector_Graphics&quot;&gt;Scalable Vector Graphics&lt;/a&gt; (SVG) have existed &lt;em&gt;long&lt;/em&gt; before 4k media (and even 1080p media), support for it had died out over the years since JPGs and PNGs were more practical for the 1024x768px screens of the day, and older versions of Internet Explorer did not support SVGs. However, creating complex SVGs is not trivial, and there aren&amp;rsquo;t any magic applications that can convert a normal image into vector graphics automatically (the closest is &lt;a href=&quot;http://potrace.sourceforge.net&quot;&gt;potrace&lt;/a&gt;, which only works for one color).&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://github.com/fogleman/primitive&quot;&gt;Primitive&lt;/a&gt;, an open-source project by &lt;a href=&quot;https://twitter.com/FogleBird&quot;&gt;Michael Fogleman&lt;/a&gt;, is a cross-platform command-line application that creates abstract art by taking simple polygons such as triangles and rectangles and placing them such that the group of polygons is as close as possible to the original image. The Twitter account &lt;a href=&quot;https://twitter.com/PrimitivePic&quot;&gt;@PrimitivePic&lt;/a&gt; posts examples of such images every half hour.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/primitive/git.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;The &lt;a href=&quot;https://primitive.lol&quot;&gt;Primitive application&lt;/a&gt; on the &lt;a href=&quot;https://itunes.apple.com/us/app/primitive/id1175103038?mt=12&quot;&gt;Mac App Store&lt;/a&gt;, also by Fogleman, provides a simple user interface for the application for $9.99 (worth it for the productivity increase over fiddling with the command-line). With this GUI, you can see exactly &lt;em&gt;how&lt;/em&gt; the art is being made, in real time. The app has also been &lt;a href=&quot;https://medium.com/art-marketing/product-launch-post-mortem-primitive-for-macos-2eee316134ad&quot;&gt;financially successful&lt;/a&gt; for a side project.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/primitive/primitive.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;Both interfaces allow for SVG export, which means that we can use Primitive to take small images and scale them &lt;em&gt;indefinitely&lt;/em&gt;.&lt;/p&gt;
-
-&lt;p&gt;But what cool things can you do with these fancy SVGs? Let&amp;rsquo;s take a look.&lt;/p&gt;
-
-&lt;h2&gt;Playing with Primitive&lt;/h2&gt;
-
-&lt;p&gt;Here&amp;rsquo;s a photo I took of the &lt;a href=&quot;https://en.wikipedia.org/wiki/San_Francisco_Ferry_Building&quot;&gt;San Francisco Ferry Building&lt;/a&gt; last year, cropped to 16:9 with an attempt to follow the &lt;a href=&quot;https://en.wikipedia.org/wiki/Rule_of_thirds&quot;&gt;rule of thirds&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/primitive/San_Francisco.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;This PNG image is 672 KB. Let&amp;rsquo;s try running it through Primitive to see if we can make it smaller, and make it &lt;em&gt;cooler&lt;/em&gt; by drawing 50 quadrilaterals (with zero transparency), at the 1024px &amp;ldquo;nicest&amp;rdquo; working size for maximum quality.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/primitive/SF_Final_50.svg&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;Now that is definitely minimalistic. Maybe &lt;em&gt;too&lt;/em&gt; abstract. What happens if we want to add detail? We can do that by adding many quadratic &lt;a href=&quot;https://en.wikipedia.org/wiki/B%C3%A9zier_curve&quot;&gt;Bèzier curves&lt;/a&gt;. Let&amp;rsquo;s add 500 solid curves to this image.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/primitive/SF_Final_550.svg&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;Now that looks fancy, is only 94 KB (about 1/8th the file size of the static image!), and can scale to any screen size.&lt;/p&gt;
-
-&lt;p&gt;You may have noticed that this SVG is the final result from the &lt;a href=&quot;/img/primitive/SF_Final_550_animated.svg&quot;&gt;animation&lt;/a&gt; at the beginning of this article. This particular shenanigan is &lt;a href=&quot;http://minimaxir.com/2016/12/interactive-network/&quot;&gt;another&lt;/a&gt; of my trademark weird-tricks-that-should-not-even-work-but-do. By passing the final SVG through &lt;a href=&quot;https://maxwellito.github.io/vivus/&quot;&gt;Vivus&lt;/a&gt; (specifically, &lt;a href=&quot;https://maxwellito.github.io/vivus-instant/&quot;&gt;Vivus Instant&lt;/a&gt;), we can animate the Bèzier curves such that it looks like they are being drawn &lt;em&gt;in real time&lt;/em&gt; on the quadrilateral background.&lt;/p&gt;
-
-&lt;p&gt;The animations generated from Vivus Instant are pure CSS and require no additional dependencies (although you&amp;rsquo;ll need to &lt;a href=&quot;https://css-tricks.com/scale-svg/&quot;&gt;manually add&lt;/a&gt; the &lt;code&gt;viewBox&lt;/code&gt; attribute to make the SVG mobile-friendly). Even then, the result is 276 KB; still much smaller than the original raster image!&lt;/p&gt;
-
-&lt;p&gt;Of the polygons available in Primitive, Vivus Instant will only animate the Bèzier curves. If you wanted to animate other polygons, you could use &lt;a href=&quot;http://snapsvg.io&quot;&gt;Snap.svg&lt;/a&gt;, which might make a fun project for a future post.&lt;/p&gt;
-
-&lt;p&gt;These SVG animations only work on the web, but it&amp;rsquo;s not difficult to make animations of SVG creation into a share-friendly format.&lt;/p&gt;
-
-&lt;h2&gt;Abstract GIFs&lt;/h2&gt;
-
-&lt;p&gt;GIFs nowadays can be shared anywhere, and Primitive has a few ways of making GIFs. The command-line interface has a GIF-maker built in; essentially, it outputs each frame as an image and stitches them together.&lt;/p&gt;
-
-&lt;p&gt;The Primitive Mac App has another option. Since the polygons are rendered on-screen, you can &lt;em&gt;record the screen&lt;/em&gt; using tools like &lt;a href=&quot;https://support.apple.com/en-us/HT201066&quot;&gt;QuickTime&amp;rsquo;s screen recording&lt;/a&gt; to simultaneously visualize and record the vector image. Once recorded (and after editing the video to speed things up), you can use one of any number of video-to-GIF converters to make a sharable animation.&lt;/p&gt;
-
-&lt;p&gt;For this test, let&amp;rsquo;s try using an &lt;em&gt;extremely&lt;/em&gt; small image and see how well Primitive can extrapolate to an infinite size. Here&amp;rsquo;s a 64x64px sprite of the &lt;a href=&quot;http://www.pokemon.com/us/&quot;&gt;Pokèmon&lt;/a&gt; Pikachu from the 3rd generation of Pokèmon games (via &lt;a href=&quot;http://bulbapedia.bulbagarden.net/wiki/Pikachu_(Pok%C3%A9mon)&quot;&gt;Bulbapedia&lt;/a&gt;).&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/primitive/Spr_3r_025.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;I made a video of Primitive rendering Pikachu using a combination of 1,000 ellipses, rectangles, triangles and curves, and converted it to a GIF using my noncreatively-named &lt;a href=&quot;https://github.com/minimaxir/video-to-gif-osx&quot;&gt;Convert Video to GIF&lt;/a&gt; tool. The result?&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/primitive/Pikachu_Record.gif&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;Not too bad, given the input. Again, the GIF can be sized to any resolution, bandwidth considerations aside.&lt;/p&gt;
-
-&lt;h2&gt;Abstract 4k Videos&lt;/h2&gt;
-
-&lt;p&gt;So how do you get these infinite-quality images into 4k videos? You can export the Primitive renderings as a super-high-resolution PNG and embed them into the video, but there may still be pixellation if you cinematically zoom into the image. SVGs aren&amp;rsquo;t natively supported by video editing programs such as Final Cut Pro and Adobe Premiere. But &lt;em&gt;PDFs&lt;/em&gt; are, and there are many SVG-to-PDF converters which preserve the vector information (On macOS, &lt;a href=&quot;https://itunes.apple.com/us/app/gapplin/id768053424?mt=12&quot;&gt;Gapplin&lt;/a&gt; works fine for this purpose).&lt;/p&gt;
-
-&lt;p&gt;For vector scaling in Final Cut Pro, you must first &lt;a href=&quot;http://www.fcp.co/forum/4-final-cut-pro-x-fcpx/25544-best-way-to-use-illustrador-files-in-fcpx#77676&quot;&gt;import through Motion&lt;/a&gt; first. Here&amp;rsquo;s a quick 4k/60fps video as proof using the Ferry Building vector image above, with a bit of style.&lt;/p&gt;
-
-&lt;div class=&quot;responsive-video&quot;&gt;&lt;iframe src=&quot;http://www.youtube.com/embed/Cv4P6VMvBCw &quot; style=&quot;width: 100%; height: 100%; border: none; padding-bottom: 20px&quot; allowfullscreen&gt;&lt;/iframe&gt;&lt;/div&gt;
-
-&lt;p&gt;Again, vector images are not a new concept, but given the changes in the media and technology landscape, it is very worthwhile to give them a second chance. Once technology evolves and the media industries start pushing &lt;em&gt;8k media&lt;/em&gt; (and they will), having a sensible method of producing high-quality assets pays for itself.&lt;/p&gt;
-
-&lt;p&gt;At the least, Primitive will give me some nice background visuals for when I start producing 4k data visualizations videos (yes, that&amp;rsquo;s a thing!).&lt;/p&gt;
-</description>
-        <pubDate>Mon, 12 Dec 2016 06:30:00 -0800</pubDate>
-        <link>http://minimaxir.com/2016/12/primitive/</link>
-        <guid isPermaLink="true">http://minimaxir.com/2016/12/primitive/</guid>
-        
         
         <category>Visualization</category>
         
