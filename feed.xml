@@ -5,9 +5,199 @@
     <description>A blog by Max Woolf about startups, technology, and blogging. It's so meta, even this acronym.</description>
     <link>http://minimaxir.com/</link>
     <atom:link href="http://minimaxir.com/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Wed, 05 Jul 2017 09:03:42 -0700</pubDate>
-    <lastBuildDate>Wed, 05 Jul 2017 09:03:42 -0700</lastBuildDate>
+    <pubDate>Mon, 14 Aug 2017 08:54:09 -0700</pubDate>
+    <lastBuildDate>Mon, 14 Aug 2017 08:54:09 -0700</lastBuildDate>
     <generator>Jekyll v3.4.3</generator>
+    
+      <item>
+        <title>How to Make High Quality Data Visualizations for Websites With R and ggplot2</title>
+        <description>&lt;p&gt;If you&amp;rsquo;ve been following my blog, I like to use &lt;a href=&quot;https://cran.r-project.org&quot;&gt;R&lt;/a&gt; and &lt;a href=&quot;http://ggplot2.tidyverse.org/reference/&quot;&gt;ggplot2&lt;/a&gt; for data visualization. A lot.&lt;/p&gt;
+
+&lt;p&gt;One of my older blog posts, &lt;a href=&quot;http://minimaxir.com/2015/02/ggplot-tutorial/&quot;&gt;An Introduction on How to Make Beautiful Charts With R and ggplot2&lt;/a&gt;, is still one of my most-trafficked posts years later, and even today I see techniques from that particular post incorporated into modern data visualizations on sites such as &lt;a href=&quot;https://www.reddit.com&quot;&gt;Reddit&amp;rsquo;s&lt;/a&gt; &lt;a href=&quot;https://www.reddit.com/r/dataisbeautiful/&quot;&gt;/r/dataisbeautiful&lt;/a&gt; subreddit.&lt;/p&gt;
+
+&lt;p&gt;However, that post is a little outdated. Thanks to a few updates to ggplot2 since then and other advances in data visualization best-practices, making pretty charts for websites/blogs using R and ggplot2 is even more easy, quick, &lt;em&gt;and&lt;/em&gt; fun!&lt;/p&gt;
+
+&lt;h2&gt;Quick Introduction to ggplot2&lt;/h2&gt;
+
+&lt;p&gt;ggplot2 uses a more concise setup toward creating charts as opposed to the more declarative style of Python&amp;rsquo;s &lt;a href=&quot;https://matplotlib.org&quot;&gt;matplotlib&lt;/a&gt; and base R. And it also includes a few example datasets for practicing ggplot2 functionality; for example, the &lt;code&gt;mpg&lt;/code&gt; dataset is a &lt;a href=&quot;http://ggplot2.tidyverse.org/reference/mpg.html&quot;&gt;dataset&lt;/a&gt; of the performance of popular models of cars in 1998 and 2008.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/ggplot2-web/mpg.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s say you want to create a &lt;a href=&quot;https://en.wikipedia.org/wiki/Scatter_plot&quot;&gt;scatter plot&lt;/a&gt;. Following &lt;a href=&quot;http://ggplot2.tidyverse.org/reference/geom_smooth.html&quot;&gt;a great example&lt;/a&gt; from the ggplot2 documentation, let&amp;rsquo;s plot the highway mileage of the car vs. the &lt;a href=&quot;https://en.wikipedia.org/wiki/Engine_displacement&quot;&gt;volume displacement&lt;/a&gt; of the engine. In ggplot2, first you instantiate the chart with the &lt;code&gt;ggplot()&lt;/code&gt; function, specifying the source dataset and the core aesthetics you want to plot, such as x, y, color, and fill. In this case, we set the core aesthetics to x = displacement and y = mileage, and add a &lt;code&gt;geom_point()&lt;/code&gt; layer to make a scatter plot:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;p &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; ggplot&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;mpg&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; aes&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;x &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; displ&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; y &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; hwy&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
+            geom_point&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;img src=&quot;/img/ggplot2-web/plot1.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;As we can see, there is a negative correlation between the two metrics. I&amp;rsquo;m sure you&amp;rsquo;ve seen plots like these around the internet before. But with only a couple of lines of codes, you can make them look more contemporary.&lt;/p&gt;
+
+&lt;p&gt;ggplot2 lets you add a well-designed theme with just one line of code. Relatively new to &lt;code&gt;ggplot2&lt;/code&gt; is &lt;code&gt;theme_minimal()&lt;/code&gt;, which &lt;a href=&quot;http://ggplot2.tidyverse.org/reference/ggtheme.html&quot;&gt;generates&lt;/a&gt; a muted style similar to &lt;a href=&quot;http://fivethirtyeight.com&quot;&gt;FiveThirtyEight&lt;/a&gt;&amp;rsquo;s modern data visualizations:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;p &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; p &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
+    theme_minimal&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;img src=&quot;/img/ggplot2-web/plot2.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;But we can still add color. Setting a color aesthetic on a character/categorical variable will set the colors of the corresponding points, making it easy to differentiate at a glance.&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;p &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; ggplot&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;mpg&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; aes&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;x &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; displ&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; y &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; hwy&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; color&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;kp&quot;&gt;class&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
+            geom_point&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
+            theme_minimal&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;img src=&quot;/img/ggplot2-web/plot3.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;Adding the color aesthetic certainly makes things much prettier. ggplot2 automatically adds a legend for the colors as well. 
+However, for this particular visualization, it is difficult to see trends in the points for each class. A easy way around this is to add a &lt;a href=&quot;https://en.wikipedia.org/wiki/Least_squares&quot;&gt;least squares regression&lt;/a&gt; trendline for each class &lt;a href=&quot;http://ggplot2.tidyverse.org/reference/geom_smooth.html&quot;&gt;using&lt;/a&gt; &lt;code&gt;geom_smooth()&lt;/code&gt; (which normally adds a smoothed line, but since there isn&amp;rsquo;t a lot of data for each group, we force it to a linear model and do not plot confidence intervals)&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;p &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; p &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
+    geom_smooth&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;method &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;lm&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; se &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;F&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;img src=&quot;/img/ggplot2-web/plot4.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;Pretty neat, and now comparative trends are much more apparent! For example, pickups and SUVs have similar efficiency, which makes intuitive sense.&lt;/p&gt;
+
+&lt;p&gt;The chart axes should be labeled (&lt;em&gt;always&lt;/em&gt; label your charts!). All the typical labels, like &lt;code&gt;title&lt;/code&gt;, &lt;code&gt;x&lt;/code&gt;-axis, and &lt;code&gt;y&lt;/code&gt;-axis can be done with the &lt;code&gt;labs()&lt;/code&gt; function. But relatively new to ggplot2 are the &lt;code&gt;subtitle&lt;/code&gt; and &lt;code&gt;caption&lt;/code&gt; fields, both of do what you expect:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;p &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; p &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
+    labs&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;title&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Efficiency of Popular Models of Cars&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+         subtitle&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;By Class of Car&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+         x&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Engine Displacement (liters)&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+         y&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Highway Miles per Gallon&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+         caption&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;by Max Woolf — minimaxir.com&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;img src=&quot;/img/ggplot2-web/plot5.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;That&amp;rsquo;s a pretty good start. Now let&amp;rsquo;s take it to the next level.&lt;/p&gt;
+
+&lt;h2&gt;How to Save A ggplot2 chart For Web&lt;/h2&gt;
+
+&lt;p&gt;Something surprisingly undiscussed in the field of data visualization is how to &lt;em&gt;save&lt;/em&gt; a chart as a high quality image file. For example, with &lt;a href=&quot;https://products.office.com/en-us/excel&quot;&gt;Excel&lt;/a&gt; charts, Microsoft &lt;a href=&quot;https://support.office.com/en-us/article/Save-a-chart-as-a-picture-in-Excel-for-Windows-254bbf9a-1ce1-459f-914a-4902e8ca9217&quot;&gt;officially recommends&lt;/a&gt; to copy the chart, &lt;em&gt;paste it as an image back into Excel&lt;/em&gt;, then save the pasted image, without having any control over image quality and size in the browser (the &lt;em&gt;real&lt;/em&gt; best way to save an Excel/&lt;a href=&quot;https://www.apple.com/numbers/&quot;&gt;Numbers&lt;/a&gt; chart as an image for a webpage is to copy/paste the chart object into a &lt;a href=&quot;https://products.office.com/en-us/powerpoint&quot;&gt;PowerPoint&lt;/a&gt;/&lt;a href=&quot;https://www.apple.com/keynote/&quot;&gt;Keynote&lt;/a&gt; slide, and export &lt;em&gt;the slide&lt;/em&gt; as an image. This also makes it extremely easy to annotate/brand said chart beforehand in PowerPoint/Keynote).&lt;/p&gt;
+
+&lt;p&gt;R IDEs such as &lt;a href=&quot;https://www.rstudio.com&quot;&gt;RStudio&lt;/a&gt; have a chart-saving UI with the typical size/filetype options. But if you save an image from this UI, the shapes and texts of the resulting image will be heavily aliased (R &lt;a href=&quot;https://danieljhocking.wordpress.com/2013/03/12/high-resolution-figures-in-r/&quot;&gt;renders images at 72 dpi&lt;/a&gt; by default, which is much lower than that of modern HiDPI/Retina displays).&lt;/p&gt;
+
+&lt;p&gt;The data visualizations used earlier in this post were generated in-line as a part of an &lt;a href=&quot;http://rmarkdown.rstudio.com/r_notebooks.html&quot;&gt;R Notebook&lt;/a&gt;, but it is surprisingly difficult to extract the generated chart as a separate file. But ggplot2 also has &lt;code&gt;ggsave()&lt;/code&gt;, which saves the image to disk using antialiasing and makes the fonts/shapes in the chart look much better, and assumes a default dpi of 300. Saving charts using &lt;code&gt;ggsave()&lt;/code&gt;, and adjusting the sizes of the text and geoms to compensate for the higher dpi, makes the charts look very presentable. A width of 4 and a height of 3 results in a 1200x900px image, which if posted on a blog with a content width of ~600px (like mine), will render at full resolution on HiDPI/Retina displays, or downsample appropriately otherwise. Due to modern PNG compression, the file size/bandwidth cost for using larger images is minimal.&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;p &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; ggplot&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;mpg&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; aes&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;x &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; displ&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; y &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; hwy&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; color&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;kp&quot;&gt;class&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; 
+    geom_smooth&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;method &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;lm&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; se&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;F&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; size&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;0.5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
+    geom_point&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;size&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;0.5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
+    theme_minimal&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;base_size&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;9&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
+    labs&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;title&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Efficiency of Popular Models of Cars&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+         subtitle&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;By Class of Car&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+         x&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Engine Displacement (liters)&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+         y&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Highway Miles per Gallon&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+         caption&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;by Max Woolf — minimaxir.com&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+ggsave&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;tutorial-0.png&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; p&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; width&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; height&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;img src=&quot;/img/ggplot2-web/tutorial-0.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;Compare to the previous non-ggsave chart, which is more blurry around text/shapes:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/ggplot2-web/plot5.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;For posterity, here&amp;rsquo;s the same chart saved at 1200x900px using the RStudio image-saving UI:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/ggplot2-web/plot-1200-900.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;Note that the antialiasing optimizations assume that you are &lt;em&gt;not&lt;/em&gt; uploading the final chart to a service like &lt;a href=&quot;https://medium.com&quot;&gt;Medium&lt;/a&gt; or &lt;a href=&quot;https://wordpress.com&quot;&gt;WordPress.com&lt;/a&gt;, which will compress the images and reduce the quality anyways. But if you are uploading it to Reddit or self-hosting your own blog, it&amp;rsquo;s definitely worth it.&lt;/p&gt;
+
+&lt;h2&gt;Fancy Fonts&lt;/h2&gt;
+
+&lt;p&gt;Changing the chart font is another way to add a personal flair.
+Theme functions like &lt;code&gt;theme_minimal()&lt;/code&gt; accept a &lt;code&gt;base_family&lt;/code&gt; parameter. With that, you can specify any font family as the default instead of the base sans-serif. (On Windows, you may need to install the &lt;code&gt;extrafont&lt;/code&gt; package first). Fonts from &lt;a href=&quot;https://fonts.google.com&quot;&gt;Google Fonts&lt;/a&gt; are free and work easily with ggplot2 once installed. For example, we can use &lt;a href=&quot;https://fonts.google.com/specimen/Roboto&quot;&gt;Roboto&lt;/a&gt;, Google&amp;rsquo;s modern font which has also been getting a lot of usage on &lt;a href=&quot;https://stackoverflow.com&quot;&gt;Stack Overflow&lt;/a&gt;&amp;rsquo;s great ggplot2 &lt;a href=&quot;https://stackoverflow.blog/2017/06/15/developers-use-spaces-make-money-use-tabs/&quot;&gt;data visualizations&lt;/a&gt;.&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;p &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; p &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
+    theme_minimal&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;base_size&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;9&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; base_family&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Roboto&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;img src=&quot;/img/ggplot2-web/tutorial-1.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;A general text design guideline is to use fonts of different weights/widths for different hierarchies of content. In this case, we can use a bolder condensed font for the title, and deemphasize the subtitle and caption using lighter colors, all done using the &lt;code&gt;theme()&lt;/code&gt; &lt;a href=&quot;http://ggplot2.tidyverse.org/reference/theme.html&quot;&gt;function&lt;/a&gt;.&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;p &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; p &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; 
+    theme&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;plot.subtitle &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; element_text&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;color&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;#666666&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+          plot.title &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; element_text&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;family&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Roboto Condensed Bold&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+          plot.caption &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; element_text&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;color&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;#AAAAAA&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; size&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;6&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;img src=&quot;/img/ggplot2-web/tutorial-2.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;It&amp;rsquo;s worth nothing that data visualizations posted on websites should be easily &lt;em&gt;legible&lt;/em&gt; for mobile-device users as well, hence the intentional use of larger fonts relative to charts typically produced in the desktop-oriented Excel.&lt;/p&gt;
+
+&lt;p&gt;Additionally, all theming options can be set as a session default at the beginning of a script using &lt;code&gt;theme_set()&lt;/code&gt;, saving even more time instead of having to recreate the theme for each chart.&lt;/p&gt;
+
+&lt;h2&gt;The &amp;ldquo;ggplot2 colors&amp;rdquo;&lt;/h2&gt;
+
+&lt;p&gt;The &amp;ldquo;ggplot2 colors&amp;rdquo; for categorical variables are infamous for being the primary indicator of a chart being made with ggplot2. But there is a science to it; ggplot2 by default selects colors using the &lt;code&gt;scale_color_hue()&lt;/code&gt; &lt;a href=&quot;http://ggplot2.tidyverse.org/reference/scale_hue.html&quot;&gt;function&lt;/a&gt;, which selects colors in the HSL space by changing the hue [H] between 0 and 360, keeping saturation [S] and lightness [L] constant. As a result, ggplot2 selects the most &lt;em&gt;distinct&lt;/em&gt; colors possible while keeping lightness constant. For example, if you have 2 different categories, ggplot2 chooses the colors with h = 0 and h = 180; if 3 colors, h = 0, h = 120, h = 240, etc.&lt;/p&gt;
+
+&lt;p&gt;It&amp;rsquo;s smart, but does make a given chart lose distinctness when many other ggplot2 charts use the same selection methodology. A quick way to take advantage of this hue dispersion while still making the colors unique is to change the lightness; by default, &lt;code&gt;l = 65&lt;/code&gt;, but setting it slightly lower will make the charts look more professional/&lt;a href=&quot;https://www.bloomberg.com&quot;&gt;Bloomberg&lt;/a&gt;-esque.&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;p_color &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; p &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
+        scale_color_hue&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;l &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;40&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;img src=&quot;/img/ggplot2-web/tutorial-4.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;h2&gt;RColorBrewer&lt;/h2&gt;
+
+&lt;p&gt;Another coloring option for ggplot2 charts are the &lt;a href=&quot;http://colorbrewer2.org/#type=sequential&amp;amp;scheme=BuGn&amp;amp;n=3&quot;&gt;ColorBrewer&lt;/a&gt; palettes implemented with the &lt;code&gt;RColorBrewer&lt;/code&gt; package, which are supported natively in ggplot2 with functions such as &lt;code&gt;scale_color_brewer()&lt;/code&gt;. The sequential palettes like &amp;ldquo;Blues&amp;rdquo; and &amp;ldquo;Greens&amp;rdquo; do what the name implies:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;p_color &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; p &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
+        scale_color_brewer&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;palette&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Blues&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;img src=&quot;/img/ggplot2-web/tutorial-5.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;A famous diverging palette for visualizations on /r/dataisbeautiful is the &amp;ldquo;Spectral&amp;rdquo; palette, which is a lighter rainbow (recommended for dark backgrounds)&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/ggplot2-web/tutorial-6.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;However, while the charts look pretty, it&amp;rsquo;s difficult to tell the categories apart. The qualitative palettes fix this problem, and have more distinct possibilities than the &lt;code&gt;scale_color_hue()&lt;/code&gt; approach mentioned earlier.&lt;/p&gt;
+
+&lt;p&gt;Here are 3 examples of qualitative palettes, &amp;ldquo;Set1&amp;rdquo;, &amp;ldquo;Set2&amp;rdquo;, and &amp;ldquo;Set3,&amp;rdquo; whichever fit your preference.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/ggplot2-web/tutorial-7.png&quot; alt=&quot;&quot;&gt;
+&lt;img src=&quot;/img/ggplot2-web/tutorial-8.png&quot; alt=&quot;&quot;&gt;
+&lt;img src=&quot;/img/ggplot2-web/tutorial-9.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;h2&gt;Viridis and Accessibility&lt;/h2&gt;
+
+&lt;p&gt;Let&amp;rsquo;s mix up the visualization a bit. A rarely-used-but-very-useful ggplot2 geom is &lt;code&gt;geom2d_bin()&lt;/code&gt;, which counts the number of points in a given 2d spatial area:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;p &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; ggplot&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;mpg&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; aes&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;x &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; displ&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; y &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; hwy&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; 
+    geom_bin2d&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;bins&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;...&lt;/span&gt;theming options...&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;img src=&quot;/img/ggplot2-web/tutorial-tile.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;We see that the largest number of points are centered around (2,30). However, the default ggplot2 color palette for continuous variables is &lt;em&gt;boring&lt;/em&gt;. Yes, we can use the RColorBrewer sequential palettes above, but as noted, they aren&amp;rsquo;t perceptually distinct, and could cause issues for readers who are colorblind.&lt;/p&gt;
+
+&lt;p&gt;The &lt;a href=&quot;https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html&quot;&gt;viridis R package&lt;/a&gt; provides a set of 4 high-contrast palettes which are very colorblind friendly, and works easily with ggplot2 by extending a &lt;code&gt;scale_fill_viridis()/scale_color_viridis()&lt;/code&gt; function.&lt;/p&gt;
+
+&lt;p&gt;The default &amp;ldquo;viridis&amp;rdquo; palette has been increasingly popular on the web lately:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;p_color &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; p &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
+        scale_fill_viridis&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;option&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;viridis&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;img src=&quot;/img/ggplot2-web/tutorial-10.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;&amp;ldquo;magma&amp;rdquo; and &amp;ldquo;inferno&amp;rdquo; are similar, and give the data visualization a fiery edge:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/ggplot2-web/tutorial-11.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/ggplot2-web/tutorial-12.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;Lastly, &amp;ldquo;plasma&amp;rdquo; is a mix between the 3 palettes above:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/ggplot2-web/tutorial-13.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;h2&gt;Next Steps&lt;/h2&gt;
+
+&lt;p&gt;FiveThirtyEight actually uses ggplot2 for their data journalism workflow &lt;a href=&quot;https://channel9.msdn.com/Events/useR-international-R-User-conference/useR2016/FiveThirtyEights-data-journalism-workflow-with-R?ocid=player&quot;&gt;in an interesting way&lt;/a&gt;; they render the base chart using ggplot2, but export it as as a SVG/PDF vector file which can scale to any size, and then the design team annotates/customizes the data visualization in &lt;a href=&quot;http://www.adobe.com/products/illustrator.html&quot;&gt;Adobe Illustrator&lt;/a&gt; before exporting it as a static PNG for the article (in general, I recommend using an external image editor to add text annotations to a data visualization because doing it manually in ggplot2 is inefficient).&lt;/p&gt;
+
+&lt;p&gt;For general use cases, ggplot2 has very strong defaults for beautiful data visualizations. And certainly there is a lot &lt;em&gt;more&lt;/em&gt; you can do to make a visualization beautiful than what&amp;rsquo;s listed in this post, such as using facets and tweaking parameters of geoms for further distinction, but those are more specific to a given data visualization. In general, it takes little additional effort to make something &lt;em&gt;unique&lt;/em&gt; with ggplot2, and the effort is well worth it. And prettier charts are more persuasive, which is a good return-on-investment.&lt;/p&gt;
+
+&lt;hr&gt;
+
+&lt;p&gt;&lt;em&gt;You can view the R and ggplot2 code used to create the data visualizations in &lt;a href=&quot;http://minimaxir.com/notebooks/ggplot2-web/&quot;&gt;this R Notebook&lt;/a&gt;. You can also view the images/data used for this post in &lt;a href=&quot;https://github.com/minimaxir/ggplot2-web&quot;&gt;this GitHub repository&lt;/a&gt;&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;You are free to use the data visualizations from this article however you wish, but it would be greatly appreciated if proper attribution is given to this article and/or myself!&lt;/em&gt;&lt;/p&gt;
+</description>
+        <pubDate>Mon, 14 Aug 2017 09:00:00 -0700</pubDate>
+        <link>http://minimaxir.com/2017/08/ggplot2-web/</link>
+        <guid isPermaLink="true">http://minimaxir.com/2017/08/ggplot2-web/</guid>
+        
+        
+        <category>Data</category>
+        
+        <category>Visualization</category>
+        
+      </item>
     
       <item>
         <title>Benchmarking TensorFlow on Cloud CPUs: Cheaper Deep Learning than Cloud GPUs</title>
@@ -1138,74 +1328,6 @@ Performing an exploratory data analysis of both is helpful to determine at a gla
         <link>http://minimaxir.com/2017/01/amazon-spark/</link>
         <guid isPermaLink="true">http://minimaxir.com/2017/01/amazon-spark/</guid>
         
-        
-        <category>Visualization</category>
-        
-        <category>Data</category>
-        
-      </item>
-    
-      <item>
-        <title>Network Visualization of Breached Internet Services Using HaveIBeenPwned? Data</title>
-        <description>&lt;p&gt;Last week, Yahoo &lt;a href=&quot;https://yahoo.tumblr.com/post/154479236569/important-security-information-for-yahoo-users&quot;&gt;announced&lt;/a&gt; that 1 billion accounts on their service were compromised by attackers in 2013. That is bad, and unfortunately common nowadays.&lt;/p&gt;
-
-&lt;p&gt;Security expert &lt;a href=&quot;https://twitter.com/troyhunt&quot;&gt;Troy Hunt&lt;/a&gt; maintains &lt;a href=&quot;https://haveibeenpwned.com&quot;&gt;Have I been pwned?&lt;/a&gt;, a database of breached internet services where users can check to see if their account information has been compromised in such an attack as the Yahoo attack. Recently, Hunt &lt;a href=&quot;https://www.troyhunt.com/heres-1-4-billion-records-from-have-i-been-pwned-for-you-to-analyse/&quot;&gt;released a dataset&lt;/a&gt; consisting of &lt;strong&gt;1.4 billion&lt;/strong&gt; unique breached accounts, and the services where those specific accounts were compromised.&lt;/p&gt;
-
-&lt;p&gt;The dataset has been scrubbed of identifying information and sensitive data (justifiability so), which strongly limits the scope of any potential analysis. However, what may be interesting is taking a look at the interrelated networks between the services and creating a neat data visualization.&lt;/p&gt;
-
-&lt;h2&gt;Methodology&lt;/h2&gt;
-
-&lt;p&gt;Here&amp;rsquo;s a line from the 141.8 MB text file:&lt;/p&gt;
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;Adobe;GFAN;HeroesOfNewerth;NetEase;Tumblr 2
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;In this example, 2 users had their accounts breached at these specific 5 services.&lt;/p&gt;
-
-&lt;p&gt;I wrote a &lt;a href=&quot;https://github.com/minimaxir/breach-network/blob/master/hibp_service_edges.py&quot;&gt;simple Python script&lt;/a&gt; that takes in the HIBP data dump and outputs two files:&lt;/p&gt;
-
-&lt;p&gt;One, &lt;a href=&quot;https://github.com/minimaxir/breach-network/blob/master/hibp_services.csv&quot;&gt;a CSV file&lt;/a&gt; containing the total number of breached accounts from each service in this dataset. From the example data point, we would add 2 to the counts of Adobe breaches, GFAN breaches, etc. There are &lt;strong&gt;1,768,628,867&lt;/strong&gt; total records in the dataset (which is greater than the earlier 1.4B metric since it multicounts accounts which have been breached multiple times). The 1.77B number approximately matches the given number of total number of records on HIBP (1,989,141,353) minus the number of records from sensitive breaches (~221M).&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/breach-network/nodes.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;Two, &lt;a href=&quot;https://github.com/minimaxir/breach-network/blob/master/hibp_edges.csv&quot;&gt;a CSV file&lt;/a&gt; containing the unique combination pairs of each service in a data point, From the example data point, we would add 2 to the counts of [Adobe, GFAN], [Adobe, HeroesOfNewerth], etc. (statistically-minded readers will notice that there are 10 unique two-value combinations for a set of 5 services). &lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/breach-network/edges.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;Although the HIBP dataset represents 1.77 Billion records, it is far from &amp;ldquo;big data&amp;rdquo;: my Python script takes less than a minute to process it.&lt;/p&gt;
-
-&lt;p&gt;The latter CSV serves as the edge list for a network graph. There are 10,816 unique edges. Using &lt;a href=&quot;https://www.r-project.org&quot;&gt;R&lt;/a&gt;, &lt;a href=&quot;http://ggplot2.org&quot;&gt;ggplot2&lt;/a&gt;, and &lt;a href=&quot;https://briatte.github.io/ggnetwork/&quot;&gt;ggnetwork&lt;/a&gt;, I connected all the edges into a graph network (removing edges with too few breached accounts), set the layout according to 50,000 iterations of the &lt;a href=&quot;https://github.com/gephi/gephi/wiki/Fruchterman-Reingold&quot;&gt;Fruchterman-Reingold algorithm&lt;/a&gt;, and attempted to make it pretty.&lt;/p&gt;
-
-&lt;p&gt;The results of my first made-in-an-hour-after-getting-home-from-work draft were &lt;a href=&quot;http://i.imgur.com/FpLiFGk.png&quot;&gt;not pretty&lt;/a&gt;. On Hacker News, user flashman &lt;a href=&quot;https://news.ycombinator.com/item?id=13112461&quot;&gt;provides a sensible fix&lt;/a&gt;; only include edges in the network with a proportional number of accounts shared between the two internet services it connects (e.g. the edge contains atleast 1% of the accounts in both services).&lt;/p&gt;
-
-&lt;p&gt;Removing edges which do not fit that criteria dramatically reduces the clutter and makes communities much more distinct. After rerunning the code and making further style tweaks, here&amp;rsquo;s the final result:&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;/img/breach-network/hibp.png&quot;&gt;&lt;img src=&quot;/img/breach-network/hibp.png&quot; alt=&quot;&quot;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;(click on the image to view at full resolution)&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;The interactive version at the top of the page was created with &lt;a href=&quot;https://plot.ly&quot;&gt;Plotly&lt;/a&gt;, via my workflow mentioned in a &lt;a href=&quot;http://minimaxir.com/2016/12/interactive-network/&quot;&gt;previous post&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h2&gt;Analysis&lt;/h2&gt;
-
-&lt;p&gt;The colors of the nodes represent the communities as determined by the &lt;a href=&quot;http://arxiv.org/abs/physics/0512106&quot;&gt;Walktrap community finding algorithm&lt;/a&gt; run on the network. There are a few noteworthy groups: the turquoise group of mainstream social networking services including LinkedIn and MySpace, the brown group of mainstream gaming services like Nexus Mods and XSplit, and mustard-colored services of questionable legality on the right of the cluster. There are clusters of services extended far from the general clusters which represent non-English services: the yellow-green cluster on the left consists of Russian internet services, while the lime-green cluster at the top represents Chinese internet services.&lt;/p&gt;
-
-&lt;p&gt;The size of the nodes represent the degree of the node, or the number of nodes connected to a given node. With that, we can easily see services like LinkedIn and XSplit have strong connections to other breached services. Relatedly, the transparency of the edges in the image is determined by the corresponding weight of the edge, and demonstrates the relative magnitude of the LinkedIn/MySpace breaches. (And it&amp;rsquo;s also why we can&amp;rsquo;t use other metrics like &lt;a href=&quot;https://en.wikipedia.org/wiki/Centrality&quot;&gt;centrality&lt;/a&gt; for sizing the nodes, as the relative weights of those breaches skew the result.)&lt;/p&gt;
-
-&lt;p&gt;What&amp;rsquo;s important is that the network is generated &lt;em&gt;entirely from user behavior&lt;/em&gt;, and not by manually establishing the actual relationships between the internet services.&lt;/p&gt;
-
-&lt;p&gt;Given the wildly-varying timing and magnitude of these breaches, along with the numerous potential &lt;em&gt;causes&lt;/em&gt; of breaches which are not always publicly disclosed, it is difficult to make accurate predictive models about future breaches from the HaveIBeenPwned? dataset. The records in HIBP are a &lt;em&gt;very&lt;/em&gt; small sample of all the leaked data worldwide, unfortunately. However, it shows what  relationships can be visualized from simple user fingerprints all around the web, even when the fingerprint &lt;em&gt;itself&lt;/em&gt; is unknown.&lt;/p&gt;
-
-&lt;hr&gt;
-
-&lt;p&gt;&lt;em&gt;You can view all the R and ggplot2 code used to visualize the network data in &lt;a href=&quot;http://minimaxir.com/notebooks/breach-network/&quot;&gt;this R Notebook&lt;/a&gt;. You can also view the images/data used for this post in &lt;a href=&quot;https://github.com/minimaxir/breach-network&quot;&gt;this GitHub repository&lt;/a&gt;&lt;/em&gt;.&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;You are free to use the data visualizations from this article however you wish, but it would be greatly appreciated if proper attribution is given to this article and/or myself!&lt;/em&gt;&lt;/p&gt;
-</description>
-        <pubDate>Mon, 19 Dec 2016 08:30:00 -0800</pubDate>
-        <link>http://minimaxir.com/2016/12/pwned-network/</link>
-        <guid isPermaLink="true">http://minimaxir.com/2016/12/pwned-network/</guid>
-        
-        
-        <category>Interactive</category>
         
         <category>Visualization</category>
         
