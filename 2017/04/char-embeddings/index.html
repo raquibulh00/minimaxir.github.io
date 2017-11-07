@@ -325,7 +325,7 @@
 <p>More importantly, all Magic cards have an explicit structure; they have a name, mana cost in the upper-right, card type, card text, and usually a power and toughness in the bottom-right.</p>
 
 <p>I wrote <a href="https://github.com/minimaxir/char-embeddings/blob/master/create_magic_text.py">another Python script</a> to parse all Magic card data from <a href="https://mtgjson.com">MTG JSON</a> into an encoding which matches this architecture, where each section transition has its own symbol delimiter, along with other encoding simplicities. For example, here is the card <a href="http://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=247314">Dragon Whelp</a> in my encoding:</p>
-<div class="highlight"><pre><code class="language-text" data-lang="text">[Dragon Whelp@{2}{R}{R}#Creature — Dragon$Flying|{R}: ~ gets +1/+0 until end of turn. If this ability has been activated four or more times this turn, sacrifice ~ at the beginning of the next end step.%2^3]
+<div class="highlight"><pre><code class="language-" data-lang="">[Dragon Whelp@{2}{R}{R}#Creature — Dragon$Flying|{R}: ~ gets +1/+0 until end of turn. If this ability has been activated four or more times this turn, sacrifice ~ at the beginning of the next end step.%2^3]
 </code></pre></div>
 <p>These card encodings are all combined into one .txt file, which will be fed into the model.</p>
 
@@ -356,22 +356,22 @@
 <p>With the Magic card dataset and my tweaked model architecture, generated text is coherent <a href="https://github.com/minimaxir/char-embeddings/blob/master/output/iter-01-0_9204.txt">after the 1st epoch</a>! After about 20 epochs, training becomes super slow, but the predicted text becomes super interesting. Here are a few fun examples from a <a href="https://github.com/minimaxir/char-embeddings/blob/master/output/text_sample.txt">list of hundreds of generated cards</a>. (Note: the power/toughness values at the end of the card have issues; more on that later).</p>
 
 <p>With low diversity, the neural network generated cards that are oddly biased toward card names which include the letter &ldquo;S&rdquo;. The card text also conforms to the rules of the game very well.</p>
-<div class="highlight"><pre><code class="language-text" data-lang="text">[Reality Spider@{3}{G}#Creature — Elf Warrior$Whenever ~ deals combat damage to a player, put a +1/+1 counter on it.%^]
+<div class="highlight"><pre><code class="language-" data-lang="">[Reality Spider@{3}{G}#Creature — Elf Warrior$Whenever ~ deals combat damage to a player, put a +1/+1 counter on it.%^]
 [Dark Soul@{2}{R}#Instant$~ deals 2 damage to each creature without flying.%^]
 [Standing Stand@{2}{G}#Creature — Elf Shaman${1}{G}, {T}: Draw a card, then discard a card.%^]
 </code></pre></div>
 <p>In contrast, cards generated with high diversity hit the uncanny valley of coherence and incoherence in both text and game mechanic abuse, which is what makes them interesting. </p>
-<div class="highlight"><pre><code class="language-text" data-lang="text">[Portrenline@{2}{R}#Sorcery$As an additional cost to cast ~, exile ~.%^]
+<div class="highlight"><pre><code class="language-" data-lang="">[Portrenline@{2}{R}#Sorcery$As an additional cost to cast ~, exile ~.%^]
 [Clocidian Lorid@{W}{W}{W}#Instant$Regenerate each creature with flying and each player.%^]
 [Icomic Convermant@{3}{G}#Sorcery$Search your library for a land card in your graveyard.%1^1]
 </code></pre></div>
 <p>The best-of-both-worlds cards are generated from diversity parameters between both extremes, and often have funny names.</p>
-<div class="highlight"><pre><code class="language-text" data-lang="text">[Seal Charm@{W}{W}#Instant$Exile target creature. Its controller loses 1 life.%^]
+<div class="highlight"><pre><code class="language-" data-lang="">[Seal Charm@{W}{W}#Instant$Exile target creature. Its controller loses 1 life.%^]
 [Shambling Assemblaster@{4}{W}#Creature — Human Cleric$When ~ enters the battlefield, destroy target nonblack creature.%1^1]
-[Lightning Strength@{3}{R}#Enchantment — Aura$Enchant creature|Enchanted creature gets +3/+3 and has flying, flying, trample, trample, lifelink, protection from black and votile all damage unless you return that card to its owner&#39;s hand.%2^2]
+[Lightning Strength@{3}{R}#Enchantment — Aura$Enchant creature|Enchanted creature gets +3/+3 and has flying, flying, trample, trample, lifelink, protection from black and votile all damage unless you return that card to its owner's hand.%2^2]
 [Skysor of Shadows@{7}{B}{B}{B}#Enchantment$As ~ enters the battlefield, choose one —|• Put a -1/-1 counter on target creature.%2^2]
-[Glinding Stadiers@{4}{W}#Creature — Spirit$Protection from no creatures can&#39;t attack.%^]
-[Dragon Gault@{3}{G}{U}{U}#Creature — Kraven$~&#39;s power and toughness are 2.%2^2]
+[Glinding Stadiers@{4}{W}#Creature — Spirit$Protection from no creatures can't attack.%^]
+[Dragon Gault@{3}{G}{U}{U}#Creature — Kraven$~'s power and toughness are 2.%2^2]
 </code></pre></div>
 <p>All Keras/Python code used in this blog post, along with sample Magic card output and the trained model itself, is available open-source <a href="https://github.com/minimaxir/char-embeddings">in this GitHub repository</a>. The repo additionally contains <a href="https://github.com/minimaxir/char-embeddings/blob/master/text_generator_keras_sample.py">a Python script</a> which lets you generate new cards using the model, too!</p>
 
@@ -400,7 +400,7 @@
 <h2>Next Steps</h2>
 
 <p>After building the model, I did a little more research to see if others solved the power/toughness problem. Since the sentences are only 40 characters and Magic cards are much longer than 40 characters, it&rsquo;s likely that power/toughness are out-of-scope for the model and it cannot learn their exact values. Turns out that the intended solution is to use a <a href="https://github.com/billzorn/mtgencode">completely different encoding</a>, such as this one for Dragon Whelp:</p>
-<div class="highlight"><pre><code class="language-text" data-lang="text">|5creature|4|6dragon|7|8&amp;^^/&amp;^^^|9flying\{RR}: @ gets +&amp;^/+&amp; until end of turn. if this ability has been activated four or more times this turn, sacrifice @ at the beginning of the next end step.|3{^^RRRR}|0N|1dragon whelp|
+<div class="highlight"><pre><code class="language-" data-lang="">|5creature|4|6dragon|7|8&amp;^^/&amp;^^^|9flying\{RR}: @ gets +&amp;^/+&amp; until end of turn. if this ability has been activated four or more times this turn, sacrifice @ at the beginning of the next end step.|3{^^RRRR}|0N|1dragon whelp|
 </code></pre></div>
 <p>Power/toughness are generated near the <em>beginning</em> of the card. Sections are delimited by pipes, with a numeral designating the corresponding section. Instead of numerals being used card values, carets are used, which provides a more accurate <em>quantification</em> of values. With this encoding, each character has a <em>singular purpose</em> in the global card context, and their embeddings would likely generate more informative visualizations. (But as a consequence, the generated cards are harder to parse at a glance).</p>
 
@@ -535,6 +535,13 @@
             
             <article class="latest-tuts">
                 <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="/2017/11/magic-the-gifening/">Making Magic: the GIFening</a></h5>
+                    <small class="latest-tuts-content-time"> Nov 7, 2017</small>
+                </div>
+            </article>
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
                     <h5 class="latest-tuts-content-title"><a href="/2017/08/ggplot2-web/">How to Make High Quality Data Visualizations for Websites With R and ggplot2</a></h5>
                     <small class="latest-tuts-content-time"> Aug 14, 2017</small>
                 </div>
@@ -565,13 +572,6 @@
                 <div class="latest-tuts-content">
                     <h5 class="latest-tuts-content-title"><a href="/2017/06/keras-cntk/">Benchmarking CNTK on Keras: is it Better at Deep Learning than TensorFlow?</a></h5>
                     <small class="latest-tuts-content-time"> Jun 12, 2017</small>
-                </div>
-            </article>
-            
-            <article class="latest-tuts">
-                <div class="latest-tuts-content">
-                    <h5 class="latest-tuts-content-title"><a href="/2017/06/r-notebooks/">Advantages of Using R Notebooks For Data Analysis Instead of Jupyter Notebooks</a></h5>
-                    <small class="latest-tuts-content-time"> Jun 6, 2017</small>
                 </div>
             </article>
             

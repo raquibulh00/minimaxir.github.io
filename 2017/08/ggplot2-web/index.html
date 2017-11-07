@@ -265,43 +265,43 @@
 <p><img src="/img/ggplot2-web/mpg.png" alt=""></p>
 
 <p>Let&rsquo;s say you want to create a <a href="https://en.wikipedia.org/wiki/Scatter_plot">scatter plot</a>. Following <a href="http://ggplot2.tidyverse.org/reference/geom_smooth.html">a great example</a> from the ggplot2 documentation, let&rsquo;s plot the highway mileage of the car vs. the <a href="https://en.wikipedia.org/wiki/Engine_displacement">volume displacement</a> of the engine. In ggplot2, first you instantiate the chart with the <code>ggplot()</code> function, specifying the source dataset and the core aesthetics you want to plot, such as x, y, color, and fill. In this case, we set the core aesthetics to x = displacement and y = mileage, and add a <code>geom_point()</code> layer to make a scatter plot:</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r">p <span class="o">&lt;-</span> ggplot<span class="p">(</span>mpg<span class="p">,</span> aes<span class="p">(</span>x <span class="o">=</span> displ<span class="p">,</span> y <span class="o">=</span> hwy<span class="p">))</span> <span class="o">+</span>
-            geom_point<span class="p">()</span>
-</code></pre></div>
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">p</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ggplot</span><span class="p">(</span><span class="n">mpg</span><span class="p">,</span><span class="w"> </span><span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">displ</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hwy</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
+            </span><span class="n">geom_point</span><span class="p">()</span><span class="w">
+</span></code></pre></div>
 <p><img src="/img/ggplot2-web/plot1.png" alt=""></p>
 
 <p>As we can see, there is a negative correlation between the two metrics. I&rsquo;m sure you&rsquo;ve seen plots like these around the internet before. But with only a couple of lines of codes, you can make them look more contemporary.</p>
 
 <p>ggplot2 lets you add a well-designed theme with just one line of code. Relatively new to <code>ggplot2</code> is <code>theme_minimal()</code>, which <a href="http://ggplot2.tidyverse.org/reference/ggtheme.html">generates</a> a muted style similar to <a href="http://fivethirtyeight.com">FiveThirtyEight</a>&rsquo;s modern data visualizations:</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r">p <span class="o">&lt;-</span> p <span class="o">+</span>
-    theme_minimal<span class="p">()</span>
-</code></pre></div>
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">p</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">+</span><span class="w">
+    </span><span class="n">theme_minimal</span><span class="p">()</span><span class="w">
+</span></code></pre></div>
 <p><img src="/img/ggplot2-web/plot2.png" alt=""></p>
 
 <p>But we can still add color. Setting a color aesthetic on a character/categorical variable will set the colors of the corresponding points, making it easy to differentiate at a glance.</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r">p <span class="o">&lt;-</span> ggplot<span class="p">(</span>mpg<span class="p">,</span> aes<span class="p">(</span>x <span class="o">=</span> displ<span class="p">,</span> y <span class="o">=</span> hwy<span class="p">,</span> color<span class="o">=</span><span class="kp">class</span><span class="p">))</span> <span class="o">+</span>
-            geom_point<span class="p">()</span> <span class="o">+</span>
-            theme_minimal<span class="p">()</span>
-</code></pre></div>
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">p</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ggplot</span><span class="p">(</span><span class="n">mpg</span><span class="p">,</span><span class="w"> </span><span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">displ</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hwy</span><span class="p">,</span><span class="w"> </span><span class="n">color</span><span class="o">=</span><span class="n">class</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
+            </span><span class="n">geom_point</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w">
+            </span><span class="n">theme_minimal</span><span class="p">()</span><span class="w">
+</span></code></pre></div>
 <p><img src="/img/ggplot2-web/plot3.png" alt=""></p>
 
 <p>Adding the color aesthetic certainly makes things much prettier. ggplot2 automatically adds a legend for the colors as well. 
 However, for this particular visualization, it is difficult to see trends in the points for each class. A easy way around this is to add a <a href="https://en.wikipedia.org/wiki/Least_squares">least squares regression</a> trendline for each class <a href="http://ggplot2.tidyverse.org/reference/geom_smooth.html">using</a> <code>geom_smooth()</code> (which normally adds a smoothed line, but since there isn&rsquo;t a lot of data for each group, we force it to a linear model and do not plot confidence intervals)</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r">p <span class="o">&lt;-</span> p <span class="o">+</span>
-    geom_smooth<span class="p">(</span>method <span class="o">=</span> <span class="s">&quot;lm&quot;</span><span class="p">,</span> se <span class="o">=</span> <span class="bp">F</span><span class="p">)</span>
-</code></pre></div>
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">p</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">+</span><span class="w">
+    </span><span class="n">geom_smooth</span><span class="p">(</span><span class="n">method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"lm"</span><span class="p">,</span><span class="w"> </span><span class="n">se</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">F</span><span class="p">)</span><span class="w">
+</span></code></pre></div>
 <p><img src="/img/ggplot2-web/plot4.png" alt=""></p>
 
 <p>Pretty neat, and now comparative trends are much more apparent! For example, pickups and SUVs have similar efficiency, which makes intuitive sense.</p>
 
 <p>The chart axes should be labeled (<em>always</em> label your charts!). All the typical labels, like <code>title</code>, <code>x</code>-axis, and <code>y</code>-axis can be done with the <code>labs()</code> function. But relatively new to ggplot2 are the <code>subtitle</code> and <code>caption</code> fields, both of do what you expect:</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r">p <span class="o">&lt;-</span> p <span class="o">+</span>
-    labs<span class="p">(</span>title<span class="o">=</span><span class="s">&quot;Efficiency of Popular Models of Cars&quot;</span><span class="p">,</span>
-         subtitle<span class="o">=</span><span class="s">&quot;By Class of Car&quot;</span><span class="p">,</span>
-         x<span class="o">=</span><span class="s">&quot;Engine Displacement (liters)&quot;</span><span class="p">,</span>
-         y<span class="o">=</span><span class="s">&quot;Highway Miles per Gallon&quot;</span><span class="p">,</span>
-         caption<span class="o">=</span><span class="s">&quot;by Max Woolf — minimaxir.com&quot;</span><span class="p">)</span>
-</code></pre></div>
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">p</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">+</span><span class="w">
+    </span><span class="n">labs</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"Efficiency of Popular Models of Cars"</span><span class="p">,</span><span class="w">
+         </span><span class="n">subtitle</span><span class="o">=</span><span class="s2">"By Class of Car"</span><span class="p">,</span><span class="w">
+         </span><span class="n">x</span><span class="o">=</span><span class="s2">"Engine Displacement (liters)"</span><span class="p">,</span><span class="w">
+         </span><span class="n">y</span><span class="o">=</span><span class="s2">"Highway Miles per Gallon"</span><span class="p">,</span><span class="w">
+         </span><span class="n">caption</span><span class="o">=</span><span class="s2">"by Max Woolf — minimaxir.com"</span><span class="p">)</span><span class="w">
+</span></code></pre></div>
 <p><img src="/img/ggplot2-web/plot5.png" alt=""></p>
 
 <p>That&rsquo;s a pretty good start. Now let&rsquo;s take it to the next level.</p>
@@ -313,18 +313,18 @@ However, for this particular visualization, it is difficult to see trends in the
 <p>R IDEs such as <a href="https://www.rstudio.com">RStudio</a> have a chart-saving UI with the typical size/filetype options. But if you save an image from this UI, the shapes and texts of the resulting image will be heavily aliased (R <a href="https://danieljhocking.wordpress.com/2013/03/12/high-resolution-figures-in-r/">renders images at 72 dpi</a> by default, which is much lower than that of modern HiDPI/Retina displays).</p>
 
 <p>The data visualizations used earlier in this post were generated in-line as a part of an <a href="http://rmarkdown.rstudio.com/r_notebooks.html">R Notebook</a>, but it is surprisingly difficult to extract the generated chart as a separate file. But ggplot2 also has <code>ggsave()</code>, which saves the image to disk using antialiasing and makes the fonts/shapes in the chart look much better, and assumes a default dpi of 300. Saving charts using <code>ggsave()</code>, and adjusting the sizes of the text and geoms to compensate for the higher dpi, makes the charts look very presentable. A width of 4 and a height of 3 results in a 1200x900px image, which if posted on a blog with a content width of ~600px (like mine), will render at full resolution on HiDPI/Retina displays, or downsample appropriately otherwise. Due to modern PNG compression, the file size/bandwidth cost for using larger images is minimal.</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r">p <span class="o">&lt;-</span> ggplot<span class="p">(</span>mpg<span class="p">,</span> aes<span class="p">(</span>x <span class="o">=</span> displ<span class="p">,</span> y <span class="o">=</span> hwy<span class="p">,</span> color<span class="o">=</span><span class="kp">class</span><span class="p">))</span> <span class="o">+</span> 
-    geom_smooth<span class="p">(</span>method <span class="o">=</span> <span class="s">&quot;lm&quot;</span><span class="p">,</span> se<span class="o">=</span><span class="bp">F</span><span class="p">,</span> size<span class="o">=</span><span class="m">0.5</span><span class="p">)</span> <span class="o">+</span>
-    geom_point<span class="p">(</span>size<span class="o">=</span><span class="m">0.5</span><span class="p">)</span> <span class="o">+</span>
-    theme_minimal<span class="p">(</span>base_size<span class="o">=</span><span class="m">9</span><span class="p">)</span> <span class="o">+</span>
-    labs<span class="p">(</span>title<span class="o">=</span><span class="s">&quot;Efficiency of Popular Models of Cars&quot;</span><span class="p">,</span>
-         subtitle<span class="o">=</span><span class="s">&quot;By Class of Car&quot;</span><span class="p">,</span>
-         x<span class="o">=</span><span class="s">&quot;Engine Displacement (liters)&quot;</span><span class="p">,</span>
-         y<span class="o">=</span><span class="s">&quot;Highway Miles per Gallon&quot;</span><span class="p">,</span>
-         caption<span class="o">=</span><span class="s">&quot;by Max Woolf — minimaxir.com&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">p</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ggplot</span><span class="p">(</span><span class="n">mpg</span><span class="p">,</span><span class="w"> </span><span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">displ</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hwy</span><span class="p">,</span><span class="w"> </span><span class="n">color</span><span class="o">=</span><span class="n">class</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w"> 
+    </span><span class="n">geom_smooth</span><span class="p">(</span><span class="n">method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"lm"</span><span class="p">,</span><span class="w"> </span><span class="n">se</span><span class="o">=</span><span class="nb">F</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="o">=</span><span class="m">0.5</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+    </span><span class="n">geom_point</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="m">0.5</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+    </span><span class="n">theme_minimal</span><span class="p">(</span><span class="n">base_size</span><span class="o">=</span><span class="m">9</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+    </span><span class="n">labs</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"Efficiency of Popular Models of Cars"</span><span class="p">,</span><span class="w">
+         </span><span class="n">subtitle</span><span class="o">=</span><span class="s2">"By Class of Car"</span><span class="p">,</span><span class="w">
+         </span><span class="n">x</span><span class="o">=</span><span class="s2">"Engine Displacement (liters)"</span><span class="p">,</span><span class="w">
+         </span><span class="n">y</span><span class="o">=</span><span class="s2">"Highway Miles per Gallon"</span><span class="p">,</span><span class="w">
+         </span><span class="n">caption</span><span class="o">=</span><span class="s2">"by Max Woolf — minimaxir.com"</span><span class="p">)</span><span class="w">
 
-ggsave<span class="p">(</span><span class="s">&quot;tutorial-0.png&quot;</span><span class="p">,</span> p<span class="p">,</span> width<span class="o">=</span><span class="m">4</span><span class="p">,</span> height<span class="o">=</span><span class="m">3</span><span class="p">)</span>
-</code></pre></div>
+</span><span class="n">ggsave</span><span class="p">(</span><span class="s2">"tutorial-0.png"</span><span class="p">,</span><span class="w"> </span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="n">width</span><span class="o">=</span><span class="m">4</span><span class="p">,</span><span class="w"> </span><span class="n">height</span><span class="o">=</span><span class="m">3</span><span class="p">)</span><span class="w">
+</span></code></pre></div>
 <p><img src="/img/ggplot2-web/tutorial-0.png" alt=""></p>
 
 <p>Compare to the previous non-ggsave chart, which is more blurry around text/shapes:</p>
@@ -341,17 +341,17 @@ ggsave<span class="p">(</span><span class="s">&quot;tutorial-0.png&quot;</span><
 
 <p>Changing the chart font is another way to add a personal flair.
 Theme functions like <code>theme_minimal()</code> accept a <code>base_family</code> parameter. With that, you can specify any font family as the default instead of the base sans-serif. (On Windows, you may need to install the <code>extrafont</code> package first). Fonts from <a href="https://fonts.google.com">Google Fonts</a> are free and work easily with ggplot2 once installed. For example, we can use <a href="https://fonts.google.com/specimen/Roboto">Roboto</a>, Google&rsquo;s modern font which has also been getting a lot of usage on <a href="https://stackoverflow.com">Stack Overflow</a>&rsquo;s great ggplot2 <a href="https://stackoverflow.blog/2017/06/15/developers-use-spaces-make-money-use-tabs/">data visualizations</a>.</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r">p <span class="o">&lt;-</span> p <span class="o">+</span>
-    theme_minimal<span class="p">(</span>base_size<span class="o">=</span><span class="m">9</span><span class="p">,</span> base_family<span class="o">=</span><span class="s">&quot;Roboto&quot;</span><span class="p">)</span>
-</code></pre></div>
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">p</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">+</span><span class="w">
+    </span><span class="n">theme_minimal</span><span class="p">(</span><span class="n">base_size</span><span class="o">=</span><span class="m">9</span><span class="p">,</span><span class="w"> </span><span class="n">base_family</span><span class="o">=</span><span class="s2">"Roboto"</span><span class="p">)</span><span class="w">
+</span></code></pre></div>
 <p><img src="/img/ggplot2-web/tutorial-1.png" alt=""></p>
 
 <p>A general text design guideline is to use fonts of different weights/widths for different hierarchies of content. In this case, we can use a bolder condensed font for the title, and deemphasize the subtitle and caption using lighter colors, all done using the <code>theme()</code> <a href="http://ggplot2.tidyverse.org/reference/theme.html">function</a>.</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r">p <span class="o">&lt;-</span> p <span class="o">+</span> 
-    theme<span class="p">(</span>plot.subtitle <span class="o">=</span> element_text<span class="p">(</span>color<span class="o">=</span><span class="s">&quot;#666666&quot;</span><span class="p">),</span>
-          plot.title <span class="o">=</span> element_text<span class="p">(</span>family<span class="o">=</span><span class="s">&quot;Roboto Condensed Bold&quot;</span><span class="p">),</span>
-          plot.caption <span class="o">=</span> element_text<span class="p">(</span>color<span class="o">=</span><span class="s">&quot;#AAAAAA&quot;</span><span class="p">,</span> size<span class="o">=</span><span class="m">6</span><span class="p">))</span>
-</code></pre></div>
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">p</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">+</span><span class="w"> 
+    </span><span class="n">theme</span><span class="p">(</span><span class="n">plot.subtitle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">element_text</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">"#666666"</span><span class="p">),</span><span class="w">
+          </span><span class="n">plot.title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">element_text</span><span class="p">(</span><span class="n">family</span><span class="o">=</span><span class="s2">"Roboto Condensed Bold"</span><span class="p">),</span><span class="w">
+          </span><span class="n">plot.caption</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">element_text</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">"#AAAAAA"</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="o">=</span><span class="m">6</span><span class="p">))</span><span class="w">
+</span></code></pre></div>
 <p><img src="/img/ggplot2-web/tutorial-2.png" alt=""></p>
 
 <p>It&rsquo;s worth nothing that data visualizations posted on websites should be easily <em>legible</em> for mobile-device users as well, hence the intentional use of larger fonts relative to charts typically produced in the desktop-oriented Excel.</p>
@@ -363,17 +363,17 @@ Theme functions like <code>theme_minimal()</code> accept a <code>base_family</co
 <p>The &ldquo;ggplot2 colors&rdquo; for categorical variables are infamous for being the primary indicator of a chart being made with ggplot2. But there is a science to it; ggplot2 by default selects colors using the <code>scale_color_hue()</code> <a href="http://ggplot2.tidyverse.org/reference/scale_hue.html">function</a>, which selects colors in the HSL space by changing the hue [H] between 0 and 360, keeping saturation [S] and lightness [L] constant. As a result, ggplot2 selects the most <em>distinct</em> colors possible while keeping lightness constant. For example, if you have 2 different categories, ggplot2 chooses the colors with h = 0 and h = 180; if 3 colors, h = 0, h = 120, h = 240, etc.</p>
 
 <p>It&rsquo;s smart, but does make a given chart lose distinctness when many other ggplot2 charts use the same selection methodology. A quick way to take advantage of this hue dispersion while still making the colors unique is to change the lightness; by default, <code>l = 65</code>, but setting it slightly lower will make the charts look more professional/<a href="https://www.bloomberg.com">Bloomberg</a>-esque.</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r">p_color <span class="o">&lt;-</span> p <span class="o">+</span>
-        scale_color_hue<span class="p">(</span>l <span class="o">=</span> <span class="m">40</span><span class="p">)</span>
-</code></pre></div>
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">p_color</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">+</span><span class="w">
+        </span><span class="n">scale_color_hue</span><span class="p">(</span><span class="n">l</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">40</span><span class="p">)</span><span class="w">
+</span></code></pre></div>
 <p><img src="/img/ggplot2-web/tutorial-4.png" alt=""></p>
 
 <h2>RColorBrewer</h2>
 
 <p>Another coloring option for ggplot2 charts are the <a href="http://colorbrewer2.org/#type=sequential&amp;scheme=BuGn&amp;n=3">ColorBrewer</a> palettes implemented with the <code>RColorBrewer</code> package, which are supported natively in ggplot2 with functions such as <code>scale_color_brewer()</code>. The sequential palettes like &ldquo;Blues&rdquo; and &ldquo;Greens&rdquo; do what the name implies:</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r">p_color <span class="o">&lt;-</span> p <span class="o">+</span>
-        scale_color_brewer<span class="p">(</span>palette<span class="o">=</span><span class="s">&quot;Blues&quot;</span><span class="p">)</span>
-</code></pre></div>
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">p_color</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">+</span><span class="w">
+        </span><span class="n">scale_color_brewer</span><span class="p">(</span><span class="n">palette</span><span class="o">=</span><span class="s2">"Blues"</span><span class="p">)</span><span class="w">
+</span></code></pre></div>
 <p><img src="/img/ggplot2-web/tutorial-5.png" alt=""></p>
 
 <p>A famous diverging palette for visualizations on /r/dataisbeautiful is the &ldquo;Spectral&rdquo; palette, which is a lighter rainbow (recommended for dark backgrounds)</p>
@@ -391,10 +391,10 @@ Theme functions like <code>theme_minimal()</code> accept a <code>base_family</co
 <h2>Viridis and Accessibility</h2>
 
 <p>Let&rsquo;s mix up the visualization a bit. A rarely-used-but-very-useful ggplot2 geom is <code>geom2d_bin()</code>, which counts the number of points in a given 2d spatial area:</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r">p <span class="o">&lt;-</span> ggplot<span class="p">(</span>mpg<span class="p">,</span> aes<span class="p">(</span>x <span class="o">=</span> displ<span class="p">,</span> y <span class="o">=</span> hwy<span class="p">))</span> <span class="o">+</span> 
-    geom_bin2d<span class="p">(</span>bins<span class="o">=</span><span class="m">10</span><span class="p">)</span> <span class="o">+</span>
-    <span class="p">[</span><span class="m">...</span>theming options...<span class="p">]</span>
-</code></pre></div>
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">p</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ggplot</span><span class="p">(</span><span class="n">mpg</span><span class="p">,</span><span class="w"> </span><span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">displ</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hwy</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w"> 
+    </span><span class="n">geom_bin2d</span><span class="p">(</span><span class="n">bins</span><span class="o">=</span><span class="m">10</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+    </span><span class="p">[</span><span class="n">...theming</span><span class="w"> </span><span class="n">options...</span><span class="p">]</span><span class="w">
+</span></code></pre></div>
 <p><img src="/img/ggplot2-web/tutorial-tile.png" alt=""></p>
 
 <p>We see that the largest number of points are centered around (2,30). However, the default ggplot2 color palette for continuous variables is <em>boring</em>. Yes, we can use the RColorBrewer sequential palettes above, but as noted, they aren&rsquo;t perceptually distinct, and could cause issues for readers who are colorblind.</p>
@@ -402,9 +402,9 @@ Theme functions like <code>theme_minimal()</code> accept a <code>base_family</co
 <p>The <a href="https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html">viridis R package</a> provides a set of 4 high-contrast palettes which are very colorblind friendly, and works easily with ggplot2 by extending a <code>scale_fill_viridis()/scale_color_viridis()</code> function.</p>
 
 <p>The default &ldquo;viridis&rdquo; palette has been increasingly popular on the web lately:</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r">p_color <span class="o">&lt;-</span> p <span class="o">+</span>
-        scale_fill_viridis<span class="p">(</span>option<span class="o">=</span><span class="s">&quot;viridis&quot;</span><span class="p">)</span>
-</code></pre></div>
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">p_color</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">+</span><span class="w">
+        </span><span class="n">scale_fill_viridis</span><span class="p">(</span><span class="n">option</span><span class="o">=</span><span class="s2">"viridis"</span><span class="p">)</span><span class="w">
+</span></code></pre></div>
 <p><img src="/img/ggplot2-web/tutorial-10.png" alt=""></p>
 
 <p>&ldquo;magma&rdquo; and &ldquo;inferno&rdquo; are similar, and give the data visualization a fiery edge:</p>
@@ -544,6 +544,13 @@ Theme functions like <code>theme_minimal()</code> accept a <code>base_family</co
             
             <article class="latest-tuts">
                 <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="/2017/11/magic-the-gifening/">Making Magic: the GIFening</a></h5>
+                    <small class="latest-tuts-content-time"> Nov 7, 2017</small>
+                </div>
+            </article>
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
                     <h5 class="latest-tuts-content-title"><a href="/2017/08/ggplot2-web/">How to Make High Quality Data Visualizations for Websites With R and ggplot2</a></h5>
                     <small class="latest-tuts-content-time"> Aug 14, 2017</small>
                 </div>
@@ -574,13 +581,6 @@ Theme functions like <code>theme_minimal()</code> accept a <code>base_family</co
                 <div class="latest-tuts-content">
                     <h5 class="latest-tuts-content-title"><a href="/2017/06/keras-cntk/">Benchmarking CNTK on Keras: is it Better at Deep Learning than TensorFlow?</a></h5>
                     <small class="latest-tuts-content-time"> Jun 12, 2017</small>
-                </div>
-            </article>
-            
-            <article class="latest-tuts">
-                <div class="latest-tuts-content">
-                    <h5 class="latest-tuts-content-title"><a href="/2017/06/r-notebooks/">Advantages of Using R Notebooks For Data Analysis Instead of Jupyter Notebooks</a></h5>
-                    <small class="latest-tuts-content-time"> Jun 6, 2017</small>
                 </div>
             </article>
             

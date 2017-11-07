@@ -299,12 +299,12 @@
 <p>The first two added features require a <em>very</em> large amount of processing power, and highlight the convenience of Spark&rsquo;s speed (and the fact that Spark uses all CPU cores by default, while typical R/Python approaches are single-threaded!)</p>
 
 <p>These changes are cached into a Spark DataFrame <code>df_t</code>. If I wanted to determine which Amazon product category receives the best review ratings on average, I can aggregate the data by category, calculate the average rating score for each category, and sort. Thanks to the power of Spark, the data processing for this many-millions-of-records takes seconds.</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r">df_agg <span class="o">&lt;-</span> df_t <span class="o">%&gt;%</span>
-            group_by<span class="p">(</span><span class="kp">category</span><span class="p">)</span> <span class="o">%&gt;%</span>
-            summarize<span class="p">(</span>count <span class="o">=</span> n<span class="p">(),</span> avg_rating <span class="o">=</span> <span class="kp">mean</span><span class="p">(</span>rating<span class="p">))</span> <span class="o">%&gt;%</span>
-            arrange<span class="p">(</span>desc<span class="p">(</span>avg_rating<span class="p">))</span> <span class="o">%&gt;%</span>
-            collect<span class="p">()</span>
-</code></pre></div>
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">df_agg</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">df_t</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+            </span><span class="n">group_by</span><span class="p">(</span><span class="n">category</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+            </span><span class="n">summarize</span><span class="p">(</span><span class="n">count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">n</span><span class="p">(),</span><span class="w"> </span><span class="n">avg_rating</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mean</span><span class="p">(</span><span class="n">rating</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+            </span><span class="n">arrange</span><span class="p">(</span><span class="n">desc</span><span class="p">(</span><span class="n">avg_rating</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+            </span><span class="n">collect</span><span class="p">()</span><span class="w">
+</span></code></pre></div>
 <p><img src="/img/amazon-spark/avg.png" alt=""></p>
 
 <p>Or, visualized in chart form using <a href="http://ggplot2.org">ggplot2</a>:</p>
@@ -488,6 +488,13 @@
             
             <article class="latest-tuts">
                 <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="/2017/11/magic-the-gifening/">Making Magic: the GIFening</a></h5>
+                    <small class="latest-tuts-content-time"> Nov 7, 2017</small>
+                </div>
+            </article>
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
                     <h5 class="latest-tuts-content-title"><a href="/2017/08/ggplot2-web/">How to Make High Quality Data Visualizations for Websites With R and ggplot2</a></h5>
                     <small class="latest-tuts-content-time"> Aug 14, 2017</small>
                 </div>
@@ -518,13 +525,6 @@
                 <div class="latest-tuts-content">
                     <h5 class="latest-tuts-content-title"><a href="/2017/06/keras-cntk/">Benchmarking CNTK on Keras: is it Better at Deep Learning than TensorFlow?</a></h5>
                     <small class="latest-tuts-content-time"> Jun 12, 2017</small>
-                </div>
-            </article>
-            
-            <article class="latest-tuts">
-                <div class="latest-tuts-content">
-                    <h5 class="latest-tuts-content-title"><a href="/2017/06/r-notebooks/">Advantages of Using R Notebooks For Data Analysis Instead of Jupyter Notebooks</a></h5>
-                    <small class="latest-tuts-content-time"> Jun 6, 2017</small>
                 </div>
             </article>
             

@@ -275,7 +275,7 @@
 <p>Since we can set 3 bits per physical pixel, the maximum amount of data (in bytes) that can be stored is equivalent to the width of an image (in pixels) multiplied by the height times 3, divided by 8.</p>
 
 <p>Take the Reddit GIF wordcloud I posted above. If you download the image and load it into PixelJihad, you can see I hid a secret message showing how to get the Reddit word data using <a href="https://cloud.google.com/bigquery/">BigQuery</a>. The visualization is 600px by 400px, therefore it can store up to:</p>
-<div class="highlight"><pre><code class="language-text" data-lang="text">600 * 400 * 3 bits / 8 = 90000 Bytes / 1000 = 90 kB
+<div class="highlight"><pre><code class="language-" data-lang="">600 * 400 * 3 bits / 8 = 90000 Bytes / 1000 = 90 kB
 </code></pre></div>
 <p>The image itself is 257 kB, but a bonus 35% in data storage isn&rsquo;t bad.</p>
 
@@ -296,7 +296,7 @@
 <p><img src="/img/gif-unlimited/gif-finder-17.png" alt=""></p>
 
 <p>Performing the same math:</p>
-<div class="highlight"><pre><code class="language-text" data-lang="text">300 * 399 * 72 frames * 3 / 8 = 3231900 / 1000000 = 3.23 MB
+<div class="highlight"><pre><code class="language-" data-lang="">300 * 399 * 72 frames * 3 / 8 = 3231900 / 1000000 = 3.23 MB
 </code></pre></div>
 <p>The potential amount of encodable data is larger than the file size of the image itself! Screw secret messages, we&rsquo;re literally <em>creating</em> data storage out of nothing!</p>
 
@@ -445,6 +445,13 @@
             
             <article class="latest-tuts">
                 <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="/2017/11/magic-the-gifening/">Making Magic: the GIFening</a></h5>
+                    <small class="latest-tuts-content-time"> Nov 7, 2017</small>
+                </div>
+            </article>
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
                     <h5 class="latest-tuts-content-title"><a href="/2017/08/ggplot2-web/">How to Make High Quality Data Visualizations for Websites With R and ggplot2</a></h5>
                     <small class="latest-tuts-content-time"> Aug 14, 2017</small>
                 </div>
@@ -475,13 +482,6 @@
                 <div class="latest-tuts-content">
                     <h5 class="latest-tuts-content-title"><a href="/2017/06/keras-cntk/">Benchmarking CNTK on Keras: is it Better at Deep Learning than TensorFlow?</a></h5>
                     <small class="latest-tuts-content-time"> Jun 12, 2017</small>
-                </div>
-            </article>
-            
-            <article class="latest-tuts">
-                <div class="latest-tuts-content">
-                    <h5 class="latest-tuts-content-title"><a href="/2017/06/r-notebooks/">Advantages of Using R Notebooks For Data Analysis Instead of Jupyter Notebooks</a></h5>
-                    <small class="latest-tuts-content-time"> Jun 6, 2017</small>
                 </div>
             </article>
             

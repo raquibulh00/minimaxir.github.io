@@ -284,12 +284,12 @@
 
 <p>Let&rsquo;s do a basic ggplot2 plot to test things out. All we need to do is plot a small point for every lat/long combination, and then save the resulting plot.</p>
 
-<figure class="highlight"><pre><code class="language-r" data-lang="r">plot <span class="o">&lt;-</span> ggplot<span class="p">(</span>df<span class="p">,</span> aes<span class="p">(</span>x<span class="o">=</span>long<span class="p">,</span> y<span class="o">=</span>lat<span class="p">))</span> <span class="o">+</span>
-            geom_point<span class="p">(</span>size<span class="o">=</span><span class="m">0.06</span><span class="p">)</span> <span class="o">+</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">plot</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ggplot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="w"> </span><span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">long</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="o">=</span><span class="n">lat</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
+            </span><span class="n">geom_point</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="m">0.06</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
 
-png<span class="p">(</span><span class="s">&quot;nyc-taxi-1.png&quot;</span><span class="p">,</span> w<span class="o">=</span><span class="m">600</span><span class="p">,</span> h<span class="o">=</span><span class="m">600</span><span class="p">)</span>
-plot
-dev.off<span class="p">()</span></code></pre></figure>
+</span><span class="n">png</span><span class="p">(</span><span class="s2">"nyc-taxi-1.png"</span><span class="p">,</span><span class="w"> </span><span class="n">w</span><span class="o">=</span><span class="m">600</span><span class="p">,</span><span class="w"> </span><span class="n">h</span><span class="o">=</span><span class="m">600</span><span class="p">)</span><span class="w">
+</span><span class="n">plot</span><span class="w">
+</span><span class="n">dev.off</span><span class="p">()</span></code></pre></figure>
 
 <p><img src="/img/nyc-ggplot2-howto/nyc-taxi-1.png" alt=""></p>
 
@@ -297,21 +297,21 @@ dev.off<span class="p">()</span></code></pre></figure>
 
 <p>This issue is fixed by constraining the plot to a <a href="https://en.wikipedia.org/wiki/Minimum_bounding_box">bounding box</a> of latitude and longitude coordinates corresponding to NYC. Flickr has <a href="https://www.flickr.com/places/info/2459115">a good starting point</a> for a NYC bounding box; I took that and edited the limits more precisely using the <a href="http://boundingbox.klokantech.com">Bounding Box Tool</a>.</p>
 
-<figure class="highlight"><pre><code class="language-r" data-lang="r">min_lat <span class="o">&lt;-</span> <span class="m">40.5774</span>
-max_lat <span class="o">&lt;-</span> <span class="m">40.9176</span>
-min_long <span class="o">&lt;-</span> <span class="m">-74.15</span>
-max_long <span class="o">&lt;-</span> <span class="m">-73.7004</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">min_lat</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">40.5774</span><span class="w">
+</span><span class="n">max_lat</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">40.9176</span><span class="w">
+</span><span class="n">min_long</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">-74.15</span><span class="w">
+</span><span class="n">max_long</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">-73.7004</span></code></pre></figure>
 
 <p>You could also enforce the bounding box during the BigQuery. Now let&rsquo;s implement the bounding box in the plot:</p>
 
-<figure class="highlight"><pre><code class="language-r" data-lang="r">plot <span class="o">&lt;-</span> ggplot<span class="p">(</span>df<span class="p">,</span> aes<span class="p">(</span>x<span class="o">=</span>long<span class="p">,</span> y<span class="o">=</span>lat<span class="p">))</span> <span class="o">+</span>
-            geom_point<span class="p">(</span>size<span class="o">=</span><span class="m">0.06</span><span class="p">)</span> <span class="o">+</span>
-            scale_x_continuous<span class="p">(</span>limits<span class="o">=</span><span class="kt">c</span><span class="p">(</span>min_long<span class="p">,</span> max_long<span class="p">))</span> <span class="o">+</span>
-            scale_y_continuous<span class="p">(</span>limits<span class="o">=</span><span class="kt">c</span><span class="p">(</span>min_lat<span class="p">,</span> max_lat<span class="p">))</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">plot</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ggplot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="w"> </span><span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">long</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="o">=</span><span class="n">lat</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
+            </span><span class="n">geom_point</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="m">0.06</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+            </span><span class="n">scale_x_continuous</span><span class="p">(</span><span class="n">limits</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="n">min_long</span><span class="p">,</span><span class="w"> </span><span class="n">max_long</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
+            </span><span class="n">scale_y_continuous</span><span class="p">(</span><span class="n">limits</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="n">min_lat</span><span class="p">,</span><span class="w"> </span><span class="n">max_lat</span><span class="p">))</span><span class="w">
 
-png<span class="p">(</span><span class="s">&quot;nyc-taxi-2.png&quot;</span><span class="p">,</span> w<span class="o">=</span><span class="m">600</span><span class="p">,</span> h<span class="o">=</span><span class="m">600</span><span class="p">)</span>
-plot
-dev.off<span class="p">()</span></code></pre></figure>
+</span><span class="n">png</span><span class="p">(</span><span class="s2">"nyc-taxi-2.png"</span><span class="p">,</span><span class="w"> </span><span class="n">w</span><span class="o">=</span><span class="m">600</span><span class="p">,</span><span class="w"> </span><span class="n">h</span><span class="o">=</span><span class="m">600</span><span class="p">)</span><span class="w">
+</span><span class="n">plot</span><span class="w">
+</span><span class="n">dev.off</span><span class="p">()</span></code></pre></figure>
 
 <p><img src="/img/nyc-ggplot2-howto/nyc-taxi-2.png" alt=""></p>
 
@@ -325,15 +325,15 @@ dev.off<span class="p">()</span></code></pre></figure>
 <li>Set the resolution of the rendering device to 300 DPI; this reduces some of the aliasing in the resulting image.</li>
 </ul>
 
-<figure class="highlight"><pre><code class="language-r" data-lang="r">plot <span class="o">&lt;-</span> ggplot<span class="p">(</span>df <span class="o">%&gt;%</span> filter<span class="p">(</span>num_pickups <span class="o">&gt;</span> <span class="m">10</span><span class="p">),</span> aes<span class="p">(</span>x<span class="o">=</span>long<span class="p">,</span> y<span class="o">=</span>lat<span class="p">))</span> <span class="o">+</span>
-            geom_point<span class="p">(</span>color<span class="o">=</span><span class="s">&quot;white&quot;</span><span class="p">,</span> size<span class="o">=</span><span class="m">0.06</span><span class="p">)</span> <span class="o">+</span>
-            scale_x_continuous<span class="p">(</span>limits<span class="o">=</span><span class="kt">c</span><span class="p">(</span>min_long<span class="p">,</span> max_long<span class="p">))</span> <span class="o">+</span>
-            scale_y_continuous<span class="p">(</span>limits<span class="o">=</span><span class="kt">c</span><span class="p">(</span>min_lat<span class="p">,</span> max_lat<span class="p">))</span> <span class="o">+</span>
-            theme_map_dark<span class="p">()</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">plot</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ggplot</span><span class="p">(</span><span class="n">df</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">filter</span><span class="p">(</span><span class="n">num_pickups</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">10</span><span class="p">),</span><span class="w"> </span><span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">long</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="o">=</span><span class="n">lat</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
+            </span><span class="n">geom_point</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">"white"</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="o">=</span><span class="m">0.06</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+            </span><span class="n">scale_x_continuous</span><span class="p">(</span><span class="n">limits</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="n">min_long</span><span class="p">,</span><span class="w"> </span><span class="n">max_long</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
+            </span><span class="n">scale_y_continuous</span><span class="p">(</span><span class="n">limits</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="n">min_lat</span><span class="p">,</span><span class="w"> </span><span class="n">max_lat</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
+            </span><span class="n">theme_map_dark</span><span class="p">()</span><span class="w">
 
-png<span class="p">(</span><span class="s">&quot;nyc-taxi-3.png&quot;</span><span class="p">,</span> w<span class="o">=</span><span class="m">600</span><span class="p">,</span> h<span class="o">=</span><span class="m">600</span><span class="p">,</span> res<span class="o">=</span><span class="m">300</span><span class="p">)</span>
-plot
-dev.off<span class="p">()</span></code></pre></figure>
+</span><span class="n">png</span><span class="p">(</span><span class="s2">"nyc-taxi-3.png"</span><span class="p">,</span><span class="w"> </span><span class="n">w</span><span class="o">=</span><span class="m">600</span><span class="p">,</span><span class="w"> </span><span class="n">h</span><span class="o">=</span><span class="m">600</span><span class="p">,</span><span class="w"> </span><span class="n">res</span><span class="o">=</span><span class="m">300</span><span class="p">)</span><span class="w">
+</span><span class="n">plot</span><span class="w">
+</span><span class="n">dev.off</span><span class="p">()</span></code></pre></figure>
 
 <p><img src="/img/nyc-ggplot2-howto/nyc-taxi-3.png" alt=""></p>
 
@@ -349,19 +349,19 @@ dev.off<span class="p">()</span></code></pre></figure>
 
 <p>Putting it all together:</p>
 
-<figure class="highlight"><pre><code class="language-r" data-lang="r">plot <span class="o">&lt;-</span> ggplot<span class="p">(</span>df <span class="o">%&gt;%</span> filter<span class="p">(</span>num_pickups <span class="o">&gt;</span> <span class="m">10</span><span class="p">),</span> aes<span class="p">(</span>x<span class="o">=</span>long<span class="p">,</span> y<span class="o">=</span>lat<span class="p">,</span> color<span class="o">=</span>num_pickups<span class="p">))</span> <span class="o">+</span>
-            geom_point<span class="p">(</span>size<span class="o">=</span><span class="m">0.06</span><span class="p">)</span> <span class="o">+</span>
-            scale_x_continuous<span class="p">(</span>limits<span class="o">=</span><span class="kt">c</span><span class="p">(</span>min_long<span class="p">,</span> max_long<span class="p">))</span> <span class="o">+</span>
-            scale_y_continuous<span class="p">(</span>limits<span class="o">=</span><span class="kt">c</span><span class="p">(</span>min_lat<span class="p">,</span> max_lat<span class="p">))</span> <span class="o">+</span>
-            theme_map_dark<span class="p">()</span> <span class="o">+</span>
-            scale_color_gradient<span class="p">(</span>low<span class="o">=</span><span class="s">&quot;#CCCCCC&quot;</span><span class="p">,</span> high<span class="o">=</span><span class="s">&quot;#8E44AD&quot;</span><span class="p">,</span> trans<span class="o">=</span><span class="s">&quot;log&quot;</span><span class="p">)</span> <span class="o">+</span>
-            labs<span class="p">(</span>title <span class="o">=</span> <span class="s">&quot;Map of NYC, Plotted Using Locations Of All Yellow Taxi Pickups&quot;</span><span class="p">)</span> <span class="o">+</span>
-            theme<span class="p">(</span>legend.position<span class="o">=</span><span class="s">&quot;none&quot;</span><span class="p">)</span> <span class="o">+</span>
-            coord_equal<span class="p">()</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">plot</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ggplot</span><span class="p">(</span><span class="n">df</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">filter</span><span class="p">(</span><span class="n">num_pickups</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">10</span><span class="p">),</span><span class="w"> </span><span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">long</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="o">=</span><span class="n">lat</span><span class="p">,</span><span class="w"> </span><span class="n">color</span><span class="o">=</span><span class="n">num_pickups</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
+            </span><span class="n">geom_point</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="m">0.06</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+            </span><span class="n">scale_x_continuous</span><span class="p">(</span><span class="n">limits</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="n">min_long</span><span class="p">,</span><span class="w"> </span><span class="n">max_long</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
+            </span><span class="n">scale_y_continuous</span><span class="p">(</span><span class="n">limits</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="n">min_lat</span><span class="p">,</span><span class="w"> </span><span class="n">max_lat</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
+            </span><span class="n">theme_map_dark</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w">
+            </span><span class="n">scale_color_gradient</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="s2">"#CCCCCC"</span><span class="p">,</span><span class="w"> </span><span class="n">high</span><span class="o">=</span><span class="s2">"#8E44AD"</span><span class="p">,</span><span class="w"> </span><span class="n">trans</span><span class="o">=</span><span class="s2">"log"</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+            </span><span class="n">labs</span><span class="p">(</span><span class="n">title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"Map of NYC, Plotted Using Locations Of All Yellow Taxi Pickups"</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+            </span><span class="n">theme</span><span class="p">(</span><span class="n">legend.position</span><span class="o">=</span><span class="s2">"none"</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+            </span><span class="n">coord_equal</span><span class="p">()</span><span class="w">
 
-png<span class="p">(</span><span class="s">&quot;nyc-taxi-4.png&quot;</span><span class="p">,</span> w<span class="o">=</span><span class="m">600</span><span class="p">,</span> h<span class="o">=</span><span class="m">600</span><span class="p">,</span> res<span class="o">=</span><span class="m">300</span><span class="p">)</span>
-plot
-dev.off<span class="p">()</span></code></pre></figure>
+</span><span class="n">png</span><span class="p">(</span><span class="s2">"nyc-taxi-4.png"</span><span class="p">,</span><span class="w"> </span><span class="n">w</span><span class="o">=</span><span class="m">600</span><span class="p">,</span><span class="w"> </span><span class="n">h</span><span class="o">=</span><span class="m">600</span><span class="p">,</span><span class="w"> </span><span class="n">res</span><span class="o">=</span><span class="m">300</span><span class="p">)</span><span class="w">
+</span><span class="n">plot</span><span class="w">
+</span><span class="n">dev.off</span><span class="p">()</span></code></pre></figure>
 
 <p>results in this image, which is what we want! However there is a slight problem, and I will wrap the image in a red border to demonstrate.</p>
 
@@ -393,19 +393,19 @@ dev.off<span class="p">()</span></code></pre></figure>
 <li>Set the chart dimensions to avoid the <code>coord_equal()</code> issue mention above.</li>
 </ul>
 
-<figure class="highlight"><pre><code class="language-r" data-lang="r">plot <span class="o">&lt;-</span> ggplot<span class="p">(</span>df <span class="o">%&gt;%</span> filter<span class="p">(</span>num_pickups <span class="o">&gt;</span> <span class="m">20</span><span class="p">),</span> aes<span class="p">(</span>x<span class="o">=</span>long<span class="p">,</span> y<span class="o">=</span>lat<span class="p">,</span> z<span class="o">=</span>total_revenue<span class="p">))</span> <span class="o">+</span>
-            geom_point<span class="p">(</span>size<span class="o">=</span><span class="m">0.06</span><span class="p">,</span> color<span class="o">=</span><span class="s">&quot;#999999&quot;</span><span class="p">)</span> <span class="o">+</span>
-            stat_summary_hex<span class="p">(</span>fun <span class="o">=</span> <span class="kp">sum</span><span class="p">,</span> bins<span class="o">=</span><span class="m">100</span><span class="p">,</span> alpha<span class="o">=</span><span class="m">0.7</span><span class="p">)</span> <span class="o">+</span>
-            scale_x_continuous<span class="p">(</span>limits<span class="o">=</span><span class="kt">c</span><span class="p">(</span>min_long<span class="p">,</span> max_long<span class="p">))</span> <span class="o">+</span>
-            scale_y_continuous<span class="p">(</span>limits<span class="o">=</span><span class="kt">c</span><span class="p">(</span>min_lat<span class="p">,</span> max_lat<span class="p">))</span> <span class="o">+</span>
-            theme_map_dark<span class="p">()</span> <span class="o">+</span>
-            scale_fill_gradient<span class="p">(</span>low<span class="o">=</span><span class="s">&quot;#CCCCCC&quot;</span><span class="p">,</span> high<span class="o">=</span><span class="s">&quot;#27AE60&quot;</span><span class="p">,</span> labels<span class="o">=</span>dollar<span class="p">)</span> <span class="o">+</span>
-            labs<span class="p">(</span>title <span class="o">=</span> <span class="s">&quot;Total Revenue for NYC Yellow Taxis by Pickup Location, from Jan 2009 ― June 2015&quot;</span><span class="p">)</span> <span class="o">+</span>
-            coord_equal<span class="p">()</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">plot</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ggplot</span><span class="p">(</span><span class="n">df</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">filter</span><span class="p">(</span><span class="n">num_pickups</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">20</span><span class="p">),</span><span class="w"> </span><span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">long</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="o">=</span><span class="n">lat</span><span class="p">,</span><span class="w"> </span><span class="n">z</span><span class="o">=</span><span class="n">total_revenue</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
+            </span><span class="n">geom_point</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="m">0.06</span><span class="p">,</span><span class="w"> </span><span class="n">color</span><span class="o">=</span><span class="s2">"#999999"</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+            </span><span class="n">stat_summary_hex</span><span class="p">(</span><span class="n">fun</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sum</span><span class="p">,</span><span class="w"> </span><span class="n">bins</span><span class="o">=</span><span class="m">100</span><span class="p">,</span><span class="w"> </span><span class="n">alpha</span><span class="o">=</span><span class="m">0.7</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+            </span><span class="n">scale_x_continuous</span><span class="p">(</span><span class="n">limits</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="n">min_long</span><span class="p">,</span><span class="w"> </span><span class="n">max_long</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
+            </span><span class="n">scale_y_continuous</span><span class="p">(</span><span class="n">limits</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="n">min_lat</span><span class="p">,</span><span class="w"> </span><span class="n">max_lat</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
+            </span><span class="n">theme_map_dark</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w">
+            </span><span class="n">scale_fill_gradient</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="s2">"#CCCCCC"</span><span class="p">,</span><span class="w"> </span><span class="n">high</span><span class="o">=</span><span class="s2">"#27AE60"</span><span class="p">,</span><span class="w"> </span><span class="n">labels</span><span class="o">=</span><span class="n">dollar</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+            </span><span class="n">labs</span><span class="p">(</span><span class="n">title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"Total Revenue for NYC Yellow Taxis by Pickup Location, from Jan 2009 ― June 2015"</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+            </span><span class="n">coord_equal</span><span class="p">()</span><span class="w">
 
-png<span class="p">(</span><span class="s">&quot;nyc-taxi-5.png&quot;</span><span class="p">,</span> w<span class="o">=</span><span class="m">950</span><span class="p">,</span> h<span class="o">=</span><span class="m">860</span><span class="p">,</span> res<span class="o">=</span><span class="m">300</span><span class="p">)</span>
-plot
-dev.off<span class="p">()</span></code></pre></figure>
+</span><span class="n">png</span><span class="p">(</span><span class="s2">"nyc-taxi-5.png"</span><span class="p">,</span><span class="w"> </span><span class="n">w</span><span class="o">=</span><span class="m">950</span><span class="p">,</span><span class="w"> </span><span class="n">h</span><span class="o">=</span><span class="m">860</span><span class="p">,</span><span class="w"> </span><span class="n">res</span><span class="o">=</span><span class="m">300</span><span class="p">)</span><span class="w">
+</span><span class="n">plot</span><span class="w">
+</span><span class="n">dev.off</span><span class="p">()</span></code></pre></figure>
 
 <p><img src="/img/nyc-ggplot2-howto/nyc-taxi-5.png" alt=""></p>
 
@@ -424,24 +424,24 @@ dev.off<span class="p">()</span></code></pre></figure>
 
 <p>Here&rsquo;s take two:</p>
 
-<figure class="highlight"><pre><code class="language-r" data-lang="r">total_rev <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>x<span class="p">,</span> threshold <span class="o">=</span> <span class="m">10</span><span class="o">^</span><span class="m">5</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kr">if</span> <span class="p">(</span><span class="kp">sum</span><span class="p">(</span>x<span class="p">)</span> <span class="o">&lt;</span> threshold<span class="p">)</span> <span class="p">{</span><span class="kr">return</span> <span class="p">(</span><span class="kc">NA</span><span class="p">)}</span>
-    <span class="kr">else</span> <span class="p">{</span><span class="kr">return</span> <span class="p">(</span><span class="kp">sum</span><span class="p">(</span>x<span class="p">))}</span>
-<span class="p">}</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">total_rev</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">threshold</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">10</span><span class="o">^</span><span class="m">5</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nf">sum</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">threshold</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="n">return</span><span class="w"> </span><span class="p">(</span><span class="kc">NA</span><span class="p">)}</span><span class="w">
+    </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="n">return</span><span class="w"> </span><span class="p">(</span><span class="nf">sum</span><span class="p">(</span><span class="n">x</span><span class="p">))}</span><span class="w">
+</span><span class="p">}</span><span class="w">
 
-plot <span class="o">&lt;-</span> ggplot<span class="p">(</span>df <span class="o">%&gt;%</span> filter<span class="p">(</span>num_pickups <span class="o">&gt;</span> <span class="m">10</span><span class="p">),</span> aes<span class="p">(</span>x<span class="o">=</span>long<span class="p">,</span> y<span class="o">=</span>lat<span class="p">,</span> z<span class="o">=</span>total_revenue<span class="p">))</span> <span class="o">+</span>
-            geom_point<span class="p">(</span>size<span class="o">=</span><span class="m">0.06</span><span class="p">,</span> color<span class="o">=</span><span class="s">&quot;#999999&quot;</span><span class="p">)</span> <span class="o">+</span>
-            stat_summary_hex<span class="p">(</span>fun <span class="o">=</span> total_rev<span class="p">,</span> bins<span class="o">=</span><span class="m">100</span><span class="p">,</span> alpha<span class="o">=</span><span class="m">0.5</span><span class="p">)</span> <span class="o">+</span>
-            scale_x_continuous<span class="p">(</span>limits<span class="o">=</span><span class="kt">c</span><span class="p">(</span><span class="m">-74.0224</span><span class="p">,</span> <span class="m">-73.8521</span><span class="p">))</span> <span class="o">+</span>
-            scale_y_continuous<span class="p">(</span>limits<span class="o">=</span><span class="kt">c</span><span class="p">(</span><span class="m">40.6959</span><span class="p">,</span> <span class="m">40.8348</span><span class="p">))</span> <span class="o">+</span>
-            theme_map_dark<span class="p">()</span> <span class="o">+</span>
-            scale_fill_gradient<span class="p">(</span>low<span class="o">=</span><span class="s">&quot;#FFFFFF&quot;</span><span class="p">,</span> high<span class="o">=</span><span class="s">&quot;#E74C3C&quot;</span><span class="p">,</span> labels<span class="o">=</span>dollar<span class="p">,</span> trans<span class="o">=</span><span class="s">&quot;log&quot;</span><span class="p">,</span> breaks<span class="o">=</span><span class="kt">c</span><span class="p">(</span><span class="m">10</span><span class="o">^</span><span class="p">(</span><span class="m">6</span><span class="o">:</span><span class="m">8</span><span class="p">)))</span> <span class="o">+</span>
-            labs<span class="p">(</span>title <span class="o">=</span> <span class="s">&quot;Total Revenue for NYC Yellow Taxis by Pickup Location, from Jan 2009 ― June 2015&quot;</span><span class="p">)</span> <span class="o">+</span>
-            coord_equal<span class="p">()</span>
+</span><span class="n">plot</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ggplot</span><span class="p">(</span><span class="n">df</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">filter</span><span class="p">(</span><span class="n">num_pickups</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">10</span><span class="p">),</span><span class="w"> </span><span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">long</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="o">=</span><span class="n">lat</span><span class="p">,</span><span class="w"> </span><span class="n">z</span><span class="o">=</span><span class="n">total_revenue</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
+            </span><span class="n">geom_point</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="m">0.06</span><span class="p">,</span><span class="w"> </span><span class="n">color</span><span class="o">=</span><span class="s2">"#999999"</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+            </span><span class="n">stat_summary_hex</span><span class="p">(</span><span class="n">fun</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">total_rev</span><span class="p">,</span><span class="w"> </span><span class="n">bins</span><span class="o">=</span><span class="m">100</span><span class="p">,</span><span class="w"> </span><span class="n">alpha</span><span class="o">=</span><span class="m">0.5</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+            </span><span class="n">scale_x_continuous</span><span class="p">(</span><span class="n">limits</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">-74.0224</span><span class="p">,</span><span class="w"> </span><span class="m">-73.8521</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
+            </span><span class="n">scale_y_continuous</span><span class="p">(</span><span class="n">limits</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">40.6959</span><span class="p">,</span><span class="w"> </span><span class="m">40.8348</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
+            </span><span class="n">theme_map_dark</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w">
+            </span><span class="n">scale_fill_gradient</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="s2">"#FFFFFF"</span><span class="p">,</span><span class="w"> </span><span class="n">high</span><span class="o">=</span><span class="s2">"#E74C3C"</span><span class="p">,</span><span class="w"> </span><span class="n">labels</span><span class="o">=</span><span class="n">dollar</span><span class="p">,</span><span class="w"> </span><span class="n">trans</span><span class="o">=</span><span class="s2">"log"</span><span class="p">,</span><span class="w"> </span><span class="n">breaks</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">10</span><span class="o">^</span><span class="p">(</span><span class="m">6</span><span class="o">:</span><span class="m">8</span><span class="p">)))</span><span class="w"> </span><span class="o">+</span><span class="w">
+            </span><span class="n">labs</span><span class="p">(</span><span class="n">title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"Total Revenue for NYC Yellow Taxis by Pickup Location, from Jan 2009 ― June 2015"</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+            </span><span class="n">coord_equal</span><span class="p">()</span><span class="w">
 
-png<span class="p">(</span><span class="s">&quot;nyc-taxi-6.png&quot;</span><span class="p">,</span> w<span class="o">=</span><span class="m">900</span><span class="p">,</span> h<span class="o">=</span><span class="m">900</span><span class="p">,</span> res<span class="o">=</span><span class="m">300</span><span class="p">)</span>
-plot
-dev.off<span class="p">()</span></code></pre></figure>
+</span><span class="n">png</span><span class="p">(</span><span class="s2">"nyc-taxi-6.png"</span><span class="p">,</span><span class="w"> </span><span class="n">w</span><span class="o">=</span><span class="m">900</span><span class="p">,</span><span class="w"> </span><span class="n">h</span><span class="o">=</span><span class="m">900</span><span class="p">,</span><span class="w"> </span><span class="n">res</span><span class="o">=</span><span class="m">300</span><span class="p">)</span><span class="w">
+</span><span class="n">plot</span><span class="w">
+</span><span class="n">dev.off</span><span class="p">()</span></code></pre></figure>
 
 <p><img src="/img/nyc-ggplot2-howto/nyc-taxi-6.png" alt=""></p>
 
@@ -568,6 +568,13 @@ dev.off<span class="p">()</span></code></pre></figure>
             
             <article class="latest-tuts">
                 <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="/2017/11/magic-the-gifening/">Making Magic: the GIFening</a></h5>
+                    <small class="latest-tuts-content-time"> Nov 7, 2017</small>
+                </div>
+            </article>
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
                     <h5 class="latest-tuts-content-title"><a href="/2017/08/ggplot2-web/">How to Make High Quality Data Visualizations for Websites With R and ggplot2</a></h5>
                     <small class="latest-tuts-content-time"> Aug 14, 2017</small>
                 </div>
@@ -598,13 +605,6 @@ dev.off<span class="p">()</span></code></pre></figure>
                 <div class="latest-tuts-content">
                     <h5 class="latest-tuts-content-title"><a href="/2017/06/keras-cntk/">Benchmarking CNTK on Keras: is it Better at Deep Learning than TensorFlow?</a></h5>
                     <small class="latest-tuts-content-time"> Jun 12, 2017</small>
-                </div>
-            </article>
-            
-            <article class="latest-tuts">
-                <div class="latest-tuts-content">
-                    <h5 class="latest-tuts-content-title"><a href="/2017/06/r-notebooks/">Advantages of Using R Notebooks For Data Analysis Instead of Jupyter Notebooks</a></h5>
-                    <small class="latest-tuts-content-time"> Jun 6, 2017</small>
                 </div>
             </article>
             

@@ -312,17 +312,17 @@
 
 <p>R Notebooks are configured with a <a href="http://yaml.org">YAML</a> header, which can include common attributes such as title, author, date published, and other relevant options. These fields will then be configured correctly in the metadata for HTML/PDF/Handouts output. Here&rsquo;s an example from <a href="http://minimaxir.com/notebooks/amazon-spark/">one of my notebooks</a>:</p>
 <div class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span class="nn">---</span>
-<span class="l-Scalar-Plain">title</span><span class="p-Indicator">:</span> <span class="s">&quot;Playing</span><span class="nv"> </span><span class="s">with</span><span class="nv"> </span><span class="s">80</span><span class="nv"> </span><span class="s">Million</span><span class="nv"> </span><span class="s">Amazon</span><span class="nv"> </span><span class="s">Product</span><span class="nv"> </span><span class="s">Review</span><span class="nv"> </span><span class="s">Ratings</span><span class="nv"> </span><span class="s">Using</span><span class="nv"> </span><span class="s">Apache</span><span class="nv"> </span><span class="s">Spark&quot;</span>
-<span class="l-Scalar-Plain">author</span><span class="p-Indicator">:</span> <span class="s">&quot;Max</span><span class="nv"> </span><span class="s">Woolf</span><span class="nv"> </span><span class="s">(@minimaxir)&quot;</span>
-<span class="l-Scalar-Plain">date</span><span class="p-Indicator">:</span> <span class="s">&quot;January</span><span class="nv"> </span><span class="s">2nd,</span><span class="nv"> </span><span class="s">2017&quot;</span>
-<span class="l-Scalar-Plain">output</span><span class="p-Indicator">:</span>
-  <span class="l-Scalar-Plain">html_notebook</span><span class="p-Indicator">:</span>
-    <span class="l-Scalar-Plain">highlight</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">tango</span>
-    <span class="l-Scalar-Plain">mathjax</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">null</span>
-    <span class="l-Scalar-Plain">number_sections</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">yes</span>
-    <span class="l-Scalar-Plain">theme</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">spacelab</span>
-    <span class="l-Scalar-Plain">toc</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">yes</span>
-    <span class="l-Scalar-Plain">toc_float</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">yes</span>
+<span class="na">title</span><span class="pi">:</span> <span class="s2">"</span><span class="s">Playing</span><span class="nv"> </span><span class="s">with</span><span class="nv"> </span><span class="s">80</span><span class="nv"> </span><span class="s">Million</span><span class="nv"> </span><span class="s">Amazon</span><span class="nv"> </span><span class="s">Product</span><span class="nv"> </span><span class="s">Review</span><span class="nv"> </span><span class="s">Ratings</span><span class="nv"> </span><span class="s">Using</span><span class="nv"> </span><span class="s">Apache</span><span class="nv"> </span><span class="s">Spark"</span>
+<span class="na">author</span><span class="pi">:</span> <span class="s2">"</span><span class="s">Max</span><span class="nv"> </span><span class="s">Woolf</span><span class="nv"> </span><span class="s">(@minimaxir)"</span>
+<span class="na">date</span><span class="pi">:</span> <span class="s2">"</span><span class="s">January</span><span class="nv"> </span><span class="s">2nd,</span><span class="nv"> </span><span class="s">2017"</span>
+<span class="na">output</span><span class="pi">:</span>
+  <span class="na">html_notebook</span><span class="pi">:</span>
+    <span class="na">highlight</span><span class="pi">:</span> <span class="s">tango</span>
+    <span class="na">mathjax</span><span class="pi">:</span> <span class="no">null</span>
+    <span class="na">number_sections</span><span class="pi">:</span> <span class="s">yes</span>
+    <span class="na">theme</span><span class="pi">:</span> <span class="s">spacelab</span>
+    <span class="na">toc</span><span class="pi">:</span> <span class="s">yes</span>
+    <span class="na">toc_float</span><span class="pi">:</span> <span class="s">yes</span>
 <span class="nn">---</span>
 </code></pre></div>
 <p>Said metadata features are <a href="https://github.com/ipython/ipython/issues/6073">often requested but unimplemented</a> in Jupyter.</p>
@@ -484,6 +484,13 @@
             
             <article class="latest-tuts">
                 <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="/2017/11/magic-the-gifening/">Making Magic: the GIFening</a></h5>
+                    <small class="latest-tuts-content-time"> Nov 7, 2017</small>
+                </div>
+            </article>
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
                     <h5 class="latest-tuts-content-title"><a href="/2017/08/ggplot2-web/">How to Make High Quality Data Visualizations for Websites With R and ggplot2</a></h5>
                     <small class="latest-tuts-content-time"> Aug 14, 2017</small>
                 </div>
@@ -514,13 +521,6 @@
                 <div class="latest-tuts-content">
                     <h5 class="latest-tuts-content-title"><a href="/2017/06/keras-cntk/">Benchmarking CNTK on Keras: is it Better at Deep Learning than TensorFlow?</a></h5>
                     <small class="latest-tuts-content-time"> Jun 12, 2017</small>
-                </div>
-            </article>
-            
-            <article class="latest-tuts">
-                <div class="latest-tuts-content">
-                    <h5 class="latest-tuts-content-title"><a href="/2017/06/r-notebooks/">Advantages of Using R Notebooks For Data Analysis Instead of Jupyter Notebooks</a></h5>
-                    <small class="latest-tuts-content-time"> Jun 6, 2017</small>
                 </div>
             </article>
             

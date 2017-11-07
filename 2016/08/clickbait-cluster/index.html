@@ -294,49 +294,49 @@
 <p>However, those are not absolute rules; BuzzFeed occasionally has more-serious headlines, and CNN occasionally has more-gimmicky headlines. <strong>That&rsquo;s okay.</strong> If my hypothesis is correct, the nonappropriate headlines will be clustered with other headlines of the same style.</p>
 
 <p>First, I load the four datasets into the hip new big data tool <a href="https://spark.apache.org">Apache Spark</a> 2.0, (via the Python interface, <a href="http://spark.apache.org/docs/latest/api/python/">PySpark</a>), and combine them all into a single DataFrame, with a little extra post-processing to remove invalid entries.</p>
-<div class="highlight"><pre><code class="language-Python" data-lang="Python"><span class="n">df_cnn</span> <span class="o">=</span> <span class="n">read_tsv</span><span class="p">(</span><span class="s">&quot;fb_headlines/CNN_fb.tsv&quot;</span><span class="p">)</span>
-<span class="n">df_nytimes</span> <span class="o">=</span> <span class="n">read_tsv</span><span class="p">(</span><span class="s">&quot;fb_headlines/NYTimes_fb.tsv&quot;</span><span class="p">)</span>
-<span class="n">df_buzzfeed</span> <span class="o">=</span> <span class="n">read_tsv</span><span class="p">(</span><span class="s">&quot;fb_headlines/BuzzFeed_fb.tsv&quot;</span><span class="p">)</span>
-<span class="n">df_upworthy</span> <span class="o">=</span> <span class="n">read_tsv</span><span class="p">(</span><span class="s">&quot;fb_headlines/Upworthy_fb.tsv&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><code class="language-Python" data-lang="Python">df_cnn = read_tsv("fb_headlines/CNN_fb.tsv")
+df_nytimes = read_tsv("fb_headlines/NYTimes_fb.tsv")
+df_buzzfeed = read_tsv("fb_headlines/BuzzFeed_fb.tsv")
+df_upworthy = read_tsv("fb_headlines/Upworthy_fb.tsv")
 
-<span class="n">df</span> <span class="o">=</span> <span class="n">df_cnn</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">df_nytimes</span><span class="p">)</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">df_buzzfeed</span><span class="p">)</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">df_upworthy</span><span class="p">)</span>
-<span class="n">df</span> <span class="o">=</span> <span class="n">process_df</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">cache</span><span class="p">()</span>
+df = df_cnn.union(df_nytimes).union(df_buzzfeed).union(df_upworthy)
+df = process_df(df).cache()
 </code></pre></div>
 <p><img src="/img/clickbait-cluster/cc-1.png" alt=""></p>
 
 <p>In all, I had 102,267 valid news headlines to analyze; not &ldquo;big data,&rdquo; but enough data that it&rsquo;s worth optimizing the analysis code as much as possible, especially in this case where the computation can be intensive.</p>
 
 <p>Once the data is loaded, we convert the headlines to an array of tokens representing each word from the headline, all lowercase and with punctuation stripped. This task can normally be difficult and have poor performance on large datasets, however Spark has a RegexTokenizer that quickly executes all the necessary tasks in one fell swoop.</p>
-<div class="highlight"><pre><code class="language-Python" data-lang="Python"><span class="n">tokenizer</span> <span class="o">=</span> <span class="n">RegexTokenizer</span><span class="p">(</span><span class="n">pattern</span><span class="o">=</span><span class="s">&quot;[^\w]&quot;</span><span class="p">,</span> <span class="n">inputCol</span><span class="o">=</span><span class="s">&quot;text&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s">&quot;words&quot;</span><span class="p">)</span>
-<span class="n">df</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<div class="highlight"><pre><code class="language-Python" data-lang="Python">tokenizer = RegexTokenizer(pattern="[^\w]", inputCol="text", outputCol="words")
+df = tokenizer.transform(df)
 </code></pre></div>
 <p><img src="/img/clickbait-cluster/cc-2.png" alt=""></p>
 
 <p>Most analyses would remove <a href="https://en.wikipedia.org/wiki/Stop_words">stop words</a> as their high frequency can cause noise in the subsequent analysis. In this case, we should <em>not</em> remove them as many stop words  are critical components of the clickbait tropes (e.g. &ldquo;I Am&rdquo; and &ldquo;The [X] Most&rdquo;).</p>
 
 <p>Now that the tokens are created, we can apply <a href="https://en.wikipedia.org/wiki/Word2vec">Word2vec</a>, an algorithm which converts a collection of words into a dictionary of multidimensional numerical representations. Once the dictionary is created, we can average all the word vectors for a given headline to get the numeric representation of the headline itself. Again, Spark has convenient functions for those actions, setting a randomness seed for reproducibility:</p>
-<div class="highlight"><pre><code class="language-Python" data-lang="Python"><span class="n">word2Vec</span> <span class="o">=</span> <span class="n">Word2Vec</span><span class="p">(</span><span class="n">vectorSize</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="n">inputCol</span><span class="o">=</span><span class="s">&quot;words&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s">&quot;vectors&quot;</span><span class="p">)</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">word2Vec</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
-<span class="n">df</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<div class="highlight"><pre><code class="language-Python" data-lang="Python">word2Vec = Word2Vec(vectorSize=50, seed=42, inputCol="words", outputCol="vectors")
+model = word2Vec.fit(df)
+df = model.transform(df)
 </code></pre></div>
 <p><img src="/img/clickbait-cluster/cc-3.png" alt=""></p>
 
 <p>In this case, each word and phrase are converted into a 50-dimension vector for speed later; usually, the word vectors from Word2vec are between 100 and 1,000 dimensions.</p>
 
 <p>Another step to add context to the data is to add features representing the page that posted the status. This takes two steps in Spark; first, use a StringIndexer to covert the names of the four Facebook Pages into numerical 0-indexed representations, then use a <a href="https://en.wikipedia.org/wiki/One-hot">OneHotEncoder</a> to convert the data into <a href="https://en.wikipedia.org/wiki/Dummy_variable_(statistics)">dummy variables</a>.</p>
-<div class="highlight"><pre><code class="language-Python" data-lang="Python"><span class="n">stringIndexer</span> <span class="o">=</span> <span class="n">StringIndexer</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s">&quot;page_id&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s">&quot;indexed&quot;</span><span class="p">)</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">stringIndexer</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
-<span class="n">df</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
-<span class="n">encoder</span> <span class="o">=</span> <span class="n">OneHotEncoder</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s">&quot;indexed&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s">&quot;page_ohe&quot;</span><span class="p">)</span>
-<span class="n">df</span> <span class="o">=</span> <span class="n">encoder</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<div class="highlight"><pre><code class="language-Python" data-lang="Python">stringIndexer = StringIndexer(inputCol="page_id", outputCol="indexed")
+model = stringIndexer.fit(df)
+df = model.transform(df)
+encoder = OneHotEncoder(inputCol="indexed", outputCol="page_ohe")
+df = encoder.transform(df)
 </code></pre></div>
 <p><img src="/img/clickbait-cluster/cc-5.png" alt=""></p>
 
 <p>This adds 3 columns, where the column containing the 1.0 represents the corresponding page. (the 4th page is represented by none of the 3 columns containing 1.0)</p>
 
 <p>Lastly, combine the 3D page numeric vectors and the 50D word numeric vectors with a VectorAssembler:</p>
-<div class="highlight"><pre><code class="language-Python" data-lang="Python"><span class="n">model</span> <span class="o">=</span> <span class="n">VectorAssembler</span><span class="p">(</span><span class="n">inputCols</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;page_ohe&#39;</span><span class="p">,</span> <span class="s">&#39;vectors&#39;</span><span class="p">],</span> <span class="n">outputCol</span><span class="o">=</span><span class="s">&quot;merged_vectors&quot;</span><span class="p">)</span>
-<span class="n">df</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<div class="highlight"><pre><code class="language-Python" data-lang="Python">model = VectorAssembler(inputCols=['page_ohe', 'vectors'], outputCol="merged_vectors")
+df = model.transform(df)
 </code></pre></div>
 <p><img src="/img/clickbait-cluster/cc-7.png" alt=""></p>
 
@@ -347,15 +347,15 @@
 <p>To keep comparisons between news sources apples-to-apples with respect to current events (and there have been a <em>lot</em> of events in the past couple months!), we will only look at headlines from <strong>June 1st, 2016 to August 12</strong> among the four pages; 9,500 headlines total. That&rsquo;s a fair maximum sample size, both because all the points need to be loaded onto this webpage, and because the clustering algorithm is slow.</p>
 
 <p>Speaking of clustering, I load the 53D vectors created above for this subset into <a href="https://www.r-project.org/about.html">R</a> and apply the <a href="https://lvdmaaten.github.io/tsne/">t-SNE</a> algorithm to project and cluster each point into 2 dimensions. (since the algorithm performance scales quadratically with sample size and is single-threaded, calculating the projected points took <em>over 8 hours</em>!)</p>
-<div class="highlight"><pre><code class="language-R" data-lang="R">cluster_coords <span class="o">&lt;-</span> tsne<span class="p">(</span><span class="kt">matrix</span><span class="p">,</span> initial_dims<span class="o">=</span><span class="m">53</span><span class="p">,</span> perplexity<span class="o">=</span><span class="m">50</span><span class="p">,</span> epoch<span class="o">=</span><span class="m">50</span><span class="p">)</span>
-</code></pre></div>
+<div class="highlight"><pre><code class="language-R" data-lang="R"><span class="n">cluster_coords</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">tsne</span><span class="p">(</span><span class="n">matrix</span><span class="p">,</span><span class="w"> </span><span class="n">initial_dims</span><span class="o">=</span><span class="m">53</span><span class="p">,</span><span class="w"> </span><span class="n">perplexity</span><span class="o">=</span><span class="m">50</span><span class="p">,</span><span class="w"> </span><span class="n">epoch</span><span class="o">=</span><span class="m">50</span><span class="p">)</span><span class="w">
+</span></code></pre></div>
 <p><img src="/img/clickbait-cluster/cc-6.png" alt=""></p>
 
 <p>Prototyping the plot extremely quickly in <a href="http://docs.ggplot2.org/current/">ggplot2</a>:</p>
-<div class="highlight"><pre><code class="language-R" data-lang="R">ggplot<span class="p">(</span>df_plot<span class="p">,</span> aes<span class="p">(</span>x<span class="o">=</span>x<span class="p">,</span> y<span class="o">=</span>y<span class="p">,</span> color<span class="o">=</span>page_id<span class="p">))</span> <span class="o">+</span>
-    geom_point<span class="p">(</span>alpha<span class="o">=</span><span class="m">0.75</span><span class="p">,</span> stroke<span class="o">=</span><span class="m">0</span><span class="p">)</span> <span class="o">+</span> 
-    theme_bw<span class="p">()</span>
-</code></pre></div>
+<div class="highlight"><pre><code class="language-R" data-lang="R"><span class="n">ggplot</span><span class="p">(</span><span class="n">df_plot</span><span class="p">,</span><span class="w"> </span><span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">color</span><span class="o">=</span><span class="n">page_id</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
+    </span><span class="n">geom_point</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="m">0.75</span><span class="p">,</span><span class="w"> </span><span class="n">stroke</span><span class="o">=</span><span class="m">0</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> 
+    </span><span class="n">theme_bw</span><span class="p">()</span><span class="w">
+</span></code></pre></div>
 <p><img src="/img/clickbait-cluster/fb-headlines-cluster-test-53D.png" alt=""></p>
 
 <p>Gives us a map close to what we want. Hooray, my crazy clustering idea was not completely crazy!</p>
@@ -499,6 +499,13 @@
             
             <article class="latest-tuts">
                 <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="/2017/11/magic-the-gifening/">Making Magic: the GIFening</a></h5>
+                    <small class="latest-tuts-content-time"> Nov 7, 2017</small>
+                </div>
+            </article>
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
                     <h5 class="latest-tuts-content-title"><a href="/2017/08/ggplot2-web/">How to Make High Quality Data Visualizations for Websites With R and ggplot2</a></h5>
                     <small class="latest-tuts-content-time"> Aug 14, 2017</small>
                 </div>
@@ -529,13 +536,6 @@
                 <div class="latest-tuts-content">
                     <h5 class="latest-tuts-content-title"><a href="/2017/06/keras-cntk/">Benchmarking CNTK on Keras: is it Better at Deep Learning than TensorFlow?</a></h5>
                     <small class="latest-tuts-content-time"> Jun 12, 2017</small>
-                </div>
-            </article>
-            
-            <article class="latest-tuts">
-                <div class="latest-tuts-content">
-                    <h5 class="latest-tuts-content-title"><a href="/2017/06/r-notebooks/">Advantages of Using R Notebooks For Data Analysis Instead of Jupyter Notebooks</a></h5>
-                    <small class="latest-tuts-content-time"> Jun 6, 2017</small>
                 </div>
             </article>
             

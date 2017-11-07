@@ -263,7 +263,7 @@
 <p>The dataset is large (2 GB per month of data), although not &ldquo;big data&rdquo; large. It would take an afternoon to set up a local database, and I wanted to make pretty visualizations <em>immediately</em>.</p>
 
 <p>Google BigQuery Developer Advocate Felipe Hoffa <a href="https://www.reddit.com/r/bigquery/comments/3fo9ao/nyc_taxi_trips_now_officially_shared_by_the_nyc/">created a BigQuery interface</a> for the data. BigQuery allows easy and fast access to the entire dataset for rapid processing. In my case, I need to compress the data set by truncating the latitude and longitude of the GPS coordinates to 4 digits; this allows <a href="http://gis.stackexchange.com/a/8674">precision to 11 meters</a> on the coordinates, which is sufficient for estimating. Running this BigQuery query:</p>
-<div class="highlight"><pre><code class="language-text" data-lang="text">SELECT ROUND(pickup_latitude, 4) as lat,
+<div class="highlight"><pre><code class="language-" data-lang="">SELECT ROUND(pickup_latitude, 4) as lat,
 ROUND(pickup_longitude, 4) as long,
 COUNT(*) as num_pickups
 FROM [nyc-tlc:yellow.trips_2014]
@@ -414,6 +414,13 @@ GROUP BY lat, long
             
             <article class="latest-tuts">
                 <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="/2017/11/magic-the-gifening/">Making Magic: the GIFening</a></h5>
+                    <small class="latest-tuts-content-time"> Nov 7, 2017</small>
+                </div>
+            </article>
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
                     <h5 class="latest-tuts-content-title"><a href="/2017/08/ggplot2-web/">How to Make High Quality Data Visualizations for Websites With R and ggplot2</a></h5>
                     <small class="latest-tuts-content-time"> Aug 14, 2017</small>
                 </div>
@@ -444,13 +451,6 @@ GROUP BY lat, long
                 <div class="latest-tuts-content">
                     <h5 class="latest-tuts-content-title"><a href="/2017/06/keras-cntk/">Benchmarking CNTK on Keras: is it Better at Deep Learning than TensorFlow?</a></h5>
                     <small class="latest-tuts-content-time"> Jun 12, 2017</small>
-                </div>
-            </article>
-            
-            <article class="latest-tuts">
-                <div class="latest-tuts-content">
-                    <h5 class="latest-tuts-content-title"><a href="/2017/06/r-notebooks/">Advantages of Using R Notebooks For Data Analysis Instead of Jupyter Notebooks</a></h5>
-                    <small class="latest-tuts-content-time"> Jun 6, 2017</small>
                 </div>
             </article>
             

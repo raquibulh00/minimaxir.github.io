@@ -307,15 +307,15 @@
 <p>For this example of a network graph, we will use the flights paths of domestic airline flights from New York City airports in 2013, provided by the <code>nycflights13</code> <a href="https://cran.r-project.org/web/packages/nycflights13/index.html">R package</a> by Hadley Wickham (usually, tutorials on <a href="https://gephi.org/tutorials/gephi-tutorial-quick_start.pdf">working with networks</a> use the character network map from <em>Les Misèrables</em>, so let&rsquo;s mix it up a bit).</p>
 
 <p>First, we install and load a few R packages:</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="kn">library</span><span class="p">(</span>dplyr<span class="p">)</span>
-<span class="kn">library</span><span class="p">(</span>nycflights13<span class="p">)</span>
-<span class="kn">library</span><span class="p">(</span>igraph<span class="p">)</span>
-<span class="kn">library</span><span class="p">(</span>intergraph<span class="p">)</span>
-<span class="kn">library</span><span class="p">(</span>sna<span class="p">)</span>
-<span class="kn">library</span><span class="p">(</span>ggplot2<span class="p">)</span>
-<span class="kn">library</span><span class="p">(</span>ggnetwork<span class="p">)</span>
-<span class="kn">library</span><span class="p">(</span>plotly<span class="p">)</span>
-</code></pre></div>
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">library</span><span class="p">(</span><span class="n">dplyr</span><span class="p">)</span><span class="w">
+</span><span class="n">library</span><span class="p">(</span><span class="n">nycflights13</span><span class="p">)</span><span class="w">
+</span><span class="n">library</span><span class="p">(</span><span class="n">igraph</span><span class="p">)</span><span class="w">
+</span><span class="n">library</span><span class="p">(</span><span class="n">intergraph</span><span class="p">)</span><span class="w">
+</span><span class="n">library</span><span class="p">(</span><span class="n">sna</span><span class="p">)</span><span class="w">
+</span><span class="n">library</span><span class="p">(</span><span class="n">ggplot2</span><span class="p">)</span><span class="w">
+</span><span class="n">library</span><span class="p">(</span><span class="n">ggnetwork</span><span class="p">)</span><span class="w">
+</span><span class="n">library</span><span class="p">(</span><span class="n">plotly</span><span class="p">)</span><span class="w">
+</span></code></pre></div>
 <ul>
 <li><code>dplyr</code> helps aggregate and manipulate tabular data.</li>
 <li><code>nycflights13</code> contains the data.</li>
@@ -329,32 +329,32 @@
 <p><img src="/img/interactive-network/flight-data.png" alt=""></p>
 
 <p>We want to aggregate the counts of pairs of (origin, destination): the pairs will serve as the <em>edges</em> of our network graph, and the airports will serve as the vertices. The counts of pairs (i.e. number of flights from X to Y) will serve as the <em>weight</em> of the edge during the graph layout phase; nodes with a higher edge weight between them have a greater &ldquo;pull.&rdquo; This aggregation takes just one line of <code>dplyr</code> code.</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r">df_edges <span class="o">&lt;-</span> flights <span class="o">%&gt;%</span> group_by<span class="p">(</span>origin<span class="p">,</span> dest<span class="p">)</span> <span class="o">%&gt;%</span> summarize<span class="p">(</span>weight <span class="o">=</span> n<span class="p">())</span>
-</code></pre></div>
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">df_edges</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">flights</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">group_by</span><span class="p">(</span><span class="n">origin</span><span class="p">,</span><span class="w"> </span><span class="n">dest</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">summarize</span><span class="p">(</span><span class="n">weight</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">n</span><span class="p">())</span><span class="w">
+</span></code></pre></div>
 <p><img src="/img/interactive-network/airport-edges.png" alt=""></p>
 
 <p>Using <code>igraph</code>, we create a network graph object from the aggregated dataset. In this context, the graph is <em>directed</em>, since logically each flight is in one direction.</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r">net <span class="o">&lt;-</span> graph.data.frame<span class="p">(</span>df_edges<span class="p">,</span> directed <span class="o">=</span> <span class="bp">T</span><span class="p">)</span>
-</code></pre></div>
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">net</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">graph.data.frame</span><span class="p">(</span><span class="n">df_edges</span><span class="p">,</span><span class="w"> </span><span class="n">directed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">T</span><span class="p">)</span><span class="w">
+</span></code></pre></div>
 <p><img src="/img/interactive-network/airport-graph.png" alt=""></p>
 
 <p>As noted by the numbers at the top of the output, there are 107 vertices/unique airports, and 224 unique edges.</p>
 
 <p>We may want to size the vertices of each of the airports in the final chart. We can set that in igraph as well by calculating the degree of each vertex, so nodes with more connected airports will be larger.</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r">V<span class="p">(</span>net<span class="p">)</span><span class="o">$</span>degree <span class="o">&lt;-</span> centralization.degree<span class="p">(</span>net<span class="p">)</span><span class="o">$</span>res
-</code></pre></div>
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">V</span><span class="p">(</span><span class="n">net</span><span class="p">)</span><span class="o">$</span><span class="n">degree</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">centralization.degree</span><span class="p">(</span><span class="n">net</span><span class="p">)</span><span class="o">$</span><span class="n">res</span><span class="w">
+</span></code></pre></div>
 <p>Now we can convert the network to a <code>ggplot2</code> friendly format. <code>ggnetwork</code> both calculates x/y coordinates for the nodes of the network graph according to the <a href="https://github.com/gephi/gephi/wiki/Fruchterman-Reingold">Fruchterman-Reingold</a> force-directed layout algorithm (so that nodes connected by higher weights will be closer), and also formats the data into a ggplot2-friendly tabular format. 5,000 iterations of the algorithm on a smaller graph is enough for a quick demo, but you should use as many iterations as possible.</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r">df_net <span class="o">&lt;-</span> ggnetwork<span class="p">(</span>net<span class="p">,</span> layout <span class="o">=</span> <span class="s">&quot;fruchtermanreingold&quot;</span><span class="p">,</span> weights <span class="o">=</span> <span class="s">&quot;weight&quot;</span><span class="p">,</span> niter <span class="o">=</span> <span class="m">5000</span><span class="p">)</span>
-</code></pre></div>
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">df_net</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ggnetwork</span><span class="p">(</span><span class="n">net</span><span class="p">,</span><span class="w"> </span><span class="n">layout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"fruchtermanreingold"</span><span class="p">,</span><span class="w"> </span><span class="n">weights</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"weight"</span><span class="p">,</span><span class="w"> </span><span class="n">niter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">5000</span><span class="p">)</span><span class="w">
+</span></code></pre></div>
 <p>Now we can plot the graph in R. The base aesthetics for the ggplot are the x/y coordinates of the points, and the xend/yend-points of the edge line segments. ggnetwork exposes a <code>geom_edges()</code> which plots the edges of a network graph, and <code>geom_nodes()</code> which plots the nodes. Both of these functions work by extending normal ggplot2 functions: the edges are actually ggplot2 lines (via <code>geom_segment()</code>), while the nodes are ggplot2 points (via <code>geom_points()</code>).</p>
 
 <p>Style-wise, for the <em>edges</em>, we should apply a low opacity so we can see where they overlap. For the <em>nodes</em>, we can size the nodes depending on their degree, and also set the text to the airport name for use later. We should include a plot title as always, and use the <code>theme_blank()</code> ggplot2 theme included with ggnetwork such that the visualization does not use ggplot2&rsquo;s default theme.</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r">plot <span class="o">&lt;-</span> ggplot<span class="p">(</span>df_net<span class="p">,</span> aes<span class="p">(</span>x <span class="o">=</span> x<span class="p">,</span> y <span class="o">=</span> y<span class="p">,</span> xend <span class="o">=</span> xend<span class="p">,</span> yend <span class="o">=</span> yend<span class="p">))</span> <span class="o">+</span>
-    geom_edges<span class="p">(</span>size <span class="o">=</span> <span class="m">0.4</span><span class="p">,</span> alpha <span class="o">=</span> <span class="m">0.25</span><span class="p">)</span> <span class="o">+</span>
-    geom_nodes<span class="p">(</span>aes<span class="p">(</span>size <span class="o">=</span> degree<span class="p">,</span> text <span class="o">=</span> vertex.names<span class="p">))</span> <span class="o">+</span>
-    ggtitle<span class="p">(</span><span class="s">&quot;Network Graph of U.S. Flights Outbound from NYC in 2013&quot;</span><span class="p">)</span> <span class="o">+</span>
-    theme_blank<span class="p">()</span>
-</code></pre></div>
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">plot</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ggplot</span><span class="p">(</span><span class="n">df_net</span><span class="p">,</span><span class="w"> </span><span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">xend</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">xend</span><span class="p">,</span><span class="w"> </span><span class="n">yend</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">yend</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
+    </span><span class="n">geom_edges</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.4</span><span class="p">,</span><span class="w"> </span><span class="n">alpha</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.25</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+    </span><span class="n">geom_nodes</span><span class="p">(</span><span class="n">aes</span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">degree</span><span class="p">,</span><span class="w"> </span><span class="n">text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vertex.names</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
+    </span><span class="n">ggtitle</span><span class="p">(</span><span class="s2">"Network Graph of U.S. Flights Outbound from NYC in 2013"</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+    </span><span class="n">theme_blank</span><span class="p">()</span><span class="w">
+</span></code></pre></div>
 <p>Putting it all together:</p>
 
 <p><img src="/img/interactive-network/ggplot3.png" alt=""></p>
@@ -370,8 +370,8 @@
 <p>Hey, isn&rsquo;t a network graph just points and straight lines?</p>
 
 <p>So let&rsquo;s chain the plot into ggplotly() while setting the hover text to the airport names, and chain that to the WebGL functionality:</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r">plot <span class="o">%&gt;%</span> ggplotly<span class="p">(</span>tooltip <span class="o">=</span> <span class="s">&quot;text&quot;</span><span class="p">)</span> <span class="o">%&gt;%</span> toWebGL<span class="p">()</span>
-</code></pre></div>
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">plot</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">ggplotly</span><span class="p">(</span><span class="n">tooltip</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"text"</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">toWebGL</span><span class="p">()</span><span class="w">
+</span></code></pre></div>
 <div id="htmlwidget_container">
   <div id="htmlwidget-51f6648a07e11b1abf04" style="width:100%;height:400px;" class="plotly html-widget"></div>
 </div>
@@ -395,8 +395,8 @@
 <h2>Sea to Shining Sea</h2>
 
 <p>Another approach is to map the airports by their physical location. This is easy to do on the ggplot2-side since the latitude/longitudes were added to the data set for the previous chart, so all we have to do is tell ggplot2 to use those instead, where the base aesthetics of the ggplot statement now become:</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r">ggplot<span class="p">(</span>df_net<span class="p">,</span> aes<span class="p">(</span>x <span class="o">=</span> lon<span class="p">,</span> y <span class="o">=</span> lat<span class="p">,</span> xend <span class="o">=</span> endlon<span class="p">,</span> yend <span class="o">=</span> endlat<span class="p">))</span>
-</code></pre></div>
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">ggplot</span><span class="p">(</span><span class="n">df_net</span><span class="p">,</span><span class="w"> </span><span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lon</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lat</span><span class="p">,</span><span class="w"> </span><span class="n">xend</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">endlon</span><span class="p">,</span><span class="w"> </span><span class="n">yend</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">endlat</span><span class="p">))</span><span class="w">
+</span></code></pre></div>
 <p>The result is a highly-abstract depiction of the United States. (+ Alaska and Hawaii)</p>
 
 <p><img src="/img/interactive-network/ggplot2.png" alt=""></p>
@@ -540,6 +540,13 @@
             
             <article class="latest-tuts">
                 <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="/2017/11/magic-the-gifening/">Making Magic: the GIFening</a></h5>
+                    <small class="latest-tuts-content-time"> Nov 7, 2017</small>
+                </div>
+            </article>
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
                     <h5 class="latest-tuts-content-title"><a href="/2017/08/ggplot2-web/">How to Make High Quality Data Visualizations for Websites With R and ggplot2</a></h5>
                     <small class="latest-tuts-content-time"> Aug 14, 2017</small>
                 </div>
@@ -570,13 +577,6 @@
                 <div class="latest-tuts-content">
                     <h5 class="latest-tuts-content-title"><a href="/2017/06/keras-cntk/">Benchmarking CNTK on Keras: is it Better at Deep Learning than TensorFlow?</a></h5>
                     <small class="latest-tuts-content-time"> Jun 12, 2017</small>
-                </div>
-            </article>
-            
-            <article class="latest-tuts">
-                <div class="latest-tuts-content">
-                    <h5 class="latest-tuts-content-title"><a href="/2017/06/r-notebooks/">Advantages of Using R Notebooks For Data Analysis Instead of Jupyter Notebooks</a></h5>
-                    <small class="latest-tuts-content-time"> Jun 6, 2017</small>
                 </div>
             </article>
             

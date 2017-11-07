@@ -284,56 +284,56 @@
 
 <p>Let&rsquo;s say we want to scrape the New York Times&rsquo; Facebook page. We would send a request to https://graph.facebook.com/v2.4/nytimes?access_token=XXXXX and we would get:</p>
 
-<figure class="highlight"><pre><code class="language-json" data-lang="json"><span class="p">{</span>
-        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;5281959998&quot;</span><span class="p">,</span> 
-        <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;The New York Times&quot;</span>
-<span class="p">}</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-json" data-lang="json"><span class="p">{</span><span class="w">
+        </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"5281959998"</span><span class="p">,</span><span class="w"> 
+        </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"The New York Times"</span><span class="w">
+</span><span class="p">}</span></code></pre></figure>
 
 <p>i.e., the page metadata. Sending a request to /nytimes/feed results in what we want:</p>
 
-<figure class="highlight"><pre><code class="language-json" data-lang="json"><span class="p">{</span>
-        <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span>
-            <span class="p">{</span>
-                <span class="nt">&quot;created_time&quot;</span><span class="p">:</span> <span class="s2">&quot;2015-07-20T01:25:01+0000&quot;</span><span class="p">,</span> 
-                <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;5281959998_10150628157724999&quot;</span><span class="p">,</span> 
-                <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;The planned megalopolis, a metropolitan area that would be about 6 times the size of New York\u2019s, is meant to revamp northern China\u2019s economy and become a laboratory for modern urban growth.&quot;</span>
-            <span class="p">},</span> 
-            <span class="p">{</span>
-                <span class="nt">&quot;created_time&quot;</span><span class="p">:</span> <span class="s2">&quot;2015-07-19T22:55:01+0000&quot;</span><span class="p">,</span> 
-                <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;5281959998_10150628161129999&quot;</span><span class="p">,</span> 
-                <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;\&quot;It\u2019s safe to say that federal agencies are not where we want them to be across the board,\&quot; said President Barack Obama&#39;s top cybersecurity adviser. \&quot;We clearly need to be moving faster.\&quot;&quot;</span>
-            <span class="p">}</span>
-         <span class="p">]</span>
+<figure class="highlight"><pre><code class="language-json" data-lang="json"><span class="p">{</span><span class="w">
+        </span><span class="s2">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+            </span><span class="p">{</span><span class="w">
+                </span><span class="s2">"created_time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2015-07-20T01:25:01+0000"</span><span class="p">,</span><span class="w"> 
+                </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"5281959998_10150628157724999"</span><span class="p">,</span><span class="w"> 
+                </span><span class="s2">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"The planned megalopolis, a metropolitan area that would be about 6 times the size of New York</span><span class="se">\u</span><span class="s2">2019s, is meant to revamp northern China</span><span class="se">\u</span><span class="s2">2019s economy and become a laboratory for modern urban growth."</span><span class="w">
+            </span><span class="p">},</span><span class="w"> 
+            </span><span class="p">{</span><span class="w">
+                </span><span class="s2">"created_time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2015-07-19T22:55:01+0000"</span><span class="p">,</span><span class="w"> 
+                </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"5281959998_10150628161129999"</span><span class="p">,</span><span class="w"> 
+                </span><span class="s2">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"</span><span class="se">\"</span><span class="s2">It</span><span class="se">\u</span><span class="s2">2019s safe to say that federal agencies are not where we want them to be across the board,</span><span class="se">\"</span><span class="s2"> said President Barack Obama's top cybersecurity adviser. </span><span class="se">\"</span><span class="s2">We clearly need to be moving faster.</span><span class="se">\"</span><span class="s2">"</span><span class="w">
+            </span><span class="p">}</span><span class="w">
+         </span><span class="p">]</span><span class="w">
 
             
-<span class="p">}</span></code></pre></figure>
+</span><span class="p">}</span></code></pre></figure>
 
 <p>Now we get the post data. But not much of it. In Graph API v2.4, the default behavior is to return very, very little metadata for statuses in order to reduce bandwidth, with the expectation that the user will request the necessary fields.</p>
 
 <p>So let&rsquo;s request <em>all</em> the fields we want. This results in a very long URL not shown here which causes the posts feed to have all the data we need:</p>
 
-<figure class="highlight"><pre><code class="language-json" data-lang="json"><span class="p">{</span>
-    <span class="nt">&quot;comments&quot;</span><span class="p">:</span> <span class="p">{},</span>
-    <span class="nt">&quot;summary&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;order&quot;</span><span class="p">:</span> <span class="s2">&quot;ranked&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;total_count&quot;</span><span class="p">:</span> <span class="mi">31</span>
-    <span class="p">},</span>
-    <span class="nt">&quot;created_time&quot;</span><span class="p">:</span> <span class="s2">&quot;2015-07-20T01:25:01+0000&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;5281959998_10150628157724999&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;likes&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="p">{},</span>
-        <span class="nt">&quot;summary&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;total_count&quot;</span><span class="p">:</span> <span class="mi">278</span>
-        <span class="p">}</span>
-    <span class="p">},</span>
-    <span class="nt">&quot;link&quot;</span><span class="p">:</span> <span class="s2">&quot;http://nyti.ms/1Jr6LhU&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;The planned megalopolis, a metropolitan area that would be about 6 times the size of New York’s, is meant to revamp northern China’s economy and become a laboratory for modern urban growth.&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;China Molds a Supercity Around Beijing, Promising to Change Lives&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;shares&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;count&quot;</span><span class="p">:</span> <span class="mi">50</span>
-    <span class="p">},</span>
-    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;link&quot;</span>
-<span class="p">}</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-json" data-lang="json"><span class="p">{</span><span class="w">
+    </span><span class="s2">"comments"</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span><span class="w">
+    </span><span class="s2">"summary"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="s2">"order"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ranked"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"total_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">31</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="s2">"created_time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2015-07-20T01:25:01+0000"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"5281959998_10150628157724999"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"likes"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="s2">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span><span class="w">
+        </span><span class="s2">"summary"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="s2">"total_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">278</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="s2">"link"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://nyti.ms/1Jr6LhU"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"The planned megalopolis, a metropolitan area that would be about 6 times the size of New York’s, is meant to revamp northern China’s economy and become a laboratory for modern urban growth."</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"China Molds a Supercity Around Beijing, Promising to Change Lives"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"shares"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="s2">"count"</span><span class="p">:</span><span class="w"> </span><span class="mi">50</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="s2">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"link"</span><span class="w">
+</span><span class="p">}</span></code></pre></figure>
 
 <h2>Post Processing</h2>
 
@@ -488,6 +488,13 @@
             
             <article class="latest-tuts">
                 <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="/2017/11/magic-the-gifening/">Making Magic: the GIFening</a></h5>
+                    <small class="latest-tuts-content-time"> Nov 7, 2017</small>
+                </div>
+            </article>
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
                     <h5 class="latest-tuts-content-title"><a href="/2017/08/ggplot2-web/">How to Make High Quality Data Visualizations for Websites With R and ggplot2</a></h5>
                     <small class="latest-tuts-content-time"> Aug 14, 2017</small>
                 </div>
@@ -518,13 +525,6 @@
                 <div class="latest-tuts-content">
                     <h5 class="latest-tuts-content-title"><a href="/2017/06/keras-cntk/">Benchmarking CNTK on Keras: is it Better at Deep Learning than TensorFlow?</a></h5>
                     <small class="latest-tuts-content-time"> Jun 12, 2017</small>
-                </div>
-            </article>
-            
-            <article class="latest-tuts">
-                <div class="latest-tuts-content">
-                    <h5 class="latest-tuts-content-title"><a href="/2017/06/r-notebooks/">Advantages of Using R Notebooks For Data Analysis Instead of Jupyter Notebooks</a></h5>
-                    <small class="latest-tuts-content-time"> Jun 6, 2017</small>
                 </div>
             </article>
             

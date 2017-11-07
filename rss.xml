@@ -4,7 +4,7 @@
   <title><![CDATA[minimaxir | Max Woolf's Blog]]></title>
   <link href="http://minimaxir.com/rss.xml" rel="self"/>
   <link href="http://minimaxir.com/"/>
-  <updated>2017-08-28T07:49:39-07:00</updated>
+  <updated>2017-11-07T08:15:17-08:00</updated>
   <id>http://minimaxir.com/</id>
   <author>
     <name><![CDATA[Max Woolf]]></name>
@@ -12,6 +12,105 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Making Magic: the GIFening]]></title>
+    <link href="http://minimaxir.com/2017/11/magic-the-gifening/"/>
+    <updated>2017-11-07T08:10:00-08:00</updated>
+    <id>http://minimaxir.com/2017/11/magic-the-gifening</id>
+    <content type="html"><![CDATA[<p>After working at <a href="https://www.buzzfeed.com/">BuzzFeed</a> for a few months, I&rsquo;m now an expert in the proper usage of GIFs. My favorite GIF tool is the <a href="https://giphy.com">/giphy</a> command in <a href="https://slack.com">Slack</a>, which <a href="https://get.slack.help/hc/en-us/articles/204714258-Add-Giphy-search-to-Slack">puts a random GIF</a> according to a given phrase into the chat, with better-than-expected appropriateness of the phrase to the GIF.</p>
+
+<p>Completely unrelated, I recently rediscovered <a href="https://github.com/Zulko/moviepy">MoviePy</a>, a Python library for programmatically editing videos and GIFs without requiring an expensive and slow video editing program. I had played with MoviePy a bit in 2014 when it was <a href="http://zulko.github.io/blog/2014/01/23/making-animated-gifs-from-video-files-with-python/#">first released</a> and <a href="https://news.ycombinator.com/item?id=7121104">became viral</a>, but couldn&rsquo;t think of a creative application for the library at the time.</p>
+
+<p>On a boring weekend I had a silly idea: why not create a program to superimpose appropriate GIFs onto <a href="https://magic.wizards.com/en">Magic: the Gathering</a> cards using these two tools? And even better, why not <em>automate</em> both the creation of the card GIFs and the tweeting of a new GIF every few hours?</p>
+
+<p><span><blockquote class="twitter-tweet" data-lang="en"><p lang="und" dir="ltr"><a href="https://t.co/sxqKUYHmfv">pic.twitter.com/sxqKUYHmfv</a></p>&mdash; Magic: The GIFening (@MTGIFening) <a href="https://twitter.com/MTGIFening/status/913993793052880897?ref_src=twsrc%5Etfw">September 30, 2017</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> </span></p>
+
+<p>As it turns out, creating a Twitter bot to tweet Magic card GIFs is <a href="https://github.com/minimaxir/magic-the-gifening">easy to implement</a>, but with a few interesting caveats. The end result is <a href="https://twitter.com/MTGIFening">@MTGIFening</a>. Here&rsquo;s how I typically create my crazy apps, step by step.</p>
+
+<h2>Feasibility Analysis</h2>
+
+<p>Like all my data analysis projects, I checked if it&rsquo;s possible to complete the project in a way that won&rsquo;t suck up a lot of free time hacking out convoluted solutions.</p>
+
+<p><strong>Can I easily get a list of all Magic cards?</strong> Yes, via <a href="https://mtgjson.com">MTG JSON</a>, which has a downloadable JSON dump of all Magic cards.</p>
+
+<p><strong>Can I easily get random GIFs from GIPHY?</strong> Yes, there is a /random endpoint in the <a href="https://developers.giphy.com">GIPHY API</a> which returns a random GIF for a specified phrase, like the /giphy Slack command. The GIPHY API requires registration, but has generous rate limits (10k requests/day).</p>
+
+<p><strong>Can I easily composite a GIF onto an image with MoviePy?</strong> Yes, compositing is a <em>primary use case</em> for the library, with many tutorials in the documentation.</p>
+
+<p><strong>Can I easily get an image for a specified Magic card?</strong> Unsure. The official tool for viewing Magic card images is <a href="http://gatherer.wizards.com/Pages/Default.aspx">Gatherer</a>. After checking the image source for the cards, each card image in Gatherer has a URL that follows this schema: <code>http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=XXXXX&amp;type=card</code>. That&rsquo;s easy to understand, but what&rsquo;s a multiverseid?</p>
+
+<p><strong>Is there a mapping of multiverseid to Magic cards from MTG JSON?</strong> Yes, the multiverseid for each Magic card is <a href="https://mtgjson.com/documentation.html">present as a field</a> in the &ldquo;All Sets&rdquo; dataset (but not the &ldquo;All Cards&rdquo; dataset oddly). A quick manual check showed that using the multiverseid from the MTG JSON dataset results in the correct image from Gatherer.</p>
+
+<p>Everything looked good to me. Let&rsquo;s dive right in, <a href="https://github.com/minimaxir/magic-the-gifening/commits/master">commit by commit</a>.</p>
+
+<h2>Implementing Magic: The GIFening</h2>
+
+<p>The first thing I did was process the Magic card data, although for this project I limit the type of cards to Instants and Sorceries, which in Magic game mechanics represent &ldquo;actions&rdquo; and are more suitable for GIFs. <em>For each set, retrieve the cards in the set; for each card, if it&rsquo;s an Instant/Sorcery, log its name and multiverseid</em>. Thanks to the magic of Python, this pseudocode is close to the <a href="https://github.com/minimaxir/magic-the-gifening/commit/3f626ae5d49a567322c6237210ab554281d462f4">actual code</a>.</p>
+
+<p>The next objective was to implement the GIPHY API to get a GIF. The very first thing I did is add a local secrets file containing my personal API key for GIPHY, and <em>immediately</em> log the secrets file in a <code>.gitignore</code> so I don&rsquo;t accidentally leak it. GIPHY has an <a href="https://developers.giphy.com/explorer/">API Explorer</a> which allows developers to quickly test an example input phrase and see corresponding output from the API. For example, here&rsquo;s part of what the API returns for <a href="http://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=151108">Invert the Skies</a> (although since it&rsquo;s the /random endpoint, your results may vary):</p>
+<div class="highlight"><pre><code class="language-json" data-lang="json"><span class="s2">"image_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://media1.giphy.com/media/plbsEwLwQvzLa/giphy.gif"</span><span class="p">,</span><span class="w">
+</span><span class="s2">"image_mp4_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://media1.giphy.com/media/plbsEwLwQvzLa/giphy.mp4"</span><span class="p">,</span><span class="w">
+</span><span class="s2">"image_frames"</span><span class="p">:</span><span class="w"> </span><span class="s2">"31"</span><span class="p">,</span><span class="w">
+</span><span class="s2">"image_width"</span><span class="p">:</span><span class="w"> </span><span class="s2">"480"</span><span class="p">,</span><span class="w">
+</span><span class="s2">"image_height"</span><span class="p">:</span><span class="w"> </span><span class="s2">"270"</span><span class="p">,</span><span class="w">
+</span></code></pre></div>
+<p>The <code>image_url</code> corresponds to the <a href="https://media1.giphy.com/media/plbsEwLwQvzLa/giphy.gif">raw GIF</a> unsurprisingly, but as a bonus, GIPHY also includes a link to a <a href="https://media1.giphy.com/media/plbsEwLwQvzLa/giphy.mp4">MP4 video</a> of the GIF, which has a much smaller file size and is better to use for compositing. The API output also includes the width and height (in pixels) of the GIF. The art in a Magic card follows a 4:3 <a href="https://en.wikipedia.org/wiki/Aspect_ratio_(image)">aspect ratio</a>, i.e. the width divided by the height equals 1.33. If the dimensions of the GIF are too far outside that ratio, resizing the GIFs to fit the Magic art frame will result in noticeable distortion. I minimized this distortion by checking and seeing if the random GIF has a width:height ratio between 1.2 and 1.6 before accepting it. Since there&rsquo;s a chance for failure (along with potential unknown bugs that the random GIF could hit), I added a limit to the number of attempts to retrieve an appropriate GIF. All done in <a href="https://github.com/minimaxir/magic-the-gifening/commit/c2e4b6b9d58d1aa360f6f67a049ec962d0430b91">one commit</a>.</p>
+
+<p>Getting the card image from Gatherer is <a href="https://github.com/minimaxir/magic-the-gifening/commit/c92440cd459640da9346cf31a79e768ac8641ea9">trivial</a>, so then I worked on combining the GIF and the card image. MoviePy has a <a href="http://zulko.github.io/moviepy/getting_started/compositing.html">good tutorial</a> for specifying the position of one clip onto another by specifying the upper-left corner of the bottom-image where the GIF will be placed, while simultaneously resizing the GIF to a given width and height.</p>
+
+<p><img src="/img/magic-the-gifening/videoWH.jpeg" alt=""></p>
+
+<p>I manually zoomed into the card image using a photo editor (<a href="http://www.pixelmator.com/mac/">Pixelmator</a>) to find the upper-left corner of the card art:</p>
+
+<p><img src="/img/magic-the-gifening/zoomin.png" alt=""></p>
+
+<p>In this case, the pixel coordinates for the upper-left corner of the card art is <code>(17,35)</code> The upper-right and bottom-left corners can be used to determine the target width and height of the GIF respectively, and can be found the same way. Simply composite the Magic card with the resized-and-positioned GIF, set the duration of the &ldquo;new&rdquo; GIF to that of the source GIF, and <code>write_gif</code>. <a href="https://github.com/minimaxir/magic-the-gifening/commit/55a52ddfc7f43d128c08c8a243254e08a171de5e">That&rsquo;s that</a>!</p>
+
+<p>To finish things up, I wrote a script to load all the cards from the processed card list into memory, select a card at random, use the helper functions to retrieve a GIPHY GIF and composite it with the card, then upload the resulting GIF to Twitter. I haven&rsquo;t worked with the Twitter API in awhile; a quick Google search for a modern Twitter API client in Python returns <a href="https://github.com/ryanmcgrath/twython">Twython</a>, which conveniently includes an example on <a href="https://twython.readthedocs.io/en/latest/usage/advanced_usage.html#updating-status-with-image">how to upload an image to Twitter</a>! And after running the script a few times, the full workflow indeed works!</p>
+
+<p>Not bad for a couple hours of scripting. But I was not close to finished.</p>
+
+<h2>The Endless Fun of QA</h2>
+
+<p>One of the reasons I enjoy doing silly projects (especially silly data projects) is because I tend to hit unsexy edge cases which typical development blogs and tutorials rarely discuss. In this case, I quickly found that the Twitter API has a <a href="https://developer.twitter.com/en/docs/media/upload-media/overview">5 MB limit</a> on image uploads, which is a problem as the resulting GIFs are huge and often randomly exceed that limit (looking back on it, there is a different endpoint intended for GIF uploads, counterintuitively).</p>
+
+<p>In actuality, GIFs on Twitter are actually displayed as videos, in order to save bandwidth. Since Twitter transcodes uploaded GIFs anyways, it makes more sense to upload <em>audioless videos</em> instead of GIFs (and as a bonus, after the death of Vine, Twitter will auto-loop videos less than 6 seconds).</p>
+
+<p>Creating videos is easy to do with MoviePy, just do a <code>write_videofile</code> instead of <code>write_gif</code>, and use Twython&rsquo;s video uploading example to upload. The result is an &ldquo;unknown&rdquo; error on upload. I verify by uploading the video manually to Twitter&hellip;and the Twitter UI fails to recognize it as a video. But the video itself plays fine in QuickTime. This is the annoying type of coding problem that&rsquo;s too specific for <a href="https://stackoverflow.com">Stack Overflow</a> to provide help. After a bit of trial and error involving video codecs and settings, the solution was to pass a <code>-pix_fmt yuv420p</code> parameter to the video encoder because Twitter apparently only likes legacy video container formats. Oh well. It worked, and both Twitter manual and API uploads worked successfully.</p>
+
+<p>I also ran into an issue where Twitter refused to accept supershort video, where the source GIF was only a couple frames. A solution is to loop the GIF to atleast 2 seconds if it&rsquo;s shorter, which somehow fixed that problem.</p>
+
+<p>(As I was writing this post a month later, I discovered that both of these video upload constraints <a href="https://developer.twitter.com/en/docs/media/upload-media/uploading-media/media-best-practices">are indeed covered in the Twitter documentation</a>, which makes me look very silly in retrospect!)</p>
+
+<p>These changes fixed most of the upload issues. However, when writing the initial script, I forgot that the borders of Magic cards have <a href="https://mtg.gamepedia.com/Card_frame">changed over the years</a>, which also changed the position and size of the card art. <strong>Is there a way to check when a card was printed?</strong> Yes, the &ldquo;All Sets&rdquo; dataset contains the release date of the set, so with that, I can <a href="https://github.com/minimaxir/magic-the-gifening/commit/0dfb678f1955f50b54b632e57087df847ec16f05">hard code</a> the dates of sets where the borders changed, and note the border type at printing time. I then used Pixelmator again to note the new art dimensions for that type of border, and used conditional statements to retrieve the correct dimensions for the type of border when compositing.</p>
+
+<p>Lastly, I added general <code>try/catch</code> error handling to prevent the script from breaking fatally and to try again with a different card if it does. That covers most of the edge cases!</p>
+
+<h2>Results</h2>
+
+<p>After running the script many times after all the fixes in place, I felt the Twitter account was good to go. The initial results showed a lot of promise:</p>
+
+<p><span><blockquote class="twitter-tweet" data-lang="en"><p lang="und" dir="ltr"><a href="https://t.co/BsZ7eIcunl">pic.twitter.com/BsZ7eIcunl</a></p>&mdash; Magic: The GIFening (@MTGIFening) <a href="https://twitter.com/MTGIFening/status/913981726182981632?ref_src=twsrc%5Etfw">September 30, 2017</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script></span></p>
+
+<p><span><blockquote class="twitter-tweet" data-lang="en"><p lang="und" dir="ltr"><a href="https://t.co/picJJk6mBm">pic.twitter.com/picJJk6mBm</a></p>&mdash; Magic: The GIFening (@MTGIFening) <a href="https://twitter.com/MTGIFening/status/912525635632775168?ref_src=twsrc%5Etfw">September 26, 2017</a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script></span></p>
+
+<p>Surprisingly, the script was able to generate <em>visual puns</em> in cards, completely by chance!</p>
+
+<p><span><blockquote class="twitter-tweet" data-lang="en"><p lang="und" dir="ltr"><a href="https://t.co/AnpzU8xVho">pic.twitter.com/AnpzU8xVho</a></p>&mdash; Magic: The GIFening (@MTGIFening) <a href="https://twitter.com/MTGIFening/status/913972922330497024?ref_src=twsrc%5Etfw">September 30, 2017</a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script></span></p>
+
+<p><span><blockquote class="twitter-tweet" data-lang="en"><p lang="und" dir="ltr"><a href="https://t.co/01vGRcq2Mj">pic.twitter.com/01vGRcq2Mj</a></p>&mdash; Magic: The GIFening (@MTGIFening) <a href="https://twitter.com/MTGIFening/status/913987002235740160?ref_src=twsrc%5Etfw">September 30, 2017</a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script></span></p>
+
+<p>The next step was to automate the script to run and post Tweets at a specific time interval. After experimenting a bit, I found that <a href="https://github.com/minimaxir/magic-the-gifening/commit/f355d5e80503c67c6e1a0e5fd1b744faf3cf8223">the best solution</a> was to use a <a href="https://en.wikipedia.org/wiki/Cron">cron job</a> in a <a href="https://www.docker.com/what-docker">Docker container</a> containing the script and its dependencies, for complicated reasons which will require another blog post to explain. </p>
+
+<p>After letting Magic: the GIFening run for a few days without fatal issues, I decided to publicize the Twitter account and posted it to the <a href="https://www.reddit.com/r/magicTCG/comments/7598g5/i_made_a_twitter_bot_which_tweets_magic_cards/">/r/MagicTCG subreddit</a> and <a href="https://news.ycombinator.com/item?id=15449955">Hacker News</a>. To my surprise, the project performed extremely well on both with 100+ upvotes on each, and the <a href="https://github.com/minimaxir/magic-the-gifening">GitHub repo</a> itself received 100+ Stars.</p>
+
+<p>In all, making Magic: the GIFening was a fun project. In retrospect, talking though the commits made me realize I performed many bad coding practices in a haste to get the project done ASAP (specifically, checking to see if certain edge cases are documented, violating <a href="https://en.wikipedia.org/wiki/Don%27t_repeat_yourself">DRY</a>, and forgetting to remove specific types of cards like <a href="https://twitter.com/MTGIFening/status/924969160307744769">split cards</a>). Obviously there isn&rsquo;t a multimillion-dollar startup opportunity in creating random GIFs of Magic cards, but I&rsquo;ll fix a few remaining issues and keep the Twitter bot running.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[How to Make High Quality Data Visualizations for Websites With R and ggplot2]]></title>
@@ -31,43 +130,43 @@
 <p><img src="/img/ggplot2-web/mpg.png" alt=""></p>
 
 <p>Let&rsquo;s say you want to create a <a href="https://en.wikipedia.org/wiki/Scatter_plot">scatter plot</a>. Following <a href="http://ggplot2.tidyverse.org/reference/geom_smooth.html">a great example</a> from the ggplot2 documentation, let&rsquo;s plot the highway mileage of the car vs. the <a href="https://en.wikipedia.org/wiki/Engine_displacement">volume displacement</a> of the engine. In ggplot2, first you instantiate the chart with the <code>ggplot()</code> function, specifying the source dataset and the core aesthetics you want to plot, such as x, y, color, and fill. In this case, we set the core aesthetics to x = displacement and y = mileage, and add a <code>geom_point()</code> layer to make a scatter plot:</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r">p <span class="o">&lt;-</span> ggplot<span class="p">(</span>mpg<span class="p">,</span> aes<span class="p">(</span>x <span class="o">=</span> displ<span class="p">,</span> y <span class="o">=</span> hwy<span class="p">))</span> <span class="o">+</span>
-            geom_point<span class="p">()</span>
-</code></pre></div>
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">p</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ggplot</span><span class="p">(</span><span class="n">mpg</span><span class="p">,</span><span class="w"> </span><span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">displ</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hwy</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
+            </span><span class="n">geom_point</span><span class="p">()</span><span class="w">
+</span></code></pre></div>
 <p><img src="/img/ggplot2-web/plot1.png" alt=""></p>
 
 <p>As we can see, there is a negative correlation between the two metrics. I&rsquo;m sure you&rsquo;ve seen plots like these around the internet before. But with only a couple of lines of codes, you can make them look more contemporary.</p>
 
 <p>ggplot2 lets you add a well-designed theme with just one line of code. Relatively new to <code>ggplot2</code> is <code>theme_minimal()</code>, which <a href="http://ggplot2.tidyverse.org/reference/ggtheme.html">generates</a> a muted style similar to <a href="http://fivethirtyeight.com">FiveThirtyEight</a>&rsquo;s modern data visualizations:</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r">p <span class="o">&lt;-</span> p <span class="o">+</span>
-    theme_minimal<span class="p">()</span>
-</code></pre></div>
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">p</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">+</span><span class="w">
+    </span><span class="n">theme_minimal</span><span class="p">()</span><span class="w">
+</span></code></pre></div>
 <p><img src="/img/ggplot2-web/plot2.png" alt=""></p>
 
 <p>But we can still add color. Setting a color aesthetic on a character/categorical variable will set the colors of the corresponding points, making it easy to differentiate at a glance.</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r">p <span class="o">&lt;-</span> ggplot<span class="p">(</span>mpg<span class="p">,</span> aes<span class="p">(</span>x <span class="o">=</span> displ<span class="p">,</span> y <span class="o">=</span> hwy<span class="p">,</span> color<span class="o">=</span><span class="kp">class</span><span class="p">))</span> <span class="o">+</span>
-            geom_point<span class="p">()</span> <span class="o">+</span>
-            theme_minimal<span class="p">()</span>
-</code></pre></div>
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">p</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ggplot</span><span class="p">(</span><span class="n">mpg</span><span class="p">,</span><span class="w"> </span><span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">displ</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hwy</span><span class="p">,</span><span class="w"> </span><span class="n">color</span><span class="o">=</span><span class="n">class</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
+            </span><span class="n">geom_point</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w">
+            </span><span class="n">theme_minimal</span><span class="p">()</span><span class="w">
+</span></code></pre></div>
 <p><img src="/img/ggplot2-web/plot3.png" alt=""></p>
 
 <p>Adding the color aesthetic certainly makes things much prettier. ggplot2 automatically adds a legend for the colors as well. 
 However, for this particular visualization, it is difficult to see trends in the points for each class. A easy way around this is to add a <a href="https://en.wikipedia.org/wiki/Least_squares">least squares regression</a> trendline for each class <a href="http://ggplot2.tidyverse.org/reference/geom_smooth.html">using</a> <code>geom_smooth()</code> (which normally adds a smoothed line, but since there isn&rsquo;t a lot of data for each group, we force it to a linear model and do not plot confidence intervals)</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r">p <span class="o">&lt;-</span> p <span class="o">+</span>
-    geom_smooth<span class="p">(</span>method <span class="o">=</span> <span class="s">&quot;lm&quot;</span><span class="p">,</span> se <span class="o">=</span> <span class="bp">F</span><span class="p">)</span>
-</code></pre></div>
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">p</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">+</span><span class="w">
+    </span><span class="n">geom_smooth</span><span class="p">(</span><span class="n">method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"lm"</span><span class="p">,</span><span class="w"> </span><span class="n">se</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">F</span><span class="p">)</span><span class="w">
+</span></code></pre></div>
 <p><img src="/img/ggplot2-web/plot4.png" alt=""></p>
 
 <p>Pretty neat, and now comparative trends are much more apparent! For example, pickups and SUVs have similar efficiency, which makes intuitive sense.</p>
 
 <p>The chart axes should be labeled (<em>always</em> label your charts!). All the typical labels, like <code>title</code>, <code>x</code>-axis, and <code>y</code>-axis can be done with the <code>labs()</code> function. But relatively new to ggplot2 are the <code>subtitle</code> and <code>caption</code> fields, both of do what you expect:</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r">p <span class="o">&lt;-</span> p <span class="o">+</span>
-    labs<span class="p">(</span>title<span class="o">=</span><span class="s">&quot;Efficiency of Popular Models of Cars&quot;</span><span class="p">,</span>
-         subtitle<span class="o">=</span><span class="s">&quot;By Class of Car&quot;</span><span class="p">,</span>
-         x<span class="o">=</span><span class="s">&quot;Engine Displacement (liters)&quot;</span><span class="p">,</span>
-         y<span class="o">=</span><span class="s">&quot;Highway Miles per Gallon&quot;</span><span class="p">,</span>
-         caption<span class="o">=</span><span class="s">&quot;by Max Woolf — minimaxir.com&quot;</span><span class="p">)</span>
-</code></pre></div>
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">p</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">+</span><span class="w">
+    </span><span class="n">labs</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"Efficiency of Popular Models of Cars"</span><span class="p">,</span><span class="w">
+         </span><span class="n">subtitle</span><span class="o">=</span><span class="s2">"By Class of Car"</span><span class="p">,</span><span class="w">
+         </span><span class="n">x</span><span class="o">=</span><span class="s2">"Engine Displacement (liters)"</span><span class="p">,</span><span class="w">
+         </span><span class="n">y</span><span class="o">=</span><span class="s2">"Highway Miles per Gallon"</span><span class="p">,</span><span class="w">
+         </span><span class="n">caption</span><span class="o">=</span><span class="s2">"by Max Woolf — minimaxir.com"</span><span class="p">)</span><span class="w">
+</span></code></pre></div>
 <p><img src="/img/ggplot2-web/plot5.png" alt=""></p>
 
 <p>That&rsquo;s a pretty good start. Now let&rsquo;s take it to the next level.</p>
@@ -79,18 +178,18 @@ However, for this particular visualization, it is difficult to see trends in the
 <p>R IDEs such as <a href="https://www.rstudio.com">RStudio</a> have a chart-saving UI with the typical size/filetype options. But if you save an image from this UI, the shapes and texts of the resulting image will be heavily aliased (R <a href="https://danieljhocking.wordpress.com/2013/03/12/high-resolution-figures-in-r/">renders images at 72 dpi</a> by default, which is much lower than that of modern HiDPI/Retina displays).</p>
 
 <p>The data visualizations used earlier in this post were generated in-line as a part of an <a href="http://rmarkdown.rstudio.com/r_notebooks.html">R Notebook</a>, but it is surprisingly difficult to extract the generated chart as a separate file. But ggplot2 also has <code>ggsave()</code>, which saves the image to disk using antialiasing and makes the fonts/shapes in the chart look much better, and assumes a default dpi of 300. Saving charts using <code>ggsave()</code>, and adjusting the sizes of the text and geoms to compensate for the higher dpi, makes the charts look very presentable. A width of 4 and a height of 3 results in a 1200x900px image, which if posted on a blog with a content width of ~600px (like mine), will render at full resolution on HiDPI/Retina displays, or downsample appropriately otherwise. Due to modern PNG compression, the file size/bandwidth cost for using larger images is minimal.</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r">p <span class="o">&lt;-</span> ggplot<span class="p">(</span>mpg<span class="p">,</span> aes<span class="p">(</span>x <span class="o">=</span> displ<span class="p">,</span> y <span class="o">=</span> hwy<span class="p">,</span> color<span class="o">=</span><span class="kp">class</span><span class="p">))</span> <span class="o">+</span> 
-    geom_smooth<span class="p">(</span>method <span class="o">=</span> <span class="s">&quot;lm&quot;</span><span class="p">,</span> se<span class="o">=</span><span class="bp">F</span><span class="p">,</span> size<span class="o">=</span><span class="m">0.5</span><span class="p">)</span> <span class="o">+</span>
-    geom_point<span class="p">(</span>size<span class="o">=</span><span class="m">0.5</span><span class="p">)</span> <span class="o">+</span>
-    theme_minimal<span class="p">(</span>base_size<span class="o">=</span><span class="m">9</span><span class="p">)</span> <span class="o">+</span>
-    labs<span class="p">(</span>title<span class="o">=</span><span class="s">&quot;Efficiency of Popular Models of Cars&quot;</span><span class="p">,</span>
-         subtitle<span class="o">=</span><span class="s">&quot;By Class of Car&quot;</span><span class="p">,</span>
-         x<span class="o">=</span><span class="s">&quot;Engine Displacement (liters)&quot;</span><span class="p">,</span>
-         y<span class="o">=</span><span class="s">&quot;Highway Miles per Gallon&quot;</span><span class="p">,</span>
-         caption<span class="o">=</span><span class="s">&quot;by Max Woolf — minimaxir.com&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">p</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ggplot</span><span class="p">(</span><span class="n">mpg</span><span class="p">,</span><span class="w"> </span><span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">displ</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hwy</span><span class="p">,</span><span class="w"> </span><span class="n">color</span><span class="o">=</span><span class="n">class</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w"> 
+    </span><span class="n">geom_smooth</span><span class="p">(</span><span class="n">method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"lm"</span><span class="p">,</span><span class="w"> </span><span class="n">se</span><span class="o">=</span><span class="nb">F</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="o">=</span><span class="m">0.5</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+    </span><span class="n">geom_point</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="m">0.5</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+    </span><span class="n">theme_minimal</span><span class="p">(</span><span class="n">base_size</span><span class="o">=</span><span class="m">9</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+    </span><span class="n">labs</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"Efficiency of Popular Models of Cars"</span><span class="p">,</span><span class="w">
+         </span><span class="n">subtitle</span><span class="o">=</span><span class="s2">"By Class of Car"</span><span class="p">,</span><span class="w">
+         </span><span class="n">x</span><span class="o">=</span><span class="s2">"Engine Displacement (liters)"</span><span class="p">,</span><span class="w">
+         </span><span class="n">y</span><span class="o">=</span><span class="s2">"Highway Miles per Gallon"</span><span class="p">,</span><span class="w">
+         </span><span class="n">caption</span><span class="o">=</span><span class="s2">"by Max Woolf — minimaxir.com"</span><span class="p">)</span><span class="w">
 
-ggsave<span class="p">(</span><span class="s">&quot;tutorial-0.png&quot;</span><span class="p">,</span> p<span class="p">,</span> width<span class="o">=</span><span class="m">4</span><span class="p">,</span> height<span class="o">=</span><span class="m">3</span><span class="p">)</span>
-</code></pre></div>
+</span><span class="n">ggsave</span><span class="p">(</span><span class="s2">"tutorial-0.png"</span><span class="p">,</span><span class="w"> </span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="n">width</span><span class="o">=</span><span class="m">4</span><span class="p">,</span><span class="w"> </span><span class="n">height</span><span class="o">=</span><span class="m">3</span><span class="p">)</span><span class="w">
+</span></code></pre></div>
 <p><img src="/img/ggplot2-web/tutorial-0.png" alt=""></p>
 
 <p>Compare to the previous non-ggsave chart, which is more blurry around text/shapes:</p>
@@ -107,17 +206,17 @@ ggsave<span class="p">(</span><span class="s">&quot;tutorial-0.png&quot;</span><
 
 <p>Changing the chart font is another way to add a personal flair.
 Theme functions like <code>theme_minimal()</code> accept a <code>base_family</code> parameter. With that, you can specify any font family as the default instead of the base sans-serif. (On Windows, you may need to install the <code>extrafont</code> package first). Fonts from <a href="https://fonts.google.com">Google Fonts</a> are free and work easily with ggplot2 once installed. For example, we can use <a href="https://fonts.google.com/specimen/Roboto">Roboto</a>, Google&rsquo;s modern font which has also been getting a lot of usage on <a href="https://stackoverflow.com">Stack Overflow</a>&rsquo;s great ggplot2 <a href="https://stackoverflow.blog/2017/06/15/developers-use-spaces-make-money-use-tabs/">data visualizations</a>.</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r">p <span class="o">&lt;-</span> p <span class="o">+</span>
-    theme_minimal<span class="p">(</span>base_size<span class="o">=</span><span class="m">9</span><span class="p">,</span> base_family<span class="o">=</span><span class="s">&quot;Roboto&quot;</span><span class="p">)</span>
-</code></pre></div>
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">p</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">+</span><span class="w">
+    </span><span class="n">theme_minimal</span><span class="p">(</span><span class="n">base_size</span><span class="o">=</span><span class="m">9</span><span class="p">,</span><span class="w"> </span><span class="n">base_family</span><span class="o">=</span><span class="s2">"Roboto"</span><span class="p">)</span><span class="w">
+</span></code></pre></div>
 <p><img src="/img/ggplot2-web/tutorial-1.png" alt=""></p>
 
 <p>A general text design guideline is to use fonts of different weights/widths for different hierarchies of content. In this case, we can use a bolder condensed font for the title, and deemphasize the subtitle and caption using lighter colors, all done using the <code>theme()</code> <a href="http://ggplot2.tidyverse.org/reference/theme.html">function</a>.</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r">p <span class="o">&lt;-</span> p <span class="o">+</span> 
-    theme<span class="p">(</span>plot.subtitle <span class="o">=</span> element_text<span class="p">(</span>color<span class="o">=</span><span class="s">&quot;#666666&quot;</span><span class="p">),</span>
-          plot.title <span class="o">=</span> element_text<span class="p">(</span>family<span class="o">=</span><span class="s">&quot;Roboto Condensed Bold&quot;</span><span class="p">),</span>
-          plot.caption <span class="o">=</span> element_text<span class="p">(</span>color<span class="o">=</span><span class="s">&quot;#AAAAAA&quot;</span><span class="p">,</span> size<span class="o">=</span><span class="m">6</span><span class="p">))</span>
-</code></pre></div>
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">p</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">+</span><span class="w"> 
+    </span><span class="n">theme</span><span class="p">(</span><span class="n">plot.subtitle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">element_text</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">"#666666"</span><span class="p">),</span><span class="w">
+          </span><span class="n">plot.title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">element_text</span><span class="p">(</span><span class="n">family</span><span class="o">=</span><span class="s2">"Roboto Condensed Bold"</span><span class="p">),</span><span class="w">
+          </span><span class="n">plot.caption</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">element_text</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">"#AAAAAA"</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="o">=</span><span class="m">6</span><span class="p">))</span><span class="w">
+</span></code></pre></div>
 <p><img src="/img/ggplot2-web/tutorial-2.png" alt=""></p>
 
 <p>It&rsquo;s worth nothing that data visualizations posted on websites should be easily <em>legible</em> for mobile-device users as well, hence the intentional use of larger fonts relative to charts typically produced in the desktop-oriented Excel.</p>
@@ -129,17 +228,17 @@ Theme functions like <code>theme_minimal()</code> accept a <code>base_family</co
 <p>The &ldquo;ggplot2 colors&rdquo; for categorical variables are infamous for being the primary indicator of a chart being made with ggplot2. But there is a science to it; ggplot2 by default selects colors using the <code>scale_color_hue()</code> <a href="http://ggplot2.tidyverse.org/reference/scale_hue.html">function</a>, which selects colors in the HSL space by changing the hue [H] between 0 and 360, keeping saturation [S] and lightness [L] constant. As a result, ggplot2 selects the most <em>distinct</em> colors possible while keeping lightness constant. For example, if you have 2 different categories, ggplot2 chooses the colors with h = 0 and h = 180; if 3 colors, h = 0, h = 120, h = 240, etc.</p>
 
 <p>It&rsquo;s smart, but does make a given chart lose distinctness when many other ggplot2 charts use the same selection methodology. A quick way to take advantage of this hue dispersion while still making the colors unique is to change the lightness; by default, <code>l = 65</code>, but setting it slightly lower will make the charts look more professional/<a href="https://www.bloomberg.com">Bloomberg</a>-esque.</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r">p_color <span class="o">&lt;-</span> p <span class="o">+</span>
-        scale_color_hue<span class="p">(</span>l <span class="o">=</span> <span class="m">40</span><span class="p">)</span>
-</code></pre></div>
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">p_color</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">+</span><span class="w">
+        </span><span class="n">scale_color_hue</span><span class="p">(</span><span class="n">l</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">40</span><span class="p">)</span><span class="w">
+</span></code></pre></div>
 <p><img src="/img/ggplot2-web/tutorial-4.png" alt=""></p>
 
 <h2>RColorBrewer</h2>
 
 <p>Another coloring option for ggplot2 charts are the <a href="http://colorbrewer2.org/#type=sequential&amp;scheme=BuGn&amp;n=3">ColorBrewer</a> palettes implemented with the <code>RColorBrewer</code> package, which are supported natively in ggplot2 with functions such as <code>scale_color_brewer()</code>. The sequential palettes like &ldquo;Blues&rdquo; and &ldquo;Greens&rdquo; do what the name implies:</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r">p_color <span class="o">&lt;-</span> p <span class="o">+</span>
-        scale_color_brewer<span class="p">(</span>palette<span class="o">=</span><span class="s">&quot;Blues&quot;</span><span class="p">)</span>
-</code></pre></div>
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">p_color</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">+</span><span class="w">
+        </span><span class="n">scale_color_brewer</span><span class="p">(</span><span class="n">palette</span><span class="o">=</span><span class="s2">"Blues"</span><span class="p">)</span><span class="w">
+</span></code></pre></div>
 <p><img src="/img/ggplot2-web/tutorial-5.png" alt=""></p>
 
 <p>A famous diverging palette for visualizations on /r/dataisbeautiful is the &ldquo;Spectral&rdquo; palette, which is a lighter rainbow (recommended for dark backgrounds)</p>
@@ -157,10 +256,10 @@ Theme functions like <code>theme_minimal()</code> accept a <code>base_family</co
 <h2>Viridis and Accessibility</h2>
 
 <p>Let&rsquo;s mix up the visualization a bit. A rarely-used-but-very-useful ggplot2 geom is <code>geom2d_bin()</code>, which counts the number of points in a given 2d spatial area:</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r">p <span class="o">&lt;-</span> ggplot<span class="p">(</span>mpg<span class="p">,</span> aes<span class="p">(</span>x <span class="o">=</span> displ<span class="p">,</span> y <span class="o">=</span> hwy<span class="p">))</span> <span class="o">+</span> 
-    geom_bin2d<span class="p">(</span>bins<span class="o">=</span><span class="m">10</span><span class="p">)</span> <span class="o">+</span>
-    <span class="p">[</span><span class="m">...</span>theming options...<span class="p">]</span>
-</code></pre></div>
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">p</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ggplot</span><span class="p">(</span><span class="n">mpg</span><span class="p">,</span><span class="w"> </span><span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">displ</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hwy</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w"> 
+    </span><span class="n">geom_bin2d</span><span class="p">(</span><span class="n">bins</span><span class="o">=</span><span class="m">10</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+    </span><span class="p">[</span><span class="n">...theming</span><span class="w"> </span><span class="n">options...</span><span class="p">]</span><span class="w">
+</span></code></pre></div>
 <p><img src="/img/ggplot2-web/tutorial-tile.png" alt=""></p>
 
 <p>We see that the largest number of points are centered around (2,30). However, the default ggplot2 color palette for continuous variables is <em>boring</em>. Yes, we can use the RColorBrewer sequential palettes above, but as noted, they aren&rsquo;t perceptually distinct, and could cause issues for readers who are colorblind.</p>
@@ -168,9 +267,9 @@ Theme functions like <code>theme_minimal()</code> accept a <code>base_family</co
 <p>The <a href="https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html">viridis R package</a> provides a set of 4 high-contrast palettes which are very colorblind friendly, and works easily with ggplot2 by extending a <code>scale_fill_viridis()/scale_color_viridis()</code> function.</p>
 
 <p>The default &ldquo;viridis&rdquo; palette has been increasingly popular on the web lately:</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r">p_color <span class="o">&lt;-</span> p <span class="o">+</span>
-        scale_fill_viridis<span class="p">(</span>option<span class="o">=</span><span class="s">&quot;viridis&quot;</span><span class="p">)</span>
-</code></pre></div>
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">p_color</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">+</span><span class="w">
+        </span><span class="n">scale_fill_viridis</span><span class="p">(</span><span class="n">option</span><span class="o">=</span><span class="s2">"viridis"</span><span class="p">)</span><span class="w">
+</span></code></pre></div>
 <p><img src="/img/ggplot2-web/tutorial-10.png" alt=""></p>
 
 <p>&ldquo;magma&rdquo; and &ldquo;inferno&rdquo; are similar, and give the data visualization a fiery edge:</p>
@@ -328,14 +427,14 @@ Theme functions like <code>theme_minimal()</code> accept a <code>base_family</co
 <p>Gathering all <strong>976,538 /r/AskReddit submissions</strong> from January 2017 to April 2017 should be enough data for this project. Here&rsquo;s the final BigQuery:</p>
 <div class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="o">#</span><span class="n">standardSQL</span> 
 <span class="k">SELECT</span> <span class="n">id</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span>
-  <span class="k">CAST</span><span class="p">(</span><span class="n">FORMAT_TIMESTAMP</span><span class="p">(</span><span class="s1">&#39;%H&#39;</span><span class="p">,</span> <span class="n">TIMESTAMP_SECONDS</span><span class="p">(</span><span class="n">created_utc</span><span class="p">),</span> <span class="s1">&#39;America/New_York&#39;</span><span class="p">)</span> <span class="k">AS</span> <span class="n">INT64</span><span class="p">)</span> <span class="k">AS</span> <span class="n">hour</span><span class="p">,</span>
-  <span class="k">CAST</span><span class="p">(</span><span class="n">FORMAT_TIMESTAMP</span><span class="p">(</span><span class="s1">&#39;%M&#39;</span><span class="p">,</span> <span class="n">TIMESTAMP_SECONDS</span><span class="p">(</span><span class="n">created_utc</span><span class="p">),</span> <span class="s1">&#39;America/New_York&#39;</span><span class="p">)</span> <span class="k">AS</span> <span class="n">INT64</span><span class="p">)</span> <span class="k">AS</span> <span class="k">minute</span><span class="p">,</span>
-  <span class="k">CAST</span><span class="p">(</span><span class="n">FORMAT_TIMESTAMP</span><span class="p">(</span><span class="s1">&#39;%w&#39;</span><span class="p">,</span> <span class="n">TIMESTAMP_SECONDS</span><span class="p">(</span><span class="n">created_utc</span><span class="p">),</span> <span class="s1">&#39;America/New_York&#39;</span><span class="p">)</span> <span class="k">AS</span> <span class="n">INT64</span><span class="p">)</span> <span class="k">AS</span> <span class="n">dayofweek</span><span class="p">,</span>
-  <span class="k">CAST</span><span class="p">(</span><span class="n">FORMAT_TIMESTAMP</span><span class="p">(</span><span class="s1">&#39;%j&#39;</span><span class="p">,</span> <span class="n">TIMESTAMP_SECONDS</span><span class="p">(</span><span class="n">created_utc</span><span class="p">),</span> <span class="s1">&#39;America/New_York&#39;</span><span class="p">)</span> <span class="k">AS</span> <span class="n">INT64</span><span class="p">)</span> <span class="k">AS</span> <span class="n">dayofyear</span><span class="p">,</span>
+  <span class="k">CAST</span><span class="p">(</span><span class="n">FORMAT_TIMESTAMP</span><span class="p">(</span><span class="s1">'%H'</span><span class="p">,</span> <span class="n">TIMESTAMP_SECONDS</span><span class="p">(</span><span class="n">created_utc</span><span class="p">),</span> <span class="s1">'America/New_York'</span><span class="p">)</span> <span class="k">AS</span> <span class="n">INT64</span><span class="p">)</span> <span class="k">AS</span> <span class="n">hour</span><span class="p">,</span>
+  <span class="k">CAST</span><span class="p">(</span><span class="n">FORMAT_TIMESTAMP</span><span class="p">(</span><span class="s1">'%M'</span><span class="p">,</span> <span class="n">TIMESTAMP_SECONDS</span><span class="p">(</span><span class="n">created_utc</span><span class="p">),</span> <span class="s1">'America/New_York'</span><span class="p">)</span> <span class="k">AS</span> <span class="n">INT64</span><span class="p">)</span> <span class="k">AS</span> <span class="k">minute</span><span class="p">,</span>
+  <span class="k">CAST</span><span class="p">(</span><span class="n">FORMAT_TIMESTAMP</span><span class="p">(</span><span class="s1">'%w'</span><span class="p">,</span> <span class="n">TIMESTAMP_SECONDS</span><span class="p">(</span><span class="n">created_utc</span><span class="p">),</span> <span class="s1">'America/New_York'</span><span class="p">)</span> <span class="k">AS</span> <span class="n">INT64</span><span class="p">)</span> <span class="k">AS</span> <span class="n">dayofweek</span><span class="p">,</span>
+  <span class="k">CAST</span><span class="p">(</span><span class="n">FORMAT_TIMESTAMP</span><span class="p">(</span><span class="s1">'%j'</span><span class="p">,</span> <span class="n">TIMESTAMP_SECONDS</span><span class="p">(</span><span class="n">created_utc</span><span class="p">),</span> <span class="s1">'America/New_York'</span><span class="p">)</span> <span class="k">AS</span> <span class="n">INT64</span><span class="p">)</span> <span class="k">AS</span> <span class="n">dayofyear</span><span class="p">,</span>
   <span class="n">IF</span><span class="p">(</span><span class="n">PERCENT_RANK</span><span class="p">()</span> <span class="n">OVER</span> <span class="p">(</span><span class="k">ORDER</span> <span class="k">BY</span> <span class="n">score</span> <span class="k">ASC</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">.</span><span class="mi">50</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="k">as</span> <span class="n">is_top_submission</span>
-  <span class="k">FROM</span> <span class="o">`</span><span class="n">fh</span><span class="o">-</span><span class="n">bigquery</span><span class="p">.</span><span class="n">reddit_posts</span><span class="p">.</span><span class="o">*`</span>
-  <span class="k">WHERE</span> <span class="p">(</span><span class="n">_TABLE_SUFFIX</span> <span class="k">BETWEEN</span> <span class="s1">&#39;2017_01&#39;</span> <span class="k">AND</span> <span class="s1">&#39;2017_04&#39;</span><span class="p">)</span>
-  <span class="k">AND</span> <span class="n">subreddit</span> <span class="o">=</span> <span class="s1">&#39;AskReddit&#39;</span>
+  <span class="k">FROM</span> <span class="nv">`fh-bigquery.reddit_posts.*`</span>
+  <span class="k">WHERE</span> <span class="p">(</span><span class="n">_TABLE_SUFFIX</span> <span class="k">BETWEEN</span> <span class="s1">'2017_01'</span> <span class="k">AND</span> <span class="s1">'2017_04'</span><span class="p">)</span>
+  <span class="k">AND</span> <span class="n">subreddit</span> <span class="o">=</span> <span class="s1">'AskReddit'</span>
 </code></pre></div>
 <p><img src="/img/reddit-deep-learning/bigquery.png" alt=""></p>
 
@@ -424,10 +523,10 @@ Theme functions like <code>theme_minimal()</code> accept a <code>base_family</co
     <id>http://minimaxir.com/2017/06/imgur-decline</id>
     <content type="html"><![CDATA[<p>Last week, Bloomberg <a href="https://www.bloomberg.com/news/articles/2017-06-17/reddit-said-to-be-raising-funds-valuing-startup-at-1-7-billion">reported</a> that Reddit was raising about $150 Million in venture capital at a valuation of $1.7 billion. Since Reddit&rsquo;s data is <a href="http://minimaxir.com/2015/10/reddit-bigquery/">public on BigQuery</a>, I quickly checked if there were any recent user engagement growth spurts which could justify such a high worth. Here&rsquo;s an example BigQuery which aggregates the total number of Reddit submissions made for each month until the end of April 2017:</p>
 <div class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="o">#</span><span class="n">standardSQL</span> 
-<span class="k">SELECT</span> <span class="n">DATE_TRUNC</span><span class="p">(</span><span class="nb">DATE</span><span class="p">(</span><span class="n">TIMESTAMP_SECONDS</span><span class="p">(</span><span class="n">created_utc</span><span class="p">)),</span> <span class="k">MONTH</span><span class="p">)</span> <span class="k">as</span> <span class="n">mon</span><span class="p">,</span>
+<span class="k">SELECT</span> <span class="n">DATE_TRUNC</span><span class="p">(</span><span class="n">DATE</span><span class="p">(</span><span class="n">TIMESTAMP_SECONDS</span><span class="p">(</span><span class="n">created_utc</span><span class="p">)),</span> <span class="k">MONTH</span><span class="p">)</span> <span class="k">as</span> <span class="n">mon</span><span class="p">,</span>
   <span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">as</span> <span class="n">num_submissions</span><span class="p">,</span>
-  <span class="k">FROM</span> <span class="o">`</span><span class="n">fh</span><span class="o">-</span><span class="n">bigquery</span><span class="p">.</span><span class="n">reddit_posts</span><span class="p">.</span><span class="o">*`</span>
-  <span class="k">WHERE</span> <span class="p">(</span><span class="n">_TABLE_SUFFIX</span> <span class="k">BETWEEN</span> <span class="s1">&#39;2016_01&#39;</span> <span class="k">AND</span> <span class="s1">&#39;2017_04&#39;</span> <span class="k">OR</span> <span class="n">_TABLE_SUFFIX</span> <span class="o">=</span> <span class="s1">&#39;full_corpus_201512&#39;</span><span class="p">)</span>
+  <span class="k">FROM</span> <span class="nv">`fh-bigquery.reddit_posts.*`</span>
+  <span class="k">WHERE</span> <span class="p">(</span><span class="n">_TABLE_SUFFIX</span> <span class="k">BETWEEN</span> <span class="s1">'2016_01'</span> <span class="k">AND</span> <span class="s1">'2017_04'</span> <span class="k">OR</span> <span class="n">_TABLE_SUFFIX</span> <span class="o">=</span> <span class="s1">'full_corpus_201512'</span><span class="p">)</span>
   <span class="k">GROUP</span> <span class="k">BY</span> <span class="n">mon</span>
   <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">mon</span>
 </code></pre></div>
@@ -701,13 +800,13 @@ div#htmlwidget_container {
 <p>My network avoids converging early with only a minor cost to training speed in the TensorFlow case; unfortunately, CNTK speed is <em>much</em> slower than the simple model, but still faster than TensorFlow in the advanced model.</p>
 
 <p>Here&rsquo;s the generated text output from the TensorFlow-trained model on my architecture:</p>
-<div class="highlight"><pre><code class="language-text" data-lang="text">hinks the rich man must be wholly perverity and connection of the english sin of the philosophers of the basis of the same profound of his placed and evil and exception of fear to plants to me such as the case of the will seems to the will to be every such a remark as a primates of a strong of
+<div class="highlight"><pre><code class="language-" data-lang="">hinks the rich man must be wholly perverity and connection of the english sin of the philosophers of the basis of the same profound of his placed and evil and exception of fear to plants to me such as the case of the will seems to the will to be every such a remark as a primates of a strong of
 [...]
 </code></pre></div>
 <p>And here&rsquo;s the output from the CNTK-trained model:</p>
-<div class="highlight"><pre><code class="language-text" data-lang="text">(_x2js1hevjg4z_?z_aæ?q_gpmj:sn![?(f3_ch=lhw4y n6)gkh
+<div class="highlight"><pre><code class="language-" data-lang="">(_x2js1hevjg4z_?z_aæ?q_gpmj:sn![?(f3_ch=lhw4y n6)gkh
 kujau
-momu,?!ljë7g)k,!?[45 0as9[d.68éhhptvsx jd_næi,ä_z!cwkr&quot;_f6ë-mu_(epp
+momu,?!ljë7g)k,!?[45 0as9[d.68éhhptvsx jd_næi,ä_z!cwkr"_f6ë-mu_(epp
 [...]
 </code></pre></div>
 <p>Wait, what? Apparently my model architecture caused CNTK to hit a legitimate bug when making predictions, which did not happen with CNTK + the simple LSTM architecture. Thanks to my QA skills, I found that <a href="https://keras.io/layers/normalization/">batch normalization</a> was the cause of the bug and <a href="https://github.com/Microsoft/CNTK/issues/1994">filed the issue</a> appropriately.</p>
@@ -789,17 +888,17 @@ momu,?!ljë7g)k,!?[45 0as9[d.68éhhptvsx jd_næi,ä_z!cwkr&quot;_f6ë-mu_(epp
 
 <p>R Notebooks are configured with a <a href="http://yaml.org">YAML</a> header, which can include common attributes such as title, author, date published, and other relevant options. These fields will then be configured correctly in the metadata for HTML/PDF/Handouts output. Here&rsquo;s an example from <a href="http://minimaxir.com/notebooks/amazon-spark/">one of my notebooks</a>:</p>
 <div class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span class="nn">---</span>
-<span class="l-Scalar-Plain">title</span><span class="p-Indicator">:</span> <span class="s">&quot;Playing</span><span class="nv"> </span><span class="s">with</span><span class="nv"> </span><span class="s">80</span><span class="nv"> </span><span class="s">Million</span><span class="nv"> </span><span class="s">Amazon</span><span class="nv"> </span><span class="s">Product</span><span class="nv"> </span><span class="s">Review</span><span class="nv"> </span><span class="s">Ratings</span><span class="nv"> </span><span class="s">Using</span><span class="nv"> </span><span class="s">Apache</span><span class="nv"> </span><span class="s">Spark&quot;</span>
-<span class="l-Scalar-Plain">author</span><span class="p-Indicator">:</span> <span class="s">&quot;Max</span><span class="nv"> </span><span class="s">Woolf</span><span class="nv"> </span><span class="s">(@minimaxir)&quot;</span>
-<span class="l-Scalar-Plain">date</span><span class="p-Indicator">:</span> <span class="s">&quot;January</span><span class="nv"> </span><span class="s">2nd,</span><span class="nv"> </span><span class="s">2017&quot;</span>
-<span class="l-Scalar-Plain">output</span><span class="p-Indicator">:</span>
-  <span class="l-Scalar-Plain">html_notebook</span><span class="p-Indicator">:</span>
-    <span class="l-Scalar-Plain">highlight</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">tango</span>
-    <span class="l-Scalar-Plain">mathjax</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">null</span>
-    <span class="l-Scalar-Plain">number_sections</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">yes</span>
-    <span class="l-Scalar-Plain">theme</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">spacelab</span>
-    <span class="l-Scalar-Plain">toc</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">yes</span>
-    <span class="l-Scalar-Plain">toc_float</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">yes</span>
+<span class="na">title</span><span class="pi">:</span> <span class="s2">"</span><span class="s">Playing</span><span class="nv"> </span><span class="s">with</span><span class="nv"> </span><span class="s">80</span><span class="nv"> </span><span class="s">Million</span><span class="nv"> </span><span class="s">Amazon</span><span class="nv"> </span><span class="s">Product</span><span class="nv"> </span><span class="s">Review</span><span class="nv"> </span><span class="s">Ratings</span><span class="nv"> </span><span class="s">Using</span><span class="nv"> </span><span class="s">Apache</span><span class="nv"> </span><span class="s">Spark"</span>
+<span class="na">author</span><span class="pi">:</span> <span class="s2">"</span><span class="s">Max</span><span class="nv"> </span><span class="s">Woolf</span><span class="nv"> </span><span class="s">(@minimaxir)"</span>
+<span class="na">date</span><span class="pi">:</span> <span class="s2">"</span><span class="s">January</span><span class="nv"> </span><span class="s">2nd,</span><span class="nv"> </span><span class="s">2017"</span>
+<span class="na">output</span><span class="pi">:</span>
+  <span class="na">html_notebook</span><span class="pi">:</span>
+    <span class="na">highlight</span><span class="pi">:</span> <span class="s">tango</span>
+    <span class="na">mathjax</span><span class="pi">:</span> <span class="no">null</span>
+    <span class="na">number_sections</span><span class="pi">:</span> <span class="s">yes</span>
+    <span class="na">theme</span><span class="pi">:</span> <span class="s">spacelab</span>
+    <span class="na">toc</span><span class="pi">:</span> <span class="s">yes</span>
+    <span class="na">toc_float</span><span class="pi">:</span> <span class="s">yes</span>
 <span class="nn">---</span>
 </code></pre></div>
 <p>Said metadata features are <a href="https://github.com/ipython/ipython/issues/6073">often requested but unimplemented</a> in Jupyter.</p>
@@ -966,7 +1065,7 @@ momu,?!ljë7g)k,!?[45 0as9[d.68éhhptvsx jd_næi,ä_z!cwkr&quot;_f6ë-mu_(epp
 <p>More importantly, all Magic cards have an explicit structure; they have a name, mana cost in the upper-right, card type, card text, and usually a power and toughness in the bottom-right.</p>
 
 <p>I wrote <a href="https://github.com/minimaxir/char-embeddings/blob/master/create_magic_text.py">another Python script</a> to parse all Magic card data from <a href="https://mtgjson.com">MTG JSON</a> into an encoding which matches this architecture, where each section transition has its own symbol delimiter, along with other encoding simplicities. For example, here is the card <a href="http://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=247314">Dragon Whelp</a> in my encoding:</p>
-<div class="highlight"><pre><code class="language-text" data-lang="text">[Dragon Whelp@{2}{R}{R}#Creature — Dragon$Flying|{R}: ~ gets +1/+0 until end of turn. If this ability has been activated four or more times this turn, sacrifice ~ at the beginning of the next end step.%2^3]
+<div class="highlight"><pre><code class="language-" data-lang="">[Dragon Whelp@{2}{R}{R}#Creature — Dragon$Flying|{R}: ~ gets +1/+0 until end of turn. If this ability has been activated four or more times this turn, sacrifice ~ at the beginning of the next end step.%2^3]
 </code></pre></div>
 <p>These card encodings are all combined into one .txt file, which will be fed into the model.</p>
 
@@ -997,22 +1096,22 @@ momu,?!ljë7g)k,!?[45 0as9[d.68éhhptvsx jd_næi,ä_z!cwkr&quot;_f6ë-mu_(epp
 <p>With the Magic card dataset and my tweaked model architecture, generated text is coherent <a href="https://github.com/minimaxir/char-embeddings/blob/master/output/iter-01-0_9204.txt">after the 1st epoch</a>! After about 20 epochs, training becomes super slow, but the predicted text becomes super interesting. Here are a few fun examples from a <a href="https://github.com/minimaxir/char-embeddings/blob/master/output/text_sample.txt">list of hundreds of generated cards</a>. (Note: the power/toughness values at the end of the card have issues; more on that later).</p>
 
 <p>With low diversity, the neural network generated cards that are oddly biased toward card names which include the letter &ldquo;S&rdquo;. The card text also conforms to the rules of the game very well.</p>
-<div class="highlight"><pre><code class="language-text" data-lang="text">[Reality Spider@{3}{G}#Creature — Elf Warrior$Whenever ~ deals combat damage to a player, put a +1/+1 counter on it.%^]
+<div class="highlight"><pre><code class="language-" data-lang="">[Reality Spider@{3}{G}#Creature — Elf Warrior$Whenever ~ deals combat damage to a player, put a +1/+1 counter on it.%^]
 [Dark Soul@{2}{R}#Instant$~ deals 2 damage to each creature without flying.%^]
 [Standing Stand@{2}{G}#Creature — Elf Shaman${1}{G}, {T}: Draw a card, then discard a card.%^]
 </code></pre></div>
 <p>In contrast, cards generated with high diversity hit the uncanny valley of coherence and incoherence in both text and game mechanic abuse, which is what makes them interesting. </p>
-<div class="highlight"><pre><code class="language-text" data-lang="text">[Portrenline@{2}{R}#Sorcery$As an additional cost to cast ~, exile ~.%^]
+<div class="highlight"><pre><code class="language-" data-lang="">[Portrenline@{2}{R}#Sorcery$As an additional cost to cast ~, exile ~.%^]
 [Clocidian Lorid@{W}{W}{W}#Instant$Regenerate each creature with flying and each player.%^]
 [Icomic Convermant@{3}{G}#Sorcery$Search your library for a land card in your graveyard.%1^1]
 </code></pre></div>
 <p>The best-of-both-worlds cards are generated from diversity parameters between both extremes, and often have funny names.</p>
-<div class="highlight"><pre><code class="language-text" data-lang="text">[Seal Charm@{W}{W}#Instant$Exile target creature. Its controller loses 1 life.%^]
+<div class="highlight"><pre><code class="language-" data-lang="">[Seal Charm@{W}{W}#Instant$Exile target creature. Its controller loses 1 life.%^]
 [Shambling Assemblaster@{4}{W}#Creature — Human Cleric$When ~ enters the battlefield, destroy target nonblack creature.%1^1]
-[Lightning Strength@{3}{R}#Enchantment — Aura$Enchant creature|Enchanted creature gets +3/+3 and has flying, flying, trample, trample, lifelink, protection from black and votile all damage unless you return that card to its owner&#39;s hand.%2^2]
+[Lightning Strength@{3}{R}#Enchantment — Aura$Enchant creature|Enchanted creature gets +3/+3 and has flying, flying, trample, trample, lifelink, protection from black and votile all damage unless you return that card to its owner's hand.%2^2]
 [Skysor of Shadows@{7}{B}{B}{B}#Enchantment$As ~ enters the battlefield, choose one —|• Put a -1/-1 counter on target creature.%2^2]
-[Glinding Stadiers@{4}{W}#Creature — Spirit$Protection from no creatures can&#39;t attack.%^]
-[Dragon Gault@{3}{G}{U}{U}#Creature — Kraven$~&#39;s power and toughness are 2.%2^2]
+[Glinding Stadiers@{4}{W}#Creature — Spirit$Protection from no creatures can't attack.%^]
+[Dragon Gault@{3}{G}{U}{U}#Creature — Kraven$~'s power and toughness are 2.%2^2]
 </code></pre></div>
 <p>All Keras/Python code used in this blog post, along with sample Magic card output and the trained model itself, is available open-source <a href="https://github.com/minimaxir/char-embeddings">in this GitHub repository</a>. The repo additionally contains <a href="https://github.com/minimaxir/char-embeddings/blob/master/text_generator_keras_sample.py">a Python script</a> which lets you generate new cards using the model, too!</p>
 
@@ -1041,7 +1140,7 @@ momu,?!ljë7g)k,!?[45 0as9[d.68éhhptvsx jd_næi,ä_z!cwkr&quot;_f6ë-mu_(epp
 <h2>Next Steps</h2>
 
 <p>After building the model, I did a little more research to see if others solved the power/toughness problem. Since the sentences are only 40 characters and Magic cards are much longer than 40 characters, it&rsquo;s likely that power/toughness are out-of-scope for the model and it cannot learn their exact values. Turns out that the intended solution is to use a <a href="https://github.com/billzorn/mtgencode">completely different encoding</a>, such as this one for Dragon Whelp:</p>
-<div class="highlight"><pre><code class="language-text" data-lang="text">|5creature|4|6dragon|7|8&amp;^^/&amp;^^^|9flying\{RR}: @ gets +&amp;^/+&amp; until end of turn. if this ability has been activated four or more times this turn, sacrifice @ at the beginning of the next end step.|3{^^RRRR}|0N|1dragon whelp|
+<div class="highlight"><pre><code class="language-" data-lang="">|5creature|4|6dragon|7|8&amp;^^/&amp;^^^|9flying\{RR}: @ gets +&amp;^/+&amp; until end of turn. if this ability has been activated four or more times this turn, sacrifice @ at the beginning of the next end step.|3{^^RRRR}|0N|1dragon whelp|
 </code></pre></div>
 <p>Power/toughness are generated near the <em>beginning</em> of the card. Sections are delimited by pipes, with a numeral designating the corresponding section. Instead of numerals being used card values, carets are used, which provides a more accurate <em>quantification</em> of values. With this encoding, each character has a <em>singular purpose</em> in the global card context, and their embeddings would likely generate more informative visualizations. (But as a consequence, the generated cards are harder to parse at a glance).</p>
 
@@ -1166,122 +1265,6 @@ Performing an exploratory data analysis of both is helpful to determine at a gla
 <hr>
 
 <p><em>You can view all the R and ggplot2 code used to visualize the San Francisco crime data in <a href="http://minimaxir.com/notebooks/predicting-arrests/">this R Notebook</a>. You can also view the images/data used for this post in <a href="https://github.com/minimaxir/sf-arrests-predict">this GitHub repository</a></em>.</p>
-
-<p><em>You are free to use the data visualizations from this article however you wish, but it would be greatly appreciated if proper attribution is given to this article and/or myself!</em></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Playing with 80 Million Amazon Product Review Ratings Using Apache Spark]]></title>
-    <link href="http://minimaxir.com/2017/01/amazon-spark/"/>
-    <updated>2017-01-02T09:00:00-08:00</updated>
-    <id>http://minimaxir.com/2017/01/amazon-spark</id>
-    <content type="html"><![CDATA[<p><a href="https://www.amazon.com">Amazon</a> product reviews and ratings are a very important business. Customers on Amazon often make purchasing decisions based on those reviews, and a single bad review can cause a potential purchaser to reconsider. A couple years ago, I wrote a blog post titled <a href="http://minimaxir.com/2014/06/reviewing-reviews/">A Statistical Analysis of 1.2 Million Amazon Reviews</a>, which was well-received.</p>
-
-<p><img src="/img/amazon/amzn-basic-score.png" alt=""></p>
-
-<p>Back then, I was only limited to 1.2M reviews because attempting to process more data caused out-of-memory issues and my R code took <em>hours</em> to run.</p>
-
-<p><a href="http://spark.apache.org">Apache Spark</a>, which makes processing gigantic amounts of data efficient and sensible, has become very popular in the past couple years (for good tutorials on using Spark with Python, I recommend the <a href="https://courses.edx.org/courses/course-v1:BerkeleyX+CS105x+1T2016/info">free</a> <a href="https://courses.edx.org/courses/course-v1:BerkeleyX+CS110x+2T2016/info">eDX</a> <a href="https://courses.edx.org/courses/course-v1:BerkeleyX+CS120x+2T2016/info">courses</a>). Although data scientists often use Spark to process data with distributed cloud computing via <a href="https://aws.amazon.com/ec2/">Amazon EC2</a> or <a href="https://azure.microsoft.com/en-us/services/hdinsight/apache-spark/">Microsoft Azure</a>, Spark works just fine even on a typical laptop, given enough memory (for this post, I use a 2016 MacBook Pro/16GB RAM, with 8GB allocated to the Spark driver).</p>
-
-<p>I wrote a <a href="https://github.com/minimaxir/amazon-spark/blob/master/amazon_preprocess.py">simple Python script</a> to combine the per-category ratings-only data from the <a href="http://jmcauley.ucsd.edu/data/amazon/">Amazon product reviews dataset</a> curated by Julian McAuley, Rahul Pandey, and Jure Leskovec for their 2015 paper <a href="http://cseweb.ucsd.edu/%7Ejmcauley/pdfs/kdd15.pdf">Inferring Networks of Substitutable and Complementary Products</a>. The result is a 4.53 GB CSV that would definitely not open in Microsoft Excel. The truncated and combined dataset includes the <strong>user_id</strong> of the user leaving the review, the <strong>item_id</strong> indicating the Amazon product receiving the review, the <strong>rating</strong> the user gave the product from 1 to 5, and the <strong>timestamp</strong> indicating the time when the review was written (truncated to the Day). We can also infer the <strong>category</strong> of the reviewed product from the name of the data subset.</p>
-
-<p>Afterwards, using the new <a href="http://spark.rstudio.com">sparklyr</a> package for R, I can easily start a local Spark cluster with a single <code>spark_connect()</code> command and load the entire CSV into the cluster in seconds with a single <code>spark_read_csv()</code> command.  </p>
-
-<p><img src="/img/amazon-spark/output.png" alt=""></p>
-
-<p>There are 80.74 million records total in the dataset, or as the output helpfully reports, <code>8.074e+07</code> records. Performing advanced queries with traditional tools like <a href="https://cran.rstudio.com/web/packages/dplyr/vignettes/introduction.html">dplyr</a> or even Python&rsquo;s <a href="http://pandas.pydata.org">pandas</a> on such a dataset would take a considerable amount of time to execute.</p>
-
-<p>With sparklyr, manipulating actually-big-data is <em>just as easy</em> as performing an analysis on a dataset with only a few records (and an order of magnitude easier than the Python approaches taught in the eDX class mentioned above!).</p>
-
-<h2>Exploratory Analysis</h2>
-
-<p><em>(You can view the R code used to process the data with Spark and generate the data visualizations in <a href="http://minimaxir.com/notebooks/amazon-spark/">this R Notebook</a>)</em></p>
-
-<p>There are <strong>20,368,412</strong> unique users who provided reviews in this dataset. <strong>51.9%</strong> of those users have only written one review.</p>
-
-<p><img src="/img/amazon-spark/user_count_cum.png" alt=""></p>
-
-<p>Relatedly, there are <strong>8,210,439</strong> unique products in this dataset, where <strong>43.3%</strong> have only one review.</p>
-
-<p><img src="/img/amazon-spark/item_count_cum.png" alt=""></p>
-
-<p>After removing duplicate ratings, I added a few more features to each rating which may help illustrate how review behavior changed over time: a ranking value indicating the # review that the author of a given review has written (1st review by author, 2nd review by author, etc.), a ranking value indicating the # review that the product of a given review has received (1st review for product, 2nd review for product, etc.), and the month and year the review was made.</p>
-
-<p>The first two added features require a <em>very</em> large amount of processing power, and highlight the convenience of Spark&rsquo;s speed (and the fact that Spark uses all CPU cores by default, while typical R/Python approaches are single-threaded!)</p>
-
-<p>These changes are cached into a Spark DataFrame <code>df_t</code>. If I wanted to determine which Amazon product category receives the best review ratings on average, I can aggregate the data by category, calculate the average rating score for each category, and sort. Thanks to the power of Spark, the data processing for this many-millions-of-records takes seconds.</p>
-<div class="highlight"><pre><code class="language-r" data-lang="r">df_agg <span class="o">&lt;-</span> df_t <span class="o">%&gt;%</span>
-            group_by<span class="p">(</span><span class="kp">category</span><span class="p">)</span> <span class="o">%&gt;%</span>
-            summarize<span class="p">(</span>count <span class="o">=</span> n<span class="p">(),</span> avg_rating <span class="o">=</span> <span class="kp">mean</span><span class="p">(</span>rating<span class="p">))</span> <span class="o">%&gt;%</span>
-            arrange<span class="p">(</span>desc<span class="p">(</span>avg_rating<span class="p">))</span> <span class="o">%&gt;%</span>
-            collect<span class="p">()</span>
-</code></pre></div>
-<p><img src="/img/amazon-spark/avg.png" alt=""></p>
-
-<p>Or, visualized in chart form using <a href="http://ggplot2.org">ggplot2</a>:</p>
-
-<p><img src="/img/amazon-spark/avg_rating_desc.png" alt=""></p>
-
-<p>Digital Music/CD products receive the highest reviews on average, while Video Games and Cell Phones receive the lowest reviews on average, with a <strong>0.77</strong> rating range between them. This does make some intuitive sense; Digital Music and CDs are types of products where you know <em>exactly</em> what you are getting with no chance of a random product defect, while Cell Phones and Accessories can have variable quality from shady third-party sellers (Video Games in particular are also prone to irrational <a href="http://steamed.kotaku.com/steam-games-are-now-even-more-susceptible-to-review-bom-1774940065">review bombing</a> over minor grievances).</p>
-
-<p>We can refine this visualization by splitting each bar into a percentage breakdown of each rating from 1-5. This could be plotted with a pie chart for each category, however a stacked bar chart, scaled to 100%, looks much cleaner.</p>
-
-<p><img src="/img/amazon-spark/category_breakdown.png" alt=""></p>
-
-<p>The new visualization does help support the theory above; the top categories have a significantly higher percentage of 4/5-star ratings than the bottom categories, and a much a lower proportion of 1/2/3-star ratings. The inverse holds true for the bottom categories.</p>
-
-<p>How have these breakdowns changed over time? Are there other factors in play?</p>
-
-<h2>Rating Breakdowns Over Time</h2>
-
-<p>Perhaps the advent of the binary Like/Dislike behaviors in social media in the 2000&rsquo;s have translated into a change in behavior for a 5-star review system. Here are the rating breakdowns for reviews written in each month from January 2000 to July 2014:</p>
-
-<p><img src="/img/amazon-spark/time_breakdown.png" alt=""></p>
-
-<p>The voting behavior oscillates very slightly over time with no clear spikes or inflection points, which dashes that theory.</p>
-
-<h2>Distribution of Average Scores</h2>
-
-<p>We should look at the global averages of Amazon product scores (i.e. what customers see when they buy products), and the users who give the ratings. We would expect the distributions to match, so any deviations would be interesting.</p>
-
-<p>Products on average, when looking at products with atleast 5 ratings, have a <strong>4.16</strong> overall rating.</p>
-
-<p><img src="/img/amazon-spark/item_histogram.png" alt=""></p>
-
-<p>When looking at a similar graph for the overall ratings given by users, (5 ratings minimum), the average rating is slightly higher at <strong>4.20</strong>.</p>
-
-<p><img src="/img/amazon-spark/user_histogram.png" alt=""></p>
-
-<p>The primary difference between the two distributions is that there is significantly higher proportion of Amazon customers giving <em>only</em> 5-star reviews. Normalizing and overlaying the two charts clearly highlights that discrepancy.</p>
-
-<p><img src="/img/amazon-spark/user_item_histogram.png" alt=""></p>
-
-<h2>The Marginal Review</h2>
-
-<p>A few posts ago, I discussed how the <a href="http://minimaxir.com/2016/11/first-comment/">first comment on a Reddit post</a> has dramatically more influence than subsequent comments. Does user rating behavior change after making more and more reviews? Is the typical rating behavior different for the first review of a given product? </p>
-
-<p>Here is the ratings breakdown for the <em>n</em>-th Amazon review a user gives:</p>
-
-<p><img src="/img/amazon-spark/user_nth_breakdown.png" alt=""></p>
-
-<p>The first user review has a slightly higher proportion of being a 1-star review than subsequent reviews. Otherwise, the voting behavior is mostly the same overtime, although users have an increased proportion of giving a 4-star review instead of a 5-star review as they get more comfortable.</p>
-
-<p>In contrast, here is the ratings breakdown for the <em>n</em>-th review an Amazon product received:</p>
-
-<p><img src="/img/amazon-spark/item_nth_breakdown.png" alt=""></p>
-
-<p>The first product review has a slightly higher proportion of being a 5-star review than subsequent reviews. However, after the 10th review, there is <em>zero</em> change in the distribution of ratings, which implies that the marginal rating behavior is independent from the current score after that threshold.</p>
-
-<h2>Summary</h2>
-
-<p>Granted, this blog post is more playing with data and less analyzing data. What might be interesting to look into for future technical posts is conditional behavior, such as predicting the rating of a review given the previous ratings on that product/by that user. However, this post shows that while &ldquo;big data&rdquo; may be an inscrutable buzzword nowadays, you don&rsquo;t have to work for a Fortune 500 company to be able to understand it. Even with a data set consisting of 5 simple features, you can extract a large number of insights. </p>
-
-<p>And this post doesn&rsquo;t even look at the text of the Amazon product reviews or the metadata associated with the products! I do have a few ideas lined up there which I won&rsquo;t spoil.</p>
-
-<hr>
-
-<p><em>You can view all the R and ggplot2 code used to visualize the Amazon data in <a href="http://minimaxir.com/notebooks/amazon-spark/">this R Notebook</a>. You can also view the images/data used for this post in <a href="https://github.com/minimaxir/amazon-spark">this GitHub repository</a></em>.</p>
 
 <p><em>You are free to use the data visualizations from this article however you wish, but it would be greatly appreciated if proper attribution is given to this article and/or myself!</em></p>
 ]]></content>

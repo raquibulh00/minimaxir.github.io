@@ -280,16 +280,16 @@
 
 <p>For this tutorial, we&rsquo;ll be using <code>ggplot2</code>, plus three additional R packages: <code>RColorBrewer</code>, which allows for the procedural generation of colors from a palette for the chart, <code>scales</code>, which allows for the axes to express numbers with commas/percents, and <code>grid</code>, which allows for manipulation of the chart margins and layout. We can install and load these packages at the beginning of the R file:</p>
 
-<figure class="highlight"><pre><code class="language-r" data-lang="r">install.packages<span class="p">(</span><span class="kt">c</span><span class="p">(</span><span class="s">&quot;ggplot2&quot;</span><span class="p">,</span><span class="s">&quot;RColorBrewer&quot;</span><span class="p">,</span><span class="s">&quot;scales&quot;</span><span class="p">))</span>
-<span class="kn">library</span><span class="p">(</span>ggplot2<span class="p">);</span> <span class="kn">library</span><span class="p">(</span>scales<span class="p">);</span> <span class="kn">library</span><span class="p">(</span>grid<span class="p">);</span> <span class="kn">library</span><span class="p">(</span>RColorBrewer<span class="p">)</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">install.packages</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="s2">"ggplot2"</span><span class="p">,</span><span class="s2">"RColorBrewer"</span><span class="p">,</span><span class="s2">"scales"</span><span class="p">))</span><span class="w">
+</span><span class="n">library</span><span class="p">(</span><span class="n">ggplot2</span><span class="p">);</span><span class="w"> </span><span class="n">library</span><span class="p">(</span><span class="n">scales</span><span class="p">);</span><span class="w"> </span><span class="n">library</span><span class="p">(</span><span class="n">grid</span><span class="p">);</span><span class="w"> </span><span class="n">library</span><span class="p">(</span><span class="n">RColorBrewer</span><span class="p">)</span></code></pre></figure>
 
 <p>The dataset we&rsquo;ll use is my <a href="http://minimaxir.com/csv/buzzfeed_linkbait_headlines.csv">list of 15,101 BuzzFeed listicles</a> that I used <a href="http://minimaxir.com/2015/01/linkbait/">in my previous blog post</a>, including both the listicle size and number of Facebook shares the listicle received, which have been prefiltered to listicle sizes of 50 or less, and have received atleast 1 Facebook share. Download the file, and set the working directory of R to the containing folder. We load the dataset into R by reading the CSV:</p>
-<div class="highlight"><pre><code class="language-text" data-lang="text">df &lt;- read.csv(&quot;buzzfeed_linkbait_headlines.csv&quot;, header=T)
+<div class="highlight"><pre><code class="language-" data-lang="">df &lt;- read.csv("buzzfeed_linkbait_headlines.csv", header=T)
 </code></pre></div>
 <p>We can make a basic histogram in two lines of code.</p>
 
-<figure class="highlight"><pre><code class="language-r" data-lang="r">ggplot<span class="p">(</span>df<span class="p">,</span> aes<span class="p">(</span>listicle_size<span class="p">))</span> <span class="o">+</span>
-    geom_histogram<span class="p">(</span>binwidth<span class="o">=</span><span class="m">1</span><span class="p">)</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">ggplot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="w"> </span><span class="n">aes</span><span class="p">(</span><span class="n">listicle_size</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
+    </span><span class="n">geom_histogram</span><span class="p">(</span><span class="n">binwidth</span><span class="o">=</span><span class="m">1</span><span class="p">)</span></code></pre></figure>
 
 <p>The first line instantiates the charts and defines the variables used for plotting. We declare the use of the data frame <code>df</code>, and the <code>listicle_size</code> vector from that data frame as the plotting aesthetic. The second line tells ggplot to make a histogram out of the given data with <code>geom_histogram</code>, and we specify a binwidth of 1 so that each column represents one discrete value of listicle. Running that code will cause a plot to pop up.</p>
 
@@ -297,56 +297,63 @@
 
 <p>Not a bad start. In order to save the created plot, we use the <code>ggsave</code> command, which saves the last-generated plot to an image in your working directory. The first parameter, the filename, determines the filetype.</p>
 
-<figure class="highlight"><pre><code class="language-r" data-lang="r">ggsave<span class="p">(</span><span class="s">&quot;tutorial_1.png&quot;</span><span class="p">,</span> dpi<span class="o">=</span><span class="m">300</span><span class="p">,</span> width<span class="o">=</span><span class="m">4</span><span class="p">,</span> height<span class="o">=</span><span class="m">3</span><span class="p">)</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">ggsave</span><span class="p">(</span><span class="s2">"tutorial_1.png"</span><span class="p">,</span><span class="w"> </span><span class="n">dpi</span><span class="o">=</span><span class="m">300</span><span class="p">,</span><span class="w"> </span><span class="n">width</span><span class="o">=</span><span class="m">4</span><span class="p">,</span><span class="w"> </span><span class="n">height</span><span class="o">=</span><span class="m">3</span><span class="p">)</span></code></pre></figure>
 
 <p>Now we can add a theme to make it look classy.</p>
 
 <p>A ggplot2 theme is a function that overrides the graphical parameters of the default theme. Here&rsquo;s the long code block for my FiveThirtyEight-inspired theme, with code comments for each code subblock:</p>
 
-<figure class="highlight"><pre><code class="language-r" data-lang="r">fte_theme <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">()</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">fte_theme</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
       
-<span class="c1"># Generate the colors for the chart procedurally with RColorBrewer</span>
-palette <span class="o">&lt;-</span> brewer.pal<span class="p">(</span><span class="s">&quot;Greys&quot;</span><span class="p">,</span> n<span class="o">=</span><span class="m">9</span><span class="p">)</span>
-color.background <span class="o">=</span> palette<span class="p">[</span><span class="m">2</span><span class="p">]</span>
-color.grid.major <span class="o">=</span> palette<span class="p">[</span><span class="m">3</span><span class="p">]</span>
-color.axis.text <span class="o">=</span> palette<span class="p">[</span><span class="m">6</span><span class="p">]</span>
-color.axis.title <span class="o">=</span> palette<span class="p">[</span><span class="m">7</span><span class="p">]</span>
-color.title <span class="o">=</span> palette<span class="p">[</span><span class="m">9</span><span class="p">]</span>
+</span><span class="c1"># Generate the colors for the chart procedurally with RColorBrewer
+</span><span class="w">
+</span><span class="n">palette</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">brewer.pal</span><span class="p">(</span><span class="s2">"Greys"</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="o">=</span><span class="m">9</span><span class="p">)</span><span class="w">
+</span><span class="n">color.background</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">palette</span><span class="p">[</span><span class="m">2</span><span class="p">]</span><span class="w">
+</span><span class="n">color.grid.major</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">palette</span><span class="p">[</span><span class="m">3</span><span class="p">]</span><span class="w">
+</span><span class="n">color.axis.text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">palette</span><span class="p">[</span><span class="m">6</span><span class="p">]</span><span class="w">
+</span><span class="n">color.axis.title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">palette</span><span class="p">[</span><span class="m">7</span><span class="p">]</span><span class="w">
+</span><span class="n">color.title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">palette</span><span class="p">[</span><span class="m">9</span><span class="p">]</span><span class="w">
       
-<span class="c1"># Begin construction of chart</span>
-theme_bw<span class="p">(</span>base_size<span class="o">=</span><span class="m">9</span><span class="p">)</span> <span class="o">+</span>
+</span><span class="c1"># Begin construction of chart
+</span><span class="w">
+</span><span class="n">theme_bw</span><span class="p">(</span><span class="n">base_size</span><span class="o">=</span><span class="m">9</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
         
-<span class="c1"># Set the entire chart region to a light gray color</span>
-theme<span class="p">(</span>panel.background<span class="o">=</span>element_rect<span class="p">(</span>fill<span class="o">=</span>color.background<span class="p">,</span> color<span class="o">=</span>color.background<span class="p">))</span> <span class="o">+</span>
-theme<span class="p">(</span>plot.background<span class="o">=</span>element_rect<span class="p">(</span>fill<span class="o">=</span>color.background<span class="p">,</span> color<span class="o">=</span>color.background<span class="p">))</span> <span class="o">+</span>
-theme<span class="p">(</span>panel.border<span class="o">=</span>element_rect<span class="p">(</span>color<span class="o">=</span>color.background<span class="p">))</span> <span class="o">+</span>
+</span><span class="c1"># Set the entire chart region to a light gray color
+</span><span class="w">
+</span><span class="n">theme</span><span class="p">(</span><span class="n">panel.background</span><span class="o">=</span><span class="n">element_rect</span><span class="p">(</span><span class="n">fill</span><span class="o">=</span><span class="n">color.background</span><span class="p">,</span><span class="w"> </span><span class="n">color</span><span class="o">=</span><span class="n">color.background</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
+</span><span class="n">theme</span><span class="p">(</span><span class="n">plot.background</span><span class="o">=</span><span class="n">element_rect</span><span class="p">(</span><span class="n">fill</span><span class="o">=</span><span class="n">color.background</span><span class="p">,</span><span class="w"> </span><span class="n">color</span><span class="o">=</span><span class="n">color.background</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
+</span><span class="n">theme</span><span class="p">(</span><span class="n">panel.border</span><span class="o">=</span><span class="n">element_rect</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">color.background</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
       
-<span class="c1"># Format the grid</span>
-theme<span class="p">(</span>panel.grid.major<span class="o">=</span>element_line<span class="p">(</span>color<span class="o">=</span>color.grid.major<span class="p">,</span>size<span class="o">=</span><span class="m">.25</span><span class="p">))</span> <span class="o">+</span>
-theme<span class="p">(</span>panel.grid.minor<span class="o">=</span>element_blank<span class="p">())</span> <span class="o">+</span>
-theme<span class="p">(</span>axis.ticks<span class="o">=</span>element_blank<span class="p">())</span> <span class="o">+</span>
+</span><span class="c1"># Format the grid
+</span><span class="w">
+</span><span class="n">theme</span><span class="p">(</span><span class="n">panel.grid.major</span><span class="o">=</span><span class="n">element_line</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">color.grid.major</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="m">.25</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
+</span><span class="n">theme</span><span class="p">(</span><span class="n">panel.grid.minor</span><span class="o">=</span><span class="n">element_blank</span><span class="p">())</span><span class="w"> </span><span class="o">+</span><span class="w">
+</span><span class="n">theme</span><span class="p">(</span><span class="n">axis.ticks</span><span class="o">=</span><span class="n">element_blank</span><span class="p">())</span><span class="w"> </span><span class="o">+</span><span class="w">
       
-<span class="c1"># Format the legend, but hide by default</span>
-theme<span class="p">(</span>legend.position<span class="o">=</span><span class="s">&quot;none&quot;</span><span class="p">)</span> <span class="o">+</span>
-theme<span class="p">(</span>legend.background <span class="o">=</span> element_rect<span class="p">(</span>fill<span class="o">=</span>color.background<span class="p">))</span> <span class="o">+</span>
-theme<span class="p">(</span>legend.text <span class="o">=</span> element_text<span class="p">(</span>size<span class="o">=</span><span class="m">7</span><span class="p">,</span>color<span class="o">=</span>color.axis.title<span class="p">))</span> <span class="o">+</span>
+</span><span class="c1"># Format the legend, but hide by default
+</span><span class="w">
+</span><span class="n">theme</span><span class="p">(</span><span class="n">legend.position</span><span class="o">=</span><span class="s2">"none"</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+</span><span class="n">theme</span><span class="p">(</span><span class="n">legend.background</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">element_rect</span><span class="p">(</span><span class="n">fill</span><span class="o">=</span><span class="n">color.background</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
+</span><span class="n">theme</span><span class="p">(</span><span class="n">legend.text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">element_text</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="m">7</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="n">color.axis.title</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
       
-<span class="c1"># Set title and axis labels, and format these and tick marks</span>
-theme<span class="p">(</span>plot.title<span class="o">=</span>element_text<span class="p">(</span>color<span class="o">=</span>color.title<span class="p">,</span> size<span class="o">=</span><span class="m">10</span><span class="p">,</span> vjust<span class="o">=</span><span class="m">1.25</span><span class="p">))</span> <span class="o">+</span>
-theme<span class="p">(</span>axis.text.x<span class="o">=</span>element_text<span class="p">(</span>size<span class="o">=</span><span class="m">7</span><span class="p">,</span>color<span class="o">=</span>color.axis.text<span class="p">))</span> <span class="o">+</span>
-theme<span class="p">(</span>axis.text.y<span class="o">=</span>element_text<span class="p">(</span>size<span class="o">=</span><span class="m">7</span><span class="p">,</span>color<span class="o">=</span>color.axis.text<span class="p">))</span> <span class="o">+</span>
-theme<span class="p">(</span>axis.title.x<span class="o">=</span>element_text<span class="p">(</span>size<span class="o">=</span><span class="m">8</span><span class="p">,</span>color<span class="o">=</span>color.axis.title<span class="p">,</span> vjust<span class="o">=</span><span class="m">0</span><span class="p">))</span> <span class="o">+</span>
-theme<span class="p">(</span>axis.title.y<span class="o">=</span>element_text<span class="p">(</span>size<span class="o">=</span><span class="m">8</span><span class="p">,</span>color<span class="o">=</span>color.axis.title<span class="p">,</span> vjust<span class="o">=</span><span class="m">1.25</span><span class="p">))</span> <span class="o">+</span>
+</span><span class="c1"># Set title and axis labels, and format these and tick marks
+</span><span class="w">
+</span><span class="n">theme</span><span class="p">(</span><span class="n">plot.title</span><span class="o">=</span><span class="n">element_text</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">color.title</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="o">=</span><span class="m">10</span><span class="p">,</span><span class="w"> </span><span class="n">vjust</span><span class="o">=</span><span class="m">1.25</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
+</span><span class="n">theme</span><span class="p">(</span><span class="n">axis.text.x</span><span class="o">=</span><span class="n">element_text</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="m">7</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="n">color.axis.text</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
+</span><span class="n">theme</span><span class="p">(</span><span class="n">axis.text.y</span><span class="o">=</span><span class="n">element_text</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="m">7</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="n">color.axis.text</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
+</span><span class="n">theme</span><span class="p">(</span><span class="n">axis.title.x</span><span class="o">=</span><span class="n">element_text</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="m">8</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="n">color.axis.title</span><span class="p">,</span><span class="w"> </span><span class="n">vjust</span><span class="o">=</span><span class="m">0</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
+</span><span class="n">theme</span><span class="p">(</span><span class="n">axis.title.y</span><span class="o">=</span><span class="n">element_text</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="m">8</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="n">color.axis.title</span><span class="p">,</span><span class="w"> </span><span class="n">vjust</span><span class="o">=</span><span class="m">1.25</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
       
-<span class="c1"># Plot margins</span>
-theme<span class="p">(</span>plot.margin <span class="o">=</span> unit<span class="p">(</span><span class="kt">c</span><span class="p">(</span><span class="m">0.35</span><span class="p">,</span> <span class="m">0.2</span><span class="p">,</span> <span class="m">0.3</span><span class="p">,</span> <span class="m">0.35</span><span class="p">),</span> <span class="s">&quot;cm&quot;</span><span class="p">))</span>
-<span class="p">}</span></code></pre></figure>
+</span><span class="c1"># Plot margins
+</span><span class="w">
+</span><span class="n">theme</span><span class="p">(</span><span class="n">plot.margin</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">unit</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="m">0.35</span><span class="p">,</span><span class="w"> </span><span class="m">0.2</span><span class="p">,</span><span class="w"> </span><span class="m">0.3</span><span class="p">,</span><span class="w"> </span><span class="m">0.35</span><span class="p">),</span><span class="w"> </span><span class="s2">"cm"</span><span class="p">))</span><span class="w">
+</span><span class="p">}</span></code></pre></figure>
 
 <p>Adding the completed theme to the chart is just one line of code:</p>
 
-<figure class="highlight"><pre><code class="language-r" data-lang="r">ggplot<span class="p">(</span>df<span class="p">,</span> aes<span class="p">(</span>listicle_size<span class="p">))</span> <span class="o">+</span>
-    geom_histogram<span class="p">(</span>binwidth<span class="o">=</span><span class="m">1</span><span class="p">)</span> <span class="o">+</span>
-    fte_theme<span class="p">()</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">ggplot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="w"> </span><span class="n">aes</span><span class="p">(</span><span class="n">listicle_size</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
+    </span><span class="n">geom_histogram</span><span class="p">(</span><span class="n">binwidth</span><span class="o">=</span><span class="m">1</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+    </span><span class="n">fte_theme</span><span class="p">()</span></code></pre></figure>
 
 <p><img src="/img/ggplot-tutorial/tutorial_2.png"  ></p>
 
@@ -354,10 +361,10 @@ theme<span class="p">(</span>plot.margin <span class="o">=</span> unit<span clas
 
 <p>Of course, all charts need properly labled axes and a title. We can add that with the <code>labs</code> function:</p>
 
-<figure class="highlight"><pre><code class="language-r" data-lang="r">ggplot<span class="p">(</span>df<span class="p">,</span> aes<span class="p">(</span>listicle_size<span class="p">))</span> <span class="o">+</span>
-    geom_histogram<span class="p">(</span>binwidth<span class="o">=</span><span class="m">1</span><span class="p">)</span> <span class="o">+</span>
-    fte_theme<span class="p">()</span> <span class="o">+</span>
-labs<span class="p">(</span>title<span class="o">=</span><span class="s">&quot;Distribution of Listicle Sizes for BuzzFeed Listicles&quot;</span><span class="p">,</span> x<span class="o">=</span><span class="s">&quot;# of Entries in Listicle&quot;</span><span class="p">,</span> y<span class="o">=</span><span class="s">&quot;# of Listicles&quot;</span><span class="p">)</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">ggplot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="w"> </span><span class="n">aes</span><span class="p">(</span><span class="n">listicle_size</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
+    </span><span class="n">geom_histogram</span><span class="p">(</span><span class="n">binwidth</span><span class="o">=</span><span class="m">1</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+    </span><span class="n">fte_theme</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w">
+</span><span class="n">labs</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"Distribution of Listicle Sizes for BuzzFeed Listicles"</span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="o">=</span><span class="s2">"# of Entries in Listicle"</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="o">=</span><span class="s2">"# of Listicles"</span><span class="p">)</span></code></pre></figure>
 
 <p><img src="/img/ggplot-tutorial/tutorial_3.png"  ></p>
 
@@ -365,13 +372,13 @@ labs<span class="p">(</span>title<span class="o">=</span><span class="s">&quot;D
 
 <p>Putting it all together:</p>
 
-<figure class="highlight"><pre><code class="language-r" data-lang="r">ggplot<span class="p">(</span>df<span class="p">,</span> aes<span class="p">(</span>listicle_size<span class="p">))</span> <span class="o">+</span>
-    geom_histogram<span class="p">(</span>binwidth<span class="o">=</span><span class="m">1</span><span class="p">,</span> fill<span class="o">=</span><span class="s">&quot;#c0392b&quot;</span><span class="p">,</span> alpha<span class="o">=</span><span class="m">0.75</span><span class="p">)</span> <span class="o">+</span>
-    fte_theme<span class="p">()</span> <span class="o">+</span>
-    labs<span class="p">(</span>title<span class="o">=</span><span class="s">&quot;Distribution of Listicle Sizes for BuzzFeed Listicles&quot;</span><span class="p">,</span> x<span class="o">=</span><span class="s">&quot;# of Entries in Listicle&quot;</span><span class="p">,</span> y<span class="o">=</span><span class="s">&quot;# of Listicles&quot;</span><span class="p">)</span> <span class="o">+</span>
-    scale_x_continuous<span class="p">(</span>breaks<span class="o">=</span><span class="kp">seq</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">50</span><span class="p">,</span> by<span class="o">=</span><span class="m">5</span><span class="p">))</span> <span class="o">+</span>
-    scale_y_continuous<span class="p">(</span>labels<span class="o">=</span>comma<span class="p">)</span> <span class="o">+</span> 
-    geom_hline<span class="p">(</span>yintercept<span class="o">=</span><span class="m">0</span><span class="p">,</span> size<span class="o">=</span><span class="m">0.4</span><span class="p">,</span> color<span class="o">=</span><span class="s">&quot;black&quot;</span><span class="p">)</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">ggplot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="w"> </span><span class="n">aes</span><span class="p">(</span><span class="n">listicle_size</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
+    </span><span class="n">geom_histogram</span><span class="p">(</span><span class="n">binwidth</span><span class="o">=</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">fill</span><span class="o">=</span><span class="s2">"#c0392b"</span><span class="p">,</span><span class="w"> </span><span class="n">alpha</span><span class="o">=</span><span class="m">0.75</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+    </span><span class="n">fte_theme</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w">
+    </span><span class="n">labs</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"Distribution of Listicle Sizes for BuzzFeed Listicles"</span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="o">=</span><span class="s2">"# of Entries in Listicle"</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="o">=</span><span class="s2">"# of Listicles"</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+    </span><span class="n">scale_x_continuous</span><span class="p">(</span><span class="n">breaks</span><span class="o">=</span><span class="n">seq</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">50</span><span class="p">,</span><span class="w"> </span><span class="n">by</span><span class="o">=</span><span class="m">5</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
+    </span><span class="n">scale_y_continuous</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="n">comma</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> 
+    </span><span class="n">geom_hline</span><span class="p">(</span><span class="n">yintercept</span><span class="o">=</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="o">=</span><span class="m">0.4</span><span class="p">,</span><span class="w"> </span><span class="n">color</span><span class="o">=</span><span class="s2">"black"</span><span class="p">)</span></code></pre></figure>
 
 <p><img src="/img/ggplot-tutorial/tutorial_4.png"  ></p>
 
@@ -383,16 +390,16 @@ labs<span class="p">(</span>title<span class="o">=</span><span class="s">&quot;D
 
 <p>Creating a scatterplot of the relationship between listicle size and the number of Facebook shares the listicle receives is essentially the same procedure as creating a histogram, except that the x-axis and y-axis aesthetic vectors must be declared explicitly.</p>
 
-<figure class="highlight"><pre><code class="language-r" data-lang="r">ggplot<span class="p">(</span>df<span class="p">,</span> aes<span class="p">(</span>x<span class="o">=</span>listicle_size<span class="p">,</span> y<span class="o">=</span>num_fb_shares<span class="p">))</span> <span class="o">+</span>
-    geom_point<span class="p">()</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">ggplot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="w"> </span><span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">listicle_size</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="o">=</span><span class="n">num_fb_shares</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
+    </span><span class="n">geom_point</span><span class="p">()</span></code></pre></figure>
 
 <p><img src="/img/ggplot-tutorial/tutorial_5.png"  ></p>
 
 <p>Because there are a few listicles with <em>over 1 million</em> Facebook shares (welcome to 2015), the entire plot is skewed. As a result, we need to compress the plot by scaling the y-axis logarithmically using <code>scale_y_log10</code>. Additionally, there will be a large amount of overlap between points due to the large sample size, so we need to greatly reduce the opacity of the points. (I set to 5% for this chart, but the best value can be determined through trial and error)</p>
 
-<figure class="highlight"><pre><code class="language-r" data-lang="r">ggplot<span class="p">(</span>df<span class="p">,</span> aes<span class="p">(</span>x<span class="o">=</span>listicle_size<span class="p">,</span> y<span class="o">=</span>num_fb_shares<span class="p">))</span> <span class="o">+</span>
-    geom_point<span class="p">(</span>alpha<span class="o">=</span><span class="m">0.05</span><span class="p">)</span> <span class="o">+</span>
-    scale_y_log10<span class="p">(</span>labels<span class="o">=</span>comma<span class="p">)</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">ggplot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="w"> </span><span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">listicle_size</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="o">=</span><span class="n">num_fb_shares</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
+    </span><span class="n">geom_point</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="m">0.05</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+    </span><span class="n">scale_y_log10</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="n">comma</span><span class="p">)</span></code></pre></figure>
 
 <p><img src="/img/ggplot-tutorial/tutorial_6.png"  ></p>
 
@@ -400,11 +407,11 @@ labs<span class="p">(</span>title<span class="o">=</span><span class="s">&quot;D
 
 <p>Now we can apply the theme and labels:</p>
 
-<figure class="highlight"><pre><code class="language-r" data-lang="r">ggplot<span class="p">(</span>df<span class="p">,</span> aes<span class="p">(</span>x<span class="o">=</span>listicle_size<span class="p">,</span> y<span class="o">=</span>num_fb_shares<span class="p">))</span> <span class="o">+</span>
-    geom_point<span class="p">(</span>alpha<span class="o">=</span><span class="m">0.05</span><span class="p">)</span> <span class="o">+</span>
-    scale_y_log10<span class="p">(</span>labels<span class="o">=</span>comma<span class="p">)</span> <span class="o">+</span>
-    fte_theme<span class="p">()</span> <span class="o">+</span>
-    labs<span class="p">(</span>x<span class="o">=</span><span class="s">&quot;# of Entries in Listicle&quot;</span><span class="p">,</span> y<span class="o">=</span><span class="s">&quot;# of Facebook Shares&quot;</span><span class="p">,</span> title<span class="o">=</span><span class="s">&quot;FB Shares vs. Listicle Size for BuzzFeed Listicles&quot;</span><span class="p">)</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">ggplot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="w"> </span><span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">listicle_size</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="o">=</span><span class="n">num_fb_shares</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
+    </span><span class="n">geom_point</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="m">0.05</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+    </span><span class="n">scale_y_log10</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="n">comma</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+    </span><span class="n">fte_theme</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w">
+    </span><span class="n">labs</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">"# of Entries in Listicle"</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="o">=</span><span class="s2">"# of Facebook Shares"</span><span class="p">,</span><span class="w"> </span><span class="n">title</span><span class="o">=</span><span class="s2">"FB Shares vs. Listicle Size for BuzzFeed Listicles"</span><span class="p">)</span></code></pre></figure>
 
 <p><img src="/img/ggplot-tutorial/tutorial_7.png"  ></p>
 
@@ -412,14 +419,14 @@ labs<span class="p">(</span>title<span class="o">=</span><span class="s">&quot;D
 
 <p>Putting it all together:</p>
 
-<figure class="highlight"><pre><code class="language-r" data-lang="r">ggplot<span class="p">(</span>df<span class="p">,</span> aes<span class="p">(</span>x<span class="o">=</span>listicle_size<span class="p">,</span> y<span class="o">=</span>num_fb_shares<span class="p">))</span> <span class="o">+</span>
-    geom_point<span class="p">(</span>alpha<span class="o">=</span><span class="m">0.05</span><span class="p">,</span> color<span class="o">=</span><span class="s">&quot;#c0392b&quot;</span><span class="p">)</span> <span class="o">+</span>
-    scale_x_continuous<span class="p">(</span>breaks<span class="o">=</span><span class="kp">seq</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">50</span><span class="p">,</span> by<span class="o">=</span><span class="m">5</span><span class="p">))</span> <span class="o">+</span>
-    scale_y_log10<span class="p">(</span>labels<span class="o">=</span>comma<span class="p">,</span> breaks<span class="o">=</span><span class="m">10</span><span class="o">^</span><span class="p">(</span><span class="m">0</span><span class="o">:</span><span class="m">6</span><span class="p">))</span> <span class="o">+</span>
-    geom_hline<span class="p">(</span>yintercept<span class="o">=</span><span class="m">1</span><span class="p">,</span> size<span class="o">=</span><span class="m">0.4</span><span class="p">,</span> color<span class="o">=</span><span class="s">&quot;black&quot;</span><span class="p">)</span> <span class="o">+</span>
-    geom_smooth<span class="p">(</span>alpha<span class="o">=</span><span class="m">0.25</span><span class="p">,</span> color<span class="o">=</span><span class="s">&quot;black&quot;</span><span class="p">,</span> fill<span class="o">=</span><span class="s">&quot;black&quot;</span><span class="p">)</span> <span class="o">+</span>
-    fte_theme<span class="p">()</span> <span class="o">+</span>
-    labs<span class="p">(</span>x<span class="o">=</span><span class="s">&quot;# of Entries in Listicle&quot;</span><span class="p">,</span> y<span class="o">=</span><span class="s">&quot;# of Facebook Shares&quot;</span><span class="p">,</span> title<span class="o">=</span><span class="s">&quot;FB Shares vs. Listicle Size for BuzzFeed Listicles&quot;</span><span class="p">)</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">ggplot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="w"> </span><span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">listicle_size</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="o">=</span><span class="n">num_fb_shares</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
+    </span><span class="n">geom_point</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="m">0.05</span><span class="p">,</span><span class="w"> </span><span class="n">color</span><span class="o">=</span><span class="s2">"#c0392b"</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+    </span><span class="n">scale_x_continuous</span><span class="p">(</span><span class="n">breaks</span><span class="o">=</span><span class="n">seq</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">50</span><span class="p">,</span><span class="w"> </span><span class="n">by</span><span class="o">=</span><span class="m">5</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
+    </span><span class="n">scale_y_log10</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="n">comma</span><span class="p">,</span><span class="w"> </span><span class="n">breaks</span><span class="o">=</span><span class="m">10</span><span class="o">^</span><span class="p">(</span><span class="m">0</span><span class="o">:</span><span class="m">6</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
+    </span><span class="n">geom_hline</span><span class="p">(</span><span class="n">yintercept</span><span class="o">=</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="o">=</span><span class="m">0.4</span><span class="p">,</span><span class="w"> </span><span class="n">color</span><span class="o">=</span><span class="s2">"black"</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+    </span><span class="n">geom_smooth</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="m">0.25</span><span class="p">,</span><span class="w"> </span><span class="n">color</span><span class="o">=</span><span class="s2">"black"</span><span class="p">,</span><span class="w"> </span><span class="n">fill</span><span class="o">=</span><span class="s2">"black"</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+    </span><span class="n">fte_theme</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w">
+    </span><span class="n">labs</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">"# of Entries in Listicle"</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="o">=</span><span class="s2">"# of Facebook Shares"</span><span class="p">,</span><span class="w"> </span><span class="n">title</span><span class="o">=</span><span class="s2">"FB Shares vs. Listicle Size for BuzzFeed Listicles"</span><span class="p">)</span></code></pre></figure>
 
 <p><img src="/img/ggplot-tutorial/tutorial_8.png"  ></p>
 
@@ -546,6 +553,13 @@ labs<span class="p">(</span>title<span class="o">=</span><span class="s">&quot;D
             
             <article class="latest-tuts">
                 <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="/2017/11/magic-the-gifening/">Making Magic: the GIFening</a></h5>
+                    <small class="latest-tuts-content-time"> Nov 7, 2017</small>
+                </div>
+            </article>
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
                     <h5 class="latest-tuts-content-title"><a href="/2017/08/ggplot2-web/">How to Make High Quality Data Visualizations for Websites With R and ggplot2</a></h5>
                     <small class="latest-tuts-content-time"> Aug 14, 2017</small>
                 </div>
@@ -576,13 +590,6 @@ labs<span class="p">(</span>title<span class="o">=</span><span class="s">&quot;D
                 <div class="latest-tuts-content">
                     <h5 class="latest-tuts-content-title"><a href="/2017/06/keras-cntk/">Benchmarking CNTK on Keras: is it Better at Deep Learning than TensorFlow?</a></h5>
                     <small class="latest-tuts-content-time"> Jun 12, 2017</small>
-                </div>
-            </article>
-            
-            <article class="latest-tuts">
-                <div class="latest-tuts-content">
-                    <h5 class="latest-tuts-content-title"><a href="/2017/06/r-notebooks/">Advantages of Using R Notebooks For Data Analysis Instead of Jupyter Notebooks</a></h5>
-                    <small class="latest-tuts-content-time"> Jun 6, 2017</small>
                 </div>
             </article>
             

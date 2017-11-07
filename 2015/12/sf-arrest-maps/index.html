@@ -274,9 +274,9 @@
 
 <p>Since we&rsquo;ve identified the map parameters, now we can request an appropriate map:</p>
 
-<figure class="highlight"><pre><code class="language-r" data-lang="r">bbox <span class="o">=</span> <span class="kt">c</span><span class="p">(</span><span class="m">-122.516441</span><span class="p">,</span><span class="m">37.702072</span><span class="p">,</span><span class="m">-122.37276</span><span class="p">,</span><span class="m">37.811818</span><span class="p">)</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">bbox</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">-122.516441</span><span class="p">,</span><span class="m">37.702072</span><span class="p">,</span><span class="m">-122.37276</span><span class="p">,</span><span class="m">37.811818</span><span class="p">)</span><span class="w">
 
-map <span class="o">&lt;-</span> get_map<span class="p">(</span>location <span class="o">=</span> bbox<span class="p">,</span> <span class="kn">source</span> <span class="o">=</span> <span class="s">&quot;stamen&quot;</span><span class="p">,</span> maptype <span class="o">=</span> <span class="s">&quot;toner-lite&quot;</span><span class="p">)</span></code></pre></figure>
+</span><span class="n">map</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">get_map</span><span class="p">(</span><span class="n">location</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bbox</span><span class="p">,</span><span class="w"> </span><span class="n">source</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"stamen"</span><span class="p">,</span><span class="w"> </span><span class="n">maptype</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"toner-lite"</span><span class="p">)</span></code></pre></figure>
 
 <p>Plotting the map by itself results in something like this:</p>
 
@@ -286,11 +286,11 @@ map <span class="o">&lt;-</span> get_map<span class="p">(</span>location <span c
 
 <p>Let&rsquo;s plot all 587,499 arrests on top of the map for fun and see what happens.</p>
 
-<figure class="highlight"><pre><code class="language-r" data-lang="r">plot <span class="o">&lt;-</span> ggmap<span class="p">(</span>map<span class="p">)</span> <span class="o">+</span>
-            geom_point<span class="p">(</span>data <span class="o">=</span> df_arrest<span class="p">,</span> aes<span class="p">(</span>x<span class="o">=</span>X<span class="p">,</span> y<span class="o">=</span>Y<span class="p">),</span> color <span class="o">=</span> <span class="s">&quot;#27AE60&quot;</span><span class="p">,</span> size <span class="o">=</span> <span class="m">0.5</span><span class="p">,</span> alpha <span class="o">=</span> <span class="m">0.01</span><span class="p">)</span> <span class="o">+</span>
-            fte_theme<span class="p">()</span> <span class="o">+</span>
-            theme<span class="p">(</span><span class="kc">...</span><span class="p">)</span> <span class="o">+</span>
-            labs<span class="p">(</span>title <span class="o">=</span> <span class="s">&quot;Locations of Police Arrests Made in San Francisco from 2003 – 2015&quot;</span><span class="p">)</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">plot</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ggmap</span><span class="p">(</span><span class="n">map</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+            </span><span class="n">geom_point</span><span class="p">(</span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">df_arrest</span><span class="p">,</span><span class="w"> </span><span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">X</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="o">=</span><span class="n">Y</span><span class="p">),</span><span class="w"> </span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"#27AE60"</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.5</span><span class="p">,</span><span class="w"> </span><span class="n">alpha</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.01</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+            </span><span class="n">fte_theme</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w">
+            </span><span class="n">theme</span><span class="p">(</span><span class="n">...</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+            </span><span class="n">labs</span><span class="p">(</span><span class="n">title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"Locations of Police Arrests Made in San Francisco from 2003 – 2015"</span><span class="p">)</span></code></pre></figure>
 
 <ul>
 <li><code>ggmap()</code> sets up the base map.</li>
@@ -312,12 +312,12 @@ map <span class="o">&lt;-</span> get_map<span class="p">(</span>location <span c
 
 <p>How about faceting by type of crime again? We can render a map of San Francisco for each type of crime, and then we can see if the clusters for a given type of crime are different from others.</p>
 
-<figure class="highlight"><pre><code class="language-r" data-lang="r">plot <span class="o">&lt;-</span> ggmap<span class="p">(</span>map<span class="p">)</span> <span class="o">+</span>
-            geom_point<span class="p">(</span>data <span class="o">=</span> df_arrest <span class="o">%&gt;%</span> filter<span class="p">(</span>Category <span class="o">%in%</span> df_top_crimes<span class="o">$</span>Category<span class="p">[</span><span class="m">2</span><span class="o">:</span><span class="m">19</span><span class="p">]),</span> aes<span class="p">(</span>x<span class="o">=</span>X<span class="p">,</span> y<span class="o">=</span>Y<span class="p">,</span> color<span class="o">=</span>Category<span class="p">),</span> size<span class="o">=</span><span class="m">0.75</span><span class="p">,</span> alpha<span class="o">=</span><span class="m">0.05</span><span class="p">)</span> <span class="o">+</span>
-            fte_theme<span class="p">()</span> <span class="o">+</span>
-            theme<span class="p">(</span><span class="kc">...</span><span class="p">)</span> <span class="o">+</span>
-            labs<span class="p">(</span>title <span class="o">=</span> <span class="s">&quot;Locations of Police Arrests Made in San Francisco from 2003 – 2015, by Type of Crime&quot;</span><span class="p">)</span> <span class="o">+</span>
-            facet_wrap<span class="p">(</span><span class="o">~</span> Category<span class="p">,</span> nrow <span class="o">=</span> <span class="m">3</span><span class="p">)</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">plot</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ggmap</span><span class="p">(</span><span class="n">map</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+            </span><span class="n">geom_point</span><span class="p">(</span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">df_arrest</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">filter</span><span class="p">(</span><span class="n">Category</span><span class="w"> </span><span class="o">%in%</span><span class="w"> </span><span class="n">df_top_crimes</span><span class="o">$</span><span class="n">Category</span><span class="p">[</span><span class="m">2</span><span class="o">:</span><span class="m">19</span><span class="p">]),</span><span class="w"> </span><span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">X</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="o">=</span><span class="n">Y</span><span class="p">,</span><span class="w"> </span><span class="n">color</span><span class="o">=</span><span class="n">Category</span><span class="p">),</span><span class="w"> </span><span class="n">size</span><span class="o">=</span><span class="m">0.75</span><span class="p">,</span><span class="w"> </span><span class="n">alpha</span><span class="o">=</span><span class="m">0.05</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+            </span><span class="n">fte_theme</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w">
+            </span><span class="n">theme</span><span class="p">(</span><span class="n">...</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+            </span><span class="n">labs</span><span class="p">(</span><span class="n">title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"Locations of Police Arrests Made in San Francisco from 2003 – 2015, by Type of Crime"</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+            </span><span class="n">facet_wrap</span><span class="p">(</span><span class="o">~</span><span class="w"> </span><span class="n">Category</span><span class="p">,</span><span class="w"> </span><span class="n">nrow</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">3</span><span class="p">)</span></code></pre></figure>
 
 <p>Again, only one line of new code for the facet, although the source data needs to be filtered as it was in the previous post.</p>
 
@@ -331,18 +331,18 @@ map <span class="o">&lt;-</span> get_map<span class="p">(</span>location <span c
 
 <p>We can reuse the normalization code from the previous post, and the hex overlay code from my NYC taxi plot post as well:</p>
 
-<figure class="highlight"><pre><code class="language-r" data-lang="r">sum_thresh <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>x<span class="p">,</span> threshold <span class="o">=</span> <span class="m">10</span><span class="o">^</span><span class="m">-3</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kr">if</span> <span class="p">(</span><span class="kp">sum</span><span class="p">(</span>x<span class="p">)</span> <span class="o">&lt;</span> threshold<span class="p">)</span> <span class="p">{</span><span class="kr">return</span> <span class="p">(</span><span class="kc">NA</span><span class="p">)}</span>
-    <span class="kr">else</span> <span class="p">{</span><span class="kr">return</span> <span class="p">(</span><span class="kp">sum</span><span class="p">(</span>x<span class="p">))}</span>
-<span class="p">}</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">sum_thresh</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">threshold</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">10</span><span class="o">^</span><span class="m">-3</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nf">sum</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">threshold</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="n">return</span><span class="w"> </span><span class="p">(</span><span class="kc">NA</span><span class="p">)}</span><span class="w">
+    </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="n">return</span><span class="w"> </span><span class="p">(</span><span class="nf">sum</span><span class="p">(</span><span class="n">x</span><span class="p">))}</span><span class="w">
+</span><span class="p">}</span><span class="w">
 
-plot <span class="o">&lt;-</span> ggmap<span class="p">(</span>map<span class="p">)</span> <span class="o">+</span>
-            stat_summary_hex<span class="p">(</span>data <span class="o">=</span> df_arrest <span class="o">%&gt;%</span> filter<span class="p">(</span>Category <span class="o">%in%</span> df_top_crimes<span class="o">$</span>Category<span class="p">[</span><span class="m">2</span><span class="o">:</span><span class="m">19</span><span class="p">])</span> <span class="o">%&gt;%</span> group_by<span class="p">(</span>Category<span class="p">)</span> <span class="o">%&gt;%</span> mutate<span class="p">(</span>w<span class="o">=</span><span class="m">1</span><span class="o">/</span>n<span class="p">()),</span> aes<span class="p">(</span>x<span class="o">=</span>X<span class="p">,</span> y<span class="o">=</span>Y<span class="p">,</span> z<span class="o">=</span>w<span class="p">),</span> fun<span class="o">=</span>sum_thresh<span class="p">,</span> alpha <span class="o">=</span> <span class="m">0.8</span><span class="p">,</span> color<span class="o">=</span><span class="s">&quot;#CCCCCC&quot;</span><span class="p">)</span> <span class="o">+</span>
-            fte_theme<span class="p">()</span> <span class="o">+</span>
-            theme<span class="p">(</span><span class="kc">...</span><span class="p">)</span> <span class="o">+</span>
-            scale_fill_gradient<span class="p">(</span>low <span class="o">=</span> <span class="s">&quot;#DDDDDD&quot;</span><span class="p">,</span> high <span class="o">=</span> <span class="s">&quot;#2980B9&quot;</span><span class="p">)</span> <span class="o">+</span>
-            labs<span class="p">(</span>title <span class="o">=</span> <span class="s">&quot;Locations of Police Arrests Made in San Francisco from 2003 – 2015, Normalized by Type of Crime&quot;</span><span class="p">)</span> <span class="o">+</span>
-            facet_wrap<span class="p">(</span><span class="o">~</span> Category<span class="p">,</span> nrow <span class="o">=</span> <span class="m">3</span><span class="p">)</span></code></pre></figure>
+</span><span class="n">plot</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ggmap</span><span class="p">(</span><span class="n">map</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+            </span><span class="n">stat_summary_hex</span><span class="p">(</span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">df_arrest</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">filter</span><span class="p">(</span><span class="n">Category</span><span class="w"> </span><span class="o">%in%</span><span class="w"> </span><span class="n">df_top_crimes</span><span class="o">$</span><span class="n">Category</span><span class="p">[</span><span class="m">2</span><span class="o">:</span><span class="m">19</span><span class="p">])</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">group_by</span><span class="p">(</span><span class="n">Category</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">mutate</span><span class="p">(</span><span class="n">w</span><span class="o">=</span><span class="m">1</span><span class="o">/</span><span class="n">n</span><span class="p">()),</span><span class="w"> </span><span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">X</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="o">=</span><span class="n">Y</span><span class="p">,</span><span class="w"> </span><span class="n">z</span><span class="o">=</span><span class="n">w</span><span class="p">),</span><span class="w"> </span><span class="n">fun</span><span class="o">=</span><span class="n">sum_thresh</span><span class="p">,</span><span class="w"> </span><span class="n">alpha</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.8</span><span class="p">,</span><span class="w"> </span><span class="n">color</span><span class="o">=</span><span class="s2">"#CCCCCC"</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+            </span><span class="n">fte_theme</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w">
+            </span><span class="n">theme</span><span class="p">(</span><span class="n">...</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+            </span><span class="n">scale_fill_gradient</span><span class="p">(</span><span class="n">low</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"#DDDDDD"</span><span class="p">,</span><span class="w"> </span><span class="n">high</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"#2980B9"</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+            </span><span class="n">labs</span><span class="p">(</span><span class="n">title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"Locations of Police Arrests Made in San Francisco from 2003 – 2015, Normalized by Type of Crime"</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+            </span><span class="n">facet_wrap</span><span class="p">(</span><span class="o">~</span><span class="w"> </span><span class="n">Category</span><span class="p">,</span><span class="w"> </span><span class="n">nrow</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">3</span><span class="p">)</span></code></pre></figure>
 
 <ul>
 <li><code>sum_thresh()</code> is a helper function that aggregates the sums of weights, but will not plot the corresponding hex if there is not enough data at that location.</li>
@@ -534,6 +534,13 @@ plot <span class="o">&lt;-</span> ggmap<span class="p">(</span>map<span class="p
             
             <article class="latest-tuts">
                 <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="/2017/11/magic-the-gifening/">Making Magic: the GIFening</a></h5>
+                    <small class="latest-tuts-content-time"> Nov 7, 2017</small>
+                </div>
+            </article>
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
                     <h5 class="latest-tuts-content-title"><a href="/2017/08/ggplot2-web/">How to Make High Quality Data Visualizations for Websites With R and ggplot2</a></h5>
                     <small class="latest-tuts-content-time"> Aug 14, 2017</small>
                 </div>
@@ -564,13 +571,6 @@ plot <span class="o">&lt;-</span> ggmap<span class="p">(</span>map<span class="p
                 <div class="latest-tuts-content">
                     <h5 class="latest-tuts-content-title"><a href="/2017/06/keras-cntk/">Benchmarking CNTK on Keras: is it Better at Deep Learning than TensorFlow?</a></h5>
                     <small class="latest-tuts-content-time"> Jun 12, 2017</small>
-                </div>
-            </article>
-            
-            <article class="latest-tuts">
-                <div class="latest-tuts-content">
-                    <h5 class="latest-tuts-content-title"><a href="/2017/06/r-notebooks/">Advantages of Using R Notebooks For Data Analysis Instead of Jupyter Notebooks</a></h5>
-                    <small class="latest-tuts-content-time"> Jun 6, 2017</small>
                 </div>
             </article>
             
