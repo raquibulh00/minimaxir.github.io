@@ -5,8 +5,8 @@
     <description>A blog by Max Woolf about startups, technology, and blogging. It's so meta, even this acronym.</description>
     <link>http://minimaxir.com/</link>
     <atom:link href="http://minimaxir.com/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Tue, 28 Nov 2017 08:39:10 -0800</pubDate>
-    <lastBuildDate>Tue, 28 Nov 2017 08:39:10 -0800</lastBuildDate>
+    <pubDate>Sun, 17 Dec 2017 11:11:37 -0800</pubDate>
+    <lastBuildDate>Sun, 17 Dec 2017 11:11:37 -0800</lastBuildDate>
     <generator>Jekyll v3.6.2</generator>
     
       <item>
@@ -101,6 +101,8 @@
 &lt;p&gt;In all, with the price cuts on GPU instances, cost-performance is often &lt;em&gt;on par&lt;/em&gt; with preemptable CPU instances, which is an advantage if you want to train models faster and not risk the instance being killed unexpectedly. And there is still a lot of competition in this space: &lt;a href=&quot;https://www.amazon.com&quot;&gt;Amazon&lt;/a&gt; offers a &lt;code&gt;p2.xlarge&lt;/code&gt; &lt;a href=&quot;https://aws.amazon.com/ec2/spot/&quot;&gt;Spot Instance&lt;/a&gt; with a K80 GPU for $0.15-$0.20 an hour, less than half of the corresponding Google Compute Engine K80 GPU instance, although with &lt;a href=&quot;https://aws.amazon.com/ec2/spot/details/&quot;&gt;a few bidding caveats&lt;/a&gt; which I haven&amp;rsquo;t fully explored yet. Competition will drive GPU prices down even further, and training deep learning models will become even easier.&lt;/p&gt;
 
 &lt;p&gt;And as the cuDNN chart above shows, things will get &lt;em&gt;very&lt;/em&gt; interesting once Volta-based GPUs like the V100 are generally available and the deep learning frameworks support cuDNN 7 by default.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;UPDATE 12/17&lt;/strong&gt;: &lt;em&gt;As pointed out by &lt;a href=&quot;https://news.ycombinator.com/item?id=15941682&quot;&gt;dantiberian on Hacker News&lt;/a&gt;, Google  Compute Engine now supports &lt;a href=&quot;https://cloud.google.com/compute/docs/instances/preemptible#preemptible_with_gpu&quot;&gt;preemptible GPUs&lt;/a&gt;, which was apparently added after this post went live. Preemptable GPUs are exactly half the price of normal GPUs (for both K80s and P100s; $0.73/hr and $0.22/hr respectively), so they&amp;rsquo;re about double the cost efficiency (when factoring in the cost of the base preemptable instance), which would put them squarely ahead of CPUs in all cases. (and since the CPU instances used here were also preemptable, it&amp;rsquo;s apples-to-apples)&lt;/em&gt;&lt;/p&gt;
 
 &lt;hr&gt;
 

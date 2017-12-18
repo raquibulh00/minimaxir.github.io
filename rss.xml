@@ -4,7 +4,7 @@
   <title><![CDATA[minimaxir | Max Woolf's Blog]]></title>
   <link href="http://minimaxir.com/rss.xml" rel="self"/>
   <link href="http://minimaxir.com/"/>
-  <updated>2017-11-28T08:39:10-08:00</updated>
+  <updated>2017-12-17T11:11:37-08:00</updated>
   <id>http://minimaxir.com/</id>
   <author>
     <name><![CDATA[Max Woolf]]></name>
@@ -108,6 +108,8 @@
 <p>In all, with the price cuts on GPU instances, cost-performance is often <em>on par</em> with preemptable CPU instances, which is an advantage if you want to train models faster and not risk the instance being killed unexpectedly. And there is still a lot of competition in this space: <a href="https://www.amazon.com">Amazon</a> offers a <code>p2.xlarge</code> <a href="https://aws.amazon.com/ec2/spot/">Spot Instance</a> with a K80 GPU for $0.15-$0.20 an hour, less than half of the corresponding Google Compute Engine K80 GPU instance, although with <a href="https://aws.amazon.com/ec2/spot/details/">a few bidding caveats</a> which I haven&rsquo;t fully explored yet. Competition will drive GPU prices down even further, and training deep learning models will become even easier.</p>
 
 <p>And as the cuDNN chart above shows, things will get <em>very</em> interesting once Volta-based GPUs like the V100 are generally available and the deep learning frameworks support cuDNN 7 by default.</p>
+
+<p><strong>UPDATE 12/17</strong>: <em>As pointed out by <a href="https://news.ycombinator.com/item?id=15941682">dantiberian on Hacker News</a>, Google  Compute Engine now supports <a href="https://cloud.google.com/compute/docs/instances/preemptible#preemptible_with_gpu">preemptible GPUs</a>, which was apparently added after this post went live. Preemptable GPUs are exactly half the price of normal GPUs (for both K80s and P100s; $0.73/hr and $0.22/hr respectively), so they&rsquo;re about double the cost efficiency (when factoring in the cost of the base preemptable instance), which would put them squarely ahead of CPUs in all cases. (and since the CPU instances used here were also preemptable, it&rsquo;s apples-to-apples)</em></p>
 
 <hr>
 
