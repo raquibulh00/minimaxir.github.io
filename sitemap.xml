@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
+<loc>http://minimaxir.com/2018/02/stack-overflow-questions/</loc>
+<lastmod>2018-02-09T09:00:00-08:00</lastmod>
+</url>
+<url>
 <loc>http://minimaxir.com/2017/11/benchmark-gpus/</loc>
 <lastmod>2017-11-28T08:30:00-08:00</lastmod>
 </url>
