@@ -5,9 +5,112 @@
     <description>A blog by Max Woolf about startups, technology, and blogging. It's so meta, even this acronym.</description>
     <link>http://minimaxir.com/</link>
     <atom:link href="http://minimaxir.com/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Fri, 09 Feb 2018 09:04:57 -0800</pubDate>
-    <lastBuildDate>Fri, 09 Feb 2018 09:04:57 -0800</lastBuildDate>
+    <pubDate>Mon, 19 Mar 2018 09:22:50 -0700</pubDate>
+    <lastBuildDate>Mon, 19 Mar 2018 09:22:50 -0700</lastBuildDate>
     <generator>Jekyll v3.6.2</generator>
+    
+      <item>
+        <title>Visualizing One Million NCAA Basketball Shots</title>
+        <description>&lt;p&gt;So &lt;a href=&quot;https://www.ncaa.com/march-madness&quot;&gt;March Madness&lt;/a&gt; is happing right now. In celebration, &lt;a href=&quot;https://www.google.com&quot;&gt;Google&lt;/a&gt; uploaded &lt;a href=&quot;https://console.cloud.google.com/launcher/details/ncaa-bb-public/ncaa-basketball&quot;&gt;massive basketball datasets&lt;/a&gt; from the &lt;a href=&quot;https://www.ncaa.com&quot;&gt;NCAA&lt;/a&gt; and &lt;a href=&quot;https://www.sportradar.com/&quot;&gt;Sportradar&lt;/a&gt; to &lt;a href=&quot;https://cloud.google.com/bigquery/&quot;&gt;BigQuery&lt;/a&gt; for anyone to query and experiment. After learning that the &lt;a href=&quot;https://www.reddit.com/r/bigquery/comments/82nz17/dataset_statistics_for_ncaa_mens_and_womens/&quot;&gt;dataset had location data&lt;/a&gt; on where basketball shots were made on the court, I played with it and a couple hours later, I created a decent heat map data visualization. The next day, I &lt;a href=&quot;https://www.reddit.com/r/dataisbeautiful/comments/837qnu/heat_map_of_1058383_basketball_shots_from_ncaa/&quot;&gt;posted it&lt;/a&gt; to Reddit&amp;rsquo;s &lt;a href=&quot;https://www.reddit.com/r/dataisbeautiful&quot;&gt;/r/dataisbeautiful subreddit&lt;/a&gt; where it earned about &lt;strong&gt;40,000 upvotes&lt;/strong&gt;. (!?)&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s dig a little deeper. Although visualizing basketball shots has been &lt;a href=&quot;http://www.slate.com/blogs/browbeat/2012/03/06/mapping_the_nba_how_geography_can_teach_players_where_to_shoot.html&quot;&gt;done&lt;/a&gt; &lt;a href=&quot;http://toddwschneider.com/posts/ballr-interactive-nba-shot-charts-with-r-and-shiny/&quot;&gt;before&lt;/a&gt;, this time we have access to an order of magnitude more public data to do some really cool stuff.&lt;/p&gt;
+
+&lt;h2&gt;Full Court&lt;/h2&gt;
+
+&lt;p&gt;The Sportradar play-by-play table on BigQuery &lt;code&gt;mbb_pbp_sr&lt;/code&gt; has more than 1 million NCAA men&amp;rsquo;s basketball shots since the 2013-2014 season, with more being added now during March Madness. Here&amp;rsquo;s a heat map of the locations where those shots were made on the full basketball court:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/basketball-shots/ncaa_count_attempts_unlog.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;We can clearly see at a glance that the majority of shots are made right in front of the basket. For 3-point shots, the center and the corners have higher numbers of shot attempts than the other areas. But not much else since the data is so spatially skewed: setting the bin color scale to logarithmic makes trends more apparent and helps things go viral on Reddit.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/basketball-shots/ncaa_count_attempts.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;Now there&amp;rsquo;s more going on here: shot behavior is clearly symmetric on each side of the court, and there&amp;rsquo;s a small gap between the 3-point line and where 3-pt shots are typically made, likely to ensure that it it&amp;rsquo;s not accidentally ruled as a 2-pt shot.&lt;/p&gt;
+
+&lt;p&gt;How likely is it to score a shot from a given spot? Are certain spots better than others?&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/basketball-shots/ncaa_count_perc_success.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;Surprisingly, shot accuracy is about &lt;em&gt;equal&lt;/em&gt; from anywhere within typical shooting distance, except directly in front of the basket where it&amp;rsquo;s much higher. What is the &lt;a href=&quot;https://en.wikipedia.org/wiki/Expected_value&quot;&gt;expected value&lt;/a&gt; of a shot at a given position: that is, how many points on average will they earn for their team?&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/basketball-shots/ncaa_count_avg_points.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;The average points earned for 3-pt shots is about 1.5x higher than many 2-pt shot locations in the inner court due to the equal accuracy, but locations next to the basket have an even higher expected value. Perhaps the accuracy of shots close to the basket is higher (&amp;gt;1.5x) than 3-pt shots and outweighs the lower point value? &lt;/p&gt;
+
+&lt;p&gt;Since both sides of the court are indeed the same, we can combine the two sides and just plot a half-court instead. (Cross-court shots, which many Redditors &lt;a href=&quot;https://www.reddit.com/r/dataisugly/comments/839rax/basketball_heat_map_shows_an_impressive_number_of/&quot;&gt;argued&lt;/a&gt; that they invalidated my visualizations above, constitute only &lt;em&gt;0.16%&lt;/em&gt; of the basketball shots in the dataset, so they can be safely removed as outliers).&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/basketball-shots/ncaa_count_attempts_half_log.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;There are still a few oddities, such as shots being made &lt;em&gt;behind&lt;/em&gt; the basket. Let&amp;rsquo;s drill down a bit.&lt;/p&gt;
+
+&lt;h2&gt;Focusing on Basketball Shot Type&lt;/h2&gt;
+
+&lt;p&gt;The Sportradar dataset classifies a shot as one of 5 major types: a &lt;strong&gt;jump shot&lt;/strong&gt; where the player jumps-and-throws the basketball, a &lt;strong&gt;layup&lt;/strong&gt; where the player runs down the field toward the basket and throws a one-handed shot, a &lt;strong&gt;dunk&lt;/strong&gt; where the player slams the ball into the basket (looking cool in the process), a &lt;strong&gt;hook shot&lt;/strong&gt; where the player close to the basket throws the ball with a hook motion, and a &lt;strong&gt;tip shot&lt;/strong&gt; where the player intercepts a basket rebound at the tip of the basket and pushes it in.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/basketball-shots/ncaa_types_prop_attempts.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;However, the most frequent types of shots are the less flashy, more practical jump shots and layups. But is a certain type of shot &amp;ldquo;better?&amp;rdquo;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/basketball-shots/ncaa_types_perc.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;Layups are safer than jump shots, but dunks are the most accurate of all the types (however, players likely wouldn&amp;rsquo;t attempt a dunk unless they knew it would be successful). The accuracy of layups  and other close-to-basket shots is indeed more than 1.5x better than the jump shots of 3-pt shots, which explains the expected value behavior above.&lt;/p&gt;
+
+&lt;p&gt;Plotting the heat maps for each type of shot offers more insight into how they work:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/basketball-shots/ncaa_count_attempts_half_types_log.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;They&amp;rsquo;re wildly different heat maps which match the shot type descriptions above, but show we&amp;rsquo;ll need to separate data visualizations by type to accurately see trends.&lt;/p&gt;
+
+&lt;h2&gt;Impact of Game Elapsed Time At Time of Shot&lt;/h2&gt;
+
+&lt;p&gt;A NCAA basketball game lasts for 40 minutes total (2 halves of 20 minutes each), with the possibility of overtime. The &lt;a href=&quot;https://bigquery.cloud.google.com/savedquery/4194148158:3359d86507814fb19a5997a770456baa&quot;&gt;example BigQuery&lt;/a&gt; for the NCAA-provided data compares the percentage of 3-point shots made during the first 35 minutes of the game versus the last 5 minutes: at the end of the game, accuracy was lower by 4 percentage points (31.2% vs. 35.1%). It might be interesting to facet these visualizations by the elapsed time of the game to see if there are any behavioral changes.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/basketball-shots/ncaa_types_prop_type_elapsed.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;There isn&amp;rsquo;t much difference between the proportions within a given half, but there is a difference between the first half and the second half, where the second half has fewer jump shots and more aggressive layups and dunks. After looking at shot success percentage:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/basketball-shots/ncaa_types_perc_success_type_elapsed.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;The jump shot accuracy loss at the end of the game with Sportradar data is similar to that of the NCAA data, which is a good sanity check (but it&amp;rsquo;s odd that the accuracy drop only happens in the last 5 minutes and not elsewhere in the 2nd half). Layup accuracy increases in the second half with the number of layups.&lt;/p&gt;
+
+&lt;p&gt;We can also visualize heat maps for each combo of shot type with time elapsed bucket, but given the results above, the changes in behavior over time may not be very perceptible.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/basketball-shots/ncaa_count_attempts_half_interval_log.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;h2&gt;Impact of Winning/Losing Before Shot&lt;/h2&gt;
+
+&lt;p&gt;Another theory worth exploring is determining if there is any difference whether a team is winning or losing when they make their shot (technically, when the delta between the team score and the other team score is positive for winning teams, negative for losing teams, or 0 if tied). Are players more relaxed when they have a lead? Are players more prone to making mistakes when losing?&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/basketball-shots/ncaa_types_prop_type_score.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;Layups are the same across all buckets, but for teams that are winning, there are fewer jump shots and &lt;strong&gt;more dunkin&amp;rsquo; action&lt;/strong&gt; (nearly double the dunks!). However, the accuracy chart illustrates an issue:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/basketball-shots/ncaa_types_perc_success_type_score.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;Accuracy for most types of shots is much better for teams that are winning&amp;hellip;which may be the &lt;em&gt;reason&lt;/em&gt; they&amp;rsquo;re winning. More research can be done in this area.&lt;/p&gt;
+
+&lt;h2&gt;Conclusion&lt;/h2&gt;
+
+&lt;p&gt;I fully admit I am not a basketball expert. But playing around with this data was a fun way to get a new perspective on how collegiate basketball games work. There&amp;rsquo;s a lot more work that can be done with big basketball data and game strategy; the NCAA-provided data doesn&amp;rsquo;t have location data, but it does have &lt;strong&gt;6x more shots&lt;/strong&gt;, which will be very helpful for further fun in this area.&lt;/p&gt;
+
+&lt;hr&gt;
+
+&lt;p&gt;&lt;em&gt;You can view the R code, ggplot2 code, and BigQueries used to create the data visualizations in &lt;a href=&quot;http://minimaxir.com/notebooks/basketball-shots/&quot;&gt;this R Notebook&lt;/a&gt;. You can also view the images/code used for this post in &lt;a href=&quot;https://github.com/minimaxir/ncaa-basketball&quot;&gt;this GitHub repository&lt;/a&gt;&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;You are free to use the data visualizations from this article however you wish, but it would be greatly appreciated if proper attribution is given to this article and/or myself!&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Special thanks to Ewen Gallic for his implementation of a &lt;a href=&quot;http://egallic.fr/en/drawing-a-basketball-court-with-r/&quot;&gt;basketball court in ggplot2&lt;/a&gt;, which saved me a lot of time!&lt;/em&gt;&lt;/p&gt;
+</description>
+        <pubDate>Mon, 19 Mar 2018 09:20:00 -0700</pubDate>
+        <link>http://minimaxir.com/2018/03/basketball-shots/</link>
+        <guid isPermaLink="true">http://minimaxir.com/2018/03/basketball-shots/</guid>
+        
+        
+        <category>Cool Stuff</category>
+        
+        <category>Visualization</category>
+        
+      </item>
     
       <item>
         <title>A Visual Overview of Stack Overflow's Question Tags</title>
@@ -1191,62 +1294,6 @@ momu,?!ljë7g)k,!?[45 0as9[d.68éhhptvsx jd_næi,ä_z!cwkr&quot;_f6ë-mu_(epp
         
         
         <category>Data</category>
-        
-      </item>
-    
-      <item>
-        <title>Leaving Apple Inc.</title>
-        <description>&lt;p&gt;I’ve been working in the San Francisco Bay Area for about 5 years, but I’ve never publicly said where I’ve worked. Well, I was a Software QA Engineer at &lt;a href=&quot;https://www.apple.com&quot;&gt;Apple Inc.&lt;/a&gt;, on the Applications team.&lt;/p&gt;
-
-&lt;p&gt;As of last week, I handed in my resignation. While I am thankful for the opportunities I have had at Apple, it is time for me to pursue working in other areas I am passionate about and search for other companies to further my personal growth and technical skills. Resigning from a good job to look for something new might defy conventional wisdom, but the time is right for me to make this bold career move.&lt;/p&gt;
-
-&lt;h2&gt;My Apple Story&lt;/h2&gt;
-
-&lt;p&gt;I graduated with university honors at &lt;a href=&quot;http://www.cmu.edu&quot;&gt;Carnegie Mellon University&lt;/a&gt;, from the &lt;a href=&quot;http://tepper.cmu.edu&quot;&gt;Tepper School of Business&lt;/a&gt; with a focus on Computing and Information Technology (i.e. data architecture and coding algorithms), and a minor in Statistics.&lt;/p&gt;
-
-&lt;p&gt;At the end of my senior year, I received an e-mail from a Software QA Manager at Apple (who followed my &lt;a href=&quot;http://techcommntr.tumblr.com&quot;&gt;comments&lt;/a&gt; at the bottom of &lt;a href=&quot;https://techcrunch.com&quot;&gt;TechCrunch&lt;/a&gt; articles) inviting me for an on-site interview. Following an offer, I moved to the Bay Area to start my first post-undergrad job in Cupertino.&lt;/p&gt;
-
-&lt;p&gt;While I can&amp;rsquo;t really talk about what I worked on at Apple, I genuinely enjoyed the work, the product, and team. I had a high impact on the final result and I successfully helped qualify many major software releases. However, after a few years, I realized that my technical skill growth was stalling, so I looked for an an internal transfer to another department, ideally in a data analysis/software engineering role.&lt;/p&gt;
-
-&lt;p&gt;Having received no responses internally, I realized I would have to expand my search to outside of Apple.&lt;/p&gt;
-
-&lt;h2&gt;My Job Hunt&lt;/h2&gt;
-
-&lt;p&gt;I have a strong technical background from my CMU classes, but not having an explicit Computer Science degree has made it difficult to prove aptitude despite my positive annual reviews and proven experience / technical skills at Apple. So I made the decision to blog with a technical focus here at &lt;a href=&quot;http://minimaxir.com&quot;&gt;minimaxir.com&lt;/a&gt;, which gave me an avenue to showcase my programmatic skills and the opportunity to self-learn practical new tools not covered during the school curriculum, such as &lt;a href=&quot;https://www.python.org&quot;&gt;Python&lt;/a&gt;, &lt;a href=&quot;http://ggplot2.org&quot;&gt;ggplot2&lt;/a&gt;, version control with &lt;a href=&quot;https://git-scm.com&quot;&gt;git&lt;/a&gt;, and reproducible analyses via &lt;a href=&quot;http://jupyter.org&quot;&gt;Jupyter/IPython Notebooks&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;This approach has been successful and many readers have liked my my blog posts: often topping &lt;a href=&quot;https://www.reddit.com/r/dataisbeautiful/comments/4bwr7o/relationship_between_rotten_tomatoes_tomatometer/&quot;&gt;Reddit&lt;/a&gt; and &lt;a href=&quot;https://news.ycombinator.com/item?id=13429656&quot;&gt;Hacker News&lt;/a&gt;, driving hundreds of thousands of pageviews. Additionally, a couple of my posts were even cited in larger publications such as the &lt;a href=&quot;https://www.washingtonpost.com/news/the-intersect/wp/2016/06/30/facebook-news-feed-and-the-tyranny-of-positive-content/&quot;&gt;Washington Post&lt;/a&gt; and &lt;a href=&quot;https://www.buzzfeed.com/tomphillips/photos-that-prove-game-of-thrones-happened-in-real-life&quot;&gt;BuzzFeed&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;I also published many open-source technical projects to my &lt;a href=&quot;https://github.com/minimaxir&quot;&gt;GitHub&lt;/a&gt;. My &lt;a href=&quot;https://github.com/minimaxir/big-list-of-naughty-strings&quot;&gt;Big List of Naughty Strings&lt;/a&gt;, a project I made in a couple hours on a weekend inspired by my QA-ing at work, is now at &lt;strong&gt;20,000+ Stars&lt;/strong&gt; on GitHub. My &lt;a href=&quot;https://github.com/minimaxir/facebook-page-post-scraper&quot;&gt;Facebook Page Post Scraper&lt;/a&gt;, which does what the name implies, is now at 1,000+ Stars and has been used by many other businesses and journalists.&lt;/p&gt;
-
-&lt;p&gt;Developers have long argued that job seekers should have a strong public portfolio, as demonstrated experience can account for the lack of a relevant degree. After years of building up my portfolio, it became apparent that most outside recruiters I talked with never looked at my blog/GitHub, despite a strong emphasis of both on my résumé.&lt;/p&gt;
-
-&lt;p&gt;I subsequently rededicated my blog as a pragmatic demonstration of relevant skills in the data analysis job market, focusing more on practical analysis instead of quirky insights and thoughts. In the process, I obtained proficiency in a number of modern tools, including &lt;a href=&quot;http://minimaxir.com/2016/08/clickbait-cluster/&quot;&gt;interactive data visualizations&lt;/a&gt; on the web with &lt;a href=&quot;https://plot.ly&quot;&gt;Plotly&lt;/a&gt;, processing &lt;a href=&quot;http://minimaxir.com/2017/01/amazon-spark/&quot;&gt;big data&lt;/a&gt; with &lt;a href=&quot;http://spark.apache.org&quot;&gt;Apache Spark&lt;/a&gt;, high-performance &lt;a href=&quot;http://minimaxir.com/2017/02/predicting-arrests/&quot;&gt;machine learning&lt;/a&gt; with &lt;a href=&quot;https://github.com/dmlc/xgboost&quot;&gt;xgboost&lt;/a&gt; and &lt;a href=&quot;https://github.com/Microsoft/LightGBM&quot;&gt;LightGBM&lt;/a&gt;, and even &lt;a href=&quot;http://minimaxir.com/2017/04/char-embeddings/&quot;&gt;deep learning&lt;/a&gt; with &lt;a href=&quot;https://github.com/fchollet/keras&quot;&gt;Keras&lt;/a&gt; and &lt;a href=&quot;https://github.com/tensorflow/tensorflow&quot;&gt;TensorFlow&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;I am now actively looking for a &lt;strong&gt;data analyst/software engineering job within San Francisco&lt;/strong&gt;. If you are interested or if you know of companies who are looking for qualified people, please send me an email at &lt;strong&gt;&lt;a href=&quot;mailto:max@minimaxir.com&quot;&gt;max@minimaxir.com&lt;/a&gt;&lt;/strong&gt;.&lt;/p&gt;
-
-&lt;h2&gt;Next Steps&lt;/h2&gt;
-
-&lt;p&gt;So I’ll be using my time over the next couple weeks to openly look for a new job, and to network with others in relevant industries (and be able to interview without taking a day off of work). Things have been improving: my &lt;a href=&quot;https://news.ycombinator.com/item?id=14238066&quot;&gt;comment&lt;/a&gt; in the Hacker News &amp;ldquo;Who wants to be hired?&amp;rdquo; thread generated many leads who really liked my blog/portfolio. If you’d like to meet up in San Francisco and talk about tech and data stuff, just let me know.&lt;/p&gt;
-
-&lt;p&gt;I still intend to continue blogging, not as a hobby but in a more purposeful way. I have very ambitious goals and now have more time to execute them at a deeper level. Plans include:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Web applications leveraging deep learning models, deployed at scale with &lt;a href=&quot;https://www.docker.com&quot;&gt;Docker&lt;/a&gt;/&lt;a href=&quot;https://kubernetes.io&quot;&gt;Kubernetes&lt;/a&gt;.&lt;/li&gt;
-&lt;li&gt;Interactive data dashboards accompanying every analytical blog post with &lt;a href=&quot;https://shiny.rstudio.com&quot;&gt;Shiny&lt;/a&gt;.&lt;/li&gt;
-&lt;li&gt;Code screencasts at 4k resolution on &lt;a href=&quot;https://youtube.com/minimaxir&quot;&gt;YouTube&lt;/a&gt;.&lt;/li&gt;
-&lt;li&gt;Data analysis live-streaming with augmented functionality on &lt;a href=&quot;https://www.twitch.tv/minimaxir&quot;&gt;Twitch&lt;/a&gt;.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;I have set up a &lt;strong&gt;&lt;a href=&quot;https://www.patreon.com/minimaxir&quot;&gt;Patreon&lt;/a&gt;&lt;/strong&gt; in order to subsidize my machine learning/deep learning/software/hardware needs for my blog posts. If you have found any of my blog posts useful, a monetary contribution to my Patreon would be appreciated and will be put to good creative use.&lt;/p&gt;
-
-&lt;p&gt;If you want to keep up with me and my projects, feel free to follow me on &lt;strong&gt;&lt;a href=&quot;https://www.facebook.com/max.woolf&quot;&gt;Facebook&lt;/a&gt;&lt;/strong&gt; and &lt;strong&gt;&lt;a href=&quot;https://twitter.com/minimaxir&quot;&gt;Twitter&lt;/a&gt;&lt;/strong&gt; too.&lt;/p&gt;
-</description>
-        <pubDate>Thu, 04 May 2017 09:30:00 -0700</pubDate>
-        <link>http://minimaxir.com/2017/05/leaving-apple/</link>
-        <guid isPermaLink="true">http://minimaxir.com/2017/05/leaving-apple/</guid>
-        
-        
-        <category>Personal</category>
         
       </item>
     
