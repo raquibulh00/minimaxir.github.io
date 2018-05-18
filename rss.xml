@@ -4,7 +4,7 @@
   <title><![CDATA[minimaxir | Max Woolf's Blog]]></title>
   <link href="http://minimaxir.com/rss.xml" rel="self"/>
   <link href="http://minimaxir.com/"/>
-  <updated>2018-03-19T09:22:50-07:00</updated>
+  <updated>2018-05-18T09:00:59-07:00</updated>
   <id>http://minimaxir.com/</id>
   <author>
     <name><![CDATA[Max Woolf]]></name>
@@ -12,6 +12,126 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[How to Quickly Train a Text-Generating Neural Network for Free]]></title>
+    <link href="http://minimaxir.com/2018/05/text-neural-networks/"/>
+    <updated>2018-05-18T09:00:00-07:00</updated>
+    <id>http://minimaxir.com/2018/05/text-neural-networks</id>
+    <content type="html"><![CDATA[<p>One of the more interesting applications of the neural network revolution is text generation. Most popular approaches are based off of Andrej Karpathy&rsquo;s <a href="https://github.com/karpathy/char-rnn">char-rnn architecture</a>/<a href="http://karpathy.github.io/2015/05/21/rnn-effectiveness/">blog post</a>, which teaches a recurrent neural network to be able to predict the next character in a sequence based on the previous <em>n</em> characters. As a result, a sufficiently trained network can theoretically reproduce its input source material, but since properly-trained neural networks aren&rsquo;t <em>perfect</em>, the output can fall into a weird-but-good uncanny valley.</p>
+
+<p><img src="/img/text-neural-networks/textgenrnn_console.gif" alt=""></p>
+
+<p>Many internet tutorials for text-generation neural networks simply copy an existing char-rnn implementation while changing the input dataset. It&rsquo;s one approach, but there&rsquo;s an opportunity for improvement with modern deep learning tooling. Thanks to frameworks like <a href="https://www.tensorflow.org">TensorFlow</a> and <a href="https://github.com/keras-team/keras">Keras</a>, I built <a href="https://github.com/minimaxir/textgenrnn">textgenrnn</a>, a <a href="https://pypi.org/project/textgenrnn/#description">Python package</a> which abstracts the process of creating and training such char-rnns to a <em>few lines of code</em>, with numerous model architecture and training improvements such as <a href="http://minimaxir.com/2017/04/char-embeddings/">character embeddings</a>, attention-weighted averaging, and a decaying learning rate.</p>
+
+<p>A neat benefit of textgenrnn is that it can be easily used to train neural networks on a GPU very quickly, <em>for free</em> using <a href="https://colab.research.google.com/notebooks/welcome.ipynb">Google Colaboratory</a>. I&rsquo;ve <a href="https://drive.google.com/file/d/1mMKGnVxirJnqDViH7BDJxFqWrsXlPSoK/view?usp=sharing">created a notebook</a> which lets you train your own network and generate text whenever you want with just a few clicks!</p>
+
+<h2>Your First Text-Generating Neural Network</h2>
+
+<p>Colaboratory is a notebook environment similar to <a href="http://jupyter.org">Jupyter Notebooks</a> used in other data science projects. However, Colaboratory notebooks are hosted in a short term virtual machine, with 2 vCPUs, 13GB memory, and a K80 GPU attached. For free. Normally, this configuration would <a href="https://cloud.google.com/compute/pricing">cost</a> $0.57/hr on Google Compute Engine; it sounds low, but adds up when you need to train model(s) for hours to get good results.</p>
+
+<p>First, I recommend copying the notebook to your own Drive so it&rsquo;ll always be there (and switch to using Google Chrome if you aren&rsquo;t). The Colaboratory VM contains Python 3 and common Python packages for machine learning such as TensorFlow. But you can install more packages directly in the notebook. Like textgenrnn! Just run this cell by clicking into the cell and click the &ldquo;play&rdquo; button (or use Shift + Enter) and it&rsquo;ll take care of the rest:</p>
+
+<p><img src="/img/text-neural-networks/pip.png" alt=""></p>
+
+<p>When training a new model, textgenrnn allows you to specify the size and complexity of the neural network with a wide variety of parameters:</p>
+
+<p><img src="/img/text-neural-networks/config.png" alt=""></p>
+
+<p>Let&rsquo;s keep these default parameters for now, so run that cell to load them into memory. Run the next cell, which prompts you to upload a file. <em>Any text file should work</em>, even large text files! For this example, we&rsquo;ll use a 1.1MB text file of Shakespeare plays also <a href="https://github.com/karpathy/char-rnn/tree/master/data/tinyshakespeare">used in the char-rnn demos</a>.</p>
+
+<p><img src="/img/text-neural-networks/upload.png" alt=""></p>
+
+<p>The next cell initializes an instance of textgenrnn and begins training a custom new text-generating neural network!</p>
+
+<p><img src="/img/text-neural-networks/train.png" alt=""></p>
+
+<p>textgenrnn automatically processes the input text into character sequences ready to train the network. After every 2 epochs (a full pass through the data), the network will generate sample text at different temperatures, which represent the &ldquo;creativity&rdquo; of the text (i.e. it allows the model to make increasingly suboptimal predictions, which can cause hilarity to ensue). I typically like generating text at a temperature of 0.5, but for very well-trained models, you can go up to 1.0.</p>
+
+<p>The quick model training speed comes from the VM&rsquo;s GPU, which can perform the necessary mathematical operations much faster than with a CPU. However, in the case of recurrent neural networks, Keras recently added a <a href="https://keras.io/layers/recurrent/#cudnnlstm">CuDNN implementation of RNNs</a> like LSTMs, which can easily tap into the GPU-native code more easily and gain a <em>massive</em> speed boost (<a href="http://minimaxir.com/2017/11/benchmark-gpus/">about <em>7x as fast</em></a>) compared to previous implementations! In all, for this example dataset and model architecture, training on a GPU took 5-6 minutes an epoch, while on a modern CPU, training took <em>1 hour and 24 minutes</em> an epoch, a <strong>14x speedup</strong> on the GPU!</p>
+
+<p>After training is complete, running the next cell will download three files: a <code>weights</code> file, a <code>vocabulary</code> file, and a <code>config</code> file that are all needed to regenerate your model elsewhere.</p>
+
+<p><img src="/img/text-neural-networks/download.png" alt=""></p>
+
+<p>For example, on your own personal computer. Just install textgenrnn + TensorFlow by inputting <code>pip3 install textgenrnn tensorflow</code> into a terminal, change to the directory where the downloaded files are located, run <code>python3</code>, and load the model using:</p>
+<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">from</span> <span class="nn">textgenrnn</span> <span class="kn">import</span> <span class="n">textgenrnn</span>
+<span class="n">textgen</span> <span class="o">=</span> <span class="n">textgenrnn</span><span class="p">(</span><span class="n">weights_path</span><span class="o">=</span><span class="s">'colaboratory_weights.hdf5'</span><span class="p">,</span>
+                       <span class="n">vocab_path</span><span class="o">=</span><span class="s">'colaboratory_vocab.json'</span><span class="p">,</span>
+                       <span class="n">config_path</span><span class="o">=</span><span class="s">'colaboratory_config.json'</span><span class="p">)</span>
+</code></pre></div>
+<p>And that&rsquo;s that! No GPU necessary if you&rsquo;re just generating text. You can generate samples (like during training) using <code>textgen.generate_samples()</code>, generate a ton of samples at any temperature you like to a file using <code>textgen.generate_to_file()</code>, or incorporate a generated text into a Python script (e.g. a Twitter bot) using <code>textgen.generate(1, return_as_list=True)[0]</code> to store a text as a variable. You can view more of textgenrnn&rsquo;s functions and capabilities in <a href="https://github.com/minimaxir/textgenrnn/blob/master/docs/textgenrnn-demo.ipynb">this demo Jupyter Notebook</a>.</p>
+
+<p>Here&rsquo;s some Shakespeare generated with a 50-minute-trained model at a temperature of 0.5:</p>
+<div class="highlight"><pre><code class="language-" data-lang="">LUCENTIO:
+And then shall good grave to my wife thee;
+Thou would the cause the brieved to me,
+And let the place and then receives:
+The rest you the foren to my ways him child,
+And marry that will be a parties and so set me that be deeds
+And then the heart and be so shall make the most as he and stand of seat.
+
+GLOUCESTER:
+Your father and madam, or shall for the people
+And dead to make the truth, or a business
+As we brother to the place her great the truth;
+And that which to the smaster and her father,
+I am I was see the sun have to the royal true.
+</code></pre></div>
+<p>Not too bad, and it&rsquo;s even close to <a href="https://en.wikipedia.org/wiki/Iambic_pentameter">iambic pentameter</a>!</p>
+
+<h2>Tweaking the Model</h2>
+
+<p>The most important model configuration options above are <code>rnn_size</code> and <code>rnn_layers</code>: these determine the complexity of the network. Typically, you&rsquo;ll see networks in tutorials be a single 128-cell or 256-cell network. However, textgenrnn&rsquo;s architecture is slightly different as it has an attention layer which incorporates <em>all</em> the preceding model layers. As a result, it&rsquo;s  much better to go deeper than wider (e.g. 4x128 is better than 1x512) unless you have a very large amount of text (&gt;10MB). <code>rnn_bidirectional</code> controls whether the recurrent neural network is bidirectional, that is, it processes  the previous characters both forward <em>and</em> backward (which works great if text follows specific rules, like Shakespeare&rsquo;s character headings). <code>max_length</code> determines the maximum number of characters for the network to use to predict the next character, which should be increased to let the network learn longer sequences, or decrease for shorter sequences.</p>
+
+<p>Training has a few helpful options as well. <code>num_epochs</code> determines the number of full passes of the data; this can be tweaked if you want to train the model even more. <code>batch_size</code> determines the number of model sequences to train in a step: typically, batch size for deep learning models is 32 or 128, but with a GPU, you can get a speed increase by saturating it with the given 1024 default. <code>train_size</code> determines the proportion of character samples to train; setting it <code>&lt; 1.0</code> both speeds up each epoch, and prevents the model from cheating and being able to learn sequences verbatim. (You can set <code>&#39;validation&#39;: True</code> to run the model on the unused data after each epoch to see if the model is overfitting).</p>
+
+<p>Let&rsquo;s try playing with the parameters more on a new text dataset.</p>
+
+<h2>Word-Level Text Generation With Reddit Data</h2>
+
+<p>You might be asking &ldquo;how do you obtain text data&rdquo;? The popular text-generation use cases like lyric generation and movie scripts are copyright-protected so they&rsquo;re harder to find, and even then, it might not be enough text data to train a new model upon (you typically want atleast 100,000 characters).</p>
+
+<p><a href="https://www.reddit.com">Reddit</a>, however, has <em>millions</em> of submission titles which would be great to train for a model. I wrote a <a href="https://github.com/minimaxir/subreddit-generator">helper script</a> to automatically download the top <em>n</em> Reddit submissions from a given subreddit over a given period of time. If you choose subreddits with similar linguistic styles in their titles, the subreddits will even blend together! Let&rsquo;s play with the Top 20,000 Submissions in 2017 from each of <a href="https://www.reddit.com/r/politics/">/r/politics</a> and <a href="https://www.reddit.com/r/technology/">/r/technology</a>, which results in a 3.3MB file: about 3x as much data as the Shakespeare plays.</p>
+
+<p><img src="/img/text-neural-networks/reddit_data.png" alt=""></p>
+
+<p>One last thing that textgenrnn can do that most char-rnn implementations can&rsquo;t is generate a <em>word level</em> model (thanks to Keras&rsquo;s tokenizers), where the model uses the <em>n</em> previous words/punctuation to predict the next word/punctuation. On the plus side, using only words prevents crazy typoes and since it predicts multiple &ldquo;characters&rdquo; at a time, <code>max_length</code> can be reduced proportionally, dramatically speeding up training. There&rsquo;s two downsides with this approach; since words are all lowercase and punctuation is its own token, the generated text cannot be immediately used without manual editing. Additionally, the model weights will be substantially larger than a character-level model since the word-level model has to store an embedding for each word (up to <code>max_words</code>, which is 10,000 by default when the vocabulary size for a char-level model is 200-300).</p>
+
+<p>Another advantage of the Colaboratory notebook is that you can quickly adjust model parameters, upload a new file, and immediately start training it. We&rsquo;ll set <code>&#39;line_delimited&#39;: True</code> and <code>&#39;rnn_bidirectional&#39;: False</code> since there aren&rsquo;t specific rules. For word level training, let&rsquo;s set <code>&#39;word_level&#39;: True</code> and <code>&#39;max_length&#39;: 8</code> to reflect the new training architecture. Since training length has been reduced to 1/5th, we can set <code>&#39;num_epochs&#39;: 50</code> and <code>&#39;gen_epoch&#39;: 10</code> to balance it out. Rerun the config cell to update parameters, upload the Reddit data file, and rerun training.</p>
+
+<p>The resulting model is much more well trained than the Shakespeare model, and here&rsquo;s a few Reddit submission titles generated at a temperature of 1.0:</p>
+<div class="highlight"><pre><code class="language-" data-lang="">report : 49 % of americans now believe all of the country ’ s effective
+
+people like facebook like it ' s 650 of 1 %
+
+uber accused of secretly - security popular service ( likely oklahoma )
+
+equifax breach fallout : your salary is dead
+
+sanders uses texas shooter ' s iphone sales
+
+adobe videos will be used to sell the web
+
+apple to hold cash for $ 500 service
+
+fitbit just targeting solar energy
+
+george bush ' s concept car ‘ goes for all the biggest controversy .
+</code></pre></div>
+<p>Those look pretty good, although they may need a little editing before posting on social media.</p>
+
+<h2>Followup</h2>
+
+<p>These examples only train the model for little time as a demo of textgenrnn&rsquo;s fast learning; there&rsquo;s nothing stopping you from increasing <code>num_epochs</code> even more to further refine a model. However, from my experience, the training cell times out after <strong>4 hours</strong>; set <code>num_epochs</code> accordingly, although in my experience that&rsquo;s all you need before the network converges.</p>
+
+<p>In practice, I used this Colaboratory notebook to train <em>many</em> models for <a href="https://www.reddit.com/r/SubredditNN/">/r/SubredditNN</a>, a Reddit subreddit where only text-generating neural network bots trained on other subreddits. And the results are very funny:</p>
+
+<p><img src="/img/text-neural-networks/subredditnn.png" alt=""></p>
+
+<p>Although text generating neural networks aren&rsquo;t at the point where they can <a href="https://www.bloomberg.com/news/features/2018-05-17/i-tried-to-get-an-ai-to-write-this-story-paul-ford">write entire articles by themselves</a>, there are still many opportunities to use it just for fun! And thanks to textgenrnn, it&rsquo;s easy, fast, and cost-effective for anyone to do! Let me know if you make any interesting neural networks with textgenrnn and this Notebook!</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Visualizing One Million NCAA Basketball Shots]]></title>
@@ -1124,130 +1244,6 @@ momu,?!ljë7g)k,!?[45 0as9[d.68éhhptvsx jd_næi,ä_z!cwkr"_f6ë-mu_(epp
 <hr>
 
 <p><em>All scripts for running the benchmark are available in <a href="https://github.com/minimaxir/keras-cntk-benchmark">this GitHub repo</a>. You can view the R/ggplot2 code used to process the logs and create the interactive visualizations in <a href="http://minimaxir.com/notebooks/keras-cntk/">this R Notebook</a>.</em></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Advantages of Using R Notebooks For Data Analysis Instead of Jupyter Notebooks]]></title>
-    <link href="http://minimaxir.com/2017/06/r-notebooks/"/>
-    <updated>2017-06-06T08:30:00-07:00</updated>
-    <id>http://minimaxir.com/2017/06/r-notebooks</id>
-    <content type="html"><![CDATA[<p><a href="http://jupyter.org">Jupyter Notebooks</a>, formerly known as <a href="https://ipython.org/notebook.html">IPython Notebooks</a>, are ubiquitous in modern data analysis. The Notebook format allows statistical code and its output to be viewed on any computer in a logical and <em>reproducible</em> manner, avoiding both the confusion caused by unclear code and the inevitable &ldquo;it only works on my system&rdquo; curse.</p>
-
-<p><img src="/img/r-notebooks/jupyterdemo.png" alt=""></p>
-
-<p>In Jupyter Notebooks, each block of Python input code executes in its own cell, and the output of the block appears inline; this allows the user to iterate on the results, both to make the data transformations explicit and to and make sure the results are as expected.</p>
-
-<p><img src="/img/r-notebooks/jupyter.png" alt=""></p>
-
-<p>In addition to code blocks, Jupyter Notebooks support <a href="https://en.wikipedia.org/wiki/Markdown">Markdown</a> cells, allowing for more detailed write-ups with easy formatting. The final Notebook can be exported as a HTML file displayable in a browser, or the raw Notebook file can be shared and <a href="https://github.com/blog/1995-github-jupyter-notebooks-3">rendered</a> on sites like <a href="https://github.com">GitHub</a>. Although Jupyter is a Python application, it can run kernels of <a href="https://irkernel.github.io">non-Python languages</a>, such as <a href="https://www.r-project.org">R</a>.</p>
-
-<p>Over the years, there have a been a few new competitors in the reproducible data analysis field, such as <a href="http://beakernotebook.com/features">Beaker Notebook</a> and, for heavy-duty business problems, <a href="https://zeppelin.apache.org">Apache Zeppelin</a>. However, today we&rsquo;ll look at the relatively new <a href="http://rmarkdown.rstudio.com/r_notebooks.html">R Notebooks</a>, and how they help improve the workflows of common data analysis in ways Jupyter Notebooks can&rsquo;t without third-party extensions.</p>
-
-<h2>About R Notebooks</h2>
-
-<p>R Notebooks are a format maintained by <a href="https://www.rstudio.com">RStudio</a>, which develops and maintains a large number of open source R packages and tools, most notably the free-for-consumer RStudio R IDE. More specifically, R Notebooks are an extension of the earlier <a href="http://rmarkdown.rstudio.com">R Markdown</a> <code>.Rmd</code> format, useful for rendering analyses into HTML/PDFs, or other cool formats like <a href="http://rmarkdown.rstudio.com/tufte_handout_format.html">Tufte handouts</a> or even <a href="https://bookdown.org">books</a>. The default output of an R Notebook file is a <code>.nb.html</code> file, which can be viewed as a webpage on any system. (<a href="https://rpubs.com">RPubs</a> has many examples of R Notebooks, although I recommend using <a href="https://pages.github.com">GitHub Pages</a> to host notebooks publicly).</p>
-
-<p><img src="/img/r-notebooks/RNotebookAnimation.gif" alt=""></p>
-
-<p>Instead of having separate cells for code and text, a R Markdown file is all plain text. The cells are indicated by three backticks and a gray background in RStudio, which makes it easy to enter a code block, easy to identify code blocks at a glance, and easy to execute a notebook block-by-block. Each cell also has a green indicator bar which shows which code is running and which code is queued, line-by-line.</p>
-
-<p>For Notebook files, a HTML webpage is automatically generated whenever the file is saved, which can immediately be viewed in any browser (the generated webpage stores the cell output and any necessary dependencies).</p>
-
-<p><img src="/img/r-notebooks/notebooktest.png" alt=""></p>
-
-<p>R Notebooks can only be created and edited in RStudio, but this is a case where tight vertical integration of open-source software is a good thing. Among many other features, RStudio includes a file manager, a function help, a variable explorer, and a project manager; all of which make analysis much easier and faster as opposed to the browser-only Jupyter.</p>
-
-<p><img src="/img/r-notebooks/rstudio.png" alt=""></p>
-
-<p>I&rsquo;ve made many, many Jupyter Notebooks and R Notebooks <a href="http://minimaxir.com/data-portfolio">over the years</a>, which has given me insight into the strengths and weaknesses of both formats. Here are a few native features of R Notebooks which present an objective advantage over Jupyter Notebooks, particularly those not highlighted in the documentation:</p>
-
-<h2>Version Control</h2>
-
-<p>Version control of files with tools such as <a href="https://en.wikipedia.org/wiki/Git">git</a> is important as it both maintains an explorable database of changes to the code files and also improves collaboration by using a centralized server (e.g. GitHub) where anyone with access to the repository can pull and push changes to the code. In the data science world, large startups such as <a href="https://stripe.com/blog/reproducible-research">Stripe</a> and <a href="https://medium.com/airbnb-engineering/scaling-knowledge-at-airbnb-875d73eff091">Airbnb</a> have seen a lot of success with this approach.</p>
-
-<p>RStudio incidentally has a native git client for tracking and committing changes to a <code>.Rmd</code> file, which is easy since <code>.Rmd</code> files are effectively plain text files where you can see differences between versions at a per-line level. (You may not want to store the changes to the generated <code>.nb.html</code> Notebook since they will be large and redundant to the changes made in the corresponding <code>.Rmd</code>; I recommend adding a <code>*.nb.html</code> rule to a <code>.gitignore</code> file during analysis).</p>
-
-<p><img src="/img/r-notebooks/git.png" alt=""></p>
-
-<p>The <code>.ipynb</code> Jupyter Notebook files are blobs of JSON that also store cell output, which will result in large diffs if you keep them in version control and make any changes which result in different output. This can cause the git database to balloon and makes reading per-line diffs hard if not impossible.</p>
-
-<p>On Hacker News, the version control issues in Jupyter are <a href="https://news.ycombinator.com/item?id=14034341">a common complaint</a>, however a Jupyter developer noted of a possibility of <a href="https://news.ycombinator.com/item?id=14035158">working with RStudio</a> on solving this issue.</p>
-
-<h2>Inline Code Rendering</h2>
-
-<p>A common practice in Jupyter Notebooks is to print common values as a part of a write-up or testing statistical code. In Jupyter Notebooks, if you want to verify the number of rows in a dataset for exploratory data analysis, you have to add an appropriate print statement to the cell to get the number <code>n</code> rows, and then add a Markdown cell to redundantly describe what you just print in the output. </p>
-
-<p>In R Notebooks, you can skip a step by calling such print statements in-line in the Markdown text, which will then be rendered with the Notebook. This also avoids hard-coding such numbers in the Markdown text if you change the data beforehand (e.g. parameter tuning) or if the values are nontrivial to calculate by hand.</p>
-
-<p>For example, these lines of R Markdown from my <a href="http://minimaxir.com/notebooks/first-comment/">Reddit First Comment Notebook</a>:</p>
-
-<p><img src="/img/r-notebooks/inline.png" alt=""></p>
-
-<p>translate into:</p>
-
-<p><img src="/img/r-notebooks/reddit.png" alt=""></p>
-
-<h2>Metadata</h2>
-
-<p>R Notebooks are configured with a <a href="http://yaml.org">YAML</a> header, which can include common attributes such as title, author, date published, and other relevant options. These fields will then be configured correctly in the metadata for HTML/PDF/Handouts output. Here&rsquo;s an example from <a href="http://minimaxir.com/notebooks/amazon-spark/">one of my notebooks</a>:</p>
-<div class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span class="nn">---</span>
-<span class="na">title</span><span class="pi">:</span> <span class="s2">"</span><span class="s">Playing</span><span class="nv"> </span><span class="s">with</span><span class="nv"> </span><span class="s">80</span><span class="nv"> </span><span class="s">Million</span><span class="nv"> </span><span class="s">Amazon</span><span class="nv"> </span><span class="s">Product</span><span class="nv"> </span><span class="s">Review</span><span class="nv"> </span><span class="s">Ratings</span><span class="nv"> </span><span class="s">Using</span><span class="nv"> </span><span class="s">Apache</span><span class="nv"> </span><span class="s">Spark"</span>
-<span class="na">author</span><span class="pi">:</span> <span class="s2">"</span><span class="s">Max</span><span class="nv"> </span><span class="s">Woolf</span><span class="nv"> </span><span class="s">(@minimaxir)"</span>
-<span class="na">date</span><span class="pi">:</span> <span class="s2">"</span><span class="s">January</span><span class="nv"> </span><span class="s">2nd,</span><span class="nv"> </span><span class="s">2017"</span>
-<span class="na">output</span><span class="pi">:</span>
-  <span class="na">html_notebook</span><span class="pi">:</span>
-    <span class="na">highlight</span><span class="pi">:</span> <span class="s">tango</span>
-    <span class="na">mathjax</span><span class="pi">:</span> <span class="no">null</span>
-    <span class="na">number_sections</span><span class="pi">:</span> <span class="s">yes</span>
-    <span class="na">theme</span><span class="pi">:</span> <span class="s">spacelab</span>
-    <span class="na">toc</span><span class="pi">:</span> <span class="s">yes</span>
-    <span class="na">toc_float</span><span class="pi">:</span> <span class="s">yes</span>
-<span class="nn">---</span>
-</code></pre></div>
-<p>Said metadata features are <a href="https://github.com/ipython/ipython/issues/6073">often requested but unimplemented</a> in Jupyter.</p>
-
-<h2>Notebook Theming</h2>
-
-<p>As noted in the example metadata above, R Notebooks allow extensive theming. Jupyter Notebooks do <a href="https://github.com/dunovank/jupyter-themes">support themes</a>, but with a third-party Python package, or placing custom CSS in an <a href="https://stackoverflow.com/a/32158550">odd location</a>.</p>
-
-<p>Like Jupyter Notebooks, the front-end of browser-based R Notebooks is based off of the <a href="http://getbootstrap.com">Bootstrap</a> HTML framework. R Notebooks, however, allow you to natively select the style of code syntax highlighting via <code>highlight</code> (similar options as <a href="https://help.farbox.com/pygments.html">pygments</a>) and also the entire Bootstrap theme via <code>theme</code> (with a selection from the excellent <a href="https://bootswatch.com">Bootswatch</a> themes by <a href="https://twitter.com/thomashpark">Thomas Park</a>), giving your Notebook a unique look without adding dependencies.</p>
-
-<h2>Data Tables</h2>
-
-<p>When you print a data frame in a Jupyter Notebook, the output appears as a standard <em>boring</em> HTML table:</p>
-
-<p><img src="/img/r-notebooks/htmltable.png" alt=""></p>
-
-<p>No cell block output is ever truncated. Accidentally printing an entire 100,000+ row table to a Jupyter Notebook is a mistake you only make <em>once</em>.</p>
-
-<p>R Notebook tables are pretty tables with pagination for both rows and columns, and can support large amounts of data if necessary.</p>
-
-<p><img src="/img/r-notebooks/rtable.png" alt=""></p>
-
-<p>The R Notebook output table also includes the data type of the column, which is helpful for debugging unexpected issues where a column has an unintended data type (e.g. a numeric <code>&lt;dbl&gt;</code> column or a datetime <code>&lt;S3: POSIXct&gt;</code> column is parsed as a text-based <code>&lt;chr&gt;</code> column).</p>
-
-<h2>Table of Contents</h2>
-
-<p>A Table of Contents always helps navigating, particularly in a PDF export. Jupyter Notebooks <a href="https://github.com/minrk/ipython_extensions">requires an extension</a> for a ToC, while R Notebooks will natively create one from section headers (controllable via <code>toc</code> and <code>number_sections</code>). An optional <code>toc_float</code> parameter causes the Table of Contents to float on the left in the browser, making it always accessible.</p>
-
-<p><img src="/img/r-notebooks/notebookheader.png" alt=""></p>
-
-<p>In conclusion, R Notebooks haven&rsquo;t received much publicity since the benefits aren&rsquo;t immediately obvious, but for the purpose of reproducible analyses, the breadth of native features allows for excellent utility while avoiding dependency hell. Running R in an R Notebook is a significantly better experience than running R in a Jupyter Notebook. The advantages present in R Notebooks can also provide guidance for feature development in other Notebook software, which improves the data analysis ecosystem as a whole.</p>
-
-<p>However, there&rsquo;s an elephant in the room&hellip;</p>
-
-<h2>What About Python?</h2>
-
-<p>So you might be thinking &ldquo;an R Notebook forces you to use R, but <em>serious</em> data science work is done using Python!&rdquo; Plot twist: you can use Python in an R Notebook!</p>
-
-<p><img src="/img/r-notebooks/python.png" alt=""></p>
-
-<p>Well, sort of. The Python session ends after the cell executes, making it unhelpful for tasks other than <em>ad hoc</em> scripts.</p>
-
-<p>The topic on whether R or Python is better for data analysis is a <a href="https://news.ycombinator.com/item?id=14056098">common</a> <a href="https://news.ycombinator.com/item?id=13239530">religious</a> <a href="https://news.ycombinator.com/item?id=12301996">flamewar</a> topic which is best saved for a separate blog post (tl;dr: I disagree with the paraphrased quote above in that both languages have their advantages and you&rsquo;ll benefit significantly from knowing both ecosystems).</p>
-
-<p>And I wouldn&rsquo;t count R out of &ldquo;serious data science&rdquo;. You can use R <a href="http://spark.rstudio.com">seamlessly</a> with big data tools like <a href="https://spark.apache.org">Apache Spark</a>, and R can <a href="https://rstudio.github.io/keras/">now</a> use <a href="https://keras.io">Keras</a>/<a href="https://www.tensorflow.org">TensorFlow</a> for deep learning with near-API-parity to the Python version. <em>Hmm</em>.</p>
 ]]></content>
   </entry>
   
