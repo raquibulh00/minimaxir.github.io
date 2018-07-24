@@ -2,11 +2,11 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>minimaxir | Max Woolf's Blog</title>
-    <description>A blog by Max Woolf about startups, technology, and blogging. It's so meta, even this acronym.</description>
-    <link>http://minimaxir.com/</link>
-    <atom:link href="http://minimaxir.com/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Mon, 16 Jul 2018 09:55:55 -0700</pubDate>
-    <lastBuildDate>Mon, 16 Jul 2018 09:55:55 -0700</lastBuildDate>
+    <description>A blog by data scientist Max Woolf about startups, technology, and blogging.</description>
+    <link>https://minimaxir.com/</link>
+    <atom:link href="https://minimaxir.com/feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Mon, 23 Jul 2018 20:42:51 -0700</pubDate>
+    <lastBuildDate>Mon, 23 Jul 2018 20:42:51 -0700</lastBuildDate>
     <generator>Jekyll v3.6.2</generator>
     
       <item>
@@ -195,8 +195,8 @@
 &lt;p&gt;&lt;em&gt;You are free to use the data visualizations from this article however you wish, but it would be greatly appreciated if proper attribution is given to this article and/or myself!&lt;/em&gt;&lt;/p&gt;
 </description>
         <pubDate>Mon, 16 Jul 2018 09:45:00 -0700</pubDate>
-        <link>http://minimaxir.com/2018/07/imdb-data-analysis/</link>
-        <guid isPermaLink="true">http://minimaxir.com/2018/07/imdb-data-analysis/</guid>
+        <link>https://minimaxir.com/2018/07/imdb-data-analysis/</link>
+        <guid isPermaLink="true">https://minimaxir.com/2018/07/imdb-data-analysis/</guid>
         
         
         <category>Data Visualization</category>
@@ -319,8 +319,8 @@ george bush ' s concept car ‘ goes for all the biggest controversy .
 &lt;p&gt;Although text generating neural networks aren&amp;rsquo;t at the point where they can &lt;a href=&quot;https://www.bloomberg.com/news/features/2018-05-17/i-tried-to-get-an-ai-to-write-this-story-paul-ford&quot;&gt;write entire articles by themselves&lt;/a&gt;, there are still many opportunities to use it just for fun! And thanks to textgenrnn, it&amp;rsquo;s easy, fast, and cost-effective for anyone to do! Let me know if you make any interesting neural networks with textgenrnn and this Notebook!&lt;/p&gt;
 </description>
         <pubDate>Fri, 18 May 2018 09:00:00 -0700</pubDate>
-        <link>http://minimaxir.com/2018/05/text-neural-networks/</link>
-        <guid isPermaLink="true">http://minimaxir.com/2018/05/text-neural-networks/</guid>
+        <link>https://minimaxir.com/2018/05/text-neural-networks/</link>
+        <guid isPermaLink="true">https://minimaxir.com/2018/05/text-neural-networks/</guid>
         
         
         <category>Projects</category>
@@ -420,8 +420,8 @@ george bush ' s concept car ‘ goes for all the biggest controversy .
 &lt;p&gt;&lt;em&gt;Special thanks to Ewen Gallic for his implementation of a &lt;a href=&quot;http://egallic.fr/en/drawing-a-basketball-court-with-r/&quot;&gt;basketball court in ggplot2&lt;/a&gt;, which saved me a lot of time!&lt;/em&gt;&lt;/p&gt;
 </description>
         <pubDate>Mon, 19 Mar 2018 09:20:00 -0700</pubDate>
-        <link>http://minimaxir.com/2018/03/basketball-shots/</link>
-        <guid isPermaLink="true">http://minimaxir.com/2018/03/basketball-shots/</guid>
+        <link>https://minimaxir.com/2018/03/basketball-shots/</link>
+        <guid isPermaLink="true">https://minimaxir.com/2018/03/basketball-shots/</guid>
         
         
         <category>Cool Stuff</category>
@@ -529,8 +529,8 @@ george bush ' s concept car ‘ goes for all the biggest controversy .
 &lt;p&gt;&lt;em&gt;You are free to use the data visualizations from this article however you wish, but it would be greatly appreciated if proper attribution is given to this article and/or myself!&lt;/em&gt;&lt;/p&gt;
 </description>
         <pubDate>Fri, 09 Feb 2018 09:00:00 -0800</pubDate>
-        <link>http://minimaxir.com/2018/02/stack-overflow-questions/</link>
-        <guid isPermaLink="true">http://minimaxir.com/2018/02/stack-overflow-questions/</guid>
+        <link>https://minimaxir.com/2018/02/stack-overflow-questions/</link>
+        <guid isPermaLink="true">https://minimaxir.com/2018/02/stack-overflow-questions/</guid>
         
         
         <category>Cool Stuff</category>
@@ -639,8 +639,8 @@ george bush ' s concept car ‘ goes for all the biggest controversy .
 &lt;p&gt;&lt;em&gt;All scripts for running the benchmark are available in &lt;a href=&quot;https://github.com/minimaxir/keras-cntk-benchmark/tree/master/v2&quot;&gt;this GitHub repo&lt;/a&gt;. You can view the R/ggplot2 code used to process the logs and create the visualizations in &lt;a href=&quot;http://minimaxir.com/notebooks/benchmark-gpus/&quot;&gt;this R Notebook&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
 </description>
         <pubDate>Tue, 28 Nov 2017 08:30:00 -0800</pubDate>
-        <link>http://minimaxir.com/2017/11/benchmark-gpus/</link>
-        <guid isPermaLink="true">http://minimaxir.com/2017/11/benchmark-gpus/</guid>
+        <link>https://minimaxir.com/2017/11/benchmark-gpus/</link>
+        <guid isPermaLink="true">https://minimaxir.com/2017/11/benchmark-gpus/</guid>
         
         
         <category>Cool Stuff</category>
@@ -742,8 +742,8 @@ george bush ' s concept car ‘ goes for all the biggest controversy .
 &lt;p&gt;In all, making Magic: the GIFening was a fun project. In retrospect, talking though the commits made me realize I performed many bad coding practices in a haste to get the project done ASAP (specifically, checking to see if certain edge cases are documented, violating &lt;a href=&quot;https://en.wikipedia.org/wiki/Don%27t_repeat_yourself&quot;&gt;DRY&lt;/a&gt;, and forgetting to remove specific types of cards like &lt;a href=&quot;https://twitter.com/MTGIFening/status/924969160307744769&quot;&gt;split cards&lt;/a&gt;). Obviously there isn&amp;rsquo;t a multimillion-dollar startup opportunity in creating random GIFs of Magic cards, but I&amp;rsquo;ll fix a few remaining issues and keep the Twitter bot running.&lt;/p&gt;
 </description>
         <pubDate>Tue, 07 Nov 2017 08:10:00 -0800</pubDate>
-        <link>http://minimaxir.com/2017/11/magic-the-gifening/</link>
-        <guid isPermaLink="true">http://minimaxir.com/2017/11/magic-the-gifening/</guid>
+        <link>https://minimaxir.com/2017/11/magic-the-gifening/</link>
+        <guid isPermaLink="true">https://minimaxir.com/2017/11/magic-the-gifening/</guid>
         
         
         <category>Cool Stuff</category>
@@ -930,8 +930,8 @@ Theme functions like &lt;code&gt;theme_minimal()&lt;/code&gt; accept a &lt;code&
 &lt;p&gt;&lt;em&gt;You are free to use the data visualizations from this article however you wish, but it would be greatly appreciated if proper attribution is given to this article and/or myself!&lt;/em&gt;&lt;/p&gt;
 </description>
         <pubDate>Mon, 14 Aug 2017 09:00:00 -0700</pubDate>
-        <link>http://minimaxir.com/2017/08/ggplot2-web/</link>
-        <guid isPermaLink="true">http://minimaxir.com/2017/08/ggplot2-web/</guid>
+        <link>https://minimaxir.com/2017/08/ggplot2-web/</link>
+        <guid isPermaLink="true">https://minimaxir.com/2017/08/ggplot2-web/</guid>
         
         
         <category>Data</category>
@@ -1035,8 +1035,8 @@ Theme functions like &lt;code&gt;theme_minimal()&lt;/code&gt; accept a &lt;code&
 &lt;p&gt;&lt;em&gt;All scripts for running the benchmark are available in &lt;a href=&quot;https://github.com/minimaxir/deep-learning-cpu-gpu-benchmark&quot;&gt;this GitHub repo&lt;/a&gt;. You can view the R/ggplot2 code used to process the logs and create the visualizations in &lt;a href=&quot;http://minimaxir.com/notebooks/deep-learning-cpu-gpu/&quot;&gt;this R Notebook&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
 </description>
         <pubDate>Wed, 05 Jul 2017 09:00:00 -0700</pubDate>
-        <link>http://minimaxir.com/2017/07/cpu-or-gpu/</link>
-        <guid isPermaLink="true">http://minimaxir.com/2017/07/cpu-or-gpu/</guid>
+        <link>https://minimaxir.com/2017/07/cpu-or-gpu/</link>
+        <guid isPermaLink="true">https://minimaxir.com/2017/07/cpu-or-gpu/</guid>
         
         
         <category>Data</category>
@@ -1162,8 +1162,8 @@ Theme functions like &lt;code&gt;theme_minimal()&lt;/code&gt; accept a &lt;code&
 &lt;p&gt;&lt;em&gt;You are free to use the data visualizations/model architectures from this article however you wish, but it would be greatly appreciated if proper attribution is given to this article and/or myself!&lt;/em&gt;&lt;/p&gt;
 </description>
         <pubDate>Mon, 26 Jun 2017 09:00:00 -0700</pubDate>
-        <link>http://minimaxir.com/2017/06/reddit-deep-learning/</link>
-        <guid isPermaLink="true">http://minimaxir.com/2017/06/reddit-deep-learning/</guid>
+        <link>https://minimaxir.com/2017/06/reddit-deep-learning/</link>
+        <guid isPermaLink="true">https://minimaxir.com/2017/06/reddit-deep-learning/</guid>
         
         
         <category>Data</category>
@@ -1248,8 +1248,8 @@ Theme functions like &lt;code&gt;theme_minimal()&lt;/code&gt; accept a &lt;code&
 &lt;p&gt;&lt;em&gt;You are free to use the data visualizations from this article however you wish, but it would be greatly appreciated if proper attribution is given to this article and/or myself!&lt;/em&gt;&lt;/p&gt;
 </description>
         <pubDate>Tue, 20 Jun 2017 08:00:00 -0700</pubDate>
-        <link>http://minimaxir.com/2017/06/imgur-decline/</link>
-        <guid isPermaLink="true">http://minimaxir.com/2017/06/imgur-decline/</guid>
+        <link>https://minimaxir.com/2017/06/imgur-decline/</link>
+        <guid isPermaLink="true">https://minimaxir.com/2017/06/imgur-decline/</guid>
         
         
         <category>Data</category>

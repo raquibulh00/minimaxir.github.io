@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[minimaxir | Max Woolf's Blog]]></title>
-  <link href="http://minimaxir.com/rss.xml" rel="self"/>
-  <link href="http://minimaxir.com/"/>
-  <updated>2018-07-16T09:55:55-07:00</updated>
-  <id>http://minimaxir.com/</id>
+  <link href="https://minimaxir.com/rss.xml" rel="self"/>
+  <link href="https://minimaxir.com/"/>
+  <updated>2018-07-23T20:42:51-07:00</updated>
+  <id>https://minimaxir.com/</id>
   <author>
     <name><![CDATA[Max Woolf]]></name>
     <email><![CDATA[max@minimaxir.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Analyzing IMDb Data The Intended Way, with R and ggplot2]]></title>
-    <link href="http://minimaxir.com/2018/07/imdb-data-analysis/"/>
+    <link href="https://minimaxir.com/2018/07/imdb-data-analysis/"/>
     <updated>2018-07-16T09:45:00-07:00</updated>
-    <id>http://minimaxir.com/2018/07/imdb-data-analysis</id>
+    <id>https://minimaxir.com/2018/07/imdb-data-analysis</id>
     <content type="html"><![CDATA[<p><a href="https://www.imdb.com">IMDb</a>, the Internet Movie Database, has been a popular source for data analysis and visualizations over the years. The combination of user ratings for movies and detailed movie metadata have always been fun to <a href="http://minimaxir.com/2016/01/movie-revenue-ratings/">play with</a>.</p>
 
 <p><img src="/img/movie-revenue-ratings/box-office-rating-5.png" alt=""></p>
@@ -205,9 +205,9 @@
   
   <entry>
     <title type="html"><![CDATA[How to Quickly Train a Text-Generating Neural Network for Free]]></title>
-    <link href="http://minimaxir.com/2018/05/text-neural-networks/"/>
+    <link href="https://minimaxir.com/2018/05/text-neural-networks/"/>
     <updated>2018-05-18T09:00:00-07:00</updated>
-    <id>http://minimaxir.com/2018/05/text-neural-networks</id>
+    <id>https://minimaxir.com/2018/05/text-neural-networks</id>
     <content type="html"><![CDATA[<p>One of the more interesting applications of the neural network revolution is text generation. Most popular approaches are based off of Andrej Karpathy&rsquo;s <a href="https://github.com/karpathy/char-rnn">char-rnn architecture</a>/<a href="http://karpathy.github.io/2015/05/21/rnn-effectiveness/">blog post</a>, which teaches a recurrent neural network to be able to predict the next character in a sequence based on the previous <em>n</em> characters. As a result, a sufficiently trained network can theoretically reproduce its input source material, but since properly-trained neural networks aren&rsquo;t <em>perfect</em>, the output can fall into a weird-but-good uncanny valley.</p>
 
 <p><img src="/img/text-neural-networks/textgenrnn_console.gif" alt=""></p>
@@ -325,9 +325,9 @@ george bush ' s concept car ‘ goes for all the biggest controversy .
   
   <entry>
     <title type="html"><![CDATA[Visualizing One Million NCAA Basketball Shots]]></title>
-    <link href="http://minimaxir.com/2018/03/basketball-shots/"/>
+    <link href="https://minimaxir.com/2018/03/basketball-shots/"/>
     <updated>2018-03-19T09:20:00-07:00</updated>
-    <id>http://minimaxir.com/2018/03/basketball-shots</id>
+    <id>https://minimaxir.com/2018/03/basketball-shots</id>
     <content type="html"><![CDATA[<p>So <a href="https://www.ncaa.com/march-madness">March Madness</a> is happing right now. In celebration, <a href="https://www.google.com">Google</a> uploaded <a href="https://console.cloud.google.com/launcher/details/ncaa-bb-public/ncaa-basketball">massive basketball datasets</a> from the <a href="https://www.ncaa.com">NCAA</a> and <a href="https://www.sportradar.com/">Sportradar</a> to <a href="https://cloud.google.com/bigquery/">BigQuery</a> for anyone to query and experiment. After learning that the <a href="https://www.reddit.com/r/bigquery/comments/82nz17/dataset_statistics_for_ncaa_mens_and_womens/">dataset had location data</a> on where basketball shots were made on the court, I played with it and a couple hours later, I created a decent heat map data visualization. The next day, I <a href="https://www.reddit.com/r/dataisbeautiful/comments/837qnu/heat_map_of_1058383_basketball_shots_from_ncaa/">posted it</a> to Reddit&rsquo;s <a href="https://www.reddit.com/r/dataisbeautiful">/r/dataisbeautiful subreddit</a> where it earned about <strong>40,000 upvotes</strong>. (!?)</p>
 
 <p>Let&rsquo;s dig a little deeper. Although visualizing basketball shots has been <a href="http://www.slate.com/blogs/browbeat/2012/03/06/mapping_the_nba_how_geography_can_teach_players_where_to_shoot.html">done</a> <a href="http://toddwschneider.com/posts/ballr-interactive-nba-shot-charts-with-r-and-shiny/">before</a>, this time we have access to an order of magnitude more public data to do some really cool stuff.</p>
@@ -422,9 +422,9 @@ george bush ' s concept car ‘ goes for all the biggest controversy .
   
   <entry>
     <title type="html"><![CDATA[A Visual Overview of Stack Overflow's Question Tags]]></title>
-    <link href="http://minimaxir.com/2018/02/stack-overflow-questions/"/>
+    <link href="https://minimaxir.com/2018/02/stack-overflow-questions/"/>
     <updated>2018-02-09T09:00:00-08:00</updated>
-    <id>http://minimaxir.com/2018/02/stack-overflow-questions</id>
+    <id>https://minimaxir.com/2018/02/stack-overflow-questions</id>
     <content type="html"><![CDATA[<p><a href="https://stackoverflow.com">Stack Overflow</a> is the most popular contemporary knowledge base for programming questions. But most interact with the site by Googling a programming question and getting a top result that links to SO. There isn&rsquo;t as much discussion about actually <em>asking</em> questions on the site.</p>
 
 <p><img src="/img/stack-overflow-tags/python_last_list.png" alt=""></p>
@@ -525,9 +525,9 @@ george bush ' s concept car ‘ goes for all the biggest controversy .
   
   <entry>
     <title type="html"><![CDATA[Benchmarking Modern GPUs for Maximum Cloud Cost Efficiency in Deep Learning]]></title>
-    <link href="http://minimaxir.com/2017/11/benchmark-gpus/"/>
+    <link href="https://minimaxir.com/2017/11/benchmark-gpus/"/>
     <updated>2017-11-28T08:30:00-08:00</updated>
-    <id>http://minimaxir.com/2017/11/benchmark-gpus</id>
+    <id>https://minimaxir.com/2017/11/benchmark-gpus</id>
     <content type="html"><![CDATA[<p>A few months ago, I <a href="http://minimaxir.com/2017/06/keras-cntk/">performed benchmarks</a> of deep learning frameworks in the cloud, with a <a href="http://minimaxir.com/2017/07/cpu-or-gpu/">followup</a> focusing on the cost difference between using GPUs and CPUs. And just a few months later, the landscape has changed, with significant updates to the low-level <a href="https://developer.nvidia.com/cudnn">NVIDIA cuDNN</a> library which powers the raw learning on the GPU, the <a href="https://www.tensorflow.org">TensorFlow</a> and <a href="https://github.com/Microsoft/CNTK">CNTK</a> deep learning frameworks, and the higher-level <a href="https://github.com/fchollet/keras">Keras</a> framework which uses TensorFlow/CNTK as backends for easy deep learning model training.</p>
 
 <p>As a bonus to the framework updates, Google <a href="https://cloudplatform.googleblog.com/2017/09/introducing-faster-GPUs-for-Google-Compute-Engine.html">recently released</a> the newest generation of NVIDIA cloud GPUs, the Pascal-based P100, onto <a href="https://cloud.google.com/compute/">Google Compute Engine</a> which touts an up-to-10x performance increase to the current K80 GPUs used in cloud computing. As a bonus bonus, Google recently <a href="https://cloudplatform.googleblog.com/2017/11/new-lower-prices-for-GPUs-and-preemptible-Local-SSDs.html">cut the prices</a> of both K80 and P100 GPU instances by up to 36%.</p>
@@ -629,9 +629,9 @@ george bush ' s concept car ‘ goes for all the biggest controversy .
   
   <entry>
     <title type="html"><![CDATA[Making Magic: the GIFening]]></title>
-    <link href="http://minimaxir.com/2017/11/magic-the-gifening/"/>
+    <link href="https://minimaxir.com/2017/11/magic-the-gifening/"/>
     <updated>2017-11-07T08:10:00-08:00</updated>
-    <id>http://minimaxir.com/2017/11/magic-the-gifening</id>
+    <id>https://minimaxir.com/2017/11/magic-the-gifening</id>
     <content type="html"><![CDATA[<p>After working at <a href="https://www.buzzfeed.com/">BuzzFeed</a> for a few months, I&rsquo;m now an expert in the proper usage of GIFs. My favorite GIF tool is the <a href="https://giphy.com">/giphy</a> command in <a href="https://slack.com">Slack</a>, which <a href="https://get.slack.help/hc/en-us/articles/204714258-Add-Giphy-search-to-Slack">puts a random GIF</a> according to a given phrase into the chat, with better-than-expected appropriateness of the phrase to the GIF.</p>
 
 <p>Completely unrelated, I recently rediscovered <a href="https://github.com/Zulko/moviepy">MoviePy</a>, a Python library for programmatically editing videos and GIFs without requiring an expensive and slow video editing program. I had played with MoviePy a bit in 2014 when it was <a href="http://zulko.github.io/blog/2014/01/23/making-animated-gifs-from-video-files-with-python/#">first released</a> and <a href="https://news.ycombinator.com/item?id=7121104">became viral</a>, but couldn&rsquo;t think of a creative application for the library at the time.</p>
@@ -728,9 +728,9 @@ george bush ' s concept car ‘ goes for all the biggest controversy .
   
   <entry>
     <title type="html"><![CDATA[How to Make High Quality Data Visualizations for Websites With R and ggplot2]]></title>
-    <link href="http://minimaxir.com/2017/08/ggplot2-web/"/>
+    <link href="https://minimaxir.com/2017/08/ggplot2-web/"/>
     <updated>2017-08-14T09:00:00-07:00</updated>
-    <id>http://minimaxir.com/2017/08/ggplot2-web</id>
+    <id>https://minimaxir.com/2017/08/ggplot2-web</id>
     <content type="html"><![CDATA[<p>If you&rsquo;ve been following my blog, I like to use <a href="https://cran.r-project.org">R</a> and <a href="http://ggplot2.tidyverse.org/reference/">ggplot2</a> for data visualization. A lot.</p>
 
 <p>One of my older blog posts, <a href="http://minimaxir.com/2015/02/ggplot-tutorial/">An Introduction on How to Make Beautiful Charts With R and ggplot2</a>, is still one of my most-trafficked posts years later, and even today I see techniques from that particular post incorporated into modern data visualizations on sites such as <a href="https://www.reddit.com">Reddit&rsquo;s</a> <a href="https://www.reddit.com/r/dataisbeautiful/">/r/dataisbeautiful</a> subreddit.</p>
@@ -912,9 +912,9 @@ Theme functions like <code>theme_minimal()</code> accept a <code>base_family</co
   
   <entry>
     <title type="html"><![CDATA[Benchmarking TensorFlow on Cloud CPUs: Cheaper Deep Learning than Cloud GPUs]]></title>
-    <link href="http://minimaxir.com/2017/07/cpu-or-gpu/"/>
+    <link href="https://minimaxir.com/2017/07/cpu-or-gpu/"/>
     <updated>2017-07-05T09:00:00-07:00</updated>
-    <id>http://minimaxir.com/2017/07/cpu-or-gpu</id>
+    <id>https://minimaxir.com/2017/07/cpu-or-gpu</id>
     <content type="html"><![CDATA[<p>I&rsquo;ve been working on a few personal deep learning projects with <a href="https://github.com/fchollet/keras">Keras</a> and <a href="https://www.tensorflow.org">TensorFlow</a>. However, training models for deep learning with cloud services such as <a href="https://aws.amazon.com/ec2/">Amazon EC2</a> and <a href="https://cloud.google.com/compute/">Google Compute Engine</a> isn&rsquo;t free, and as someone who is currently unemployed, I have to keep an eye on extraneous spending and be as cost-efficient as possible (please support my work on <a href="https://www.patreon.com/minimaxir">Patreon</a>!). I tried deep learning on the cheaper CPU instances instead of GPU instances to save money, and to my surprise, my model training was only slightly slower. As a result, I took a deeper look at the pricing mechanisms of these two types of instances to see if CPUs are more useful for my needs.</p>
 
 <p>The <a href="https://cloud.google.com/compute/pricing#gpus">pricing of GPU instances</a> on Google Compute Engine starts at <strong>$0.745/hr</strong> (by attaching a $0.700/hr GPU die to a $0.045/hr n1-standard-1 instance). A couple months ago, Google <a href="https://cloudplatform.googleblog.com/2017/05/Compute-Engine-machine-types-with-up-to-64-vCPUs-now-ready-for-your-production-workloads.html">announced</a> CPU instances with up to 64 vCPUs on the modern Intel <a href="https://en.wikipedia.org/wiki/Skylake_(microarchitecture)">Skylake</a> CPU architecture. More importantly, they can also be used in <a href="https://cloud.google.com/compute/docs/instances/preemptible">preemptible CPU instances</a>, which live at most for 24 hours on GCE and can be terminated at any time (very rarely), but cost about <em>20%</em> of the price of a standard instance. A preemptible n1-highcpu-64 instance with 64 vCPUs and 57.6GB RAM plus the premium for using Skylake CPUs is <strong>$0.509/hr</strong>, about 2/3rds of the cost of the GPU instance.</p>
@@ -1011,9 +1011,9 @@ Theme functions like <code>theme_minimal()</code> accept a <code>base_family</co
   
   <entry>
     <title type="html"><![CDATA[Predicting the Success of a Reddit Submission with Deep Learning and Keras]]></title>
-    <link href="http://minimaxir.com/2017/06/reddit-deep-learning/"/>
+    <link href="https://minimaxir.com/2017/06/reddit-deep-learning/"/>
     <updated>2017-06-26T09:00:00-07:00</updated>
-    <id>http://minimaxir.com/2017/06/reddit-deep-learning</id>
+    <id>https://minimaxir.com/2017/06/reddit-deep-learning</id>
     <content type="html"><![CDATA[<p>I&rsquo;ve been trying to figure out what makes a <a href="https://www.reddit.com">Reddit</a> submission &ldquo;good&rdquo; for years. If we assume the number of upvotes on a submission is a fair proxy for submission quality, optimizing a statistical model for Reddit data with submission score as a response variable might lead to interesting (and profitable) insights when transferred into other domains, such as Facebook Likes and Twitter Favorites.</p>
 
 <p><img src="/img/reddit-deep-learning/reddit-example.png" alt=""></p>
@@ -1132,9 +1132,9 @@ Theme functions like <code>theme_minimal()</code> accept a <code>base_family</co
   
   <entry>
     <title type="html"><![CDATA[The Decline of Imgur on Reddit and the Rise of Reddit's Native Image Hosting]]></title>
-    <link href="http://minimaxir.com/2017/06/imgur-decline/"/>
+    <link href="https://minimaxir.com/2017/06/imgur-decline/"/>
     <updated>2017-06-20T08:00:00-07:00</updated>
-    <id>http://minimaxir.com/2017/06/imgur-decline</id>
+    <id>https://minimaxir.com/2017/06/imgur-decline</id>
     <content type="html"><![CDATA[<p>Last week, Bloomberg <a href="https://www.bloomberg.com/news/articles/2017-06-17/reddit-said-to-be-raising-funds-valuing-startup-at-1-7-billion">reported</a> that Reddit was raising about $150 Million in venture capital at a valuation of $1.7 billion. Since Reddit&rsquo;s data is <a href="http://minimaxir.com/2015/10/reddit-bigquery/">public on BigQuery</a>, I quickly checked if there were any recent user engagement growth spurts which could justify such a high worth. Here&rsquo;s an example BigQuery which aggregates the total number of Reddit submissions made for each month until the end of April 2017:</p>
 <div class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="o">#</span><span class="n">standardSQL</span> 
 <span class="k">SELECT</span> <span class="n">DATE_TRUNC</span><span class="p">(</span><span class="n">DATE</span><span class="p">(</span><span class="n">TIMESTAMP_SECONDS</span><span class="p">(</span><span class="n">created_utc</span><span class="p">)),</span> <span class="k">MONTH</span><span class="p">)</span> <span class="k">as</span> <span class="n">mon</span><span class="p">,</span>
