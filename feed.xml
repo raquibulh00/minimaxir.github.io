@@ -5,9 +5,124 @@
     <description>A blog by data scientist Max Woolf about startups, technology, and blogging.</description>
     <link>https://minimaxir.com/</link>
     <atom:link href="https://minimaxir.com/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Mon, 23 Jul 2018 20:55:02 -0700</pubDate>
-    <lastBuildDate>Mon, 23 Jul 2018 20:55:02 -0700</lastBuildDate>
+    <pubDate>Mon, 10 Sep 2018 09:15:15 -0700</pubDate>
+    <lastBuildDate>Mon, 10 Sep 2018 09:15:15 -0700</lastBuildDate>
     <generator>Jekyll v3.6.2</generator>
+    
+      <item>
+        <title>Problems with Predicting Post Performance on Reddit and Other Link Aggregators</title>
+        <description>&lt;p&gt;&lt;a href=&quot;https://www.reddit.com&quot;&gt;Reddit&lt;/a&gt;, &amp;ldquo;the front page of the internet&amp;rdquo; is a link aggregator where anyone can submit links to cool happenings. Over the years, Reddit has expanded from just being a link aggregator, to allowing image and videos, and as of recently, hosting images and videos itself.&lt;/p&gt;
+
+&lt;p&gt;Reddit is broken down into subreddits, where each subreddit represents each own community around a particular interest, like &lt;a href=&quot;https://www.reddit.com/r/aww&quot;&gt;/r/aww&lt;/a&gt; for pet photos and &lt;a href=&quot;https://www.reddit.com/r/politics/&quot;&gt;/r/politics&lt;/a&gt; for U.S. politics. The posts on each subreddit are ranked by some function of both time elapsed since the submission was made, and the &lt;em&gt;score&lt;/em&gt; of the submission as determined by upvotes and downvotes from other users.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/modeling-link-aggregators/reddit_aww.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;There&amp;rsquo;s also an intrinsic pride in having something you&amp;rsquo;re responsible for providing to the community get lots of upvotes (the submitter also earns karma based on received upvotes, although karma is meaningless and doesn&amp;rsquo;t provide any user benefits). But the reality is that even on the largest subreddits, submissions with 1 point (the default score for new submissions) are the most prominent, with some subreddits having &lt;em&gt;over half&lt;/em&gt; of their submissions with only 1 point.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/modeling-link-aggregators/reddit_dist_facet.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;The exposure from having a submission go viral on Reddit (especially on larger subreddits) can be valuable especially if its your own original content. As a result, there has been a lot of &lt;a href=&quot;https://www.brandwatch.com/blog/how-to-get-on-the-front-page-of-reddit/&quot;&gt;analysis&lt;/a&gt;/&lt;a href=&quot;https://www.reddit.com/r/starterpacks/comments/8rkfk9/reddit_front_page_starter_pack/&quot;&gt;stereotypes&lt;/a&gt; on what techniques to do to help your submission make it to the top of the front page. But almost all claims of &amp;ldquo;cracking&amp;rdquo; the Reddit algorithm are &lt;a href=&quot;https://en.wikipedia.org/wiki/Post_hoc_ergo_propter_hoc&quot;&gt;&lt;em&gt;post hoc&lt;/em&gt; rationalizations&lt;/a&gt;, attributing success to things like submission timing and title verbiage of a single submission after the fact. The nature of algorithmic feeds inherently leads to a &lt;a href=&quot;https://en.wikipedia.org/wiki/Survivorship_bias&quot;&gt;survivorship bias&lt;/a&gt;: although users may recognize certain types of posts that appear on the front page, there are many more which follow the same patterns but fail, which makes modeling a successful post very tricky.&lt;/p&gt;
+
+&lt;p&gt;I&amp;rsquo;ve touched on analyzing Reddit post performance &lt;a href=&quot;https://minimaxir.com/2017/06/reddit-deep-learning/&quot;&gt;before&lt;/a&gt;, but let&amp;rsquo;s give it another look and see if we can drill down on why Reddit posts do and do not do well. &lt;/p&gt;
+
+&lt;h2&gt;Submission Timing&lt;/h2&gt;
+
+&lt;p&gt;As with many US-based websites, the majority of Reddit users are most active during work hours (9 AM — 5 PM Eastern time weekdays). Most subreddits have submission patterns which fit accordingly.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/modeling-link-aggregators/reddit_subreddit_prop.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;But what&amp;rsquo;s interesting are the subreddits which &lt;em&gt;deviate&lt;/em&gt; from that standard. Gaming subreddits (&lt;a href=&quot;https://www.reddit.com/r/DestinyTheGame&quot;&gt;/r/DestinyTheGame&lt;/a&gt;, &lt;a href=&quot;https://www.reddit.com/r/Overwatch&quot;&gt;/r/Overwatch&lt;/a&gt;) have short activity after a Tuesday game update/patch, game &lt;em&gt;communication&lt;/em&gt; subreddits (&lt;a href=&quot;https://www.reddit.com/r/Fireteams&quot;&gt;/r/Fireteams&lt;/a&gt;, &lt;a href=&quot;https://www.reddit.com/r/RocketLeagueExchange&quot;&gt;/r/RocketLeagueExchange&lt;/a&gt;) are more active &lt;em&gt;outside&lt;/em&gt; of work hours as they assume you are playing the game at the time, and Not-Safe-For-Work subreddits (/r/dirtykikpals, /r/gonewild) are incidentally less active during work hours and more active late-night than other subreddits.&lt;/p&gt;
+
+&lt;p&gt;Whenever you make a submission to Reddit, the submission appears in the subreddit&amp;rsquo;s &lt;code&gt;/new&lt;/code&gt; queue of the most recent submissions, where hopefully kind souls will find your submission and upvote it if it&amp;rsquo;s good.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/modeling-link-aggregators/reddit_new.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;However, if it falls off the first page of the &lt;code&gt;/new&lt;/code&gt; queue, your submission might be as good as dead. As a result, there&amp;rsquo;s an element of game theory to timing your submission if you want it to not become another 1-point submission. Is it better to submit during peak hours when more users may see the submission before it falls off of &lt;code&gt;/new&lt;/code&gt;? Is it better to submit &lt;em&gt;before&lt;/em&gt; peak usage since there will be less competition, then continue the momentum once it hits the front page?&lt;/p&gt;
+
+&lt;p&gt;Here&amp;rsquo;s a look at the median post performance at each given time slot for top subreddits:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/modeling-link-aggregators/reddit_subreddit_hr_doy.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;As the earlier distribution chart implied, the median score is around 1-2 for most subreddits, and that&amp;rsquo;s consistent across all time slots. Some subreddits with higher medians like /r/me_irl do appear to have a &lt;em&gt;slight&lt;/em&gt; benefit when posting before peak activity. When focusing on subreddits with high overall median scores, the difference is more explicit.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/modeling-link-aggregators/reddit_subreddit_highmedian.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;Subreddits like /r/PrequelMemes and /r/The_Donald &lt;em&gt;definitely&lt;/em&gt; have better performance on average when made before peak activity! Posting before peak usage &lt;em&gt;does&lt;/em&gt; appear to be a viable strategy, however for the majority of subreddits it doesn&amp;rsquo;t make much of a difference.&lt;/p&gt;
+
+&lt;h2&gt;Submission Titles&lt;/h2&gt;
+
+&lt;p&gt;Each Reddit subreddit has their own vocabulary and topics of discussion. Let&amp;rsquo;s break down text by subreddit by looking at the 75th percentile for score on posts containing a given two-word phrase:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/modeling-link-aggregators/reddit_subreddit_topbigrams.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;The one trend consistent across all subreddits is the effectiveness of first-person pronouns (&lt;em&gt;I/my&lt;/em&gt;) and original content (&lt;em&gt;fan art&lt;/em&gt;). Other than that, the vocabulary and sentiment for successful posts is very specific to the subreddit and culture is represents; no universal guaranteed-success memes.&lt;/p&gt;
+
+&lt;h2&gt;Can Deep Learning Predict Post Performance?&lt;/h2&gt;
+
+&lt;p&gt;Some might think &amp;ldquo;oh hey, this is an arbitrary statistical problem, you can just build an AI to solve it!&amp;rdquo; So, for the sake of argument, I did.&lt;/p&gt;
+
+&lt;p&gt;Instead of using Reddit data for building a deep learning model, we&amp;rsquo;ll use data from &lt;a href=&quot;https://news.ycombinator.com&quot;&gt;Hacker News&lt;/a&gt;, another link aggregator similar to Reddit with a strong focus on technology and startup entrepreneurship. The distribution of scores on posts, submission timings, upvoting, and front page ranking systems are all the same as on Reddit.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/modeling-link-aggregators/hn.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;The titles on Hacker News submissions are also shorter (80 characters max vs. Reddit&amp;rsquo;s 300 character max) and in concise English (no memes/shitposts allowed), which should help the model learn the title syntax and identify high-impact keywords easier. Like Reddit, the score data is super-skewed with most HN submissions at 1-2 points, and typical model training will quickly converge but try to predict that &lt;em&gt;every&lt;/em&gt; submission has a score of 1, which isn&amp;rsquo;t helpful!&lt;/p&gt;
+
+&lt;p&gt;By constructing a model employing &lt;em&gt;many&lt;/em&gt; deep learning tricks with &lt;a href=&quot;https://keras.io&quot;&gt;Keras&lt;/a&gt;/&lt;a href=&quot;https://www.tensorflow.org&quot;&gt;TensorFlow&lt;/a&gt; to prevent model cheating and training on &lt;em&gt;hundreds of thousands&lt;/em&gt; of HN submissions (using post title, day-of-week, hour, and link domain like &lt;code&gt;github.com&lt;/code&gt; as model features), the model does converge and finds some signal among the noise (training R&lt;sup&gt;2&lt;/sup&gt; ~ 0.55 when trained for 50 epochs). However, it fails to offer any valuable predictions on new, unseen posts (test R&lt;sup&gt;2&lt;/sup&gt; &lt;em&gt;&amp;lt; 0.00&lt;/em&gt;) because it falls into the same exact human biases regarding titles: it saw submissions with titles that did very well during training, but can&amp;rsquo;t isolate the random chance why X and Y submissions are similar but X goes viral while Y does not.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/modeling-link-aggregators/hn_test.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;I&amp;rsquo;ve made the Keras/TensorFlow model training code available in &lt;a href=&quot;https://www.kaggle.com/minimaxir/hacker-news-submission-score-predictor/notebook&quot;&gt;this Kaggle Notebook&lt;/a&gt; if you want to fork it and try to improve the model.&lt;/p&gt;
+
+&lt;h2&gt;Other Potential Modeling Factors&lt;/h2&gt;
+
+&lt;p&gt;The deep learning model above makes optimistic assumptions about the underlying data, including that each post behaves independently, and the included features are the sole features which determine the score. These assumptions are questionable.&lt;/p&gt;
+
+&lt;p&gt;The simple model forgoes the content of the submission itself, which is hard to retrieve for hundreds of thousands of data points. On Hacker News that&amp;rsquo;s mostly OK since most submissions are links/articles which accurately correlate to the content, although occasionally there are idiosyncratic short titles which do the opposite. On Reddit, obviously looking at content is necessary for image/video-oriented subreddits, which is hard to gather and analyze at scale.&lt;/p&gt;
+
+&lt;p&gt;A very important concept of post performance is &lt;em&gt;momentum&lt;/em&gt;. A post having a high score is a positive signal in itself, which begets more votes (a famous Reddit problem is brigading from /r/all which can cause submission scores to skyrocket). If the front page of a subreddit has a large number of high-performing posts, they might also suppress posts coming out of the &lt;code&gt;/new&lt;/code&gt; queue because the score threshold is much higher. A simple model may not be able to capture these impacts; the model would need to incorporate the &lt;em&gt;state of the front page&lt;/em&gt; at the time of posting.&lt;/p&gt;
+
+&lt;p&gt;Some also try to manipulate upvotes. Reddit became famous for adding the rule &amp;ldquo;asking for upvotes is a violation of intergalactic law&amp;rdquo; to their &lt;a href=&quot;https://www.reddithelp.com/en/categories/rules-reporting/account-and-community-restrictions/what-constitutes-vote-cheating-or&quot;&gt;Content Policy&lt;/a&gt;, although some subreddits do it anyway &lt;a href=&quot;https://www.reddit.com/r/TheoryOfReddit/comments/5qqrod/for_years_reddit_told_us_that_saying_upvote_this/&quot;&gt;without consequence&lt;/a&gt;. On Reddit, obvious spam posts can be downvoted to immediately counteract illicit upvotes. Hacker News has a &lt;a href=&quot;https://news.ycombinator.com/newsfaq.html&quot;&gt;similar don&amp;rsquo;t-upvote rule&lt;/a&gt;, although there aren&amp;rsquo;t downvotes, just a flagging mechanism which quickly neutralizes spam/misleading posts. In general, there&amp;rsquo;s no &lt;em&gt;legitimate&lt;/em&gt; reason to highlight your own submission immediately after its posted (except for Reddit&amp;rsquo;s AMAs). Fortunately, gaming the system is less impactful on Reddit and Hacker News due to their sheer size and countermeasures, but it&amp;rsquo;s a good example of potential user behavior that makes modeling post performance difficult, and hopefully link aggregators of the future aren&amp;rsquo;t susceptible to such shenanigans.&lt;/p&gt;
+
+&lt;h2&gt;Do We Really to Predict Post Score?&lt;/h2&gt;
+
+&lt;p&gt;Let&amp;rsquo;s say you are submitting original content to Reddit or your own tech project to Hacker News. More points means a higher ranking means more exposure for your link, right? Not exactly. As noted from Reddit/HN screenshots above, the scores of popular submissions are all over the place ranking-wise, having been affected by age penalties.&lt;/p&gt;
+
+&lt;p&gt;In practical terms, from my own purely anecdotal experience, submissions at a top ranking receive &lt;em&gt;substantially&lt;/em&gt; more clickthroughs despite being spatially close on the page to others.&lt;/p&gt;
+
+&lt;p&gt;&lt;span&gt;&lt;blockquote class=&quot;twitter-tweet&quot; data-lang=&quot;en&quot;&gt;&lt;p lang=&quot;en&quot; dir=&quot;ltr&quot;&gt;&amp;hellip;and now traffic at #3.&lt;br&gt;&lt;br&gt;Placement is absurdly important for search engines/social media sites. Difference between #1 and #3 is dramatic. &lt;a href=&quot;https://t.co/nGjWJBx6dU&quot;&gt;pic.twitter.com/nGjWJBx6dU&lt;/a&gt;&lt;/p&gt;&amp;mdash; Max Woolf (@minimaxir) &lt;a href=&quot;https://twitter.com/minimaxir/status/877219784907149316?ref_src=twsrc%5Etfw&quot;&gt;June 20, 2017&lt;/a&gt;&lt;/blockquote&gt; &lt;script async src=&quot;https://platform.twitter.com/widgets.js&quot; charset=&quot;utf-8&quot;&gt;&lt;/script&gt;&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;In &lt;a href=&quot;https://twitter.com/minimaxir/status/877219784907149316&quot;&gt;that case&lt;/a&gt;, falling from #1 to #3 &lt;em&gt;immediately halved&lt;/em&gt; the referral traffic coming from Hacker News.&lt;/p&gt;
+
+&lt;p&gt;Therefore, an ideal link aggregator predictive model to maximize  clicks should try to predict the &lt;em&gt;rank&lt;/em&gt; of a submission (max rank, average rank over &lt;em&gt;n&lt;/em&gt; period, etc.), not necessarily the score it receives. You could theoretically create a model by making a snapshot of a Reddit subreddit/front page of Hacker News every minute or so which includes the post position at the time of the snapshot. As mentioned earlier, the snapshots can also be used as a model feature to identify whether the front page is active or stale. Unfortunately, snapshots can&amp;rsquo;t be retrieved retroactively, and both storing, processing, and analyzing snapshots at scale is a difficult and &lt;em&gt;expensive&lt;/em&gt; feat of data engineering.&lt;/p&gt;
+
+&lt;p&gt;Presumably Reddit&amp;rsquo;s data scientists would be incorporating submission position as a part of their data analytics and modeling, but after inspecting what&amp;rsquo;s sent to Reddit&amp;rsquo;s servers when you perform an action like upvoting, I wasn&amp;rsquo;t able to find a sent position value when upvoting from the feed: only the post score and post upvote percentage at the time of the action were sent.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/modeling-link-aggregators/chrome.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;In this example, I upvoted the &lt;code&gt;Fact are facts&lt;/code&gt; submission at position #5: we&amp;rsquo;d expect a value between &lt;code&gt;3&lt;/code&gt; and &lt;code&gt;5&lt;/code&gt; be sent with the post metadata within the analytics payload, but that&amp;rsquo;s not the case.&lt;/p&gt;
+
+&lt;p&gt;Optimizing ranking instead of a tangible metric or classification accuracy is a relatively underdiscussed field of modern data science (besides &lt;a href=&quot;https://en.wikipedia.org/wiki/Search_engine_optimization&quot;&gt;SEO&lt;/a&gt; for getting the top spot on a Google search), and it would be interesting to dive deeper into it for other applications.&lt;/p&gt;
+
+&lt;h2&gt;In the future&lt;/h2&gt;
+
+&lt;p&gt;The moral of this post is that you should not take it personally if a submission fails to hit the front page. It doesn&amp;rsquo;t necessarily mean it&amp;rsquo;s bad. Conversely, if a post does well, don’t assume that similar posts will do just as well. There&amp;rsquo;s a lot of quality content that falls through the cracks due to dumb luck. Fortunately, both Reddit and Hacker News allow reposts, which helps alleviate this particular problem.&lt;/p&gt;
+
+&lt;p&gt;There&amp;rsquo;s still a lot that can be done to more deterministically predict the behavior of these algorithmic feeds. There&amp;rsquo;s also room to help make these link aggregators more &lt;em&gt;fair&lt;/em&gt;. Unfortunately, there&amp;rsquo;s even more undiscovered ways to game these algorithms, and we&amp;rsquo;ll see how things play out.&lt;/p&gt;
+
+&lt;hr&gt;
+
+&lt;p&gt;&lt;em&gt;You can view the BigQuery queries used to get the Reddit and Hacker News data, plus the R and ggplot2 used to create the data visualizations, in &lt;a href=&quot;http://minimaxir.com/notebooks/modeling-link-aggregators/&quot;&gt;this R Notebook&lt;/a&gt;. You can also view the images/code used for this post in &lt;a href=&quot;https://github.com/minimaxir/modeling-link-aggregators&quot;&gt;this GitHub repository&lt;/a&gt;&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;You are free to use the data visualizations from this article however you wish, but it would be greatly appreciated if proper attribution is given to this article and/or myself!&lt;/em&gt;&lt;/p&gt;
+</description>
+        <pubDate>Mon, 10 Sep 2018 09:15:00 -0700</pubDate>
+        <link>https://minimaxir.com/2018/09/modeling-link-aggregators/</link>
+        <guid isPermaLink="true">https://minimaxir.com/2018/09/modeling-link-aggregators/</guid>
+        
+        
+        <category>Data Visualization</category>
+        
+      </item>
     
       <item>
         <title>Analyzing IMDb Data The Intended Way, with R and ggplot2</title>
@@ -1164,92 +1279,6 @@ Theme functions like &lt;code&gt;theme_minimal()&lt;/code&gt; accept a &lt;code&
         <pubDate>Mon, 26 Jun 2017 09:00:00 -0700</pubDate>
         <link>https://minimaxir.com/2017/06/reddit-deep-learning/</link>
         <guid isPermaLink="true">https://minimaxir.com/2017/06/reddit-deep-learning/</guid>
-        
-        
-        <category>Data</category>
-        
-      </item>
-    
-      <item>
-        <title>The Decline of Imgur on Reddit and the Rise of Reddit's Native Image Hosting</title>
-        <description>&lt;p&gt;Last week, Bloomberg &lt;a href=&quot;https://www.bloomberg.com/news/articles/2017-06-17/reddit-said-to-be-raising-funds-valuing-startup-at-1-7-billion&quot;&gt;reported&lt;/a&gt; that Reddit was raising about $150 Million in venture capital at a valuation of $1.7 billion. Since Reddit&amp;rsquo;s data is &lt;a href=&quot;http://minimaxir.com/2015/10/reddit-bigquery/&quot;&gt;public on BigQuery&lt;/a&gt;, I quickly checked if there were any recent user engagement growth spurts which could justify such a high worth. Here&amp;rsquo;s an example BigQuery which aggregates the total number of Reddit submissions made for each month until the end of April 2017:&lt;/p&gt;
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sql&quot; data-lang=&quot;sql&quot;&gt;&lt;span class=&quot;o&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;standardSQL&lt;/span&gt; 
-&lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;DATE_TRUNC&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;DATE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;TIMESTAMP_SECONDS&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;created_utc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)),&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;MONTH&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mon&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-  &lt;span class=&quot;k&quot;&gt;COUNT&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;num_submissions&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-  &lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;`fh-bigquery.reddit_posts.*`&lt;/span&gt;
-  &lt;span class=&quot;k&quot;&gt;WHERE&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;_TABLE_SUFFIX&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;BETWEEN&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'2016_01'&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;AND&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'2017_04'&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;OR&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_TABLE_SUFFIX&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'full_corpus_201512'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-  &lt;span class=&quot;k&quot;&gt;GROUP&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;BY&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mon&lt;/span&gt;
-  &lt;span class=&quot;k&quot;&gt;ORDER&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;BY&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mon&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;&lt;img src=&quot;/img/imgur-decline/reddit-1.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;As it turns out, Reddit did indeed get a large boost in activity toward the end of 2016, likely due to the &lt;em&gt;heated&lt;/em&gt; discussions and events around the &lt;a href=&quot;https://en.wikipedia.org/wiki/United_States_presidential_election,_2016&quot;&gt;U.S. Presidential Election&lt;/a&gt;. But Reddit has maintained the growth rate since then, which is very appealing to potential investors.&lt;/p&gt;
-
-&lt;p&gt;How are other sites benefiting from Reddit&amp;rsquo;s growth? &lt;a href=&quot;http://imgur.com&quot;&gt;Imgur&lt;/a&gt;, an image-host developed to be the &lt;em&gt;de facto&lt;/em&gt; image hosting service for Reddit, shared in Reddit&amp;rsquo;s continual growth&amp;hellip;&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/imgur-decline/reddit-2.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;&amp;hellip;until mid-2016, when Imgur submission activity abruptly dropped. What happened?&lt;/p&gt;
-
-&lt;p&gt;Coincidentally in mid-2016, Reddit &lt;a href=&quot;https://techcrunch.com/2016/05/25/reddit-image-uploads/&quot;&gt;made itself&lt;/a&gt; an image host for submissions to the site. Initially limited to uploads via the iOS/Android apps, Reddit then allowed desktop users to upload images through a &lt;a href=&quot;https://www.reddit.com/r/changelog/comments/4kuk2j/reddit_change_introducing_image_uploading_beta/&quot;&gt;beta rollout&lt;/a&gt; starting May 24th, and a full &lt;a href=&quot;https://www.reddit.com/r/announcements/comments/4p5dm9/image_hosting_on_reddit/&quot;&gt;sitewide release&lt;/a&gt; on June 21st.&lt;/p&gt;
-
-&lt;p&gt;How many Reddit-hosted image submissions are there compared to the number of Imgur submissions?&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/imgur-decline/reddit-3.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;Wow, native Reddit images caught on.&lt;/p&gt;
-
-&lt;h2&gt;Market Share&lt;/h2&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/imgur-decline/pics.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;Did the rise of Reddit-hosted images cause the decline of Imgur on Reddit? Let&amp;rsquo;s look at the daily number of Imgur submissions and Reddit-hosted Image submissions from December 2015 to April 2017, normalized by the total number of sitewide submissions on that day. This gives us a Reddit &amp;ldquo;market share&amp;rdquo; metric for both services. &lt;/p&gt;
-
-&lt;p&gt;Additionally, we can plot vertical lines representing the dates when Reddit-hosted images rolled out in the limited beta release and the full sitewide release to see if there is a link between those events and submission behavior.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/imgur-decline/reddit-4.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;Before Reddit added native image hosting, Imgur accounted for 15% of all submissions to Reddit. Now it&amp;rsquo;s below 9%. More Reddit-hosted images are being shared on Reddit than images from Imgur.&lt;/p&gt;
-
-&lt;p&gt;Instead of looking at all of Reddit, where spam subreddits could skew the results, we can also look at the largest image-only subreddits: &lt;a href=&quot;https://www.reddit.com/r/pics/&quot;&gt;/r/pics&lt;/a&gt; and &lt;a href=&quot;https://www.reddit.com/r/gifs/&quot;&gt;/r/gifs&lt;/a&gt;, both of which were a part of the beta rollout.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/imgur-decline/reddit-5.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;Here, the impact of the two rollouts is much noticeable, with immediate increases in Reddit-hosted image market share after each rollout, and proportional decreases in Imgur market share. The growth rate after the beta release is flat for both services, but when Reddit image hosting becomes sitewide, the market shares of Reddit-hosted/Imgur images increase/decrease linearly over time once users officially learn that the native image upload functionality exists. And these trends do not appear to be slowing down.&lt;/p&gt;
-
-&lt;h2&gt;A Silver Lining?&lt;/h2&gt;
-
-&lt;p&gt;Obviously Imgur does not like losing a &lt;em&gt;large&lt;/em&gt; chunk of traffic, but there&amp;rsquo;s a possibility that this outcome will be better for the business than what&amp;rsquo;s implied from the charts above.&lt;/p&gt;
-
-&lt;p&gt;Hosting images on the internet isn&amp;rsquo;t free, and bandwidth costs are the primary reason dedicated image hosts have died off over the years. Direct image links which show the user only the image and nothing else are convenient, but they are pure loss for the service. That&amp;rsquo;s why image hosts encourage linking to the image on a landing page of the website, filled with ads which generate an expected revenue greater than the cost of serving the image.&lt;/p&gt;
-
-&lt;p&gt;After a user uploads an image to Imgur on the desktop, the user is given two share links that can be submitted to sites like Reddit: an image link that goes to the image + ads, and a direct link to the image.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/imgur-decline/imgur_direct.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;Recently, Imgur has &lt;a href=&quot;https://www.reddit.com/r/assholedesign/comments/5gs96k/just_show_me_the_fucking_image_imgur/&quot;&gt;pushed app downloads&lt;/a&gt; when visiting the site on an iOS/Android device, including &lt;a href=&quot;https://www.reddit.com/r/assholedesign/comments/695efj/upload_image_on_imgur_mobile_has_been_replaced_by/&quot;&gt;disabling uploads&lt;/a&gt; in the mobile browser. When sharing an image from the Imgur app, the &lt;em&gt;only&lt;/em&gt; way to share an image is through the image link, which could lead to an increase in the proportion of ad-filled Imgur image links on Reddit. Said increase could counteract the decrease in total Imgur submissions, and Imgur could actually come out ahead.&lt;/p&gt;
-
-&lt;p&gt;With BigQuery, we can check the percentage of all Imgur submissions to Reddit which are direct links and the percentage which are indirect/lead to a landing page, and see if the ratio changes along the same time horizon used above:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/img/imgur-decline/reddit-6.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-&lt;p&gt;Welp. No significant change in the ratio over time, eliminating that possible silver lining.&lt;/p&gt;
-
-&lt;h2&gt;Conclusion&lt;/h2&gt;
-
-&lt;p&gt;Note that the decline of Imgur on Reddit says nothing about Imgur as a business; it&amp;rsquo;s entirely possible that Imgur&amp;rsquo;s traffic on the main site itself is sufficient for growth. But the loss of Reddit traffic certainly can&amp;rsquo;t be ignored, and it&amp;rsquo;s interesting to visualize how quickly a service can be replaced when there&amp;rsquo;s an equivalent native feature.&lt;/p&gt;
-
-&lt;p&gt;It&amp;rsquo;s worth nothing that new competitors in the image space such as &lt;a href=&quot;https://giphy.com&quot;&gt;Giphy&lt;/a&gt; utilize image hosting as a &lt;em&gt;secondary&lt;/em&gt; service. Instead, they focus on building a repository of images which can be licensed and accessed programmatically by other services like Slack, Facebook, and Twitter. And Giphy has raised &lt;a href=&quot;https://www.crunchbase.com/organization/giphy#/entity&quot;&gt;$150 Million&lt;/a&gt; total with this approach, so perhaps the image hosting market itself has indeed changed.&lt;/p&gt;
-
-&lt;hr&gt;
-
-&lt;p&gt;&lt;em&gt;You can view the R, ggplot2 code, and BigQueries used to visualize the Reddit data in &lt;a href=&quot;http://minimaxir.com/notebooks/imgur-decline/&quot;&gt;this R Notebook&lt;/a&gt;. You can also view the images/data used for this post in &lt;a href=&quot;https://github.com/minimaxir/imgur-decline&quot;&gt;this GitHub repository&lt;/a&gt;&lt;/em&gt;.&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;You are free to use the data visualizations from this article however you wish, but it would be greatly appreciated if proper attribution is given to this article and/or myself!&lt;/em&gt;&lt;/p&gt;
-</description>
-        <pubDate>Tue, 20 Jun 2017 08:00:00 -0700</pubDate>
-        <link>https://minimaxir.com/2017/06/imgur-decline/</link>
-        <guid isPermaLink="true">https://minimaxir.com/2017/06/imgur-decline/</guid>
         
         
         <category>Data</category>
