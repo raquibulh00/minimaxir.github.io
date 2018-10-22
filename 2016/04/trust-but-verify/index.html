@@ -286,7 +286,7 @@ The Dark Knight, and for some other movies near the top (<a href="http://www.imd
 
 <p>Huh. Apparently someone put a filler movie entry with the same name and release year as a blockbuster movie in hopes that people search for it by accident (and since it received 50 ratings and an average score of 8.6, this tactic was successful).</p>
 
-<p>Using the Rotten Tomatoes <a href="http://developer.rottentomatoes.com/docs/read/json/v10/Movie_Alias">IMDb Lookup API</a>, we find that &ldquo;The Dark Knight&rdquo; page on Rotten Tomatoes&hellip;<a href="http://api.rottentomatoes.com/api/public/v1.0/movie_alias.json?type=imdb&amp;id=1774602">doesn&rsquo;t exist</a>.</p>
+<p>Using the Rotten Tomatoes <a href="http://developer.rottentomatoes.com/docs/read/json/v10/Movie_Alias">IMDb Lookup API</a>, we find that &ldquo;The Dark Knight&rdquo; page on Rotten Tomatoes&hellip;<a href="http://api.rottentomatoes.com/api/public/v1.0/movie_alias.json?type=imdb&id=1774602">doesn&rsquo;t exist</a>.</p>
 
 <p>We can run a safe deduplicate by removing entries with the same title (excluding the &ldquo;The&rdquo; if present) and release year.</p>
 <div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">df_dup</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">df</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">select</span><span class="p">(</span><span class="n">Title</span><span class="p">,</span><span class="w"> </span><span class="n">Year</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">mutate</span><span class="p">(</span><span class="n">Title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">gsub</span><span class="p">(</span><span class="s2">"The "</span><span class="p">,</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w"> </span><span class="n">Title</span><span class="p">))</span><span class="w">
@@ -317,7 +317,7 @@ The Dark Knight, and for some other movies near the top (<a href="http://www.imd
 </span></code></pre></div>
 <p><img src="/img/trust-but-verify/inf.png" alt=""></p>
 
-<p>For example, to get the inflation-adjusted Box Office Revenue for a movie released in 1949 in 2016 dollars, we multiply the reported revenue by 10. That sounds about right (and matches closely enough to the output of the <a href="http://data.bls.gov/cgi-bin/cpicalc.pl?cost1=1&amp;year1=1949&amp;year2=2016">Bureau of Labor Statistics inflation calculator</a>).</p>
+<p>For example, to get the inflation-adjusted Box Office Revenue for a movie released in 1949 in 2016 dollars, we multiply the reported revenue by 10. That sounds about right (and matches closely enough to the output of the <a href="http://data.bls.gov/cgi-bin/cpicalc.pl?cost1=1&year1=1949&year2=2016">Bureau of Labor Statistics inflation calculator</a>).</p>
 
 <p>Now map each inflation adjustment factor to each movie by merging the two datasets (on the <code>Year</code> column), then multiply the Box Office revenue by the adjustment factor to get the inflation-adjusted revenue. Plus another sanity-check for good measure. </p>
 <div class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">df_dedup_join</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">df_dedup</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">inner_join</span><span class="p">(</span><span class="n">inflation</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">mutate</span><span class="p">(</span><span class="n">AdjBoxOffice</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BoxOffice</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Adjust</span><span class="p">)</span><span class="w">
@@ -455,6 +455,13 @@ The Dark Knight, and for some other movies near the top (<a href="http://www.imd
             
             <article class="latest-tuts">
                 <div class="latest-tuts-content">
+                    <h5 class="latest-tuts-content-title"><a href="/2018/10/data-science-protips/">Things About Real-World Data Science Not Discussed In MOOCs and Thought Pieces</a></h5>
+                    <small class="latest-tuts-content-time"> Oct 22, 2018</small>
+                </div>
+            </article>
+            
+            <article class="latest-tuts">
+                <div class="latest-tuts-content">
                     <h5 class="latest-tuts-content-title"><a href="/2018/09/modeling-link-aggregators/">Problems with Predicting Post Performance on Reddit and Other Link Aggregators</a></h5>
                     <small class="latest-tuts-content-time"> Sep 10, 2018</small>
                 </div>
@@ -485,13 +492,6 @@ The Dark Knight, and for some other movies near the top (<a href="http://www.imd
                 <div class="latest-tuts-content">
                     <h5 class="latest-tuts-content-title"><a href="/2018/02/stack-overflow-questions/">A Visual Overview of Stack Overflow's Question Tags</a></h5>
                     <small class="latest-tuts-content-time"> Feb 9, 2018</small>
-                </div>
-            </article>
-            
-            <article class="latest-tuts">
-                <div class="latest-tuts-content">
-                    <h5 class="latest-tuts-content-title"><a href="/2017/11/benchmark-gpus/">Benchmarking Modern GPUs for Maximum Cloud Cost Efficiency in Deep Learning</a></h5>
-                    <small class="latest-tuts-content-time"> Nov 28, 2017</small>
                 </div>
             </article>
             
