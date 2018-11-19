@@ -4,7 +4,7 @@
   <title><![CDATA[minimaxir | Max Woolf's Blog]]></title>
   <link href="https://minimaxir.com/rss.xml" rel="self"/>
   <link href="https://minimaxir.com/"/>
-  <updated>2018-10-22T09:14:47-07:00</updated>
+  <updated>2018-11-19T09:04:18-08:00</updated>
   <id>https://minimaxir.com/</id>
   <author>
     <name><![CDATA[Max Woolf]]></name>
@@ -12,6 +12,60 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Run Any Scheduled Task/Cron Super-Cheap on Google Cloud Platform]]></title>
+    <link href="https://minimaxir.com/2018/11/cheap-cron/"/>
+    <updated>2018-11-19T09:00:00-08:00</updated>
+    <id>https://minimaxir.com/2018/11/cheap-cron</id>
+    <content type="html"><![CDATA[<p>Let&rsquo;s say you want to make a <a href="https://twitter.com">Twitter</a> bot to tweet out a custom message every few hours or so, and the free-tier VMs offered by cloud services with fractional virtual CPUs and little RAM aren&rsquo;t sufficient. How do you host the bot? Many suggest you get a <a href="https://www.digitalocean.com">Digital Ocean</a> VM for <a href="https://www.digitalocean.com/pricing/">$5/mo</a>, which is not a bad price. But what if you want to run <em>multiple</em> bots? How do you easily coordinate multiple scheduled tasks?</p>
+
+<p>In my case, I maintain three bots: a bot which <a href="https://twitter.com/MTGIFening">tweets GIFs</a> superimposed onto Magic: The Gathering cards, a bot which <a href="https://twitter.com/hackernews_nn">tweets AI-generated Hacker News submission titles</a>, and a bot which makes <a href="https://www.reddit.com/r/subredditnn">AI-generated Reddit submissions</a>. I found a clever solution to the multiple-bots problem: leveraging <a href="https://cloud.google.com/kubernetes-engine/docs/how-to/cronjobs">CronJobs</a> with <a href="https://cloud.google.com/kubernetes-engine/">Google Kubernetes Engine</a> + a single worker node. Each bot has its own CronJob which tells when GKE should schedule a Job for each task, and then the cluster executes the Jobs whenever compute capacity is available (i.e. no resource hogging/race conditions), and can ensure completion by restarting the task if it fails.</p>
+
+<p><img src="/img/cheap-cron/kubecron.png" alt=""></p>
+
+<p>The cost of running a cluster in GKE is just the cost of the compute: using a preemptible n1-standard-1 (1 vCPU/3.75 GB RAM) worker node VM, the <a href="https://cloud.google.com/compute/pricing">cost</a> is about <strong>$7.30/mo</strong>, a bit more than the Digital Ocean server but can theoretically handle an unlimited number of scheduled tasks. The problem is the worker node needs to be up 24/7 even though the bots run sporadically.</p>
+
+<p>But thanks to a few new synergies within GCP products, it&rsquo;s possible to get the cost of running a scheduled task down to <em>less than a dollar a month</em>.</p>
+
+<h2>GCP Shenanigans</h2>
+
+<p><a href="https://cloud.google.com/blog/products/application-development/announcing-cloud-scheduler-a-modern-managed-cron-service-for-automated-batch-jobs">A couple weeks ago</a>, Google released <a href="https://cloud.google.com/scheduler/">Cloud Scheduler</a>, which is a managed cron service that can perform tasks for other Google services. With that launch, Google also released a tutorial titled <a href="https://cloud.google.com/scheduler/docs/scheduling-instances-with-cloud-scheduler">Scheduling Instances with Cloud Scheduler</a>, demonstrating how you can programmatically start and stop instances using Cloud Scheduler in conjunction with <a href="https://cloud.google.com/functions/">Cloud Functions</a>. The demo use case is to schedule VMs during business hours, which gave me an idea; could this approach be used to boot up a VM, run a script, and then shut it down to minimize uptime?</p>
+
+<p>I followed the tutorial instructions, which contains code to create a Cloud Function which boots up a specified VM, code for a Cloud Function to shut down a specified VM, and how to create cron jobs in Cloud Scheduler to invoke those two Functions at a specified time. For my scheduled tasks, I only need the instance up for a couple minutes: for example we can use a Cloud Scheduler job to start an instance every 4 hours at X:00 with the cron <code>0 */4 * * *</code>, and shut it down 2 minutes later at X:02 with the cron <code>2 */4 * * *</code>.</p>
+
+<p>The next step is configuring a Google Compute Engine VM to run the scheduled task on boot. There are two ways to go about it: one is to use the <code>startup-script</code> field when configuring a VM, which specifies a command to run on boot and gets the job done. Another approach (which I use) is to package the scheduled task as a <a href="https://www.docker.com/resources/what-container">Docker Container</a>, and use a container-optimized OS which simply runs a specified container upon boot (although you should set restart to <code>On Failure</code> and give <code>Privileged Access</code> to the container). Additionally, the VM can be configured as a preemptible instance for massive cost savings, as the &ldquo;shut-down-at-anytime&rdquo; constraint is irrelevant for this use case!</p>
+
+<p><img src="/img/cheap-cron/vm.png" alt=""></p>
+
+<p>After the VMs are created, I created the start/stop tasks targeting those VMs as noted in the tutorial.</p>
+
+<p><img src="/img/cheap-cron/scheduler.png" alt=""></p>
+
+<p>I can verify that this workflow indeed works for all my bots, and the crons have been running successfully at the specified time, for only a couple minutes!</p>
+
+<p><img src="/img/cheap-cron/working.png" alt=""></p>
+
+<h2>Crunching the Numbers</h2>
+
+<p>This approach incorporates many different Google products. Is it <em>actually</em> cheaper than just maintaining a simple $5/month server? Let&rsquo;s calculate the monthly cost of all these services.</p>
+
+<p>Assuming that we run a scheduled task every 4 hours, and the server is up for 2 minutes each time (i.e. 12 minutes of uptime a day):</p>
+
+<ul>
+<li><strong>Compute Engine</strong>: A preemptible n1-standard-1 is <a href="https://cloud.google.com/compute/pricing">$0.01 an hour</a>. <code>$0.01 / 60 * 12 * 30 = $0.06</code></li>
+<li><strong>VM Persistent Disk</strong>: Each GB of storage for a VM costs <a href="https://cloud.google.com/compute/pricing#disk">$0.04/month</a>, and the minimum storage size is 10GB. <code>$0.04 * 10 = $0.40</code></li>
+<li><strong>Cloud Scheduler</strong>: Each rule is <a href="https://cloud.google.com/scheduler/pricing">$0.10/month</a>, and there are both a start and a stop rule. <code>$0.10 * 2 = $0.20</code></li>
+<li><strong>Cloud Functions</strong>: It takes about 60 seconds total to turn on and off a VM, and with the default 256MB provision, during which it costs <a href="https://cloud.google.com/functions/pricing">$.000000463/100ms</a>. <code>0.000000463 * 10 * 60 * 12 * 30 = $0.10</code></li>
+</ul>
+
+<p>$0.06 + $0.40 + $0.20 + $0.10 = <strong>$0.76/month to run the scheduled task</strong>! That&rsquo;s not even counting the free tier bonuses if you just want to create one scheduled task; in that case, the only price you pay is the $0.06/mo for the VM. And even in the case where you run the task every hour (like in the images above), the cost is $1.24/month; still not bad.</p>
+
+<p>It&rsquo;s worth noting that these pricing economics wouldn&rsquo;t have worked years ago. Back then <a href="https://aws.amazon.com">Amazon Web Services</a>, the leader in web services, charged for a minimum of 1 hour every time a VM was booted. Google Compute Engine innovated by only requiring a minimum of 10 minutes, which is much better but still would have had unnecessary overhead (in this example, it would increase compute monthly costs by $0.24/31%). <a href="https://cloud.google.com/blog/products/gcp/extending-per-second-billing-in-google">As of September 2017</a>, Google Compute Engine charges a minimum of <strong>1 minute</strong>, which makes this workflow possible and cheap (AWS made the same change <a href="https://aws.amazon.com/blogs/aws/new-per-second-billing-for-ec2-instances-and-ebs-volumes/">a week earlier</a>). </p>
+
+<p>It&rsquo;s also possible that similar workflows exist for AWS and <a href="https://azure.microsoft.com/en-us/">Azure Cloud</a>, although I&rsquo;m less familiar with those platforms (and it may not necessarily be better/cheaper). Sure, if you have a very simple task to practice making bots in the cloud, the free tier of any cloud service might suffice (where you run the server all the time, and schedule the cron on the server itself). If you&rsquo;re planning many scheduled tasks, then a centralized approach like my initial Kubernetes implementation might actually be more cost effective. But if you&rsquo;re somewhere <em>in between</em>, then giving each scheduled task its own VM makes more sense for both ease of use and cost-effectiveness. And there&rsquo;s still many further optimizations to be done too (for example, by allowing the script in the VM to ping a HTTP Cloud Function endpoint and shut <em>itself</em> off when complete instead of using a scheduled cron rule).</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Things About Real-World Data Science Not Discussed In MOOCs and Thought Pieces]]></title>
@@ -1088,105 +1142,6 @@ Theme functions like <code>theme_minimal()</code> accept a <code>base_family</co
 <p><em>You can view the R and ggplot2 code used to create the data visualizations in <a href="http://minimaxir.com/notebooks/ggplot2-web/">this R Notebook</a>. You can also view the images/data used for this post in <a href="https://github.com/minimaxir/ggplot2-web">this GitHub repository</a></em>.</p>
 
 <p><em>You are free to use the data visualizations from this article however you wish, but it would be greatly appreciated if proper attribution is given to this article and/or myself!</em></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Benchmarking TensorFlow on Cloud CPUs: Cheaper Deep Learning than Cloud GPUs]]></title>
-    <link href="https://minimaxir.com/2017/07/cpu-or-gpu/"/>
-    <updated>2017-07-05T09:00:00-07:00</updated>
-    <id>https://minimaxir.com/2017/07/cpu-or-gpu</id>
-    <content type="html"><![CDATA[<p>I&rsquo;ve been working on a few personal deep learning projects with <a href="https://github.com/fchollet/keras">Keras</a> and <a href="https://www.tensorflow.org">TensorFlow</a>. However, training models for deep learning with cloud services such as <a href="https://aws.amazon.com/ec2/">Amazon EC2</a> and <a href="https://cloud.google.com/compute/">Google Compute Engine</a> isn&rsquo;t free, and as someone who is currently unemployed, I have to keep an eye on extraneous spending and be as cost-efficient as possible (please support my work on <a href="https://www.patreon.com/minimaxir">Patreon</a>!). I tried deep learning on the cheaper CPU instances instead of GPU instances to save money, and to my surprise, my model training was only slightly slower. As a result, I took a deeper look at the pricing mechanisms of these two types of instances to see if CPUs are more useful for my needs.</p>
-
-<p>The <a href="https://cloud.google.com/compute/pricing#gpus">pricing of GPU instances</a> on Google Compute Engine starts at <strong>$0.745/hr</strong> (by attaching a $0.700/hr GPU die to a $0.045/hr n1-standard-1 instance). A couple months ago, Google <a href="https://cloudplatform.googleblog.com/2017/05/Compute-Engine-machine-types-with-up-to-64-vCPUs-now-ready-for-your-production-workloads.html">announced</a> CPU instances with up to 64 vCPUs on the modern Intel <a href="https://en.wikipedia.org/wiki/Skylake_(microarchitecture)">Skylake</a> CPU architecture. More importantly, they can also be used in <a href="https://cloud.google.com/compute/docs/instances/preemptible">preemptible CPU instances</a>, which live at most for 24 hours on GCE and can be terminated at any time (very rarely), but cost about <em>20%</em> of the price of a standard instance. A preemptible n1-highcpu-64 instance with 64 vCPUs and 57.6GB RAM plus the premium for using Skylake CPUs is <strong>$0.509/hr</strong>, about 2/3rds of the cost of the GPU instance.</p>
-
-<p>If the model training speed of 64 vCPUs is comparable to that of a GPU (or even slightly slower), it would be more cost-effective to use the CPUs instead. But that&rsquo;s assuming the deep learning software and the GCE platform hardware operate at 100% efficiency; if they don&rsquo;t (and they likely don&rsquo;t), there may be <em>even more savings</em> by scaling down the number of vCPUs and cost accordingly (a 32 vCPU instance with same parameters is half the price at <strong>$0.254/hr</strong>, 16 vCPU at <strong>$0.127/hr</strong>, etc).</p>
-
-<p>There aren&rsquo;t any benchmarks for deep learning libraries with tons and tons of CPUs since there&rsquo;s no demand, as GPUs are the <a href="https://en.wikipedia.org/wiki/Occam%27s_razor">Occam&rsquo;s razor</a> solution to deep learning hardware. But what might make counterintuitive but economical sense is to use CPUs instead of GPUs for deep learning training because of the massive cost differential afforded by preemptible instances, thanks to Google&rsquo;s <a href="https://en.wikipedia.org/wiki/Economies_of_scale">economies of scale</a>.</p>
-
-<h2>Setup</h2>
-
-<p>I already have <a href="https://github.com/minimaxir/deep-learning-cpu-gpu-benchmark">benchmarking scripts</a> of real-world deep learning use cases, <a href="https://github.com/minimaxir/keras-cntk-docker">Docker container environments</a>, and results logging from my <a href="http://minimaxir.com/2017/06/keras-cntk/">TensorFlow vs. CNTK article</a>. A few minor tweaks allow the scripts to be utilized for both CPU and GPU instances by setting CLI arguments. I also rebuilt <a href="https://github.com/minimaxir/keras-cntk-docker/blob/master/Dockerfile">the Docker container</a> to support the latest version of TensorFlow (1.2.1), and created a <a href="https://github.com/minimaxir/keras-cntk-docker/blob/master/Dockerfile-cpu">CPU version</a> of the container which installs the CPU-appropriate TensorFlow library instead.</p>
-
-<p>There is a notable CPU-specific TensorFlow behavior; if you install from <code>pip</code> (as the<a href="https://www.tensorflow.org/install/"> official instructions</a> and tutorials recommend) and begin training a model in TensorFlow, you&rsquo;ll see these warnings in the console:</p>
-
-<p><img src="/img/cpu-or-gpu/tensorflow-console.png" alt=""></p>
-
-<p>In order to fix the warnings and benefit from these <a href="https://en.wikipedia.org/wiki/SSE4#SSE4.2">SSE4.2</a>/<a href="https://en.wikipedia.org/wiki/Advanced_Vector_Extensions">AVX</a>/<a href="https://en.wikipedia.org/wiki/FMA_instruction_set">FMA</a> optimizations, we <a href="https://stackoverflow.com/questions/41293077/how-to-compile-tensorflow-with-sse4-2-and-avx-instructions">compile TensorFlow from source</a>, and I created a <a href="https://github.com/minimaxir/keras-cntk-docker/blob/master/Dockerfile-cpu-compiled">third Docker container</a> to do just that. When training models in the new container, <a href="https://github.com/tensorflow/tensorflow/issues/10689">most</a> of the warnings no longer show, and (spoiler alert) there is indeed a speed boost in training time.</p>
-
-<p>Therefore, we can test three major cases with Google Compute Engine:</p>
-
-<ul>
-<li>A Tesla K80 GPU instance.</li>
-<li>A 64 Skylake vCPU instance where TensorFlow is installed via <code>pip</code> (along with testings at 8/16/32 vCPUs).</li>
-<li>A 64 Skylake vCPU instance where TensorFlow is compiled (<code>cmp</code>) with CPU instructions (+ 8/16/32 vCPUs).</li>
-</ul>
-
-<h2>Results</h2>
-
-<p>For each model architecture and software/hardware configuration, I calculate the <strong>total training time relative to the GPU instance training</strong> for running the model training for the provided test script. In all cases, the GPU <em>should</em> be the fastest training configuration, and systems with more processors should train faster than those with fewer processors.</p>
-
-<p>Let&rsquo;s start using the <a href="http://yann.lecun.com/exdb/mnist/">MNIST dataset</a> of handwritten digits plus the common multilayer perceptron (MLP) architecture, with dense fully-connected layers. Lower training time is better. All configurations below the horizontal dotted line are better than GPUs; all configurations above the dotted line are worse than GPUs.</p>
-
-<p><img src="/img/cpu-or-gpu/dl-cpu-gpu-5.png" alt=""></p>
-
-<p>Here, the GPU is the fastest out of all the platform configurations, but there are other curious trends: the performance between 32 vCPUs and 64 vCPUs is similar, and the compiled TensorFlow library is indeed a significant improvement in training speed <em>but only for 8 and 16 vCPUs</em>. Perhaps there are overheads negotiating information between vCPUs that eliminate the performance advantages of more vCPUs, and perhaps these overheads are <em>different</em> with the CPU instructions of the compiled TensorFlow. In the end, it&rsquo;s a <a href="https://en.wikipedia.org/wiki/Black_box">black box</a>, which is why I prefer black box benchmarking all configurations of hardware instead of theorycrafting.</p>
-
-<p>Since the difference between training speeds of different vCPU counts is minimal, there is definitely an advantage by scaling down. For each model architecture and configuration, I calculate a <strong>normalized training cost relative to the cost of GPU instance training</strong>. Because GCE instance costs are prorated (unlike Amazon EC2), we can simply calculate experiment cost by multiplying the total number of seconds the experiment runs by the cost of the instance (per second). Ideally, we want to <em>minimize</em> cost.</p>
-
-<p><img src="/img/cpu-or-gpu/dl-cpu-gpu-6.png" alt=""></p>
-
-<p>Lower CPU counts are <em>much</em> more cost-effective for this problem, when going as low as possible is better.</p>
-
-<p>Now, let&rsquo;s look at the same dataset with a convolutional neural network (CNN) approach for digit classification:</p>
-
-<p><img src="/img/cpu-or-gpu/dl-cpu-gpu-7.png" alt=""></p>
-
-<p><img src="/img/cpu-or-gpu/dl-cpu-gpu-8.png" alt=""></p>
-
-<p>GPUs are unsurprisingly more than twice as fast as any CPU approach at CNNs, but cost structures are still the same, except that 64 vCPUs are <em>worse</em> than GPUs cost-wise, with 32 vCPUs training even faster than with 64 vCPUs.</p>
-
-<p>Let&rsquo;s go deeper with CNNs and look at the <a href="https://www.cs.toronto.edu/%7Ekriz/cifar.html">CIFAR-10</a> image classification dataset, and a model which utilizes a deep covnet + a multilayer perceptron and ideal for image classification (similar to the <a href="https://gist.github.com/baraldilorenzo/07d7802847aaad0a35d3">VGG-16</a> architecture).</p>
-
-<p><img src="/img/cpu-or-gpu/dl-cpu-gpu-9.png" alt=""></p>
-
-<p><img src="/img/cpu-or-gpu/dl-cpu-gpu-10.png" alt=""></p>
-
-<p>Similar behaviors as in the simple CNN case, although in this instance all CPUs perform better with the compiled TensorFlow library.</p>
-
-<p>The fasttext algorithm, used here on the <a href="http://ai.stanford.edu/%7Eamaas/data/sentiment/">IMDb reviews dataset</a> to determine whether a review is positive or negative, classifies text extremely quickly relative to other methods. </p>
-
-<p><img src="/img/cpu-or-gpu/dl-cpu-gpu-3.png" alt=""></p>
-
-<p><img src="/img/cpu-or-gpu/dl-cpu-gpu-4.png" alt=""></p>
-
-<p>In this case, GPUs are much, much faster than CPUs. The benefit of lower numbers of CPU isn&rsquo;t as dramatic; although as an aside, the <a href="https://github.com/facebookresearch/fastText">official fasttext implementation</a> is <em>designed</em> for large amounts of CPUs and handles parallelization much better.</p>
-
-<p>The Bidirectional long-short-term memory (LSTM) architecture is great for working with text data like IMDb reviews, but after my previous benchmark article, <a href="https://news.ycombinator.com/item?id=14538086">commenters on Hacker News</a> noted that TensorFlow uses an inefficient implementation of the LSTM on the GPU, so perhaps the difference will be more notable.</p>
-
-<p><img src="/img/cpu-or-gpu/dl-cpu-gpu-1.png" alt=""></p>
-
-<p><img src="/img/cpu-or-gpu/dl-cpu-gpu-2.png" alt=""></p>
-
-<p>Wait, what? GPU training of Bidirectional LSTMs is <em>twice as slow</em> as any CPU configuration? Wow. (In fairness, the benchmark uses the Keras LSTM default of <code>implementation=0</code> which is better on CPUs while <code>implementation=2</code> is better on GPUs, but it shouldn&rsquo;t result in that much of a differential)</p>
-
-<p>Lastly, LSTM text generation of <a href="https://en.wikipedia.org/wiki/Friedrich_Nietzsche">Nietzsche&rsquo;s</a> <a href="https://s3.amazonaws.com/text-datasets/nietzsche.txt">writings</a> follows similar patterns to the other architectures, but without the drastic hit to the GPU.</p>
-
-<p><img src="/img/cpu-or-gpu/dl-cpu-gpu-11.png" alt=""></p>
-
-<p><img src="/img/cpu-or-gpu/dl-cpu-gpu-12.png" alt=""></p>
-
-<h2>Conclusion</h2>
-
-<p>As it turns out, using 64 vCPUs is <em>bad</em> for deep learning as current software/hardware architectures can&rsquo;t fully utilize all of them, and it often results in the exact same performance (or <em>worse</em>) than with 32 vCPUs. In terms balancing both training speed and cost, training models with <strong>16 vCPUs + compiled TensorFlow</strong> seems like the winner. The 30%-40% speed boost of the compiled TensorFlow library was an unexpected surprise, and I&rsquo;m shocked Google doesn&rsquo;t offer a precompiled version of TensorFlow with these CPU speedups since the gains are nontrivial.</p>
-
-<p>It&rsquo;s worth nothing that the cost advantages shown here are <em>only</em> possible with preemptible instances; regular high-CPU instances on Google Compute Engine are about 5x as expensive, and as a result eliminate the cost benefits completely. Hooray for economies of scale!</p>
-
-<p>A major implicit assumption with the cloud CPU training approach is that you don&rsquo;t need a trained model ASAP. In professional use cases, time may be too valuable to waste, but in personal use cases where someone can just leave a model training overnight, it&rsquo;s a very, very good and cost-effective option, and one that I&rsquo;ll now utilize.</p>
-
-<hr>
-
-<p><em>All scripts for running the benchmark are available in <a href="https://github.com/minimaxir/deep-learning-cpu-gpu-benchmark">this GitHub repo</a>. You can view the R/ggplot2 code used to process the logs and create the visualizations in <a href="http://minimaxir.com/notebooks/deep-learning-cpu-gpu/">this R Notebook</a>.</em></p>
 ]]></content>
   </entry>
   
