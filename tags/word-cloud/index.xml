@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Word Cloud on Max Woolf&#39;s Blog</title><link>/tags/word-cloud/</link><description>Recent content in Word Cloud on Max Woolf&#39;s Blog</description><generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>Copyright Max Woolf &amp;copy; {year}</copyright><lastBuildDate>Mon, 09 May 2016 08:00:00 +0000</lastBuildDate><atom:link href="/tags/word-cloud/index.xml" rel="self" type="application/rss+xml"/><item><title>Creating Stylish, High-Quality Word Clouds Using Python and Font Awesome Icons</title><link>/2016/05/wordclouds/</link><pubDate>Mon, 09 May 2016 08:00:00 +0000</pubDate><guid>/2016/05/wordclouds/</guid><description>
+&lt;p&gt;You&amp;rsquo;ve probably seen word clouds around the internet. There are several popular free tools for creating them, such as &lt;a href=&#34;http://www.wordle.net&#34; target=&#34;_blank&#34;&gt;Wordle&lt;/a&gt;. I myself am a fan of them, and I have made them for previous posts using the &lt;a href=&#34;http://www.inside-r.org/packages/cran/wordcloud/docs/wordcloud&#34; target=&#34;_blank&#34;&gt;wordcloud package&lt;/a&gt; for R.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/gif-unlimited/reddit-gif-wordcloud-e.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Word clouds are not the most scientific type of data visualization. However, they are a very &lt;em&gt;information-dense&lt;/em&gt; representation of the frequency of all words in a given text. Word clouds are more effective than just using bar charts displaying the counts of words for large amounts of text, as the chart would be difficult to parse if there are too many bars.&lt;/p&gt;
+&lt;p&gt;The &lt;a href=&#34;https://github.com/amueller/word_cloud&#34; target=&#34;_blank&#34;&gt;Python word_cloud package&lt;/a&gt; by Andreas Mueller is relatively popular. A Reddit bot &lt;a href=&#34;https://github.com/Winneon/makeswordclouds&#34; target=&#34;_blank&#34;&gt;makeswordclouds&lt;/a&gt; by Jesse Bryan automatically &lt;a href=&#34;https://www.reddit.com/user/makeswordcloudsagain&#34; target=&#34;_blank&#34;&gt;generates a word cloud&lt;/a&gt; of comments on &lt;a href=&#34;https://www.reddit.com&#34; target=&#34;_blank&#34;&gt;Reddit&lt;/a&gt; submissions using this package. However, when I first saw the example output on the package, I was not impressed.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/wordclouds/constitution.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;I did more research into the &lt;a href=&#34;http://amueller.github.io/word_cloud/&#34; target=&#34;_blank&#34;&gt;package documentation&lt;/a&gt;. I found that there are two important perks present the Python implementation:&lt;/p&gt;
+&lt;p&gt;1) Python word_cloud allows the user to specify a mask to constrain the distribution of words.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/wordclouds/a_new_hope_1.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;2) In addition to the mask, Python word_cloud allows the user to use the original colors of the image to set the colors of the words.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/wordclouds/colored_2.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;The masks are the more interesting aspect for creating visualizations, but &lt;em&gt;where&lt;/em&gt; do you get the masks? You can manually trace and extract objects from images, but that can be time consuming and the masks will likely be heavily aliased and at a low resolution (the size of the mask sets the size of the word cloud).&lt;/p&gt;
+&lt;p&gt;Enter &lt;a href=&#34;https://fortawesome.github.io/Font-Awesome/&#34; target=&#34;_blank&#34;&gt;Font Awesome&lt;/a&gt;, an icon font by Dave Gandy which is &lt;em&gt;very&lt;/em&gt; widely used throughout the Internet (including this website). Icon fonts contain a wide variety of shapes and are vectorized, and therefore they can scale to any size.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/wordclouds/fa_icons.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;So why not use Font Awesome icons as masks for the word cloud? The font icons need to be extracted and rasterized as an image in order to be usable with the Python word_cloud package: cue the Python script &lt;a href=&#34;https://github.com/Pythonity/icon-font-to-png&#34; target=&#34;_blank&#34;&gt;Icon Font to PNG&lt;/a&gt; by Pythonity which does what the name implies.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/wordclouds/fa_icons_finder.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Now &lt;em&gt;every&lt;/em&gt; Font Awesome icon can be used as a word cloud mask! And the icons can be exported at any size: for this post, I render the word clouds at &lt;strong&gt;2048x2048px&lt;/strong&gt;, larger than most desktop screens! After hacking the Python scripts included with the package which were used to create the default word clouds, I managed to create a few interesting examples.&lt;/p&gt;
+&lt;h2 id=&#34;reddit-data-and-thematic-icons&#34;&gt;Reddit Data and Thematic Icons&lt;/h2&gt;
+&lt;p&gt;Font Awesome has &lt;a href=&#34;http://fortawesome.github.io/Font-Awesome/icon/line-chart/&#34; target=&#34;_blank&#34;&gt;icons for charts&lt;/a&gt;, which logically appeals to me as a data person. Why not make a word cloud which looks like a line chart?&lt;/p&gt;
+&lt;p&gt;Let&amp;rsquo;s use the word counts of titles of submissions to the &lt;a href=&#34;https://www.reddit.com/r/dataisbeautiful/&#34; target=&#34;_blank&#34;&gt;/r/dataisbeautiful subreddit&lt;/a&gt; on Reddit which have scored at least 100 points (using the &lt;a href=&#34;https://bigquery.cloud.google.com/table/fh-bigquery:reddit_posts.full_corpus_201512&#34; target=&#34;_blank&#34;&gt;Reddit data dump&lt;/a&gt; located on &lt;a href=&#34;https://cloud.google.com/bigquery/&#34; target=&#34;_blank&#34;&gt;BigQuery&lt;/a&gt;).&lt;/p&gt;
+&lt;p&gt;Additionally, we can improve on the design of the default word cloud output by forcing all-caps text and by changing the text font. For word clouds, I prefer to use condensed font families, as they can allow for more information to be displayed in the word cloud. In this example, I will be using the &lt;a href=&#34;https://www.myfonts.com/fonts/paratype/din-condensed/&#34; target=&#34;_blank&#34;&gt;DIN Condensed&lt;/a&gt; font, a font native to OS X and a font you&amp;rsquo;ve likely seen in media advertisements and website logos.&lt;/p&gt;
+&lt;p&gt;Putting it all together:&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://raw.githubusercontent.com/minimaxir/stylistic-word-clouds/master/wordclouds/dataisbeautiful_wordcloud.png&#34; target=&#34;_blank&#34;&gt;&lt;img src=&#34;/img/wordclouds/dataisbeautiful_wordcloud.png&#34; alt=&#34;&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;(All word clouds in this post are shrunk to 600x600px to reduce loading time: click on the image for the full 2048x2048px resolution.)&lt;/em&gt;&lt;/p&gt;
+&lt;h2 id=&#34;github-data-and-brand-icons&#34;&gt;GitHub Data and Brand Icons&lt;/h2&gt;
+&lt;p&gt;Font Awesome also contains icons representing the logos of popular internet brands, such as Facebook and Twitter.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://github.com&#34; target=&#34;_blank&#34;&gt;GitHub&lt;/a&gt; is another such website. I will use BigQuery again with the &lt;a href=&#34;https://bigquery.cloud.google.com/table/githubarchive:year.2014&#34; target=&#34;_blank&#34;&gt;2014 GitHub Archive dataset&lt;/a&gt; to gather word counts of git commit messages during that year, and use the modern GitHub logo as the mask. This time, I will incorporate the freeware condensed monospaced font &lt;a href=&#34;https://www.fontsquirrel.com/fonts/M-1m&#34; target=&#34;_blank&#34;&gt;M+ 1m&lt;/a&gt; in order to create a more code-like aesthetic, which creates an interesting look when juxtaposed with the negative space of GitHub&amp;rsquo;s logo.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://raw.githubusercontent.com/minimaxir/stylistic-word-clouds/master/wordclouds/github_wordcloud.png&#34; target=&#34;_blank&#34;&gt;&lt;img src=&#34;/img/wordclouds/github_wordcloud.png&#34; alt=&#34;&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&#34;yelp-data-and-sentiment-icons&#34;&gt;Yelp Data and Sentiment Icons&lt;/h2&gt;
+&lt;p&gt;One of the &lt;a href=&#34;http://minimaxir.com/2014/09/one-star-five-stars/&#34; target=&#34;_blank&#34;&gt;earliest word clouds I made&lt;/a&gt; was for the &lt;a href=&#34;http://www.yelp.com&#34; target=&#34;_blank&#34;&gt;Yelp&lt;/a&gt; reviews dataset from the &lt;a href=&#34;https://www.yelp.com/dataset_challenge&#34; target=&#34;_blank&#34;&gt;Yelp Dataset Challenge&lt;/a&gt; to compare and contrast verbiage between 1-star reviews and 5-star reviews. Let&amp;rsquo;s remake those word clouds.&lt;/p&gt;
+&lt;p&gt;At this point I should mention appropriate color palettes for word clouds since the rainbows of the stereotypical word clouds can be distracting. I strongly recommend using the &lt;a href=&#34;http://colorbrewer2.org&#34; target=&#34;_blank&#34;&gt;ColorBrewer&lt;/a&gt; palettes, helpfully provided for this use case with the &lt;a href=&#34;https://github.com/jiffyclub/palettable&#34; target=&#34;_blank&#34;&gt;paletteable Python library&lt;/a&gt; by Matt Davis. I particularly like the &lt;a href=&#34;https://jiffyclub.github.io/palettable/colorbrewer/sequential/&#34; target=&#34;_blank&#34;&gt;sequential palettes&lt;/a&gt;, which follow a clean gradient between white and another color (or between two or three colors), although I ignore some of the lighter colors as they may not be visible against white backgrounds.&lt;/p&gt;
+&lt;p&gt;The font choice this time is &lt;a href=&#34;https://www.google.com/fonts/specimen/Open+Sans+Condensed&#34; target=&#34;_blank&#34;&gt;Open Sans Condensed&lt;/a&gt;, a Google Font. &lt;a href=&#34;https://www.google.com/fonts&#34; target=&#34;_blank&#34;&gt;Google Fonts&lt;/a&gt; are free and open source. I strongly recommend using them for documents/websites to add some flair over default fonts.&lt;/p&gt;
+&lt;p&gt;Using the &lt;strong&gt;Greens&lt;/strong&gt; palette and a smiley-face Font Awesome icon on 5-star reviews:&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://raw.githubusercontent.com/minimaxir/stylistic-word-clouds/master/wordclouds/yelp_pos_wordcloud.png&#34; target=&#34;_blank&#34;&gt;&lt;img src=&#34;/img/wordclouds/yelp_pos_wordcloud.png&#34; alt=&#34;&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Makes sense, although the thin lines of the smiley-face causes the font sizes to become constrained. How about the inverse: &lt;strong&gt;Reds&lt;/strong&gt;, thumbs-down, and 1-star reviews?&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://raw.githubusercontent.com/minimaxir/stylistic-word-clouds/master/wordclouds/yelp_neg_wordcloud.png&#34; target=&#34;_blank&#34;&gt;&lt;img src=&#34;/img/wordclouds/yelp_neg_wordcloud.png&#34; alt=&#34;&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&#34;facebook-data-and-etc-icons&#34;&gt;Facebook Data and Etc. Icons&lt;/h2&gt;
+&lt;p&gt;I recently updated my &lt;a href=&#34;https://github.com/minimaxir/facebook-page-post-scraper&#34; target=&#34;_blank&#34;&gt;Facebook Page Data Scraper&lt;/a&gt;, which gathers public posts made by Facebook Pages, to now retrieve total Reaction counts on those posts instead of just Likes.&lt;/p&gt;
+&lt;p&gt;Why not create a word cloud of news headlines to get a zeitgeist of popular discussion? To do this, I scraped all the public posts from &lt;a href=&#34;https://www.facebook.com/cnn/&#34; target=&#34;_blank&#34;&gt;CNN&amp;rsquo;s Facebook page&lt;/a&gt;, and created a word cloud of all CNN headlines to which the posts link. Let&amp;rsquo;s use the Google Font &lt;a href=&#34;https://www.google.com/fonts/specimen/Amatic+SC&#34; target=&#34;_blank&#34;&gt;Amatic SC&lt;/a&gt; which you&amp;rsquo;ve likely seen before in ads, and let&amp;rsquo;s try a &lt;a href=&#34;https://jiffyclub.github.io/palettable/colorbrewer/qualitative/&#34; target=&#34;_blank&#34;&gt;qualitative palette&lt;/a&gt;, &lt;strong&gt;Dark2&lt;/strong&gt;, to get a &amp;ldquo;rainbow&amp;rdquo; effect without looking gawdy.&lt;/p&gt;
+&lt;p&gt;And use a flag icon, because why not?&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://raw.githubusercontent.com/minimaxir/stylistic-word-clouds/master/wordclouds/cnn_wordcloud.png&#34; target=&#34;_blank&#34;&gt;&lt;img src=&#34;/img/wordclouds/cnn_wordcloud.png&#34; alt=&#34;&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Of course, CNN has had fun with the 2016 U.S. Presidential election.&lt;/p&gt;
+&lt;p&gt;Let&amp;rsquo;s do one more word cloud. We have not yet done a word cloud using the colors-from-original-image technique. Using the underlying &lt;a href=&#34;http://matplotlib.org/examples/color/colormaps_reference.html&#34; target=&#34;_blank&#34;&gt;matplotlib color map&lt;/a&gt; for the &lt;strong&gt;Spectral&lt;/strong&gt; palette, we can overlay a spatial rainbow which determines the color of the words displayed at that area of the mask:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/wordclouds/spectral.jpg&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Additionally, in order to estimate the importance of the presence of each word in generating Reactions, we can create a word cloud of the words where the words are sized not by count, but by the &lt;strong&gt;average number of Reactions&lt;/strong&gt; on Facebook posts referencing CNN headlines containing that word (where the word is used in at least 20 headlines for some statistical correction). And let&amp;rsquo;s try a black background.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://raw.githubusercontent.com/minimaxir/stylistic-word-clouds/master/wordclouds/cnn_wordcloud_reactions.png&#34; target=&#34;_blank&#34;&gt;&lt;img src=&#34;/img/wordclouds/cnn_wordcloud_reactions.png&#34; alt=&#34;&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;While the word cloud cannot be output in a vectorized format using this method, creating a word cloud at a super-high resolution (even larger than 2048x2048px) is more-than-enough for making typical wall posters and t-shirts.&lt;/p&gt;
+&lt;p&gt;Word clouds may not have as much explanatory value in the academic sense, but they have &lt;em&gt;persuasive&lt;/em&gt; power, which is just as important. At the least, it&amp;rsquo;s another visual technique in my fun bag of visualization tricks to spice up future blog posts.&lt;/p&gt;
+&lt;p&gt;Performing postprocessing on rendered word clouds can help create especially artsy art, but that discussion best-saved for &lt;a href=&#34;https://raw.githubusercontent.com/minimaxir/stylistic-word-clouds/master/wordclouds/starry_night_cnn_weight_12_iterations_500_smooth_5.png&#34; target=&#34;_blank&#34;&gt;another time&lt;/a&gt;.&lt;/p&gt;
+&lt;hr /&gt;
+&lt;p&gt;&lt;em&gt;You can view the scripts to create the word clouds in this posts in this &lt;a href=&#34;https://github.com/minimaxir/stylistic-word-clouds&#34; target=&#34;_blank&#34;&gt;GitHub repository&lt;/a&gt;; the code is more hacky than usual, but it should be clear enough to demonstrate how the raw data was processed in each instance and how the word clouds were rendered. In the future, I hope to create a &lt;a href=&#34;http://flask.pocoo.org&#34; target=&#34;_blank&#34;&gt;Flask app&lt;/a&gt; based on these scripts to streamline the creation of word clouds.&lt;/em&gt;&lt;/p&gt;</description></item><item><title>The Data From Our Comments to the FCC About Net Neutrality</title><link>/2014/08/comments-about-comments/</link><pubDate>Fri, 08 Aug 2014 08:00:00 +0000</pubDate><guid>/2014/08/comments-about-comments/</guid><description>
+&lt;p&gt;This year, the Federal Communications Commission, one of the governmental entities which polices the Internet in the United States, announced significant rule changes to the policy of &amp;ldquo;&lt;a href=&#34;http://www.fcc.gov/openinternet&#34; target=&#34;_blank&#34;&gt;Open Internet&lt;/a&gt;.&amp;rdquo; Open Internet, more commonly known as &amp;ldquo;&lt;a href=&#34;http://en.wikipedia.org/wiki/Net_neutrality&#34; target=&#34;_blank&#34;&gt;net neutrality&lt;/a&gt;,&amp;rdquo; helps businesses facilitate competition and promote innovation on the internet, which help improve the internet as a whole. However, the proposed rule changes allow internet service providers (ISPs) to discriminate between different types of internet traffic (a &amp;ldquo;fast lane&amp;rdquo; for video and social media, for example). Said pricing discrimination may end up affecting the consumers instead (e.g. paying $10/month for access to Facebook), which may reduce innovation due to increased costs to the consumers of internet bandwidth, i.e. the average American citizen.&lt;/p&gt;
+&lt;p&gt;The FCC recently &lt;a href=&#34;http://www.fcc.gov/comments&#34; target=&#34;_blank&#34;&gt;opened up a comment period&lt;/a&gt;, where the U.S. public can &lt;a href=&#34;http://apps.fcc.gov/ecfs/upload/display?z=s6uf0&#34; target=&#34;_blank&#34;&gt;send or e-mail comments&lt;/a&gt; on the changes to this policy. Naturally, the consumers of the internet reacted strongly. By August 2014, over &lt;em&gt;1.1 million comments&lt;/em&gt; have been received by the FCC.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/fcc/fcc-words-small.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;This week, the FCC &lt;a href=&#34;http://www.fcc.gov/blog/fcc-makes-open-internet-comments-more-accessible-public&#34; target=&#34;_blank&#34;&gt;released a dataset&lt;/a&gt; of about &lt;a href=&#34;http://www.fcc.gov/files/ecfs/14-28/ecfs-files.htm&#34; target=&#34;_blank&#34;&gt;450,000 of these comments&lt;/a&gt;. Looking at the data behind these comments, it&amp;rsquo;s clear to see that the entire country is passionate against the rule changes to net neutrality.&lt;/p&gt;
+&lt;p&gt;Here&amp;rsquo;s a timeline of when comments about net neutrality were sent to the FCC:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/fcc/fcc-timeline-annotated.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;There are clear spikes after important initiatives for awareness of the FCC&amp;rsquo;s ruling. May 15th marked the &lt;a href=&#34;http://www.savetheinternet.com/net-neutrality-resources&#34; target=&#34;_blank&#34;&gt;beginning of the Open Comment period&lt;/a&gt; for the FCC&amp;rsquo;s new guidelines, June 3rd marked the week after an airing of Last Week Tonight with John Oliver, which contained an &lt;a href=&#34;https://www.youtube.com/watch?v=fpbOEoRrHyU&#34; target=&#34;_blank&#34;&gt;anti-net-neutrality rant&lt;/a&gt; which went viral for the rest of the week. July 15th marked the close of the Open Comment period, which is why on July 14th, the internet rallied and sent in over a hundred thousand comments, which &lt;a href=&#34;http://www.nydailynews.com/news/politics/fcc-extends-net-neutrality-open-comment-deadline-friday-article-1.1868238#kDMozMu84rJ5TPsl.97&#34; target=&#34;_blank&#34;&gt;crashed their servers&lt;/a&gt; and forced them to extend the deadline.&lt;/p&gt;
+&lt;p&gt;But as with many awareness campaigns over the internet, this campaign may have &amp;ldquo;&lt;a href=&#34;http://en.wikipedia.org/wiki/Slacktivism&#34; target=&#34;_blank&#34;&gt;slacktivists&lt;/a&gt;&amp;rdquo;, as evidenced by the flat lines after the events where people stopped writing comments. How much effort did the U.S. people actually put into their submissions? One way to tell is to check the length of the submissions.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/fcc/fcc-comment-length.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Many comments were one-liners at about 20 words each, and many comments were multiparagraph notes at about 180 words each. But why is there a giant spike at about 300 words?&lt;/p&gt;
+&lt;p&gt;As it turns out, there were over 100,000 comments with exactly 1,477 characters (approximately 290 words). That number of characters (before cleaning) corresponds to a comment following this template:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Net neutrality is the First Amendment of the Internet, the principle that Internet service providers (ISPs) treat all data equally. As an Internet user, net neutrality is vitally important to me. The FCC should use its Title II authority to protect it.&lt;/p&gt;
+&lt;p&gt;Most Americans have only one choice for truly high speed Internet: their local cable company. This is a political failure, and it is an embarrassment. America deserves competition and choice.&lt;/p&gt;
+&lt;p&gt;Without net neutrality, a bad situation gets even worse. These ISPs will now be able to manipulate our Internet experience by speeding up some services and slowing down others. That kills choice, diversity, and quality.&lt;/p&gt;
+&lt;p&gt;It also causes tremendous economic harm. If ISPs can speed up favored services and slow others, new businesses will no longer be able to rely on a level playing field. When ISPs can slow your site and destroy your business at will, how can any startup attract investors?&lt;/p&gt;
+&lt;p&gt;My friends, family, and I use the Internet for conversation and fun, but also for work and business. When you let ISPs mess with our Internet experience, you are attacking our social lives, our entertainment, and our economic well being. We won&amp;rsquo;t stand for it.&lt;/p&gt;
+&lt;p&gt;ISPs are opposing Title II so that they can destroy the FCC&amp;rsquo;s net neutrality rules in court. This is the same trick they pulled last time. Please, let&amp;rsquo;s not be fooled again. Title II is the strong, legally sound way to enforce net neutrality. Use it.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;This is the default template for a submission at the &lt;a href=&#34;https://www.battleforthenet.com&#34; target=&#34;_blank&#34;&gt;Battle for Net Neutrality&lt;/a&gt; website. That means over about 1/4th of the comments in the dataset, and atleast 1/10th of all comments submitted, used this website&amp;rsquo;s submission form.&lt;/p&gt;
+&lt;h2 id=&#34;comments-across-the-nation&#34;&gt;Comments Across the Nation&lt;/h2&gt;
+&lt;p&gt;Net neutrality affects some individuals more than others. Not everyone in the U.S. may be as passionate over the issue, and many may not even be aware that such a threat to the modern internet even exists.&lt;/p&gt;
+&lt;p&gt;Which cities in the United States sent the most comments to the FCC?&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/fcc/fcc-city.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Yes, Brooklyn, NY counts as a city according to the FCC.&lt;/p&gt;
+&lt;p&gt;It&amp;rsquo;s not surprising that the three most populated cities in the U.S. (New York, Los Angeles, Chicago) top this chart due to the higher potential number of commenters. What is surprising yet important is that tech hubs with much fewer populations, such as San Francisco, Seattle, and Portland, all have extremely strong showings.&lt;/p&gt;
+&lt;p&gt;When you look at the distribution of comments by state of origin, it&amp;rsquo;s even more apparent that California and Washington are some of the key drivers of the comments. (admittingly, it does resemble a &lt;a href=&#34;https://xkcd.com/1138/&#34; target=&#34;_blank&#34;&gt;population map&lt;/a&gt;)&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/fcc/fcc-state-map.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;What are the key words mentioned in the comments to the FCC?&lt;/p&gt;
+&lt;p&gt;The key players in who would benefit the most from the implementation of net neutrality are &lt;a href=&#34;http://www.comcast.com/&#34; target=&#34;_blank&#34;&gt;Comcast&lt;/a&gt; and &lt;a href=&#34;http://www.verizon.com/&#34; target=&#34;_blank&#34;&gt;Verizon&lt;/a&gt;, two of the biggest ISPs in the country. Which states have been speaking out the most against these institutions?&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/fcc/fcc-state-map-comcast.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/fcc/fcc-state-map-verizon.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Comcast is a frequent topic of discussion (5.2% of all comments about net neutrality contain atleast 1 mention of Comcast), especially on the West Coast. On the other hand, less than half as many talk about Verizon (2.0% of all comments), except on the East Coast.&lt;/p&gt;
+&lt;p&gt;Although not on the map, Washington, DC actually had the most to comment on these two topics, with 11.7% comments having atleast one mention of Comcast and 8.8% of comments having atleast one mention of Verizon.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;http://www.netflix.com/&#34; target=&#34;_blank&#34;&gt;Netflix&lt;/a&gt;, an internet video-streaming service which would likely be negatively impacted by the FCC ruling, was also discussed.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/fcc/fcc-state-map-netflix.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Discussion of Netflix from all around the country is very evenly distributed (2.1% of all comments), potentially because it&amp;rsquo;s not location-specific as the presence of an ISP. (Montana apparently does not care much about Netflix.)&lt;/p&gt;
+&lt;p&gt;Another concern about net neutrality is the potential &lt;a href=&#34;https://www.aclu.org/net-neutrality&#34; target=&#34;_blank&#34;&gt;fight against the First Amendment&lt;/a&gt; and free speech itself, as ISPs could theoretically restrict traffic to unfavorable websites under the system. Which states are most passionate about free speech?&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/fcc/fcc-state-map-free-speech.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Much more activity in the Midwest and especially the North West than the previous maps. (2.1% of all comments discuss &amp;ldquo;free speech&amp;rdquo;) North Dakota apparently is relatively indifferent about the freedom of speech.&lt;/p&gt;
+&lt;p&gt;Unfortunately, at this period of time, it&amp;rsquo;s hard to guess if the hundreds of thousands of comments sent to the FCC will actually cause them to reconsider their plans. The sheer quantity of comments, at the least, lets the FCC know that Americans feel strongly about the issue. It&amp;rsquo;s clear that in the worst-case scenario where the ISPs win the net neutrality battle, the consumers of the internet in the United States &lt;strong&gt;will not remain passive&lt;/strong&gt;.&lt;/p&gt;
+&lt;hr /&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;Charts were generated using R and ggplot2.&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;You can view the data aggregated by date, by state, and by city in &lt;a href=&#34;https://docs.google.com/spreadsheets/d/1D2T5Lg41IWfkQPEMLWq3fjU7_kJ8lDNc4H2wsbr4BbU/edit?usp=sharing&#34; target=&#34;_blank&#34;&gt;this Google Sheet&lt;/a&gt;. You can download a CSV of the original comment metadata &lt;a href=&#34;https://www.dropbox.com/s/7tzsk7kv7ctgydp/fcc_comments.zip&#34; target=&#34;_blank&#34;&gt;here&lt;/a&gt;. [7.6MB .zip]&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;You can view a 3000px x 3000px image of the FCC comments word cloud &lt;a href=&#34;http://i.imgur.com/I0dpEA6.png&#34; target=&#34;_blank&#34;&gt;here&lt;/a&gt;.&lt;/em&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;*&lt;strong&gt;EDIT: 8/9/14&lt;/strong&gt;: Per &lt;a href=&#34;https://news.ycombinator.com/item?id=8153091&#34; target=&#34;_blank&#34;&gt;comments on Hacker News&lt;/a&gt;, I&amp;rsquo;ve changed wording in a few paragraphs for clarification.*&lt;/p&gt;</description></item><item><title>The Wikipedia Entries Which Are Most-Edited by Members of the U.S. Congress</title><link>/2014/07/caucus-needed/</link><pubDate>Tue, 15 Jul 2014 08:30:00 +0000</pubDate><guid>/2014/07/caucus-needed/</guid><description>&lt;p&gt;Last week, the Twitter account &lt;a href=&#34;https://twitter.com/congressedits&#34; target=&#34;_blank&#34;&gt;@congressedits&lt;/a&gt; launched. This account is a bot that tweets edits to Wikipedia that were made by members of the U.S. Congress, in order to help &lt;a href=&#34;http://inkdroid.org/journal/2014/07/10/why-congressedits/&#34; target=&#34;_blank&#34;&gt;facilitate transparency&lt;/a&gt;. The account &lt;a href=&#34;https://github.com/edsu/anon&#34; target=&#34;_blank&#34;&gt;works&lt;/a&gt; by automatically tweeting any Wikipedia edits made by anonymous contributors with IP addresses between the known IP address blocks of the &lt;a href=&#34;http://whois.arin.net/rest/org/USSAA/nets&#34; target=&#34;_blank&#34;&gt;U.S. Senate&lt;/a&gt; or the &lt;a href=&#34;http://whois.arin.net/rest/org/ISUHR/nets&#34; target=&#34;_blank&#34;&gt;House of Representatives&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Google&amp;rsquo;s &lt;a href=&#34;https://developers.google.com/bigquery/&#34; target=&#34;_blank&#34;&gt;BigQuery&lt;/a&gt; tool has a &lt;a href=&#34;https://developers.google.com/bigquery/docs/dataset-wikipedia&#34; target=&#34;_blank&#34;&gt;sample dataset&lt;/a&gt; of Wikipedia data, representing the data on 314 million article edits up to April 2010. Out of curiosity, I wrote a query which returns the top 100 pages with the most amount of edits by Wikipedia contributors in the U.S. Senate&amp;rsquo;s IP block.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/caucus-needed/senate-query.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Using this query for the Senate&amp;rsquo;s IP block, and a similar one for the House of Representatives IP blocks, I retrieved the most-edited entries for both entities. You can access the spreadsheet of this data by &lt;a href=&#34;https://dl.dropboxusercontent.com/u/2017402/Congress_Wikipedia_Edits.pdf&#34; target=&#34;_blank&#34;&gt;downloading a .pdf&lt;/a&gt; or by viewing the data online with &lt;a href=&#34;https://www.icloud.com/iw/#numbers/BALY8siqBP4jYZq5E2OB20P-wlPpyXdycqqF/Congress_Wikipedia_Edits&#34; target=&#34;_blank&#34;&gt;Numbers for iCloud&lt;/a&gt;, both of which contain high-resolution charts and clickable Wikipedia links. A &lt;a href=&#34;https://docs.google.com/spreadsheets/d/1qfFEwzNzc4KL4gqe2i4IoMO0ksmoYndCK0O0m46n37I/edit?usp=sharing&#34; target=&#34;_blank&#34;&gt;Google Sheets&lt;/a&gt; version is also available.&lt;/p&gt;
+&lt;p&gt;Here are the Top 10 Wikipedia entries with the most amount of edits by members of the Senate:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/caucus-needed/senate-wikipedia.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Wait a minute. Hawk from G.I. Joe?!&lt;/p&gt;
+&lt;p&gt;Saying that the query results were surprising would be the understatement of the century.&lt;/p&gt;
+&lt;p&gt;Two of the top-edited entries are directly pertaining to the U.S. Senate, which helps prove that the IP block is indeed the Senate&amp;rsquo;s IP block. Both Kappa Upsilon Chi and &lt;a href=&#34;http://en.wikipedia.org/wiki/Beta_Upsilon_Chi&#34; target=&#34;_blank&#34;&gt;Beta Upsilon Chi&lt;/a&gt; are Christian fraternities. (however, the Kappa Upsilon Chi Wikipedia entry no longer exists for some reason)&lt;/p&gt;
+&lt;p&gt;The edits corresponding to actual people are ones which are the most interesting. &lt;a href=&#34;http://en.wikipedia.org/wiki/William_Swain_Lee&#34; target=&#34;_blank&#34;&gt;William Swain Lee&lt;/a&gt; is a Delaware politician whose entry was &lt;a href=&#34;http://en.wikipedia.org/w/index.php?title=William_Swain_Lee&amp;amp;diff=prev&amp;amp;oldid=31202175&#34; target=&#34;_blank&#34;&gt;created and edited&lt;/a&gt; by a &lt;a href=&#34;http://en.wikipedia.org/wiki/Special:Contributions/156.33.148.107&#34; target=&#34;_blank&#34;&gt;user in the Senate IP block&lt;/a&gt;. OrangePie is a user who, &lt;a href=&#34;http://en.wikipedia.org/wiki?curid=7319910&#34; target=&#34;_blank&#34;&gt;according to his talk page&lt;/a&gt;, was criticized for repeatedly recreating an entry for &amp;ldquo;Michael Hardaway&amp;rdquo; after deletion, who coincidentally worked for the Senate &lt;a href=&#34;https://twitter.com/michaelhardaway&#34; target=&#34;_blank&#34;&gt;according to his Twitter bio&lt;/a&gt;. In journalist &lt;a href=&#34;http://en.wikipedia.org/wiki?curid=8593106&#34; target=&#34;_blank&#34;&gt;Paul D. Thacker&amp;rsquo;s&lt;/a&gt; entry, one Senate editor &lt;a href=&#34;http://en.wikipedia.org/w/index.php?title=Paul_D._Thacker&amp;amp;diff=311839513&amp;amp;oldid=311689066&#34; target=&#34;_blank&#34;&gt;replaced a paragraph&lt;/a&gt; of Thacker&amp;rsquo;s biography with the word &amp;ldquo;anus?&amp;rdquo;. Jay Rockefeller is an &lt;a href=&#34;http://en.wikipedia.org/wiki?curid=337026&#34; target=&#34;_blank&#34;&gt;actual U.S. Senator&lt;/a&gt;, so the edits are definitely a conflict of interest. The &lt;a href=&#34;http://en.wikipedia.org/wiki/Special:Contributions/156.33.96.28&#34; target=&#34;_blank&#34;&gt;user who made the edits&lt;/a&gt; apparently also removed &lt;a href=&#34;http://en.wikipedia.org/w/index.php?title=Jay_Rockefeller&amp;amp;diff=prev&amp;amp;oldid=33857327&#34; target=&#34;_blank&#34;&gt;information about a government investigation&lt;/a&gt; into the Senator.&lt;/p&gt;
+&lt;p&gt;I have nothing to add for &lt;a href=&#34;http://en.wikipedia.org/wiki?curid=2814171&#34; target=&#34;_blank&#34;&gt;Hawk from G.I. Joe&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Other interesting frequently-edited Wikipedia entries from members of the U.S. Senate are &lt;a href=&#34;http://en.wikipedia.org/wiki?curid=3626593&#34; target=&#34;_blank&#34;&gt;Primetime Emmy Award for Outstanding Supporting Actor – Comedy Series&lt;/a&gt; (11 edits), &lt;a href=&#34;http://en.wikipedia.org/wiki?curid=1226609&#34; target=&#34;_blank&#34;&gt;Wikipedia:Introduction&lt;/a&gt; (5 edits) and &lt;a href=&#34;http://en.wikipedia.org/wiki?curid=1749535&#34; target=&#34;_blank&#34;&gt;Crash (2004 film)&lt;/a&gt; (5 edits)&lt;/p&gt;
+&lt;p&gt;The Wikipedia entries with the most amount of edits by members of the House of Representatives are somehow even &lt;em&gt;weirder&lt;/em&gt;, and that&amp;rsquo;s quite an accomplishment.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/caucus-needed/house-wikipedia.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Well, if &lt;em&gt;anyone&lt;/em&gt; in the entire United States would be experts on the topics of &lt;a href=&#34;http://en.wikipedia.org/wiki?curid=2352587&#34; target=&#34;_blank&#34;&gt;cleft chins&lt;/a&gt; and &lt;a href=&#34;http://en.wikipedia.org/wiki?curid=1924543&#34; target=&#34;_blank&#34;&gt;dimples&lt;/a&gt;, it would be the members of the House of Representatives.&lt;/p&gt;
+&lt;p&gt;Again, one of the most-edited entries corresponds to a House of Representatives topic, which helps validate the IP blocks. The &lt;a href=&#34;http://en.wikipedia.org/wiki?curid=107610&#34; target=&#34;_blank&#34;&gt;Cerritos, California&lt;/a&gt; location had &lt;a href=&#34;http://en.wikipedia.org/w/index.php?title=Cerritos,_California&amp;amp;diff=21384826&amp;amp;oldid=21363395&#34; target=&#34;_blank&#34;&gt;neutral edits&lt;/a&gt; made by a &lt;a href=&#34;http://en.wikipedia.org/wiki/Special:Contributions/143.231.249.141&#34; target=&#34;_blank&#34;&gt;rather dedicated Wikiuser&lt;/a&gt;. Wynne, Arkansas and Michelle Ye&amp;rsquo;s edits were made by the same dedicated Wikiuser. &lt;a href=&#34;http://en.wikipedia.org/wiki?curid=1143590&#34; target=&#34;_blank&#34;&gt;Waverly, Pennsylvania&lt;/a&gt; was edited by a &lt;a href=&#34;http://en.wikipedia.org/wiki/Special:Contributions/137.18.255.33&#34; target=&#34;_blank&#34;&gt;user&lt;/a&gt; who&amp;rsquo;s &lt;a href=&#34;http://en.wikipedia.org/w/index.php?title=Waverly,_Pennsylvania&amp;amp;diff=7763793&amp;amp;oldid=7761053&#34; target=&#34;_blank&#34;&gt;really passionate about Doc&amp;rsquo;s Deli&lt;/a&gt;. &lt;a href=&#34;http://en.wikipedia.org/wiki?curid=1129560&#34; target=&#34;_blank&#34;&gt;Luis Fortuno&lt;/a&gt;, former governor of Puerto Rico, had his &lt;a href=&#34;http://en.wikipedia.org/w/index.php?title=Luis_Fortu%C3%B1o&amp;amp;diff=prev&amp;amp;oldid=134653411&#34; target=&#34;_blank&#34;&gt;history excised&lt;/a&gt; by &lt;a href=&#34;http://en.wikipedia.org/wiki/Special:Contributions/143.231.249.137&#34; target=&#34;_blank&#34;&gt;another user&lt;/a&gt;. &lt;a href=&#34;http://en.wikipedia.org/wiki?curid=6260346&#34; target=&#34;_blank&#34;&gt;Betty Sutton&lt;/a&gt;, however, is a actual Representative from Ohio, representing another conflict of interest, as another &lt;a href=&#34;http://en.wikipedia.org/wiki/Special:Contributions/143.228.129.9&#34; target=&#34;_blank&#34;&gt;user&lt;/a&gt; constructed &lt;a href=&#34;http://en.wikipedia.org/w/index.php?title=Betty_Sutton&amp;amp;diff=303743778&amp;amp;oldid=296652449&#34; target=&#34;_blank&#34;&gt;most of her entry&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;I have nothing to add regarding &lt;a href=&#34;http://en.wikipedia.org/wiki?curid=862471&#34; target=&#34;_blank&#34;&gt;effeminacy&lt;/a&gt; in the House of Representatives.&lt;/p&gt;
+&lt;p&gt;Other interesting edits by members of the House include &lt;a href=&#34;http://en.wikipedia.org/wiki?curid=18951054&#34; target=&#34;_blank&#34;&gt;Apocalypse Now&lt;/a&gt; (10 edits), &lt;a href=&#34;http://en.wikipedia.org/wiki?curid=1161298&#34; target=&#34;_blank&#34;&gt;History of Italy as a monarchy and in the World Wars&lt;/a&gt; (9 edits), and &lt;a href=&#34;http://en.wikipedia.org/wiki?curid=34071&#34; target=&#34;_blank&#34;&gt;Whitney Houston&lt;/a&gt; (9 edits)&lt;/p&gt;
+&lt;p&gt;In the end, the members of the U.S. Congress have the same peculiar interests as typical Americans. However, when these people edit entries on topics in which they are directly involved, the potential bias threatens the integrity of all Wikipedia. And this is just the tip of the iceburg.&lt;/p&gt;</description></item><item><title>Probabilistically Generating GitHub Projects</title><link>/2013/11/innovation-rng/</link><pubDate>Fri, 29 Nov 2013 10:30:00 +0000</pubDate><guid>/2013/11/innovation-rng/</guid><description>&lt;p&gt;Grant Slatton made an amusing post on Hacker News yesterday titled &amp;ldquo;&lt;a href=&#34;https://news.ycombinator.com/item?id=6815282&#34; target=&#34;_blank&#34;&gt;Show HN: Probabilistically Generating HN Post Titles&lt;/a&gt;&amp;rdquo;. By using the statistical principle of &lt;a href=&#34;http://en.wikipedia.org/wiki/Markov_chain&#34; target=&#34;_blank&#34;&gt;Markov chains&lt;/a&gt;, Slatton was able to &lt;a href=&#34;http://grantslatton.com/hngen/&#34; target=&#34;_blank&#34;&gt;generate eerily-realistic Hacker News headlines&lt;/a&gt; such as &amp;ldquo;Facebook detects if you are not a pilot&amp;rdquo; and &amp;ldquo;The No. 1 Habit of Highly Effective Mediocre Entrepreneurs.&amp;rdquo;&lt;/p&gt;
+&lt;p&gt;Could Markov chains be applied to any other data sets for hilarious effect? By using Slatton&amp;rsquo;s &lt;a href=&#34;https://gist.github.com/grantslatton/7694811&#34; target=&#34;_blank&#34;&gt;Python implementation of Markov chains&lt;/a&gt; plus 300,000 descriptions of public GitHub repositories retrieved from their API, I discovered that statistical randomness can indeed create funny innovation.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/github-wordcloud-mac.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;You can download a list of 1,000 Markov chain-generated projects &lt;a href=&#34;https://dl.dropboxusercontent.com/u/2017402/github_markov.txt&#34; target=&#34;_blank&#34;&gt;here&lt;/a&gt;. Here are a few interesting ones:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;MaNGOS is a free, Open Source implementation of a tag at relatively random intervals.&lt;/li&gt;
+&lt;li&gt;A Warhammer 40k simulator to teach myself both OpenGL and Clojure&lt;/li&gt;
+&lt;li&gt;Perl interface to Git repositories via Ruby.&lt;/li&gt;
+&lt;li&gt;A windows live messenger network client written in Erlang&lt;/li&gt;
+&lt;li&gt;Rails plugin which allows to talk anonymously and use tripcodes if you want.&lt;/li&gt;
+&lt;li&gt;A Firebug extension for displaying the latest from Hacker News&lt;/li&gt;
+&lt;li&gt;Sinatra-inspired JavaScript node.js web development framework for lua. Inspired by rspec&lt;/li&gt;
+&lt;li&gt;Inverted Index on top of Tornado&lt;/li&gt;
+&lt;li&gt;Android LED interface library for various wave propagation techniques.&lt;/li&gt;
+&lt;li&gt;CatchAPI is a Java API to remove the need for boring project setup.&lt;/li&gt;
+&lt;li&gt;Adds basic social networking capabilities to your lighting system based on the concept of the Working with Rails&lt;/li&gt;
+&lt;li&gt;Brute force your OpenERP data integration with flatfiles&lt;/li&gt;
+&lt;li&gt;Culerity integrates Cucumber and Celerity in order to shutdown the computer.&lt;/li&gt;
+&lt;li&gt;Parses ANSI color codes and converts them to iphone compatible mp4s using HandBrake&lt;/li&gt;
+&lt;li&gt;A simple OFX (Open Financial Exchange) parser built on top of WordPress. Rolopress core theme&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;p&gt;&lt;em&gt;The code used to get the project descriptions from the GitHub API is available in &lt;a href=&#34;https://github.com/minimaxir/get-github-repo-descriptions&#34; target=&#34;_blank&#34;&gt;this GitHub repository&lt;/a&gt;, and you can download the ~300k repo descriptions &lt;a href=&#34;https://dl.dropboxusercontent.com/u/2017402/github_repo_desc.zip&#34; target=&#34;_blank&#34;&gt;here&lt;/a&gt;. [5MB .zip]&lt;/em&gt;&lt;/p&gt;</description></item><item><title>Predicting the Number of Likes on a Facebook Status With Statistical Keyword Analysis</title><link>/2013/06/big-social-data/</link><pubDate>Sat, 22 Jun 2013 10:00:00 +0000</pubDate><guid>/2013/06/big-social-data/</guid><description>
+&lt;p&gt;What makes people click the Like button on Facebook Statuses? Does the status say something funny? Does it contain a cool link or a funny photo? Does the status actively engage its readers?&lt;/p&gt;
+&lt;p&gt;Needless to say, brands on Facebook want to know the answers to these questions. The more people that Like their statuses on their Facebook Pages, the more exposure they gain, and the more money they earn. Many, many companies have been created for the sole purpose of maximizing the number of Facebook Likes.&lt;/p&gt;
+&lt;p&gt;By 2013, most brands have realized that photo posts and statuses that ask a question &lt;a href=&#34;http://minimaxir.com/2012/10/questions-equals-reponses/&#34; target=&#34;_blank&#34;&gt;will generate &lt;em&gt;much&lt;/em&gt; higher numbers&lt;/a&gt; of Likes. Personally, that&amp;rsquo;s not why &lt;em&gt;I&lt;/em&gt; like a given Facebook status: I Like statuses that contain new and exciting things that are relevant to my interests. The first thing I read in a status is the Message: if the message is boring and uninteresting, then there&amp;rsquo;s no reason for me to Like the status needlessly.&lt;/p&gt;
+&lt;p&gt;Can the keywords and language in a Facebook Status predict the number of Likes the status receives?&lt;/p&gt;
+&lt;p&gt;Running multivariate regressions on keywords from thousands of Facebook statuses, I&amp;rsquo;ve discovered that the language used in a status &lt;em&gt;does&lt;/em&gt; help predict the number of Likes a status receives, and actually could help brands learn much more about their fans.&lt;/p&gt;
+&lt;h2 id=&#34;setup&#34;&gt;Setup&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;/img/rdataset.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;In order to draw accurate conclusions from the analysis, large amounts of data are needed (and there&amp;rsquo;s no such thing as too much data).&lt;/p&gt;
+&lt;p&gt;I decided to analyze the Facebook Pages of 3 extremely popular News sources: &lt;a href=&#34;https://www.facebook.com/cnn&#34; target=&#34;_blank&#34;&gt;CNN&lt;/a&gt;, the &lt;a href=&#34;https://www.facebook.com/nytimes&#34; target=&#34;_blank&#34;&gt;New York Times&lt;/a&gt;, and &lt;a href=&#34;https://www.facebook.com/bbcworldnews&#34; target=&#34;_blank&#34;&gt;BBC World News&lt;/a&gt;. All three Pages have millions of fans, post the same types of Facebook statuses, and post statuses extremely frequently to Facebook (around 8-9 times a day). The statuses analyzed will be from June 1st 2012 to June 1st 2013, in order to both gather a large sample size (~3,000 statuses from each Page) and a ensure a consistent apples-to-apples comparison between the three sources.&lt;/p&gt;
+&lt;p&gt;The raw data, code, and a detailed technical explanation of the statistical techniques used to process the data can be found in &lt;a href=&#34;https://github.com/minimaxir/facebook-keyword-regression-analysis&#34; target=&#34;_blank&#34;&gt;this GitHub repository&lt;/a&gt;. (tl;dr, it&amp;rsquo;s an optimized &lt;a href=&#34;http://en.wikipedia.org/wiki/Least_squares&#34; target=&#34;_blank&#34;&gt;least squares&lt;/a&gt; regression)&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Can the keywords and language in a Facebook Status predict the number of Likes the status receives?&lt;/em&gt; We&amp;rsquo;re ready to test this hypothesis.&lt;/p&gt;
+&lt;hr /&gt;
+&lt;h2 id=&#34;cnn&#34;&gt;CNN&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;/img/cnn_Wordcloud.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt; +Likes P-Val
+Bourdain 1962.98 0
+NEWS 1272.64 0
+Photo 1154.6 0
+Barack 1002.45 0
+City 851.82 0
+Monday 705.42 0
+Obama 632.2 0
+United 578.77 0
+Mitt 562.29 0.01
+South 508.43 0.03
+America 505.83 0.01
+Watch 470.51 0
+Boston 398.13 0.05
+New 326.74 0.03
+ET -433.96 0
+North -467.05 0.02
+Check -503.5 0
+Travel -988.99 0.02
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;analysis&#34;&gt;Analysis&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;The most impactful keywords for CNN are political keywords.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;NEWS&lt;/strong&gt; (&amp;ldquo;BREAKING NEWS&amp;rdquo;) predicts more Likes than &lt;strong&gt;Photo&lt;/strong&gt; (i.e. &lt;a href=&#34;http://www.facebook.com/5550296508/posts/10151626042186509&#34; target=&#34;_blank&#34;&gt;Travel Photo of the Day&lt;/a&gt;).&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Bourdain&lt;/strong&gt; refers to Anthony Bourdain, who very recently began &lt;a href=&#34;http://en.wikipedia.org/wiki/Anthony_Bourdain:_Parts_Unknown&#34; target=&#34;_blank&#34;&gt;a food and travel show&lt;/a&gt; on CNN. I assume that targets CNN&amp;rsquo;s primary demographic.&lt;/li&gt;
+&lt;li&gt;The presence of &lt;strong&gt;Barack&lt;/strong&gt; (Barack Obama) predicts more likes than just &lt;strong&gt;Obama&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;The presence of &lt;strong&gt;Monday&lt;/strong&gt; predicts more likes most other keywords. Garfield would be disappointed.&lt;/li&gt;
+&lt;li&gt;The presence of &lt;strong&gt;North&lt;/strong&gt; (North Korea) predicts a &lt;em&gt;decrease&lt;/em&gt; in Likes from the average. Is North Korea boring?&lt;/li&gt;
+&lt;li&gt;The presence of &lt;strong&gt;Check&lt;/strong&gt; (&amp;ldquo;Check this out!&amp;rdquo;) also predicts a decrease in Likes from the average. This is interesting because this call-to-action is usually associated with the other keywords. Perhaps it&amp;rsquo;s not necessary?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;h2 id=&#34;nytimes&#34;&gt;NYTimes&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;/img/nytimes_Wordcloud.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt; +Likes P-Val
+Mills 1022.9 0
+Democratic 496.32 0
+Krugman 456.31 0
+Senate 431.05 0
+London 373.67 0.01
+Oscar 367.64 0.01
+Sandy 364.61 0
+Olympics 339.15 0.01
+Sunday 317 0
+Clinton 314.64 0.02
+You 247.07 0
+Obama 237.98 0
+Opinion 221 0
+Michael 204.2 0.03
+Credit 191.92 0.05
+Tuesday 187.22 0.03
+Times 178.69 0
+See 160.12 0.01
+Romney 157.66 0.04
+Ed 140.86 0.01
+Read -101.23 0.05
+Here -182.72 0.04
+Facebook -187.75 0.02
+Are -216.3 0.01
+While -293.77 0.04
+Quotation -322.29 0.02
+House -362.1 0.01
+Thanksgiving -369.88 0.05
+Convention -448.34 0.01
+Jersey -505.98 0
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&#34;analysis-1&#34;&gt;Analysis&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;The most impactful keywords for NYTimes are political keywords and current events, such as Hurricane &lt;strong&gt;Sandy&lt;/strong&gt; and the &lt;strong&gt;London&lt;/strong&gt; &lt;strong&gt;Olympics&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Mills&lt;/strong&gt; refers to Doug Mills, &lt;a href=&#34;http://www.facebook.com/5281959998/posts/10150252479219999&#34; target=&#34;_blank&#34;&gt;photographer&lt;/a&gt; for the New York Times. The power of photos!&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;You&lt;/strong&gt; and &lt;strong&gt;See&lt;/strong&gt; are impactful call-to-action keywords, even though they don&amp;rsquo;t ask any questions. (Interestingly, &lt;strong&gt;Are&lt;/strong&gt;, which implicitly asks a question, predicts a decrease in Likes. Maybe people don&amp;rsquo;t Like questions?)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Clinton&lt;/strong&gt; has a bigger impact than &lt;strong&gt;Obama&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;No one likes &lt;strong&gt;Jersey&lt;/strong&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;h2 id=&#34;bbc-world-news&#34;&gt;BBC World News&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;/img/bbcworldnews_Wordcloud.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt; +Likes P-Val
+Malala 488.1 0
+Japan 186.32 0
+Britain 167.25 0.01
+That 155.01 0.01
+AFP 154.97 0.02
+Travel 153.41 0
+Now 148.39 0.02
+Would 146.45 0.03
+Delhi 137.85 0.04
+Let 134.93 0.03
+Future 127.49 0.02
+Barack 125.79 0.02
+An 122.18 0.03
+David 111.78 0.04
+Do 111.13 0
+Israel 101.31 0.04
+Impact 87.94 0.05
+South 78.62 0.03
+It 62.7 0.01
+The 55.7 0
+US -47.84 0.02
+On -86.22 0.04
+BBC -103.58 0
+Sunday -117.01 0.03
+After -122.38 0.05
+Thursday -143.91 0.03
+Twitter -144.55 0
+City -147.16 0.02
+Hi -149.85 0.03
+BBCNewsUS -150.48 0.03
+House -176.86 0.01
+California -187.57 0
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&#34;analysis-2&#34;&gt;Analysis&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;The most impactful keywords for BBC World News are keywords describing news around the world. Unlike CNN and NYTimes, there are very few impactful keywords related to domestic politics (such as Prime Minister &lt;strong&gt;David&lt;/strong&gt; Cameron, and even &lt;strong&gt;Barack&lt;/strong&gt; is more impactful than him.)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Malala&lt;/strong&gt; refers to &lt;a href=&#34;http://en.wikipedia.org/wiki/Malala_Yousafzai&#34; target=&#34;_blank&#34;&gt;Malala Youdsfzai&lt;/a&gt;, a Pakistani activist who survived an assassination attempt.&lt;/li&gt;
+&lt;li&gt;Implicit question keywords such as &lt;strong&gt;Let&lt;/strong&gt;, &lt;strong&gt;Do&lt;/strong&gt;, and &lt;strong&gt;Would&lt;/strong&gt; are all very effective.&lt;/li&gt;
+&lt;li&gt;The simple salutation of &lt;strong&gt;Hi&lt;/strong&gt; predicts a decrease in Likes. There&amp;rsquo;s a British joke here somewhere.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;p&gt;The language used in Facebook Statuses can be very useful in identifying what words Fans like, and what words will be most useful in generating the most exposure. While my analysis can&amp;rsquo;t predict the &lt;em&gt;exact&lt;/em&gt; number of Likes a Status receives, and I likely &lt;a href=&#34;http://xkcd.com/882/&#34; target=&#34;_blank&#34;&gt;broke a few rules of statistics&lt;/a&gt; in the process of making this post, the impact of language and specific keywords on social media interaction is an endeavor worth pursuing.&lt;/p&gt;</description></item></channel></rss>

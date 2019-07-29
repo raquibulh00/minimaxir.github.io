@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Facebook on Max Woolf&#39;s Blog</title><link>/categories/facebook/</link><description>Recent content in Facebook on Max Woolf&#39;s Blog</description><generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>Copyright Max Woolf &amp;copy; {year}</copyright><lastBuildDate>Mon, 13 Jan 2014 08:00:00 +0000</lastBuildDate><atom:link href="/categories/facebook/index.xml" rel="self" type="application/rss+xml"/><item><title>The Friends Of My Friends Are Not My Friends</title><link>/2014/01/farcical-friends-of-friends-folly/</link><pubDate>Mon, 13 Jan 2014 08:00:00 +0000</pubDate><guid>/2014/01/farcical-friends-of-friends-folly/</guid><description>
+&lt;p&gt;&lt;a href=&#34;http://jelly.co/&#34; target=&#34;_blank&#34;&gt;Jelly&lt;/a&gt;, a highly-anticipated social networking app by Twitter co-founder Biz Stone, was released last week. One of Jelly&amp;rsquo;s &lt;a href=&#34;http://blog.jelly.co/post/72563498393/introducing-jelly&#34; target=&#34;_blank&#34;&gt;underlying principles&lt;/a&gt; is &amp;ldquo;it’s not hard to imagine that the true promise of a connected society is people helping each other.&amp;rdquo; While using Jelly over the past few days, I&amp;rsquo;ve seen people ask whether or not to exercise, make unsubtle plugs for their product, sell a car Craigslist-style, and get amnesia.&lt;/p&gt;
+&lt;!-- more --&gt;
+&lt;p&gt;&lt;img src=&#34;/img/jellyposts2.jpg&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Wait, what? How are these questions representative of &amp;ldquo;a connected society,&amp;rdquo; especially since I don&amp;rsquo;t know any of the question authors?&lt;/p&gt;
+&lt;p&gt;Jelly tells its users that they can &amp;ldquo;help friends, or friends-of-friends with their questions.&amp;rdquo; The vast majority of the questions I&amp;rsquo;ve seen are from Friends of Friends. I&amp;rsquo;m Facebook Friends with people who have &lt;strong&gt;thousands&lt;/strong&gt; of friends; the probability that I have something in common with those second-degree friends is low.&lt;/p&gt;
+&lt;p&gt;Websites like Jelly and even Facebook are now utilizing the content made by second-degree &amp;ldquo;friends.&amp;rdquo; Why am I seeing pictures and statuses from friends of friends, who are essentially complete strangers?&lt;/p&gt;
+&lt;h2 id=&#34;facebook-s-farcical-friends-of-friends-folly&#34;&gt;Facebook&amp;rsquo;s Farcical Friends of Friends Folly&lt;/h2&gt;
+&lt;p&gt;A couple months ago, Facebook again tweaked the News Feed algorithm such that all new Posts on a friend&amp;rsquo;s Wall are shown on your News Feed, even if the person making the Post is a complete stranger to you.&lt;/p&gt;
+&lt;p&gt;Originally, Facebook showed posts in your News Feed that were posted on a Friend&amp;rsquo;s wall only if they were made by another Friend. If you are friends with both people, there&amp;rsquo;s likely a common link between all three of you, such as going to the same college or working at the same company. That can make the Wall post more relevant to your interests.&lt;/p&gt;
+&lt;p&gt;However, people have many social circles. What happens when a stranger not in any of my social circles posts on a Friend&amp;rsquo;s wall?&lt;/p&gt;
+&lt;p&gt;This post recently appeared in my News Feed:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/fb-stranger-wall.jpg&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;I don&amp;rsquo;t know who the person with &amp;ldquo;1 mutual friend&amp;rdquo; is. (the &amp;ldquo;1 mutual friend&amp;rdquo; being the friend who received the post). I don&amp;rsquo;t live in Arizona. Why am I seeing this?&lt;/p&gt;
+&lt;p&gt;Although I may be Facebook Friends with someone, it doesn&amp;rsquo;t necessarily mean I should be Friends with their Friends. Facebook is showing me Posts that aren&amp;rsquo;t relevant to me at all.&lt;/p&gt;
+&lt;p&gt;This behavior also extends to your Friends&amp;rsquo; birthday: all &amp;ldquo;Happy Birthday!&amp;rdquo; posts on your Friend&amp;rsquo;s Wall also display in your News Feed.&lt;/p&gt;
+&lt;p&gt;This entry was visible on my News Feed for an entire day:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/mutual-friends-birthday.jpg&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Facebook &lt;strong&gt;really&lt;/strong&gt; wants you to wish your Friends happy birthday.&lt;/p&gt;
+&lt;p&gt;I don&amp;rsquo;t need to see strangers with &amp;ldquo;1 mutual friend&amp;rdquo; wish my friends Happy Birthday. It&amp;rsquo;s just extra clutter on an already cluttered News Feed.&lt;/p&gt;
+&lt;p&gt;To be fair, other websites such as &lt;a href=&#34;https://twitter.com/&#34; target=&#34;_blank&#34;&gt;Twitter&lt;/a&gt; and &lt;a href=&#34;http://www.linkedin.com/&#34; target=&#34;_blank&#34;&gt;LinkedIn&lt;/a&gt; push second-degree friends. Twitter&amp;rsquo;s new &lt;a href=&#34;https://twitter.com/i/discover&#34; target=&#34;_blank&#34;&gt;Discover&lt;/a&gt; feature highlights users who the people you Follow are themselves Following. LinkedIn shows your connections&amp;rsquo; new connections so you can form connections with them too. But the difference between Twitter/LinkedIn and Facebook/Jelly is that both Facebook and Jelly push the power of &lt;strong&gt;intimate&lt;/strong&gt; friendships, and imposing a sense of intimacy between strangers feels fake and intrudes on actual friendships.&lt;/p&gt;</description></item><item><title>Predicting the Number of Likes on a Facebook Status With Statistical Keyword Analysis</title><link>/2013/06/big-social-data/</link><pubDate>Sat, 22 Jun 2013 10:00:00 +0000</pubDate><guid>/2013/06/big-social-data/</guid><description>
+&lt;p&gt;What makes people click the Like button on Facebook Statuses? Does the status say something funny? Does it contain a cool link or a funny photo? Does the status actively engage its readers?&lt;/p&gt;
+&lt;p&gt;Needless to say, brands on Facebook want to know the answers to these questions. The more people that Like their statuses on their Facebook Pages, the more exposure they gain, and the more money they earn. Many, many companies have been created for the sole purpose of maximizing the number of Facebook Likes.&lt;/p&gt;
+&lt;p&gt;By 2013, most brands have realized that photo posts and statuses that ask a question &lt;a href=&#34;http://minimaxir.com/2012/10/questions-equals-reponses/&#34; target=&#34;_blank&#34;&gt;will generate &lt;em&gt;much&lt;/em&gt; higher numbers&lt;/a&gt; of Likes. Personally, that&amp;rsquo;s not why &lt;em&gt;I&lt;/em&gt; like a given Facebook status: I Like statuses that contain new and exciting things that are relevant to my interests. The first thing I read in a status is the Message: if the message is boring and uninteresting, then there&amp;rsquo;s no reason for me to Like the status needlessly.&lt;/p&gt;
+&lt;p&gt;Can the keywords and language in a Facebook Status predict the number of Likes the status receives?&lt;/p&gt;
+&lt;p&gt;Running multivariate regressions on keywords from thousands of Facebook statuses, I&amp;rsquo;ve discovered that the language used in a status &lt;em&gt;does&lt;/em&gt; help predict the number of Likes a status receives, and actually could help brands learn much more about their fans.&lt;/p&gt;
+&lt;h2 id=&#34;setup&#34;&gt;Setup&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;/img/rdataset.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;In order to draw accurate conclusions from the analysis, large amounts of data are needed (and there&amp;rsquo;s no such thing as too much data).&lt;/p&gt;
+&lt;p&gt;I decided to analyze the Facebook Pages of 3 extremely popular News sources: &lt;a href=&#34;https://www.facebook.com/cnn&#34; target=&#34;_blank&#34;&gt;CNN&lt;/a&gt;, the &lt;a href=&#34;https://www.facebook.com/nytimes&#34; target=&#34;_blank&#34;&gt;New York Times&lt;/a&gt;, and &lt;a href=&#34;https://www.facebook.com/bbcworldnews&#34; target=&#34;_blank&#34;&gt;BBC World News&lt;/a&gt;. All three Pages have millions of fans, post the same types of Facebook statuses, and post statuses extremely frequently to Facebook (around 8-9 times a day). The statuses analyzed will be from June 1st 2012 to June 1st 2013, in order to both gather a large sample size (~3,000 statuses from each Page) and a ensure a consistent apples-to-apples comparison between the three sources.&lt;/p&gt;
+&lt;p&gt;The raw data, code, and a detailed technical explanation of the statistical techniques used to process the data can be found in &lt;a href=&#34;https://github.com/minimaxir/facebook-keyword-regression-analysis&#34; target=&#34;_blank&#34;&gt;this GitHub repository&lt;/a&gt;. (tl;dr, it&amp;rsquo;s an optimized &lt;a href=&#34;http://en.wikipedia.org/wiki/Least_squares&#34; target=&#34;_blank&#34;&gt;least squares&lt;/a&gt; regression)&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Can the keywords and language in a Facebook Status predict the number of Likes the status receives?&lt;/em&gt; We&amp;rsquo;re ready to test this hypothesis.&lt;/p&gt;
+&lt;hr /&gt;
+&lt;h2 id=&#34;cnn&#34;&gt;CNN&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;/img/cnn_Wordcloud.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt; +Likes P-Val
+Bourdain 1962.98 0
+NEWS 1272.64 0
+Photo 1154.6 0
+Barack 1002.45 0
+City 851.82 0
+Monday 705.42 0
+Obama 632.2 0
+United 578.77 0
+Mitt 562.29 0.01
+South 508.43 0.03
+America 505.83 0.01
+Watch 470.51 0
+Boston 398.13 0.05
+New 326.74 0.03
+ET -433.96 0
+North -467.05 0.02
+Check -503.5 0
+Travel -988.99 0.02
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;analysis&#34;&gt;Analysis&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;The most impactful keywords for CNN are political keywords.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;NEWS&lt;/strong&gt; (&amp;ldquo;BREAKING NEWS&amp;rdquo;) predicts more Likes than &lt;strong&gt;Photo&lt;/strong&gt; (i.e. &lt;a href=&#34;http://www.facebook.com/5550296508/posts/10151626042186509&#34; target=&#34;_blank&#34;&gt;Travel Photo of the Day&lt;/a&gt;).&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Bourdain&lt;/strong&gt; refers to Anthony Bourdain, who very recently began &lt;a href=&#34;http://en.wikipedia.org/wiki/Anthony_Bourdain:_Parts_Unknown&#34; target=&#34;_blank&#34;&gt;a food and travel show&lt;/a&gt; on CNN. I assume that targets CNN&amp;rsquo;s primary demographic.&lt;/li&gt;
+&lt;li&gt;The presence of &lt;strong&gt;Barack&lt;/strong&gt; (Barack Obama) predicts more likes than just &lt;strong&gt;Obama&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;The presence of &lt;strong&gt;Monday&lt;/strong&gt; predicts more likes most other keywords. Garfield would be disappointed.&lt;/li&gt;
+&lt;li&gt;The presence of &lt;strong&gt;North&lt;/strong&gt; (North Korea) predicts a &lt;em&gt;decrease&lt;/em&gt; in Likes from the average. Is North Korea boring?&lt;/li&gt;
+&lt;li&gt;The presence of &lt;strong&gt;Check&lt;/strong&gt; (&amp;ldquo;Check this out!&amp;rdquo;) also predicts a decrease in Likes from the average. This is interesting because this call-to-action is usually associated with the other keywords. Perhaps it&amp;rsquo;s not necessary?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;h2 id=&#34;nytimes&#34;&gt;NYTimes&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;/img/nytimes_Wordcloud.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt; +Likes P-Val
+Mills 1022.9 0
+Democratic 496.32 0
+Krugman 456.31 0
+Senate 431.05 0
+London 373.67 0.01
+Oscar 367.64 0.01
+Sandy 364.61 0
+Olympics 339.15 0.01
+Sunday 317 0
+Clinton 314.64 0.02
+You 247.07 0
+Obama 237.98 0
+Opinion 221 0
+Michael 204.2 0.03
+Credit 191.92 0.05
+Tuesday 187.22 0.03
+Times 178.69 0
+See 160.12 0.01
+Romney 157.66 0.04
+Ed 140.86 0.01
+Read -101.23 0.05
+Here -182.72 0.04
+Facebook -187.75 0.02
+Are -216.3 0.01
+While -293.77 0.04
+Quotation -322.29 0.02
+House -362.1 0.01
+Thanksgiving -369.88 0.05
+Convention -448.34 0.01
+Jersey -505.98 0
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&#34;analysis-1&#34;&gt;Analysis&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;The most impactful keywords for NYTimes are political keywords and current events, such as Hurricane &lt;strong&gt;Sandy&lt;/strong&gt; and the &lt;strong&gt;London&lt;/strong&gt; &lt;strong&gt;Olympics&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Mills&lt;/strong&gt; refers to Doug Mills, &lt;a href=&#34;http://www.facebook.com/5281959998/posts/10150252479219999&#34; target=&#34;_blank&#34;&gt;photographer&lt;/a&gt; for the New York Times. The power of photos!&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;You&lt;/strong&gt; and &lt;strong&gt;See&lt;/strong&gt; are impactful call-to-action keywords, even though they don&amp;rsquo;t ask any questions. (Interestingly, &lt;strong&gt;Are&lt;/strong&gt;, which implicitly asks a question, predicts a decrease in Likes. Maybe people don&amp;rsquo;t Like questions?)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Clinton&lt;/strong&gt; has a bigger impact than &lt;strong&gt;Obama&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;No one likes &lt;strong&gt;Jersey&lt;/strong&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;h2 id=&#34;bbc-world-news&#34;&gt;BBC World News&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;/img/bbcworldnews_Wordcloud.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt; +Likes P-Val
+Malala 488.1 0
+Japan 186.32 0
+Britain 167.25 0.01
+That 155.01 0.01
+AFP 154.97 0.02
+Travel 153.41 0
+Now 148.39 0.02
+Would 146.45 0.03
+Delhi 137.85 0.04
+Let 134.93 0.03
+Future 127.49 0.02
+Barack 125.79 0.02
+An 122.18 0.03
+David 111.78 0.04
+Do 111.13 0
+Israel 101.31 0.04
+Impact 87.94 0.05
+South 78.62 0.03
+It 62.7 0.01
+The 55.7 0
+US -47.84 0.02
+On -86.22 0.04
+BBC -103.58 0
+Sunday -117.01 0.03
+After -122.38 0.05
+Thursday -143.91 0.03
+Twitter -144.55 0
+City -147.16 0.02
+Hi -149.85 0.03
+BBCNewsUS -150.48 0.03
+House -176.86 0.01
+California -187.57 0
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&#34;analysis-2&#34;&gt;Analysis&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;The most impactful keywords for BBC World News are keywords describing news around the world. Unlike CNN and NYTimes, there are very few impactful keywords related to domestic politics (such as Prime Minister &lt;strong&gt;David&lt;/strong&gt; Cameron, and even &lt;strong&gt;Barack&lt;/strong&gt; is more impactful than him.)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Malala&lt;/strong&gt; refers to &lt;a href=&#34;http://en.wikipedia.org/wiki/Malala_Yousafzai&#34; target=&#34;_blank&#34;&gt;Malala Youdsfzai&lt;/a&gt;, a Pakistani activist who survived an assassination attempt.&lt;/li&gt;
+&lt;li&gt;Implicit question keywords such as &lt;strong&gt;Let&lt;/strong&gt;, &lt;strong&gt;Do&lt;/strong&gt;, and &lt;strong&gt;Would&lt;/strong&gt; are all very effective.&lt;/li&gt;
+&lt;li&gt;The simple salutation of &lt;strong&gt;Hi&lt;/strong&gt; predicts a decrease in Likes. There&amp;rsquo;s a British joke here somewhere.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;p&gt;The language used in Facebook Statuses can be very useful in identifying what words Fans like, and what words will be most useful in generating the most exposure. While my analysis can&amp;rsquo;t predict the &lt;em&gt;exact&lt;/em&gt; number of Likes a Status receives, and I likely &lt;a href=&#34;http://xkcd.com/882/&#34; target=&#34;_blank&#34;&gt;broke a few rules of statistics&lt;/a&gt; in the process of making this post, the impact of language and specific keywords on social media interaction is an endeavor worth pursuing.&lt;/p&gt;</description></item><item><title>Facebook Hashtags Are Fundamentally Broken</title><link>/2013/06/hashtag-hashtag/</link><pubDate>Fri, 14 Jun 2013 08:00:00 +0000</pubDate><guid>/2013/06/hashtag-hashtag/</guid><description>
+&lt;p&gt;This week, &lt;a href=&#34;https://www.facebook.com/&#34; target=&#34;_blank&#34;&gt;Facebook&lt;/a&gt; added &lt;a href=&#34;http://newsroom.fb.com/News/633/Public-Conversations-on-Facebook&#34; target=&#34;_blank&#34;&gt;searchable hashtags&lt;/a&gt; to all status updates and user comments. As with &lt;a href=&#34;https://twitter.com/&#34; target=&#34;_blank&#34;&gt;Twitter&lt;/a&gt;, whenever a Facebook user posts an status with a #hashtag, that hashtag becomes clickable and leads to a News Feed of all other publically-visible posts with that hashtag.&lt;/p&gt;
+&lt;p&gt;The implementation of hashtags in Facebook is an obvious move. Advertisements and television shows display hashtags all the time to encourage users to Tweet about them: it&amp;rsquo;s free marketing, after all. Facebook can piggy-back off those already-existing hashtags and grow user adoption &lt;em&gt;very&lt;/em&gt; quickly, especially with Facebook-owned &lt;a href=&#34;http://instagram.com/&#34; target=&#34;_blank&#34;&gt;Instagram&lt;/a&gt; already supporting hashtags.&lt;/p&gt;
+&lt;p&gt;However, Facebook is a fundamentally different social network than Twitter. While Twitter uses hashtags to quickly categorize a feed of 140-character thoughts, Facebook&amp;rsquo;s content feeds typically consist of long posts and large images. Additionally, while posts on Twitter are explicitly public or private, Facebook&amp;rsquo;s privacy settings are more granular: if users don&amp;rsquo;t make their posts Public, the hashtag is essentially useless. And the brands are going to &lt;em&gt;love&lt;/em&gt; hashtags. Maybe too much.&lt;/p&gt;
+&lt;p&gt;The magic of Facebook is flat-out incompatible with the magic of hashtags.&lt;/p&gt;
+&lt;h2 id=&#34;too-long-didn-t-read&#34;&gt;Too Long; Didn&amp;rsquo;t Read&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;/img/facebooktwitter.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Since Twitter posts have a length limit, they&amp;rsquo;re short and occupy a consistent amount of space on the webpage. Facebook posts can be near-unlimited length, utilize a large amount of a white space between posts, and also potentially contain an equally-long comment section. As a result, 5 Twitter posts can use the same amount of screen real-estate as 2 Facebook posts. Given the already incredibly low signal-to-noise quality ratio of #hashtag feeds (as evident above), this makes reading hashtag feeds on Facebook a chore.&lt;/p&gt;
+&lt;h2 id=&#34;a-thousand-words-takes-a-lot-of-space&#34;&gt;A Thousand Words Takes A Lot Of Space&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;/img/bieber-twitter.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Facebook displays pictures embedded in posts natively in the feed, while Twitter requires the user to click the Tweet to see the photo. In this case, the ratio of Twitter:Facebook posts can be even worse, in this case 6 Twitter posts for 1 Facebook post.&lt;/p&gt;
+&lt;h2 id=&#34;if-a-hashtag-isn-t-seen-was-it-posted&#34;&gt;If A Hashtag Isn&amp;rsquo;t Seen, Was It Posted?&lt;/h2&gt;
+&lt;p&gt;Twitter is opt-in private posting. Facebook is opt-&lt;em&gt;out&lt;/em&gt; private posting. That&amp;rsquo;s a big usability problem.&lt;/p&gt;
+&lt;p&gt;The Facebook hashtag feeds only show posts that are explicitly made Public (or posts from your Friends which are set to a privacy of Friends Only). If the user is unaware that their posts are not Public by default, then their posts containing the hashtag will never be seen and the user won&amp;rsquo;t be able to participate in social hashtag feeds. Although Facebook has made improvements in helping users set the intended privacy level of a post, it makes the process of posting much more deliberate and much less impulsive than Twitter.&lt;/p&gt;
+&lt;h2 id=&#34;brand-branding-marketing-yolo-swag&#34;&gt;#brand #branding #marketing #yolo #swag&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;/img/hashtagabuse.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Brands love hashtags. The more hashtags included in a Tweet, the more exposure the Tweet receives, right?&lt;/p&gt;
+&lt;p&gt;With Twitter, there&amp;rsquo;s a limit on the number of hashtags in a Tweet due to the delicate balance between the number of hashtags, the length of the hashtags, and the length of the Tweet itself. On Facebook, you can include &lt;strong&gt;25&lt;/strong&gt; hashtags in any post!&lt;/p&gt;
+&lt;p&gt;Since there&amp;rsquo;s no consequence for abusing hashtags, expect to see more Facebook brands taking advantage this new free source of marketing. Expect to see Facebook get much more cluttered.&lt;/p&gt;
+&lt;h2 id=&#34;explicit-image-bombing&#34;&gt;Explicit Image Bombing&lt;/h2&gt;
+&lt;p&gt;A malicious user could theoretically insert shock images into popular hashtag feeds. During my testing of Facebook hashtags, there was a surprising amount of nudity in the seemingly-innocuous #many hashtag.&lt;/p&gt;
+&lt;p&gt;On Twitter, the volume of Tweets is much higher and the images are hidden by default, so the odds of such an attack working on Facebook are much higher than on Twitter.&lt;/p&gt;
+&lt;h2 id=&#34;comment-hashtags-different-from-post-hashtags&#34;&gt;Comment Hashtags Different From Post Hashtags&lt;/h2&gt;
+&lt;p&gt;You can hashtag comments on Facebook posts like you can hashtag Facebook posts themselves. But hashtagged comments won&amp;rsquo;t appear in the hashtag News Feed. Whereas on Twitter, Replies are also Tweets and can be hashtagged accordingly. This behavior isn&amp;rsquo;t surprising, but it&amp;rsquo;s still a big inconsistency.&lt;/p&gt;
+&lt;hr /&gt;
+&lt;p&gt;Will Facebook Hashtags fail due to the massive differences between Facebook and Twitter? It&amp;rsquo;s hard to say, but I&amp;rsquo;m skeptical that Facebook will be able to capture the hashtag magic.&lt;/p&gt;</description></item></channel></rss>

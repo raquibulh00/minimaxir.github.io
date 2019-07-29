@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Animation on Max Woolf&#39;s Blog</title><link>/tags/animation/</link><description>Recent content in Animation on Max Woolf&#39;s Blog</description><generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>Copyright Max Woolf &amp;copy; {year}</copyright><lastBuildDate>Tue, 22 Sep 2015 08:00:00 +0000</lastBuildDate><atom:link href="/tags/animation/index.xml" rel="self" type="application/rss+xml"/><item><title>Coding, Visualizing, and Animating Bootstrap Resampling</title><link>/2015/09/bootstrap-resample/</link><pubDate>Tue, 22 Sep 2015 08:00:00 +0000</pubDate><guid>/2015/09/bootstrap-resample/</guid><description>
+&lt;p&gt;A few days ago on Hacker News, I saw a &lt;a href=&#34;https://news.ycombinator.com/item?id=10244950&#34; target=&#34;_blank&#34;&gt;nice submission&lt;/a&gt; titled &amp;ldquo;&lt;a href=&#34;https://speakerdeck.com/jakevdp/statistics-for-hackers&#34; target=&#34;_blank&#34;&gt;Statistics for Hackers&lt;/a&gt;,&amp;rdquo; which was a slide deck written and presented by &lt;a href=&#34;https://twitter.com/jakevdp&#34; target=&#34;_blank&#34;&gt;Jake Vanderplas&lt;/a&gt;. The talk is very explicitly a tutorial for a few good statistical methods for those without a statistical background, using simple tools &amp;ldquo;hackers&amp;rdquo; are familiar with and are occasionally very necessary (it&amp;rsquo;s not hacking in the sense of &amp;ldquo;growth hacking,&amp;rdquo; thankfully).&lt;/p&gt;
+&lt;p&gt;One important statistical tool discussed in the presentation is &lt;a href=&#34;https://en.wikipedia.org/wiki/Bootstrapping_%28statistics%29&#34; target=&#34;_blank&#34;&gt;bootstrap resampling&lt;/a&gt;, a good example for a programming-oriented presentation as it can be easily done with code. Bootstrapping is when a data set is randomized many, many times (usually thousands of times) to simulate similar data sets, and use those simulated datasets to obtain a more accurate range for a particular statistic about the data set, such as the statistical average.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/bootstrap-resample/talk0.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;I have reverse-engineered the data and code from the talk with R and ggplot2 in order to create more detailed implementations of bootstrapping, and also to add a few visual improvements.&lt;/p&gt;
+&lt;h2 id=&#34;preparing-the-data&#34;&gt;Preparing the Data&lt;/h2&gt;
+&lt;p&gt;&lt;em&gt;If you want to view the code with more detailed output and extensive code for the ggplot2 charts, read this &lt;a href=&#34;https://github.com/minimaxir/bootstrap-resample-notebook/blob/master/bootstrap_resample_notebook.ipynb&#34; target=&#34;_blank&#34;&gt;Jupyter notebook&lt;/a&gt;, hosted and open-sourced on GitHub.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;The first thing to do is recreate the test data.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/bootstrap-resample/talk1.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Data is manually transcribed from the linked talk (to the best of my ability), and converted to a &lt;code&gt;tbl_df&lt;/code&gt; for ease of use.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-R&#34;&gt;x &amp;lt;- c(8.1, 8.4, 8.8, 8.7, 9, 9.1, 9.2, 9.3, 9.4, 9.6, 9.9, 10, 10, 10.5, 10.6, 10.6, 11.2, 11.8, 12.6)
+y &amp;lt;- c(21, 19, 18, 16, 15, 17, 17, 17, 19, 14, 14, 15, 11, 12, 12, 13, 10, 8, 9)
+df &amp;lt;- tbl_df(data.frame(x,y))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Let&amp;rsquo;s create a quick plot in ggplot2 to compare it to the source image:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-R&#34;&gt;qplot(x, y, df) + geom_smooth(method=&amp;quot;lm&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/img/bootstrap-resample/qplot.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Pretty good copy, and it comes with a linear regression line for one line of code!&lt;/p&gt;
+&lt;p&gt;Performing the linear regression within R itself (via &lt;code&gt;lm()&lt;/code&gt;) results in a model containing an X-intercept of 42.3 and a slope of -2.81. (&lt;em&gt;y = 42.3 - 2.81x&lt;/em&gt;)&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;42.3&lt;/strong&gt;, the coefficient for the (Intercept), represents the value of the stack if Wind Speed is 0.&lt;/li&gt;
+&lt;li&gt;For every 1 unit increase in Wind Speed, the estimated Height &lt;strong&gt;decreases by 2.81&lt;/strong&gt;, the coefficient for the &lt;code&gt;x&lt;/code&gt; variable.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Both coefficients are extremely statistically significant. Regression as a whole has a R&lt;sup&gt;2&lt;/sup&gt; of 82.71%; indicating that the change in Wind Speed explains 82.71% of the variation in Height. That&amp;rsquo;s enough to assert causality in this mock data.&lt;/p&gt;
+&lt;p&gt;Now we can know the true value of the coefficients for the data, we can perform bootstrapping. We can create a function to perform a linear regression on the data frame, having been resampled &lt;em&gt;with replacement&lt;/em&gt; (important!), and return the model coefficients:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-R&#34;&gt;lm_res &amp;lt;- function(df) {
+model &amp;lt;- lm(y ~ x, df %&amp;gt;% sample_frac(replace=T))
+return (model$coefficients)
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;R&amp;rsquo;s &lt;code&gt;replicate&lt;/code&gt; function runs a function a specified amount of times and stores the results in the same data frame; perfect for bootstrapping.&lt;/p&gt;
+&lt;p&gt;There&amp;rsquo;s no limit to the number of repetitions you can perform using this method; however, you can hit diminishing returns as the distribution converges. Generally, 2,000 trials minimum are recommended, but let&amp;rsquo;s do 10,000 trials just to be sure.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-R&#34;&gt;df_boot &amp;lt;- replicate(10000, lm_res(df))
+df_boot &amp;lt;- tbl_df(data.frame(t(df_boot)))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This completed in about 13 seconds on my computer, and results in a dataset of 10,000 pairs of X-intercept and wind speed coefficients!&lt;/p&gt;
+&lt;p&gt;Now we can build 95% confidence intervals for each coefficient. This is done by finding the 2.5% quartile, and the 97.5% quartile; since there are a very large amount of bootstrapped samples, the confidence interval will be very accurate.&lt;/p&gt;
+&lt;p&gt;This can be done easily using the &lt;code&gt;gather()&lt;/code&gt; function from &lt;code&gt;tidyr&lt;/code&gt; to convert the data from wide to long, and &lt;code&gt;dplyr&lt;/code&gt;&amp;rsquo;s aggregation and summarization functions.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-R&#34;&gt;df_boot_agg &amp;lt;- df_boot %&amp;gt;%
+gather(var, value) %&amp;gt;%
+group_by(var) %&amp;gt;%
+summarize(
+average = mean(value),
+low_ci = quantile(value, 0.025),
+high_ci = quantile(value, 0.975)
+)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;From the output, the true value of the X intercept has a 95% chance of being between 36.9 and 49.3, and the true value of the Wind Speed coefficient has a 95% chance of being between -3.53 and -2.28.&lt;/p&gt;
+&lt;h2 id=&#34;plotting-the-bootstrap-of-one-variable&#34;&gt;Plotting the Bootstrap of One Variable&lt;/h2&gt;
+&lt;p&gt;The Wind Speed coefficient is much more interesting, statistically. We have enough information to derive a ggplot2 histogram of the resampled data, and a graphical representation of the confidence interval. We can also include the true value of the coefficient in the visualization (as the dotted vertical line) to see if it make sense.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/bootstrap-resample/uni_one.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Plot is close to a &lt;a href=&#34;https://en.wikipedia.org/wiki/Normal_distribution&#34; target=&#34;_blank&#34;&gt;Normal distribution&lt;/a&gt; / bell curve, which is a nice property of bootstrapping and makes the results easier to analyze. The true coefficient value is in the interval, but not quite at the center.&lt;/p&gt;
+&lt;p&gt;We can write a function to generate a plot for different data size subsets (e.g. 100 samples, 200 samples, etc. up to 10,000 samples). This shows the impact of bootstrapping and how the confidence estimate intervals converge as the number of trials increases. Each of these plots serve as a frame in a GIF.&lt;/p&gt;
+&lt;p&gt;Each of these frames are stitched together into a high- quality, low file size by my new &lt;a href=&#34;https://github.com/minimaxir/frames-to-gif-osx&#34; target=&#34;_blank&#34;&gt;Convert Frames to GIF OS X tool&lt;/a&gt;!&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/bootstrap-resample/uni_frames.gif&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;A 99 frame, 640px width GIF, at only half a megabyte! (R has an &lt;a href=&#34;https://cran.r-project.org/web/packages/animation/index.html&#34; target=&#34;_blank&#34;&gt;animation package&lt;/a&gt;, but with much worse results, which was the motivation for writing the OS X tool)&lt;/p&gt;
+&lt;p&gt;From the GIF, it&amp;rsquo;s clear to see that the confidence intervals converge to the final values at about 2000 trials, with the shape of the distribution stabilizing at about 7000 trials.&lt;/p&gt;
+&lt;h2 id=&#34;plotting-the-bootstrap-of-two-variables&#34;&gt;Plotting the Bootstrap of Two Variables&lt;/h2&gt;
+&lt;p&gt;The X-intercept and the Wind Speed coefficient have a linked, negatively correlated relationship, so it makes sense to plot them simultaneously, as in the original talk.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/bootstrap-resample/talk2.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;ggplot2&amp;rsquo;s &lt;code&gt;density2d&lt;/code&gt; plots a &lt;a href=&#34;https://en.wikipedia.org/wiki/Contour_line&#34; target=&#34;_blank&#34;&gt;contour map&lt;/a&gt;, which will help illustrate the area and magnitude where the data converges on a 2D plane. We can also include an &lt;strong&gt;orange&lt;/strong&gt; bounding box using the specified values for the 2D confidence intervals for each variable, and a &lt;strong&gt;red&lt;/strong&gt; dot representing the true value of the coefficients.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/bootstrap-resample/bi_one.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;The pair of coefficients can only occur in a certain range of values, much smaller than the bounding box. The true value is close to the most frequent occurrence, too.&lt;/p&gt;
+&lt;p&gt;Then we can make another GIF using the same method:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/bootstrap-resample/bi_frames.gif&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Again, the visualization converges relatively quickly at about 2,000 trials. (although, in retrospect, the orange bounding box may not have been necessary.)&lt;/p&gt;
+&lt;p&gt;While the sample dataset isn&amp;rsquo;t the most ideal for bootstrapping due to its extremely small size, bootstrapping at the least adds some clarity to the issues that results when simply performing statistics on a given dataset.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Again, if you want to view the code with more detailed output and extensive code for the ggplot2 charts, read this &lt;a href=&#34;https://github.com/minimaxir/bootstrap-resample-notebook/blob/master/bootstrap_resample_notebook.ipynb&#34; target=&#34;_blank&#34;&gt;Jupyter notebook&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;</description></item></channel></rss>

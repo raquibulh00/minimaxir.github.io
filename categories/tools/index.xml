@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Tools on Max Woolf&#39;s Blog</title><link>/categories/tools/</link><description>Recent content in Tools on Max Woolf&#39;s Blog</description><generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>Copyright Max Woolf &amp;copy; {year}</copyright><lastBuildDate>Thu, 13 Aug 2015 08:00:00 +0000</lastBuildDate><atom:link href="/categories/tools/index.xml" rel="self" type="application/rss+xml"/><item><title>Making a Video-to-GIF Right-Click Menu Item in OS X</title><link>/2015/08/gif-to-video-osx/</link><pubDate>Thu, 13 Aug 2015 08:00:00 +0000</pubDate><guid>/2015/08/gif-to-video-osx/</guid><description>
+&lt;p&gt;&lt;em&gt;TL;DR: To set up the Convert Video to GIF tool, download the &amp;ldquo;Convert Video to GIF&amp;rdquo; Service &lt;a href=&#34;https://github.com/minimaxir/video-to-gif-osx&#34; target=&#34;_blank&#34;&gt;from this GitHub Repository&lt;/a&gt; and follow the install instructions in the README.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Last weekend, I was working on making a &lt;a href=&#34;https://github.com/minimaxir/big-list-of-naughty-strings&#34; target=&#34;_blank&#34;&gt;Big List of Naughty Strings&lt;/a&gt; for user-data testing. (now up to 4,000+ GitHub Stars!) For the README, I needed a visual example to demonstrate why testing bad strings is important. I easily made a video of an internal server error on Twitter using &lt;a href=&#34;http://www.apple.com/quicktime/&#34; target=&#34;_blank&#34;&gt;Quicktime&lt;/a&gt; and its &lt;a href=&#34;https://support.apple.com/kb/PH5882?locale=en_US&#34; target=&#34;_blank&#34;&gt;Screen Recording feature&lt;/a&gt; to record, crop, and trim the event. But videos cannot render on GitHub; only GIFs can. And ideally I would not include a 807KB file everytime a user loads the GitHub page.&lt;/p&gt;
+&lt;p&gt;Websites that offer online Video-to-GIF converters are often seedy and create low quality, low frame-rate GIFs. I did some research and eventually I tried &lt;a href=&#34;http://www.gifrocket.com&#34; target=&#34;_blank&#34;&gt;Gifrocket&lt;/a&gt;, a recently-released tool that promises effortless drag-and-drop video-to-GIF-conversion.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/video-to-gif-osx/zerowidthedit_gifrocket.gif&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;The quality is not terrible, although the ghosting is &lt;em&gt;weird&lt;/em&gt;, and the framerate is choppy when the cursor moves. Unfortunately, I can&amp;rsquo;t optimize any settings. File Size is 534KB, which is a slight compression but not great.&lt;/p&gt;
+&lt;p&gt;As a result, I gave &lt;a href=&#34;http://zulko.github.io/moviepy/&#34; target=&#34;_blank&#34;&gt;MoviePy&lt;/a&gt;, a Python API for manipulating videos another try, as I had used it for other posts on this blog to &lt;a href=&#34;http://minimaxir.com/2014/02/moved-temporarily/&#34; target=&#34;_blank&#34;&gt;good&lt;/a&gt; &lt;a href=&#34;http://minimaxir.com/2014/03/hashtag-tag/&#34; target=&#34;_blank&#34;&gt;success&lt;/a&gt;. However, I had to shrink them significantly to keep load times down; something I would prefer not to do with my internal server error GIF in order to maximize readability. On the &lt;a href=&#34;http://zulko.github.io/blog/2014/01/23/making-animated-gifs-from-video-files-with-python/&#34; target=&#34;_blank&#34;&gt;blog post announcing GIF support&lt;/a&gt;, the core developer &lt;a href=&#34;http://zulko.github.io/blog/2014/01/23/making-animated-gifs-from-video-files-with-python/#comment-1216274781&#34; target=&#34;_blank&#34;&gt;relayed an interesting comment&lt;/a&gt; from another reader that &amp;ldquo;mencoder/ImageMagick/gifsickle is a winning trio for Gif making.&amp;rdquo;&lt;/p&gt;
+&lt;p&gt;I&amp;rsquo;ve heard of ImageMagick before: it&amp;rsquo;s the tool that drives nearly all image manipulation on the internet (it&amp;rsquo;s also what Gifrocket uses). But what was mencoder and gifsickle?&lt;/p&gt;
+&lt;p&gt;Some searching led to this &lt;a href=&#34;https://www.reddit.com/r/reactiongifs/comments/x55z9/after_i_learned_how_to_make_large_well_compressed/c5jbq7c&#34; target=&#34;_blank&#34;&gt;2012 Reddit comment&lt;/a&gt; in the /r/reactiongifs subreddit. That&amp;rsquo;s where everything clicked.&lt;/p&gt;
+&lt;h2 id=&#34;shell-games&#34;&gt;Shell Games&lt;/h2&gt;
+&lt;p&gt;The linked Reddit post conveiently uses the same three tools by the commenter on MoviePy. I ran the terminal commands on my video, with a little tweaking.&lt;/p&gt;
+&lt;p&gt;The first command uses the &lt;code&gt;mencoder&lt;/code&gt; functionality of &lt;a href=&#34;http://www.mplayerhq.hu/design7/news.html&#34; target=&#34;_blank&#34;&gt;mplayer&lt;/a&gt; to render each frame of the video to PNGs:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;mplayer -ao null -vo png:z=1:outdir=gif -vf scale=608:454 zerowidthedit.mov
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I set the size to a width of 608px since it was exactly 50% of the width of the raw video, but I could set it to whatever I want, although it would be ideal to keep the aspect ratio the same.&lt;/p&gt;
+&lt;p&gt;The second command uses &lt;a href=&#34;http://www.imagemagick.org/script/index.php&#34; target=&#34;_blank&#34;&gt;ImageMagick&lt;/a&gt;&amp;rsquo;s famously robust &lt;code&gt;convert&lt;/code&gt; comand to convert the rendered frames in to a GIF, with two optimization passes for lower file size and ~16.6ms delay, which is equivalent to 60 frames per second.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;convert +repage -fuzz 1.6% -delay 1.7 -loop 0 gif/*.png -layers OptimizePlus -layers OptimizeTransparency Almost.gif
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This results in a 156KB image; much, much better than the 534KB from Gifrocket, and at a much higher framerate too.&lt;/p&gt;
+&lt;p&gt;Lastly, the GIF is further optimized with &lt;a href=&#34;http://www.lcdf.org/gifsicle/&#34; target=&#34;_blank&#34;&gt;gifsicle&lt;/a&gt;, which also limits the color pallete to 256 colors for even lower file size.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;gifsicle -O3 --colors 256 Almost.gif &amp;gt; Done.gif
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This results in a 107KB KB, a 31% savings over the already-optimized GIF, without any discernable loss! Here is the final result:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/video-to-gif-osx/zerowidthedit_final.gif&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Much, &lt;em&gt;much&lt;/em&gt; better. No ghosting, 60 FPS, 1/8th of the original video file size, and 1/5th of the file size of the Gifrocket GIF!&lt;/p&gt;
+&lt;p&gt;Then I realized; aside from the output GIF resolution in from &lt;code&gt;mencoder&lt;/code&gt;, the terminal commands for making GIFs are very generic. What if I could easily automate these steps for any video on my Mac?&lt;/p&gt;
+&lt;h2 id=&#34;full-automatic&#34;&gt;Full Automatic&lt;/h2&gt;
+&lt;p&gt;I decided to make a OS X &lt;a href=&#34;http://www.computerworld.com/article/2476298/mac-os-x/os-x-a-quick-guide-to-services-on-your-mac.html&#34; target=&#34;_blank&#34;&gt;Service&lt;/a&gt;, which can be used to automate actions for a specified file type in the form of a right-click menu option. Services can be created using &lt;a href=&#34;https://en.wikipedia.org/wiki/Automator_%28software%29&#34; target=&#34;_blank&#34;&gt;Automator&lt;/a&gt;, which is included in all OS X installations. In my case, I want to create a Service for movie files; and when the Service runs, it should Run a Shell Script with the above three commands.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/video-to-gif-osx/service.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;After writing the script, which incorporates a maximium GIF width of 480px and will resize larger GIFs to that size while maintaining the aspect ratio, the Service is complete and I can right-click any Movie file and get an optimized GIF!&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/video-to-gif-osx/convert_to_gif.gif&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Yes, even a 41.6MB 720p video file, which most GIF converter sites would never let you upload, becomes a &lt;a href=&#34;http://i.imgur.com/0dU3A6o.gif&#34; target=&#34;_blank&#34;&gt;relatively reasonable 1.3MB GIF&lt;/a&gt;!&lt;/p&gt;
+&lt;p&gt;This approach also has an unexpected benefit; the script support batch conversion, meaning you can convert as many videos as you want at the same time!&lt;/p&gt;
+&lt;p&gt;As usual, my code is &lt;a href=&#34;https://github.com/minimaxir/video-to-gif-osx&#34; target=&#34;_blank&#34;&gt;open sourced on GitHub&lt;/a&gt; with a MIT license, with instructions on how to set up the tool. The repository also includes two bonus utilities; a Shell Script to run the conversion from the command line and an Application which prompts you for movie files instead of needing to right-click. Install the three command-line applications and convert away! Or fork the repository and make an even &lt;em&gt;better&lt;/em&gt; Video-to-GIF conversion tool!&lt;/p&gt;</description></item><item><title>How to Scrape Data From Facebook Page Posts for Statistical Analysis</title><link>/2015/07/facebook-scraper/</link><pubDate>Mon, 20 Jul 2015 08:00:00 +0000</pubDate><guid>/2015/07/facebook-scraper/</guid><description>
+&lt;div class=&#34;alert alert-warning&#34;&gt;
+&lt;div&gt;
+UPDATE April 2018: Due to changes Facebook has made to the Graph API, the API will no longer return every post as noted in this article.
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;One of the first data scrapers I wrote for the purpose of statistical analysis was a Facebook Graph API scraper, in order to determine &lt;a href=&#34;http://minimaxir.com/2013/06/big-social-data/&#34; target=&#34;_blank&#34;&gt;which words are the most important&lt;/a&gt; in a Facebook Page status update. However, the v2.0 update to the Facebook API unsurprisingly broke the scraper.&lt;/p&gt;
+&lt;p&gt;Now that &lt;a href=&#34;https://developers.facebook.com/blog/post/2015/07/08/graph-api-v2.4/&#34; target=&#34;_blank&#34;&gt;v2.4 of the Graph API is released&lt;/a&gt;, I gave the Facebook Graph API another look. Turns out, it&amp;rsquo;s pretty easy to scrape and make into a spreadsheet for easy analysis, although like with any other scrapers, there are a large number of gotchas.&lt;/p&gt;
+&lt;h2 id=&#34;feasibility&#34;&gt;Feasibility&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;/img/facebook-scraper/nyt_sample.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;In order to determine if I can sanely scrape a website, I have to do a bit of research. How much data from a Facebook status update can we actually scrape?&lt;/p&gt;
+&lt;p&gt;Fortunately, Facebook&amp;rsquo;s &lt;a href=&#34;https://developers.facebook.com/docs/graph-api/reference&#34; target=&#34;_blank&#34;&gt;Graph API documentation&lt;/a&gt; is pretty good. We need data from the &lt;a href=&#34;https://developers.facebook.com/docs/graph-api/reference/page&#34; target=&#34;_blank&#34;&gt;/page&lt;/a&gt; node, and from there, we can access data from the &lt;a href=&#34;https://developers.facebook.com/docs/graph-api/reference/v2.4/page/feed&#34; target=&#34;_blank&#34;&gt;/feed&lt;/a&gt; edge.&lt;/p&gt;
+&lt;p&gt;Between the two nodes, we have access to &lt;code&gt;id&lt;/code&gt;, which is a unique identifer that can be used to create a link back to the update itself (e.g. &lt;a href=&#34;https://www.facebook.com/5281959998_10150628170209999&#34; target=&#34;_blank&#34;&gt;https://www.facebook.com/5281959998_10150628170209999&lt;/a&gt;) &lt;code&gt;message&lt;/code&gt;, the text of the update; &lt;code&gt;link&lt;/code&gt;, the URL which the update is linking; &lt;code&gt;name&lt;/code&gt;, the title of the webpage of the link, &lt;code&gt;type&lt;/code&gt;, an identifier if the update is text, a photo, or a video; and &lt;code&gt;created_time&lt;/code&gt;, when the update is published.&lt;/p&gt;
+&lt;p&gt;Accessing the numerical counts of &lt;code&gt;likes&lt;/code&gt;, &lt;code&gt;comments&lt;/code&gt;, and &lt;code&gt;shares&lt;/code&gt; is less explicit in the documentation. Fortunately, &lt;a href=&#34;http://stackoverflow.com/questions/6984526/facebook-graph-api-get-like-count-on-page-group-photos&#34; target=&#34;_blank&#34;&gt;StackOverflow&lt;/a&gt; has the answer: you need to request &lt;code&gt;likes.limit(1).summary(true)&lt;/code&gt; instead of normal &lt;code&gt;likes&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;There&amp;rsquo;s no indication that there&amp;rsquo;s a Rate Limit, oddly. Since we can query 100 updates at a time, the scraper will be efficient enough that it&amp;rsquo;s unlikely to hit any extreme API limits.&lt;/p&gt;
+&lt;p&gt;Now that we know we can get all the relevant data from the sample status update, we can build a Facebook post scraper.&lt;/p&gt;
+&lt;h2 id=&#34;data-scrappy&#34;&gt;Data Scrappy&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;/img/facebook-scraper/def_test.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;I have created an &lt;a href=&#34;https://github.com/minimaxir/facebook-page-post-scraper/blob/master/examples/how_to_build_facebook_scraper.ipynb&#34; target=&#34;_blank&#34;&gt;IPython notebook hosted on GitHub&lt;/a&gt; with detailed code, code comments, and sample output for each step of the scraper development. I strongly recommend giving it a look.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;First, we need to see how to actually access the API. It&amp;rsquo;s no longer a public API, and it requires user authentication via &lt;a href=&#34;https://developers.facebook.com/docs/facebook-login/access-tokens&#34; target=&#34;_blank&#34;&gt;access tokens&lt;/a&gt;. Users can get Short-Term tokens, but as their name suggests, they expire quickly, so they are not recommended. The Graph API allows a neat trick; by concatenating the App ID from a user-created App and the App Secret, you create an access token which never expires. Of course, this is a major security risk, so create a separate app for the sole purpose of scraping, and reset your API Secret if it becomes known.&lt;/p&gt;
+&lt;p&gt;Let&amp;rsquo;s say we want to scrape the New York Times&amp;rsquo; Facebook page. We would send a request to &lt;a href=&#34;https://graph.facebook.com/v2.4/nytimes?access_token=XXXXX&#34; target=&#34;_blank&#34;&gt;https://graph.facebook.com/v2.4/nytimes?access_token=XXXXX&lt;/a&gt; and we would get:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
+&amp;quot;id&amp;quot;: &amp;quot;5281959998&amp;quot;,
+&amp;quot;name&amp;quot;: &amp;quot;The New York Times&amp;quot;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;i.e., the page metadata. Sending a request to /nytimes/feed results in what we want:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
+&amp;quot;data&amp;quot;: [
+{
+&amp;quot;created_time&amp;quot;: &amp;quot;2015-07-20T01:25:01+0000&amp;quot;,
+&amp;quot;id&amp;quot;: &amp;quot;5281959998_10150628157724999&amp;quot;,
+&amp;quot;message&amp;quot;: &amp;quot;The planned megalopolis, a metropolitan area that would be about 6 times the size of New York\u2019s, is meant to revamp northern China\u2019s economy and become a laboratory for modern urban growth.&amp;quot;
+},
+{
+&amp;quot;created_time&amp;quot;: &amp;quot;2015-07-19T22:55:01+0000&amp;quot;,
+&amp;quot;id&amp;quot;: &amp;quot;5281959998_10150628161129999&amp;quot;,
+&amp;quot;message&amp;quot;: &amp;quot;\&amp;quot;It\u2019s safe to say that federal agencies are not where we want them to be across the board,\&amp;quot; said President Barack Obama&#39;s top cybersecurity adviser. \&amp;quot;We clearly need to be moving faster.\&amp;quot;&amp;quot;
+}
+]
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now we get the post data. But not much of it. In Graph API v2.4, the default behavior is to return very, very little metadata for statuses in order to reduce bandwidth, with the expectation that the user will request the necessary fields.&lt;/p&gt;
+&lt;p&gt;So let&amp;rsquo;s request &lt;em&gt;all&lt;/em&gt; the fields we want. This results in a very long URL not shown here which causes the posts feed to have all the data we need:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
+&amp;quot;comments&amp;quot;: {},
+&amp;quot;summary&amp;quot;: {
+&amp;quot;order&amp;quot;: &amp;quot;ranked&amp;quot;,
+&amp;quot;total_count&amp;quot;: 31
+},
+&amp;quot;created_time&amp;quot;: &amp;quot;2015-07-20T01:25:01+0000&amp;quot;,
+&amp;quot;id&amp;quot;: &amp;quot;5281959998_10150628157724999&amp;quot;,
+&amp;quot;likes&amp;quot;: {
+&amp;quot;data&amp;quot;: {},
+&amp;quot;summary&amp;quot;: {
+&amp;quot;total_count&amp;quot;: 278
+}
+},
+&amp;quot;link&amp;quot;: &amp;quot;http://nyti.ms/1Jr6LhU&amp;quot;,
+&amp;quot;message&amp;quot;: &amp;quot;The planned megalopolis, a metropolitan area that would be about 6 times the size of New York’s, is meant to revamp northern China’s economy and become a laboratory for modern urban growth.&amp;quot;,
+&amp;quot;name&amp;quot;: &amp;quot;China Molds a Supercity Around Beijing, Promising to Change Lives&amp;quot;,
+&amp;quot;shares&amp;quot;: {
+&amp;quot;count&amp;quot;: 50
+},
+&amp;quot;type&amp;quot;: &amp;quot;link&amp;quot;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;post-processing&#34;&gt;Post Processing&lt;/h2&gt;
+&lt;p&gt;Great! Now we just have to process each post. Which is easier said than done.&lt;/p&gt;
+&lt;p&gt;If you&amp;rsquo;re an avid Facebook user, you know that not all of these attributes are not guaranteed to exist. Status updates may not have text or links. Since we&amp;rsquo;re making a spreadsheet with an enforced schema, we need to validate that a field exists before attempting to process it.&lt;/p&gt;
+&lt;p&gt;The &amp;ldquo;\u2019&amp;rdquo;s in the message correspond to a &lt;a href=&#34;http://smartquotesforsmartpeople.com/&#34; target=&#34;_blank&#34;&gt;smart quote&lt;/a&gt; apostrophe. Since this a possibility, along with other unicode characters, the message and link names must be encoded &lt;a href=&#34;https://en.wikipedia.org/wiki/UTF-8&#34; target=&#34;_blank&#34;&gt;in UTF-8&lt;/a&gt; to prevent errors.&lt;/p&gt;
+&lt;p&gt;The time format is another issue. The date follows the &lt;a href=&#34;https://en.wikipedia.org/wiki/ISO_8601&#34; target=&#34;_blank&#34;&gt;ISO 8601&lt;/a&gt; standard for UTC times. However, most spreadsheet programs will not able to parse it as a Date value. Also, since the NYT is based in the USA (specifically, New York), it may be helpful for time-based statistical analysis to convert the time to Eastern Standard Time while fixing the date format.&lt;/p&gt;
+&lt;p&gt;There&amp;rsquo;s also an unexpected precaution that must be taken whenever scraping data sets. These APIs do not expect users to be accessing very, very old data. As a result, there&amp;rsquo;s a high probability of the API server actually hitting an error sometime during the scrape, such as a &lt;a href=&#34;http://www.checkupdown.com/status/E500.html&#34; target=&#34;_blank&#34;&gt;HTTP Status 500&lt;/a&gt; or &lt;a href=&#34;http://www.checkupdown.com/status/E502.html&#34; target=&#34;_blank&#34;&gt;HTTP Status 502&lt;/a&gt;. These server errors are temporary, so a helper function must be used to attempt to retrieve data until it is actually successful.&lt;/p&gt;
+&lt;h2 id=&#34;putting-it-all-together&#34;&gt;Putting it All Together&lt;/h2&gt;
+&lt;p&gt;Now we have a full plan for scraping, we query each page of Facebook Page Statuses (100 statuses maximum per page), process all statuses on that page and writing the output to a CSV file, and navigate to the next page, and repeat until no more statuses left.&lt;/p&gt;
+&lt;p&gt;This can be done with a for-loop within a while loop. In addition, I also recommend counting the number of posts processed and taking a timestamp every-so-often to ensure that the program has not stalled.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/facebook-scraper/cnnwoo.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;And that&amp;rsquo;s it! You can access the complete scraper in this GitHub repository, along with all other scripts mentioned in this article. Once you have the CSV file, you can import it into nearly every statistical program and have fun with it. &lt;em&gt;(You can download a .zip of the NYTimes data &lt;a href=&#34;https://dl.dropboxusercontent.com/u/2017402/nytimes_facebook_statuses.zip&#34; target=&#34;_blank&#34;&gt;here&lt;/a&gt; [4.6MB])&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Say, for example, what would happen if we compared the Median Likes of the New York Times with a certain other journalistic website that&amp;rsquo;s the master of social media?&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/facebook-scraper/nytimes_buzz_fb.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;There may be more practical reasons for analyzing data on Facebook Posts, such as quantifying the growth and success of your own page, or that of your competitors. But the data is easy to get and is very useful.&lt;/p&gt;
+&lt;p&gt;Although, in fairness, the scraper is not perfect and still has room for improvement. With CNN&amp;rsquo;s Facebook Page post data, for example, somehow the scraper skips all posts from 2013. Although in that case, I blame Facebook.&lt;/p&gt;
+&lt;hr /&gt;
+&lt;p&gt;&lt;em&gt;You can access all resources used in this blog post at this &lt;a href=&#34;https://github.com/minimaxir/facebook-page-post-scraper&#34; target=&#34;_blank&#34;&gt;GitHub repository&lt;/a&gt;&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;If you haven&amp;rsquo;t, I strongly recommend looking at the &lt;a href=&#34;https://github.com/minimaxir/facebook-page-post-scraper/blob/master/how_to_build_facebook_scraper.ipynb&#34; target=&#34;_blank&#34;&gt;IPython Notebook&lt;/a&gt; for more detailed coding methodology.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;And, as an experiment, I&amp;rsquo;ve made an &lt;a href=&#34;https://github.com/minimaxir/facebook-page-post-scraper/blob/master/fb_page_data_analysis.ipynb&#34; target=&#34;_blank&#34;&gt;IPython notebook with the R kernel&lt;/a&gt; showing how I made the NYT-BuzzFeed chart!&lt;/em&gt;&lt;/p&gt;</description></item></channel></rss>
