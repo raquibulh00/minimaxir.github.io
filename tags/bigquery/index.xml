@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>BigQuery on Max Woolf&#39;s Blog</title><link>/tags/bigquery/</link><description>Recent content in BigQuery on Max Woolf&#39;s Blog</description><generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>Copyright Max Woolf &amp;copy; {year}</copyright><lastBuildDate>Mon, 16 Nov 2015 08:00:00 +0000</lastBuildDate><atom:link href="/tags/bigquery/index.xml" rel="self" type="application/rss+xml"/><item><title>How to Visualize New York City Using Taxi Location Data and ggplot2</title><link>/2015/11/nyc-ggplot2-howto/</link><pubDate>Mon, 16 Nov 2015 08:00:00 +0000</pubDate><guid>/2015/11/nyc-ggplot2-howto/</guid><description>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>BigQuery on Max Woolf&#39;s Blog</title><link>https://minimaxir.com/tags/bigquery/</link><description>Recent content in BigQuery on Max Woolf&#39;s Blog</description><generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>Copyright Max Woolf &amp;copy; {year}</copyright><lastBuildDate>Mon, 16 Nov 2015 08:00:00 -0700</lastBuildDate><atom:link href="https://minimaxir.com/tags/bigquery/index.xml" rel="self" type="application/rss+xml"/><item><title>How to Visualize New York City Using Taxi Location Data and ggplot2</title><link>https://minimaxir.com/2015/11/nyc-ggplot2-howto/</link><pubDate>Mon, 16 Nov 2015 08:00:00 -0700</pubDate><guid>https://minimaxir.com/2015/11/nyc-ggplot2-howto/</guid><description>
 &lt;p&gt;A few months ago, I had &lt;a href=&#34;http://minimaxir.com/2015/08/nyc-map/&#34; target=&#34;_blank&#34;&gt;posted a visualization&lt;/a&gt; of NYC Yellow Taxis using &lt;a href=&#34;http://ggplot2.org&#34; target=&#34;_blank&#34;&gt;ggplot2&lt;/a&gt;, an extremely-popular R package by Hadley Wickham for data visualization. At the time, the code used for the chart was very messy since I was eager to create something cool after seeing the &lt;a href=&#34;https://news.ycombinator.com/item?id=10003118&#34; target=&#34;_blank&#34;&gt;referenced Hacker News thread&lt;/a&gt;. Due to popular demand, I&amp;rsquo;ve cleaned up the code and have &lt;a href=&#34;https://github.com/minimaxir/nyc-taxi-notebook&#34; target=&#34;_blank&#34;&gt;released it open source&lt;/a&gt;, with a few improvements.&lt;/p&gt;
 &lt;p&gt;Here are some tips and tutorials on how to make such visualizations.&lt;/p&gt;
 &lt;h2 id=&#34;getting-the-data&#34;&gt;Getting the Data&lt;/h2&gt;
@@ -15,7 +15,7 @@ GROUP BY lat, long
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;The resulting dataset is 4 million rows and 116MB in size! This is well over the limit for downloading from the web BigQuery client, so you must use a local client (in the attached notebook, R), and it will still take about 10-15 minutes to download (as a result, I recommend caching the results locally). Relatedly, rendering 4 million points on a single plot on screen may be computationally intensive: I strongly recommend rendering the visualization to disk by instantiating a &lt;code&gt;png&lt;/code&gt; device or by using &lt;code&gt;ggsave&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;Here&amp;rsquo;s a few results from that query.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/img/nyc-ggplot2-howto/test-data.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/nyc-ggplot2-howto/test-data.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;As you can see, the second latitude/longitude combo is blatantly &lt;em&gt;wrong&lt;/em&gt;. This isn&amp;rsquo;t the first fidelity issue with the dataset, but we will address those in due time.&lt;/p&gt;
 &lt;h2 id=&#34;plotting-the-taxis&#34;&gt;Plotting the Taxis&lt;/h2&gt;
 &lt;p&gt;Let&amp;rsquo;s do a basic ggplot2 plot to test things out. All we need to do is plot a small point for every lat/long combination, and then save the resulting plot.&lt;/p&gt;
@@ -25,7 +25,7 @@ png(&amp;quot;nyc-taxi-1.png&amp;quot;, w=600, h=600)
 plot
 dev.off()
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/img/nyc-ggplot2-howto/nyc-taxi-1.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/nyc-ggplot2-howto/nyc-taxi-1.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;&amp;hellip;stupid data fidelity issues.&lt;/p&gt;
 &lt;p&gt;This issue is fixed by constraining the plot to a &lt;a href=&#34;https://en.wikipedia.org/wiki/Minimum_bounding_box&#34; target=&#34;_blank&#34;&gt;bounding box&lt;/a&gt; of latitude and longitude coordinates corresponding to NYC. Flickr has &lt;a href=&#34;https://www.flickr.com/places/info/2459115&#34; target=&#34;_blank&#34;&gt;a good starting point&lt;/a&gt; for a NYC bounding box; I took that and edited the limits more precisely using the &lt;a href=&#34;http://boundingbox.klokantech.com&#34; target=&#34;_blank&#34;&gt;Bounding Box Tool&lt;/a&gt;.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-R&#34;&gt;min_lat &amp;lt;- 40.5774
@@ -42,7 +42,7 @@ png(&amp;quot;nyc-taxi-2.png&amp;quot;, w=600, h=600)
 plot
 dev.off()
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/img/nyc-ggplot2-howto/nyc-taxi-2.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/nyc-ggplot2-howto/nyc-taxi-2.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Much, much better! Now that the visualization generally looks like what we want it to be, we can start theming.&lt;/p&gt;
 &lt;p&gt;Let&amp;rsquo;s start small and do just a few tweaks:&lt;/p&gt;
 &lt;ul&gt;
@@ -59,7 +59,7 @@ png(&amp;quot;nyc-taxi-3.png&amp;quot;, w=600, h=600, res=300)
 plot
 dev.off()
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/img/nyc-ggplot2-howto/nyc-taxi-3.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/nyc-ggplot2-howto/nyc-taxi-3.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Right on track! Now time to make things more professional.&lt;/p&gt;
 &lt;p&gt;This requires the implementation of a few more aesthetics:&lt;/p&gt;
 &lt;ul&gt;
@@ -87,7 +87,7 @@ dev.off()
 border: 3px solid red;
 }
 &lt;/style&gt;&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;&lt;span class=&#34;border&#34;&gt;&lt;img src=&#34;/img/nyc-ggplot2-howto/nyc-taxi-4.png&#34; alt=&#34;&#34; /&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;border&#34;&gt;&lt;img src=&#34;https://minimaxir.com/img/nyc-ggplot2-howto/nyc-taxi-4.png&#34; alt=&#34;&#34; /&gt;&lt;/span&gt;&lt;/p&gt;
 &lt;p&gt;Due to &lt;code&gt;coord_equal()&lt;/code&gt; enforcing the chart dimensions, the rendering device has a gap of white space at the top due to interaction with the &lt;code&gt;grid&lt;/code&gt; graphics package that ggplot2 is based upon; normally not a problem for default charts, but a waste of space for visualizations with non-white backgrounds.&lt;/p&gt;
 &lt;p&gt;I attempted to fix this issue by forcing &lt;code&gt;grid&lt;/code&gt; to render a black rectangle then plot on top of it. Unfornately, that was not successful. The quickest workaround is to set the image dimensions through trial-and-error such that the issue is minimized.&lt;/p&gt;
 &lt;p&gt;All things considered, that&amp;rsquo;s minor but should still be noted. The streets of Manhattan are visible! And there&amp;rsquo;s still more that can be done.&lt;/p&gt;
@@ -114,7 +114,7 @@ png(&amp;quot;nyc-taxi-5.png&amp;quot;, w=950, h=860, res=300)
 plot
 dev.off()
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/img/nyc-ggplot2-howto/nyc-taxi-5.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/nyc-ggplot2-howto/nyc-taxi-5.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;That wasn&amp;rsquo;t too bad. The gradient shows that &lt;a href=&#34;https://www.google.com/maps/place/penn+station+nyc/@40.750568,-73.993519,15z&#34; target=&#34;_blank&#34;&gt;Penn Station&lt;/a&gt; in Manhattan, along with the two airports, are the largest revenue generators.&lt;/p&gt;
 &lt;p&gt;I &lt;a href=&#34;https://www.reddit.com/r/dataisbeautiful/comments/3sjmc0/total_revenue_for_nyc_yellow_taxis_by_pickup/&#34; target=&#34;_blank&#34;&gt;posted the hex-overlayed map&lt;/a&gt; on Reddit to /r/dataisbeautiful as a part of my data visualization beta-testing. Although the chart received just under 200 upvotes, the comments in the Reddit thread were &lt;em&gt;unanimously negative&lt;/em&gt;. Reddit user /u/DanHeidel &lt;a href=&#34;https://www.reddit.com/r/dataisbeautiful/comments/3sjmc0/total_revenue_for_nyc_yellow_taxis_by_pickup/cwxuy1e&#34; target=&#34;_blank&#34;&gt;posted a long rant&lt;/a&gt; on the problems with the aesthetics of the chart. And for the most part, I agree with his assessment.&lt;/p&gt;
 &lt;p&gt;Let&amp;rsquo;s try again, and address the claims made in the Reddit comments.&lt;/p&gt;
@@ -142,11 +142,11 @@ png(&amp;quot;nyc-taxi-6.png&amp;quot;, w=900, h=900, res=300)
 plot
 dev.off()
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/img/nyc-ggplot2-howto/nyc-taxi-6.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/nyc-ggplot2-howto/nyc-taxi-6.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;A good step forward. Revenue all through Manhattan is mostly the same except for Penn Station. Meanwhile, the hexes in LaGuardia Airport are noticeably more saturated than Penn Station.&lt;/p&gt;
 &lt;p&gt;Hopefully, this tutorial gave you a good look into a few interesting tricks that can be accomplished with ggplot2, even though the code can be somewhat messy. If you want more orthodox methods of plotting geographic data in ggplot2, you should look into the &lt;a href=&#34;https://cran.r-project.org/web/packages/ggmap/index.html&#34; target=&#34;_blank&#34;&gt;ggmap&lt;/a&gt; R package, which I used to plot &lt;a href=&#34;http://minimaxir.com/2014/04/san-francisco/&#34; target=&#34;_blank&#34;&gt;Facebook Checkin data in San Francisco&lt;/a&gt;, and look into the &lt;a href=&#34;https://cran.r-project.org/web/packages/maps/index.html&#34; target=&#34;_blank&#34;&gt;maps&lt;/a&gt; R package plus shape files, which I used to plot &lt;a href=&#34;http://minimaxir.com/2015/01/tree-time/&#34; target=&#34;_blank&#34;&gt;Instagram photo location data&lt;/a&gt;. Unfortunately, the code may not necessarily be less messy.&lt;/p&gt;
 &lt;hr /&gt;
-&lt;p&gt;&lt;em&gt;If you use the code or data visualization designs contained within this article, it would be greatly appreciated if proper attribution is given back to this article and/or myself. Thanks!&lt;/em&gt;&lt;/p&gt;</description></item><item><title>Quantifying and Visualizing the Reddit Hivemind</title><link>/2015/10/reddit-topwords/</link><pubDate>Fri, 09 Oct 2015 08:00:00 +0000</pubDate><guid>/2015/10/reddit-topwords/</guid><description>
+&lt;p&gt;&lt;em&gt;If you use the code or data visualization designs contained within this article, it would be greatly appreciated if proper attribution is given back to this article and/or myself. Thanks!&lt;/em&gt;&lt;/p&gt;</description></item><item><title>Quantifying and Visualizing the Reddit Hivemind</title><link>https://minimaxir.com/2015/10/reddit-topwords/</link><pubDate>Fri, 09 Oct 2015 08:00:00 -0700</pubDate><guid>https://minimaxir.com/2015/10/reddit-topwords/</guid><description>
 &lt;p&gt;In my &lt;a href=&#34;http://minimaxir.com/2015/10/reddit-bigquery/&#34; target=&#34;_blank&#34;&gt;last post on Reddit data&lt;/a&gt; (I strongly suggest you read that first if you haven&amp;rsquo;t already), I noted that analyzing the words used in Reddit submissions may be useful in quantifying the relationship of those keywords in the success of a Reddit submission. Indeed, if we can find out which topics Reddit users tend to upvote, we can identify what keywords are most attractive to the Reddit &amp;ldquo;hivemind.&amp;rdquo;&lt;/p&gt;
 &lt;p&gt;First, I gathered some preliminary statistics about all submissions to the top 500 subreddits on Reddit, again using the &lt;a href=&#34;https://cloud.google.com/bigquery/&#34; target=&#34;_blank&#34;&gt;BigQuery&lt;/a&gt; data dump compiled by Jason Baumgartner and Felipe Hoffa, in order to establish a good base for the analysis:&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-sql&#34;&gt;SELECT subreddit,
@@ -190,46 +190,46 @@ ORDER BY subreddit, avg_score DESC
 &lt;h2 id=&#34;plotting-the-words&#34;&gt;Plotting the Words&lt;/h2&gt;
 &lt;p&gt;&lt;em&gt;The R code used to generate the charts is available in &lt;a href=&#34;https://github.com/minimaxir/reddit-subreddit-keywords/blob/master/reddit_subreddit_words.ipynb&#34; target=&#34;_blank&#34;&gt;this Jupyter notebook&lt;/a&gt;, open-sourced on GitHub. Additionally, all 500 charts with the keyword ranks for all 500 subreddits are available in &lt;a href=&#34;https://github.com/minimaxir/reddit-subreddit-keywords/tree/master/subreddit-mean&#34; target=&#34;_blank&#34;&gt;the parent repository&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
 &lt;p&gt;After a few R tricks, I managed to chart the Top 10 keywords for each of the Top 15 subreddits:&lt;/p&gt;
-&lt;p&gt;&lt;a href=&#34;https://i.imgur.com/dWdCnMI.png&#34; target=&#34;_blank&#34;&gt; &lt;img src=&#34;/img/reddit-topwords/subreddit-means-half.png&#34; alt=&#34;&#34; /&gt; &lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://i.imgur.com/dWdCnMI.png&#34; target=&#34;_blank&#34;&gt; &lt;img src=&#34;https://minimaxir.com/img/reddit-topwords/subreddit-means-half.png&#34; alt=&#34;&#34; /&gt; &lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;&lt;em&gt;(Click on image for full-resolution)&lt;/em&gt;&lt;/p&gt;
 &lt;p&gt;As noted in the subtitle, each word appears in atleast 1,000 submissions by subreddit (which absorbs any messy outliers), and vertical line represents the true average upvotes per subreddit. One might argue that the median would be a better statistic instead of the median, due to the high skewness of the data. Thanks to the power of BigQuery, I was able to calculate the &lt;a href=&#34;http://i.imgur.com/0PBolIq.png&#34; target=&#34;_blank&#34;&gt;top medians for each of the subreddits&lt;/a&gt; with a slightly-tweaked query, but the chart is not as helpful. There are still a few useful implications of the median, though, which I&amp;rsquo;ll show later. (No, I don&amp;rsquo;t need to normalize the data in the chart since I am not making an apples-to-apples comparison between the values of the words among subreddits, and no, I don&amp;rsquo;t need to remove stop words since this is visualizing an average, and not a count.)&lt;/p&gt;
 &lt;p&gt;When the visualization was &lt;a href=&#34;https://www.reddit.com/r/dataisbeautiful/comments/3nz3zz/average_number_of_upvotes_for_reddit_submissions/&#34; target=&#34;_blank&#34;&gt;posted to Reddit&lt;/a&gt; in the &lt;a href=&#34;https://www.reddit.com/r/dataisbeautiful/&#34; target=&#34;_blank&#34;&gt;/r/dataisbeautiful&lt;/a&gt; subreddit, it received over 3,500 upvotes. As many commenters on that submission correctly note, there are a few especially interesting observations for the keywords in those 15 subreddits, and when looking at the remaining subreddits, many trends in their keywords are made apparent.&lt;/p&gt;
 &lt;h2 id=&#34;politicalreddit&#34;&gt;Politicalreddit&lt;/h2&gt;
 &lt;p&gt;The most notable trend with the Top 15 subreddits is in the &lt;a href=&#34;https://www.reddit.com/r/politics/&#34; target=&#34;_blank&#34;&gt;/r/politics&lt;/a&gt; subreddit, which tells users to &amp;ldquo;Vote based on quality, not opinion,&amp;rdquo; but has a high affiliation for submissions specifically involving Bernie Sanders and Elizabeth Warren.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/img/reddit-topwords/mean-010-politics.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/reddit-topwords/mean-010-politics.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;&lt;a href=&#34;https://www.reddit.com/r/technology/&#34; target=&#34;_blank&#34;&gt;/r/technology&lt;/a&gt;, intended to be about &amp;ldquo;a broad spectrum of conversation as to the innovations, aspirations, applications and machinations,&amp;rdquo; has a high affiliation for political issues such as the net neutrality controversy involving the FCC, ISPs, and Comcast, and little affiliation for actual &lt;em&gt;technology&lt;/em&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/img/reddit-topwords/mean-018-technology.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/reddit-topwords/mean-018-technology.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Outside the Top 15 Subreddits, the political affiliations of subreddits such as &lt;a href=&#34;http://reddit.com/r/Libertarian&#34; target=&#34;_blank&#34;&gt;/r/Libertarian&lt;/a&gt; are less surprising and more funny as a result.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/img/reddit-topwords/mean-103-Libertarian.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/reddit-topwords/mean-103-Libertarian.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 &lt;h2 id=&#34;storyreddit&#34;&gt;Storyreddit&lt;/h2&gt;
 &lt;p&gt;One of the rising trends in the online publication landscape is that telling a story is more effective at generating attention. (thank BuzzFeed for that)&lt;/p&gt;
 &lt;p&gt;The biggest offender is &lt;a href=&#34;https://www.reddit.com/r/aww/&#34; target=&#34;_blank&#34;&gt;/r/aww&lt;/a&gt;, a subreddit about animals, has a high affinity for words &lt;em&gt;that aren&amp;rsquo;t animals&lt;/em&gt;, with only two animal words appearing in the Top 20.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/img/reddit-topwords/mean-011-aww.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/reddit-topwords/mean-011-aww.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;The presence of story titles is also apparent in &lt;a href=&#34;https://www.reddit.com/r/Fitness/&#34; target=&#34;_blank&#34;&gt;/r/Fitness&lt;/a&gt;, which in fairness, the atmosphere of self-improvement lends itself more to stories.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/img/reddit-topwords/mean-054-Fitness.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/reddit-topwords/mean-054-Fitness.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 &lt;h2 id=&#34;metareddit&#34;&gt;Metareddit&lt;/h2&gt;
 &lt;p&gt;The practice of upvoting submissions just because they mention a particular topic is colloquially known as &amp;ldquo;circlejerking.&amp;rdquo; &lt;a href=&#34;https://www.reddit.com/r/circlejerk/&#34; target=&#34;_blank&#34;&gt;/r/circlejerk&lt;/a&gt; fits that well, with titles designed to satirize clickbaity issues in order to receive upvotes ironically.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/img/reddit-topwords/mean-025-circlejerk.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/reddit-topwords/mean-025-circlejerk.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;&lt;a href=&#34;https://www.reddit.com/r/Braveryjerk/&#34; target=&#34;_blank&#34;&gt;/r/Braveryjerk&lt;/a&gt;, however, takes this practice to its logical conclusion.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/img/reddit-topwords/mean-486-Braveryjerk.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/reddit-topwords/mean-486-Braveryjerk.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 &lt;h2 id=&#34;esotericreddit&#34;&gt;Esotericreddit&lt;/h2&gt;
 &lt;p&gt;Here are a few other infamous subreddits that people have requested.&lt;/p&gt;
 &lt;p&gt;&lt;a href=&#34;https://www.reddit.com/r/conspiracy/&#34; target=&#34;_blank&#34;&gt;/r/conspiracy&lt;/a&gt;, which apparently have frequent instances of &amp;ldquo;TIL&amp;rdquo; (Today, I Learned) in titles, are simultaneously very &lt;em&gt;suspicious&lt;/em&gt; of the actions in the &lt;a href=&#34;https://www.reddit.com/r/TIL/&#34; target=&#34;_blank&#34;&gt;/r/TIL&lt;/a&gt; subreddit.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/img/reddit-topwords/mean-064-conspiracy.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/reddit-topwords/mean-064-conspiracy.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;The keywords in &lt;a href=&#34;https://www.reddit.com/r/teenagers/&#34; target=&#34;_blank&#34;&gt;/r/teenagers&lt;/a&gt; captures the essence of modern social media.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/img/reddit-topwords/mean-072-teenagers.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/reddit-topwords/mean-072-teenagers.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Some subreddits are just plain weird.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/img/reddit-topwords/mean-175-me_irl.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/reddit-topwords/mean-175-me_irl.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;That&amp;rsquo;s &lt;a href=&#34;https://www.reddit.com/r/me_irl/&#34; target=&#34;_blank&#34;&gt;/r/me_irl&lt;/a&gt; for you.&lt;/p&gt;
 &lt;h2 id=&#34;looking-at-the-medians&#34;&gt;Looking at the Medians&lt;/h2&gt;
 &lt;p&gt;As shown in the linked median image earlier, the medians for most keywords are 1 or 2, which does not provide much visual information whether a keyword is more important than another.&lt;/p&gt;
 &lt;p&gt;There are notable exceptions, however, such as with &lt;a href=&#34;https://www.reddit.com/r/Android/&#34; target=&#34;_blank&#34;&gt;/r/Android&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/img/reddit-topwords/median-059-Android.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/reddit-topwords/median-059-Android.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;That subreddit has official threads for events; it would make sense for users to upvote that whenever it appears as it&amp;rsquo;s &lt;em&gt;important&lt;/em&gt; that it&amp;rsquo;s visible, but not necessarily as an agreement of the topic. That&amp;rsquo;s why I believe looking at the medians is a different approach than looking at the means.&lt;/p&gt;
 &lt;p&gt;Same thing with &lt;a href=&#34;https://www.reddit.com/r/relationships/&#34; target=&#34;_blank&#34;&gt;/r/relationships&lt;/a&gt;, where an &amp;ldquo;update&amp;rdquo; is important.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/img/reddit-topwords/median-057-relationships.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/reddit-topwords/median-057-relationships.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;All in all, this is still just a first step for analyzing the importance of keywords in Reddit submission, and the impact of Reddit&amp;rsquo;s hivemind. The next step would be NLP techniques such as POS tagging and TDF-IF, but those require very significant and very expensive computing power. At the least, the good results with these simple analyses validates the idea for further research.&lt;/p&gt;
-&lt;p&gt;&lt;em&gt;Again the R code used to generate the charts is available in &lt;a href=&#34;https://github.com/minimaxir/reddit-subreddit-keywords/blob/master/reddit_subreddit_words.ipynb&#34; target=&#34;_blank&#34;&gt;this Jupyter notebook&lt;/a&gt;, open-sourced on GitHub. Additionally, all 500 charts with the keyword ranks for all 500 subreddits are available in &lt;a href=&#34;https://github.com/minimaxir/reddit-subreddit-keywords/tree/master/subreddit-mean&#34; target=&#34;_blank&#34;&gt;the parent repository&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;</description></item><item><title>How to Analyze Every Reddit Submission and Comment, in Seconds, for Free</title><link>/2015/10/reddit-bigquery/</link><pubDate>Fri, 02 Oct 2015 08:00:00 +0000</pubDate><guid>/2015/10/reddit-bigquery/</guid><description>
+&lt;p&gt;&lt;em&gt;Again the R code used to generate the charts is available in &lt;a href=&#34;https://github.com/minimaxir/reddit-subreddit-keywords/blob/master/reddit_subreddit_words.ipynb&#34; target=&#34;_blank&#34;&gt;this Jupyter notebook&lt;/a&gt;, open-sourced on GitHub. Additionally, all 500 charts with the keyword ranks for all 500 subreddits are available in &lt;a href=&#34;https://github.com/minimaxir/reddit-subreddit-keywords/tree/master/subreddit-mean&#34; target=&#34;_blank&#34;&gt;the parent repository&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;</description></item><item><title>How to Analyze Every Reddit Submission and Comment, in Seconds, for Free</title><link>https://minimaxir.com/2015/10/reddit-bigquery/</link><pubDate>Fri, 02 Oct 2015 08:00:00 -0700</pubDate><guid>https://minimaxir.com/2015/10/reddit-bigquery/</guid><description>
 &lt;div class=&#34;alert alert-info&#34;&gt;
 &lt;div&gt;
 This post uses the #legacySQL dialect of BigQuery SQL.
@@ -237,7 +237,7 @@ This post uses the #legacySQL dialect of BigQuery SQL.
 &lt;/div&gt;
 &lt;p&gt;While working on my &lt;a href=&#34;http://minimaxir.com/2014/12/reddit-statistics/&#34; target=&#34;_blank&#34;&gt;statistical analysis of 142 million Reddit submissions&lt;/a&gt; last year, I had a surprising amount of trouble settings things up. It took a few hours to download the 40+ gigabytes of compressed data, and another few hours to parse the data and store in a local database. Even then, on my old-but-still-pretty-fast desktop PC, simple queries on the entire dataset took minutes to run, with complex queries occasionally taking upwards to an hour.&lt;/p&gt;
 &lt;p&gt;Over the past year, I&amp;rsquo;ve had a lot of success using &lt;a href=&#34;https://cloud.google.com/bigquery/&#34; target=&#34;_blank&#34;&gt;Google&amp;rsquo;s BigQuery&lt;/a&gt; tool for quick big data analysis without having to manage the data, such as the &lt;a href=&#34;http://minimaxir.com/2015/08/nyc-map/&#34; target=&#34;_blank&#34;&gt;recent NYC Taxi data dump&lt;/a&gt;. Recently, Jason Michael Baumgartner of &lt;a href=&#34;https://pushshift.io&#34; target=&#34;_blank&#34;&gt;Pushshift.io&lt;/a&gt; (a.k.a &lt;a href=&#34;https://www.reddit.com/user/Stuck_In_the_Matrix&#34; target=&#34;_blank&#34;&gt;/u/Stuck_In_The_Matrix&lt;/a&gt; on Reddit), who also provided me the original Reddit data, released &lt;a href=&#34;https://www.reddit.com/r/datasets/comments/3mg812/full_reddit_submission_corpus_now_available_2006/&#34; target=&#34;_blank&#34;&gt;new Reddit datasets&lt;/a&gt; containing all submissions and all comments until August 2015. Google BigQuery Developer Advocate Felipe Hoffa &lt;a href=&#34;https://www.reddit.com/r/bigquery/comments/3mv82i/dataset_reddits_full_post_history_shared_on/&#34; target=&#34;_blank&#34;&gt;uploaded the dataset&lt;/a&gt; to a public table in BigQuery for anyone to perform analysis on the data.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/img/reddit-bigquery/bigquery-tool.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/reddit-bigquery/bigquery-tool.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;With Reddit data in BigQuery, quantifying all the hundreds of millions of Reddit submissions and comments is trivial.&lt;/p&gt;
 &lt;h2 id=&#34;hello-reddit&#34;&gt;Hello Reddit!&lt;/h2&gt;
 &lt;p&gt;&lt;em&gt;Although the data is retrieved and processed in seconds, making the data visualizations in this post takes slightly longer. You can view the R code needed to reproduce the visualizations in &lt;a href=&#34;https://github.com/minimaxir/reddit-bigquery/blob/master/reddit_bigquery.ipynb&#34; target=&#34;_blank&#34;&gt;this Jupyter notebook&lt;/a&gt; open-sourced on GitHub.&lt;/em&gt;&lt;/p&gt;
@@ -252,7 +252,7 @@ ORDER by date_submission
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Which results in a simple timeseries, as shown above. BigQuery allows you to download the data as a CSV, and it can easily be visualized in any statistical program such as Excel.&lt;/p&gt;
 &lt;p&gt;Of course, I prefer R and ggplot2.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/img/reddit-bigquery/reddit-bigquery-1.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/reddit-bigquery/reddit-bigquery-1.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;And that query only took 4.5 seconds to complete, with 1.46 GB data processed! BigQuery only counts the columns used in the query against the 1 TB quota; since the query only used one small column, the query is cheap. (if the query hits the raw submission title/comment text data, then the queries will be significantly larger data-wise)&lt;/p&gt;
 &lt;h2 id=&#34;when-is-the-best-time-to-post-to-reddit&#34;&gt;When is the best time to post to Reddit?&lt;/h2&gt;
 &lt;p&gt;One of the reasons people might look at Reddit data is for determining the best way to viral. One of the most important factors in making something go viral is timing; since Reddit has a ranking system based on both community approval and time-since-submission, along with the fact that there is more activity at certain times of the day, the time when a submission is made is especially important.&lt;/p&gt;
@@ -266,7 +266,7 @@ GROUP BY sub_dayofweek, sub_hour
 ORDER BY sub_dayofweek, sub_hour
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;2.5 seconds, 2.39 GB processed, and a few R tricks results in this:&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/img/reddit-bigquery/reddit-bigquery-2.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/reddit-bigquery/reddit-bigquery-2.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;The day-of-week mostly does not matter, but hour matters significantly: about 3x as many submissions go viral when they are posted in the morning EST than if they are posted late in the day. (and rarely anything comparatively goes viral posted late at night, which is intuitive enough)&lt;/p&gt;
 &lt;h2 id=&#34;creating-wordclouds-of-subreddit-comments&#34;&gt;Creating Wordclouds of Subreddit Comments&lt;/h2&gt;
 &lt;p&gt;Wordclouds are always a fun representation of data, although not necessarily the most quantifiable. BigQuery can help derive word counts on large quantities of data, although the query is much more complex.&lt;/p&gt;
@@ -283,7 +283,7 @@ HAVING num_words &amp;gt;= 10000
 ORDER BY num_words DESC
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;5.0 seconds and 11.3 GB processed, along with removing a few stopwords via R results in this.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/img/reddit-bigquery/reddit-bigquery-3.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/reddit-bigquery/reddit-bigquery-3.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;News is about &lt;strong&gt;people&lt;/strong&gt;. And &lt;strong&gt;more&lt;/strong&gt;. Makes sense. (An &lt;code&gt;avg_score&lt;/code&gt; column for each word is included to allow for emulation of quantifiable impact of a given word, as used in my &lt;a href=&#34;http://minimaxir.com/2015/01/linkbait/&#34; target=&#34;_blank&#34;&gt;BuzzFeed analysis&lt;/a&gt;, although that is less useful for comments than submissions.)&lt;/p&gt;
 &lt;h2 id=&#34;monthly-active-users&#34;&gt;Monthly Active Users&lt;/h2&gt;
 &lt;p&gt;Although Reddit does provide a count of Subscribers for a given subreddit, most of those users are passive. One of the most important metrics of any startup is Monthly Active Users (MAUs), which we can get a reasonable approximation using the comment data. And not only that, we can aggregate the unique number of commenters by a given subreddit and by a given month, to see how subreddit activity changes over time relative to other subreddits.&lt;/p&gt;
@@ -302,7 +302,7 @@ WHERE rank &amp;lt;= 20
 ORDER BY date ASC, unique_authors DESC
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;11.9 seconds and 53.3 GB (!) later, we can create a Top 20 Subreddits visualization for each month, and combine each image into a GIF with my trusty &lt;a href=&#34;https://github.com/minimaxir/frames-to-gif-osx&#34; target=&#34;_blank&#34;&gt;Convert Frames to GIF&lt;/a&gt; tool.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/img/reddit-bigquery/subreddit-ranks.gif&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/reddit-bigquery/subreddit-ranks.gif&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;You can view the individual frames &lt;a href=&#34;https://github.com/minimaxir/reddit-bigquery/tree/master/subreddit-ranks&#34; target=&#34;_blank&#34;&gt;in the project GitHub repository&lt;/a&gt;. There are many trends revealed, such how some subreddits die over time (&lt;a href=&#34;https://www.reddit.com/r/fffffffuuuuuuuuuuuu&#34; target=&#34;_blank&#34;&gt;r/fffffffuuuuuuuuuuuu&lt;/a&gt;, &lt;a href=&#34;https://www.reddit.com/r/technology&#34; target=&#34;_blank&#34;&gt;/r/technology&lt;/a&gt;), how some rise over time (&lt;a href=&#34;https://www.reddit.com/r/pcmasterrace&#34; target=&#34;_blank&#34;&gt;/r/pcmasterrace&lt;/a&gt;), and how some subreddits have relative monthly spikes (&lt;a href=&#34;https://www.reddit.com/r/thebutton&#34; target=&#34;_blank&#34;&gt;/r/thebutton&lt;/a&gt;). Note that the colors have no visual meaning but are used to help easily differentiate between subreddits.&lt;/p&gt;
 &lt;p&gt;These sample queries are only a small sample of what can be done with the Reddit data and BigQuery. Although some data scientists may argue that using is BigQuery is pointless since ~200GB of data &lt;a href=&#34;http://yourdatafitsinram.com&#34; target=&#34;_blank&#34;&gt;can fit in RAM&lt;/a&gt;, the quick, dirty, and &lt;em&gt;cheap&lt;/em&gt; option is much more pragmatic for the majority of potential data analysis on this Reddit dataset.&lt;/p&gt;
 &lt;p&gt;&lt;em&gt;Again, you can view the R code needed to reproduce the visualizations in &lt;a href=&#34;https://github.com/minimaxir/reddit-bigquery/blob/master/reddit_bigquery.ipynb&#34; target=&#34;_blank&#34;&gt;this Jupyter notebook&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;</description></item></channel></rss>

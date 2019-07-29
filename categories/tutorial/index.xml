@@ -1,13 +1,13 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Tutorial on Max Woolf&#39;s Blog</title><link>/categories/tutorial/</link><description>Recent content in Tutorial on Max Woolf&#39;s Blog</description><generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>Copyright Max Woolf &amp;copy; {year}</copyright><lastBuildDate>Thu, 12 Feb 2015 08:00:00 +0000</lastBuildDate><atom:link href="/categories/tutorial/index.xml" rel="self" type="application/rss+xml"/><item><title>An Introduction on How to Make Beautiful Charts With R and ggplot2</title><link>/2015/02/ggplot-tutorial/</link><pubDate>Thu, 12 Feb 2015 08:00:00 +0000</pubDate><guid>/2015/02/ggplot-tutorial/</guid><description>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Tutorial on Max Woolf&#39;s Blog</title><link>https://minimaxir.com/categories/tutorial/</link><description>Recent content in Tutorial on Max Woolf&#39;s Blog</description><generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>Copyright Max Woolf &amp;copy; {year}</copyright><lastBuildDate>Thu, 12 Feb 2015 08:00:00 -0700</lastBuildDate><atom:link href="https://minimaxir.com/categories/tutorial/index.xml" rel="self" type="application/rss+xml"/><item><title>An Introduction on How to Make Beautiful Charts With R and ggplot2</title><link>https://minimaxir.com/2015/02/ggplot-tutorial/</link><pubDate>Thu, 12 Feb 2015 08:00:00 -0700</pubDate><guid>https://minimaxir.com/2015/02/ggplot-tutorial/</guid><description>
 &lt;div class=&#34;alert alert-note&#34;&gt;
 &lt;div&gt;
 &lt;strong&gt;UPDATE August 2017&lt;/strong&gt;: I have published an &lt;a href=&#34;http://minimaxir.com/2017/08/ggplot2-web/&#34; target=&#34;_blank&#34;&gt;updated version&lt;/a&gt; of this post with modern trends for making high quality charts with R and ggplot2, which may be a helpful resource in addition to this post.
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;p&gt;Readers of my previous blog posts have frequently asked me &amp;ldquo;how do you make those charts?&amp;rdquo;&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/img/ggplot-tutorial/buzzfeed-listicle-scatterplot.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/ggplot-tutorial/buzzfeed-listicle-scatterplot.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;These charts were made using &lt;a href=&#34;http://docs.ggplot2.org/current/&#34; target=&#34;_blank&#34;&gt;ggplot2&lt;/a&gt;, an add-on package for the &lt;a href=&#34;http://www.r-project.org/index.html&#34; target=&#34;_blank&#34;&gt;R programming language&lt;/a&gt;, along with lots of iterative improvement over the months. R notably has chart-making capabilities built into the language by default, but it is not easy to use and often produces &lt;em&gt;very&lt;/em&gt; simplistic charts. Enter ggplot2, which allows users to create full-featured and robust charts with only a few lines of code.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/img/ggplot-tutorial/geom_histogram-4.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/ggplot-tutorial/geom_histogram-4.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;You&amp;rsquo;ve probably seen charts elsewhere on the internet similar to this one. While it implements the &amp;ldquo;&lt;a href=&#34;http://vita.had.co.nz/papers/layered-grammar.html&#34; target=&#34;_blank&#34;&gt;Grammar of Graphics&lt;/a&gt;&amp;rdquo; (which is where the &amp;ldquo;gg&amp;rdquo; in &amp;ldquo;ggplot2&amp;rdquo; comes from), it does look generic and cluttered.&lt;/p&gt;
 &lt;p&gt;Adding a touch of color and design can help make more compelling visualizations, and it&amp;rsquo;s pretty easy to do thanks to ggplot2&amp;rsquo;s syntax and chaining capabilities.&lt;/p&gt;
 &lt;h2 id=&#34;quick-design-notes&#34;&gt;Quick Design Notes&lt;/h2&gt;
@@ -28,7 +28,7 @@ library(ggplot2); library(scales); library(grid); library(RColorBrewer)
 geom_histogram(binwidth=1)
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;The first line instantiates the charts and defines the variables used for plotting. We declare the use of the data frame &lt;code&gt;df&lt;/code&gt;, and the &lt;code&gt;listicle_size&lt;/code&gt; vector from that data frame as the plotting aesthetic. The second line tells ggplot to make a histogram out of the given data with &lt;code&gt;geom_histogram&lt;/code&gt;, and we specify a binwidth of 1 so that each column represents one discrete value of listicle. Running that code will cause a plot to pop up.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/img/ggplot-tutorial/tutorial_1.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/ggplot-tutorial/tutorial_1.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Not a bad start. In order to save the created plot, we use the &lt;code&gt;ggsave&lt;/code&gt; command, which saves the last-generated plot to an image in your working directory. The first parameter, the filename, determines the filetype.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-R&#34;&gt;ggsave(&amp;quot;tutorial_1.png&amp;quot;, dpi=300, width=4, height=3)
 &lt;/code&gt;&lt;/pre&gt;
@@ -71,7 +71,7 @@ theme(plot.margin = unit(c(0.35, 0.2, 0.3, 0.35), &amp;quot;cm&amp;quot;))
 geom_histogram(binwidth=1) +
 fte_theme()
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/img/ggplot-tutorial/tutorial_2.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/ggplot-tutorial/tutorial_2.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;A little more classy. Now that the core design of the chart is present, we can make polish the chart to make it more beautiful.&lt;/p&gt;
 &lt;p&gt;Of course, all charts need properly labled axes and a title. We can add that with the &lt;code&gt;labs&lt;/code&gt; function:&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-R&#34;&gt;ggplot(df, aes(listicle_size)) +
@@ -79,7 +79,7 @@ geom_histogram(binwidth=1) +
 fte_theme() +
 labs(title=&amp;quot;Distribution of Listicle Sizes for BuzzFeed Listicles&amp;quot;, x=&amp;quot;# of Entries in Listicle&amp;quot;, y=&amp;quot;# of Listicles&amp;quot;)
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/img/ggplot-tutorial/tutorial_3.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/ggplot-tutorial/tutorial_3.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Now we can add a few finishing touches. For the x-axis, we can set the breaks to 5 instead of 10 using &lt;code&gt;scale_x_continuous&lt;/code&gt; since we have the room. For the y-axis, since we have an axis value with 4 digits, we can set the formatting to use a comma with &lt;code&gt;scale_y_continuous&lt;/code&gt;. Lastly, we can add a line at y = 0 using &lt;code&gt;geom_line&lt;/code&gt; to further seperate the data. Lastly, in &lt;code&gt;geom_histogram&lt;/code&gt;, we can change the fill of the bars to a red color for more thematic branding, and also reduce the opacity to make the grid lines visible behind the chart.&lt;/p&gt;
 &lt;p&gt;Putting it all together:&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-R&#34;&gt;ggplot(df, aes(listicle_size)) +
@@ -90,7 +90,7 @@ scale_x_continuous(breaks=seq(0,50, by=5)) +
 scale_y_continuous(labels=comma) +
 geom_hline(yintercept=0, size=0.4, color=&amp;quot;black&amp;quot;)
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/img/ggplot-tutorial/tutorial_4.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/ggplot-tutorial/tutorial_4.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;That&amp;rsquo;s pretty professional and is a good stopping point. Normally, I would change the text fonts as well, but that&amp;rsquo;s a subject for another post.&lt;/p&gt;
 &lt;h2 id=&#34;making-a-ggplot2-scatterplot&#34;&gt;Making a ggplot2 Scatterplot&lt;/h2&gt;
 &lt;p&gt;Scatterplots are also efficient to do in ggplot2, which especially useful as making a plot containing 15,101 points might cause spreadsheets to freeze.&lt;/p&gt;
@@ -98,13 +98,13 @@ geom_hline(yintercept=0, size=0.4, color=&amp;quot;black&amp;quot;)
 &lt;pre&gt;&lt;code class=&#34;language-R&#34;&gt;ggplot(df, aes(x=listicle_size, y=num_fb_shares)) +
 geom_point()
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/img/ggplot-tutorial/tutorial_5.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/ggplot-tutorial/tutorial_5.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Because there are a few listicles with &lt;em&gt;over 1 million&lt;/em&gt; Facebook shares (welcome to 2015), the entire plot is skewed. As a result, we need to compress the plot by scaling the y-axis logarithmically using &lt;code&gt;scale_y_log10&lt;/code&gt;. Additionally, there will be a large amount of overlap between points due to the large sample size, so we need to greatly reduce the opacity of the points. (I set to 5% for this chart, but the best value can be determined through trial and error)&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-R&#34;&gt;ggplot(df, aes(x=listicle_size, y=num_fb_shares)) +
 geom_point(alpha=0.05) +
 scale_y_log10(labels=comma)
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/img/ggplot-tutorial/tutorial_6.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/ggplot-tutorial/tutorial_6.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;That&amp;rsquo;s a lot more intuitive, and it makes it clear that there is indeed a positive relationship between listicle size and the number of Facebook shares.&lt;/p&gt;
 &lt;p&gt;Now we can apply the theme and labels:&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-R&#34;&gt;ggplot(df, aes(x=listicle_size, y=num_fb_shares)) +
@@ -113,7 +113,7 @@ scale_y_log10(labels=comma) +
 fte_theme() +
 labs(x=&amp;quot;# of Entries in Listicle&amp;quot;, y=&amp;quot;# of Facebook Shares&amp;quot;, title=&amp;quot;FB Shares vs. Listicle Size for BuzzFeed Listicles&amp;quot;)
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/img/ggplot-tutorial/tutorial_7.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/ggplot-tutorial/tutorial_7.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;And then the final touches. We can include the same horizontal line, x-axis behavior, and point color as with the last plot. However, for the y-axis, we have room to include each power of 10 between 1 and 1,000,000 as breaks, which we can do through a cute R syntax trick: &lt;code&gt;10^(0:6)&lt;/code&gt;. While the chart shows a positive relationship between the variables, the shape is ambiguous and it may be helpful to add a trend line. We use &lt;code&gt;geom_smooth&lt;/code&gt; to add a trendline representing a &lt;a href=&#34;http://www.inside-r.org/r-doc/mgcv/gam&#34; target=&#34;_blank&#34;&gt;generalized additive model&lt;/a&gt; with a 95% confidence interval.&lt;/p&gt;
 &lt;p&gt;Putting it all together:&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-R&#34;&gt;ggplot(df, aes(x=listicle_size, y=num_fb_shares)) +
@@ -125,7 +125,7 @@ geom_smooth(alpha=0.25, color=&amp;quot;black&amp;quot;, fill=&amp;quot;black&am
 fte_theme() +
 labs(x=&amp;quot;# of Entries in Listicle&amp;quot;, y=&amp;quot;# of Facebook Shares&amp;quot;, title=&amp;quot;FB Shares vs. Listicle Size for BuzzFeed Listicles&amp;quot;)
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/img/ggplot-tutorial/tutorial_8.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/ggplot-tutorial/tutorial_8.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Now that is pretty insightful.&lt;/p&gt;
 &lt;p&gt;Hopefully, this small overview of how ggplot2 gives you an small idea of what it can do. This is just the tip of the iceberg. However, making cooler charts such as categorical bar charts, charts with multiple factor variables, and charts with multiple facets require smart data preprocessing, which is a topic for another blog post.&lt;/p&gt;
 &lt;hr /&gt;

@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Video on Max Woolf&#39;s Blog</title><link>/tags/video/</link><description>Recent content in Video on Max Woolf&#39;s Blog</description><generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>Copyright Max Woolf &amp;copy; {year}</copyright><lastBuildDate>Mon, 16 Jul 2018 09:45:00 +0000</lastBuildDate><atom:link href="/tags/video/index.xml" rel="self" type="application/rss+xml"/><item><title>Analyzing IMDb Data The Intended Way, with R and ggplot2</title><link>/2018/07/imdb-data-analysis/</link><pubDate>Mon, 16 Jul 2018 09:45:00 +0000</pubDate><guid>/2018/07/imdb-data-analysis/</guid><description>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Video on Max Woolf&#39;s Blog</title><link>https://minimaxir.com/tags/video/</link><description>Recent content in Video on Max Woolf&#39;s Blog</description><generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>Copyright Max Woolf &amp;copy; {year}</copyright><lastBuildDate>Mon, 16 Jul 2018 09:45:00 +0000</lastBuildDate><atom:link href="https://minimaxir.com/tags/video/index.xml" rel="self" type="application/rss+xml"/><item><title>Analyzing IMDb Data The Intended Way, with R and ggplot2</title><link>https://minimaxir.com/2018/07/imdb-data-analysis/</link><pubDate>Mon, 16 Jul 2018 09:45:00 +0000</pubDate><guid>https://minimaxir.com/2018/07/imdb-data-analysis/</guid><description>
 &lt;p&gt;&lt;a href=&#34;https://www.imdb.com&#34; target=&#34;_blank&#34;&gt;IMDb&lt;/a&gt;, the Internet Movie Database, has been a popular source for data analysis and visualizations over the years. The combination of user ratings for movies and detailed movie metadata have always been fun to &lt;a href=&#34;http://minimaxir.com/2016/01/movie-revenue-ratings/&#34; target=&#34;_blank&#34;&gt;play with&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/img/movie-revenue-ratings/box-office-rating-5.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/movie-revenue-ratings/box-office-rating-5.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;There are a number of tools to help get IMDb data, such as &lt;a href=&#34;https://github.com/alberanid/imdbpy&#34; target=&#34;_blank&#34;&gt;IMDbPY&lt;/a&gt;, which makes it easy to programmatically scrape IMDb by pretending it&amp;rsquo;s a website user and extracting the relevant data from the page&amp;rsquo;s HTML output. While it &lt;em&gt;works&lt;/em&gt;, web scraping public data is a gray area in terms of legality; many large websites have a Terms of Service which forbids scraping, and can potentially send a DMCA take-down notice to websites redistributing scraped data.&lt;/p&gt;
 &lt;p&gt;IMDb has &lt;a href=&#34;https://help.imdb.com/article/imdb/general-information/can-i-use-imdb-data-in-my-software/G5JTRESSHJBBHTGX#&#34; target=&#34;_blank&#34;&gt;data licensing terms&lt;/a&gt; which forbid scraping and require an attribution in the form of a &lt;strong&gt;Information courtesy of IMDb (&lt;a href=&#34;http://www.imdb.com&#34; target=&#34;_blank&#34;&gt;http://www.imdb.com&lt;/a&gt;). Used with permission.&lt;/strong&gt; statement, and has also &lt;a href=&#34;https://www.kaggle.com/tmdb/tmdb-movie-metadata/home&#34; target=&#34;_blank&#34;&gt;DMCAed a Kaggle IMDb dataset&lt;/a&gt; to hone the point.&lt;/p&gt;
 &lt;p&gt;However, there is good news! IMDb publishes an &lt;a href=&#34;https://www.imdb.com/interfaces/&#34; target=&#34;_blank&#34;&gt;official dataset&lt;/a&gt; for casual data analysis! And it&amp;rsquo;s now very accessible, just choose a dataset and download (now with no hoops to jump through), and the files are in the standard &lt;a href=&#34;https://en.wikipedia.org/wiki/Tab-separated_values&#34; target=&#34;_blank&#34;&gt;TSV format&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/img/imdb-data-analysis/datasets.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/imdb-data-analysis/datasets.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;The uncompressed files are pretty large; not &amp;ldquo;big data&amp;rdquo; large (it fits into computer memory), but Excel will explode if you try to open them in it. You have to play with the data &lt;em&gt;smartly&lt;/em&gt;, and both &lt;a href=&#34;https://www.r-project.org&#34; target=&#34;_blank&#34;&gt;R&lt;/a&gt; and &lt;a href=&#34;https://ggplot2.tidyverse.org/reference/index.html&#34; target=&#34;_blank&#34;&gt;ggplot2&lt;/a&gt; have neat tricks to do just that.&lt;/p&gt;
 &lt;h2 id=&#34;first-steps&#34;&gt;First Steps&lt;/h2&gt;
 &lt;p&gt;R is a popular programming language for statistical analysis. One of the most popular series of external packages is the &lt;code&gt;tidyverse&lt;/code&gt; package, which automatically imports the &lt;code&gt;ggplot2&lt;/code&gt; data visualization library and other useful packages which we&amp;rsquo;ll get to one-by-one. We&amp;rsquo;ll also use &lt;code&gt;scales&lt;/code&gt; which we&amp;rsquo;ll use later for prettier number formatting. First we&amp;rsquo;ll load these packages:&lt;/p&gt;
@@ -16,13 +16,13 @@ library(scales)
 &lt;p&gt;We can preview what&amp;rsquo;s in the loaded data using &lt;code&gt;dplyr&lt;/code&gt; (a tidyverse package), which is what we&amp;rsquo;ll be using to manipulate data for this analysis. dplyr allows you to pipe commands, making it easy to create a sequence of manipulation commands. For now, we&amp;rsquo;ll use &lt;code&gt;head()&lt;/code&gt;, which displays the top few rows of the data frame.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;df_ratings %&amp;gt;% head()
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/img/imdb-data-analysis/ratings.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/imdb-data-analysis/ratings.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Each of the &lt;strong&gt;873k rows&lt;/strong&gt; corresponds to a single movie, an ID for the movie, its average rating (from 1 to 10), and the number of votes which contribute to that average. Since we have two numeric variables, why not test out ggplot2 by creating a scatterplot mapping them? ggplot2 takes in a data frame and names of columns as aesthetics, then you specify what type of shape to plot (a &amp;ldquo;geom&amp;rdquo;). Passing the plot to &lt;code&gt;ggsave&lt;/code&gt; saves it as a standalone, high-quality data visualization.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;plot &amp;lt;- ggplot(df_ratings, aes(x = numVotes, y = averageRating)) +
 geom_point()
 ggsave(&amp;quot;imdb-0.png&amp;quot;, plot, width = 4, height = 3)
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/img/imdb-data-analysis/imdb-0.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/imdb-data-analysis/imdb-0.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Here is nearly &lt;em&gt;1 million&lt;/em&gt; points on a single chart; definitely don&amp;rsquo;t try to do that in Excel! However, it&amp;rsquo;s not a &lt;em&gt;useful&lt;/em&gt; chart since all the points are opaque and we&amp;rsquo;re not sure what the spatial density of points is. One approach to fix this issue is to create a heat map of points, which ggplot can do natively with &lt;code&gt;geom_bin2d&lt;/code&gt;. We can color the heat map with the &lt;a href=&#34;https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html&#34; target=&#34;_blank&#34;&gt;viridis&lt;/a&gt; colorblind-friendly palettes &lt;a href=&#34;https://ggplot2.tidyverse.org/reference/scale_viridis.html&#34; target=&#34;_blank&#34;&gt;just introduced&lt;/a&gt; into ggplot2. We should also tweak the axes; the x-axis should be scaled logarithmically with &lt;code&gt;scale_x_log10&lt;/code&gt; since there are many movies with high numbers of votes and we can format those numbers with the &lt;code&gt;comma&lt;/code&gt; function from the &lt;code&gt;scales&lt;/code&gt; package (we can format the scale with &lt;code&gt;comma&lt;/code&gt; too). For the y-axis, we can add explicit number breaks for each rating; R can do this neatly by setting the breaks to &lt;code&gt;1:10&lt;/code&gt;. Putting it all together:&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;plot &amp;lt;- ggplot(df_ratings, aes(x = numVotes, y = averageRating)) +
 geom_bin2d() +
@@ -30,14 +30,14 @@ scale_x_log10(labels = comma) +
 scale_y_continuous(breaks = 1:10) +
 scale_fill_viridis_c(labels = comma)
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/img/imdb-data-analysis/imdb-1.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/imdb-data-analysis/imdb-1.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Not bad, although it unfortunately confirms that IMDb follows a &lt;a href=&#34;https://tvtropes.org/pmwiki/pmwiki.php/Main/FourPointScale&#34; target=&#34;_blank&#34;&gt;Four Point Scale&lt;/a&gt; where average ratings tend to fall between 6 — 9.&lt;/p&gt;
 &lt;h2 id=&#34;mapping-movies-to-ratings&#34;&gt;Mapping Movies to Ratings&lt;/h2&gt;
 &lt;p&gt;You may be asking &amp;ldquo;which ratings correspond to which movies?&amp;rdquo; That&amp;rsquo;s what the &lt;code&gt;tconst&lt;/code&gt; field is for. But first, let&amp;rsquo;s load the title data from &lt;code&gt;title.basics.tsv&lt;/code&gt; into &lt;code&gt;df_basics&lt;/code&gt; and take a look as before.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;df_basics &amp;lt;- read_tsv(&#39;title.basics.tsv&#39;, na = &amp;quot;\\N&amp;quot;, quote = &#39;&#39;)
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/img/imdb-data-analysis/basics1.png&#34; alt=&#34;&#34; /&gt;
-&lt;img src=&#34;/img/imdb-data-analysis/basics2.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/imdb-data-analysis/basics1.png&#34; alt=&#34;&#34; /&gt;
+&lt;img src=&#34;https://minimaxir.com/img/imdb-data-analysis/basics2.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;We have some neat movie metadata. Notably, this table has a &lt;code&gt;tconst&lt;/code&gt; field as well. Therefore, we can &lt;em&gt;join&lt;/em&gt; the two tables together, adding the movie information to the corresponding row in the rating table (in this case, a left join is more appropriate than an inner/full join)&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;df_ratings &amp;lt;- df_ratings %&amp;gt;% left_join(df_basics)
 &lt;/code&gt;&lt;/pre&gt;
@@ -56,7 +56,7 @@ y = &amp;quot;Average User Rating&amp;quot;,
 caption = &amp;quot;Max Woolf — minimaxir.com&amp;quot;,
 fill = &amp;quot;# Movies&amp;quot;)
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/img/imdb-data-analysis/imdb-2b.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/imdb-data-analysis/imdb-2b.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Now that&amp;rsquo;s pretty nice-looking for only a few lines of code! Albeit unhelpful, as there doesn&amp;rsquo;t appear to be a correlation.&lt;/p&gt;
 &lt;p&gt;&lt;em&gt;(Note: for the rest of this post, the theming/labels code will be omitted for convenience)&lt;/em&gt;&lt;/p&gt;
 &lt;p&gt;How about movie ratings vs. the year the movie was made? It&amp;rsquo;s a similar plot code-wise to the one above (one perk about &lt;code&gt;ggplot2&lt;/code&gt; is that there&amp;rsquo;s no shame in reusing chart code!), but we can add a &lt;code&gt;geom_smooth&lt;/code&gt;, which adds a nonparametric trendline with confidence bands for the trend; since we have a large amount of data, the bands are very tight. We can also fix the problem of &amp;ldquo;empty&amp;rdquo; bins by setting the color fill scale to logarithmic scaling. And since we&amp;rsquo;re adding a black trendline, let&amp;rsquo;s change the viridis palette to &lt;code&gt;plasma&lt;/code&gt; for better contrast.&lt;/p&gt;
@@ -67,7 +67,7 @@ scale_x_continuous() +
 scale_y_continuous(breaks = 1:10) +
 scale_fill_viridis_c(option = &amp;quot;plasma&amp;quot;, labels = comma, trans = &#39;log10&#39;)
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/img/imdb-data-analysis/imdb-4.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/imdb-data-analysis/imdb-4.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Unfortunately, this trend hasn&amp;rsquo;t changed much either, although the presence of average ratings outside the Four Point Scale has increased over time.&lt;/p&gt;
 &lt;h2 id=&#34;mapping-lead-actors-to-movies&#34;&gt;Mapping Lead Actors to Movies&lt;/h2&gt;
 &lt;p&gt;Now that we have a handle on working with the IMDb data, let&amp;rsquo;s try playing with the larger datasets. Since they take up a lot of computer memory, we only want to persist data we actually might use. After looking at the schema provided with the official datasets, the only really useful metadata about the actors is their birth year, so let&amp;rsquo;s load that, but only keep both actors/actresses (using the fast &lt;code&gt;str_detect&lt;/code&gt; function from &lt;code&gt;stringr&lt;/code&gt;, another tidyverse package) and the relevant fields.&lt;/p&gt;
@@ -75,9 +75,9 @@ scale_fill_viridis_c(option = &amp;quot;plasma&amp;quot;, labels = comma, trans 
 filter(str_detect(primaryProfession, &amp;quot;actor|actress&amp;quot;)) %&amp;gt;%
 select(nconst, primaryName, birthYear)
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/img/imdb-data-analysis/actor.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/imdb-data-analysis/actor.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;The principals dataset, the large 1.28GB TSV, is the most interesting. It&amp;rsquo;s an unnested list of the credited persons in each movie, with an &lt;code&gt;ordering&lt;/code&gt; indicating their rank (where &lt;code&gt;1&lt;/code&gt; means first, &lt;code&gt;2&lt;/code&gt; means second, etc.).&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/img/imdb-data-analysis/principals.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/imdb-data-analysis/principals.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;For this analysis, let&amp;rsquo;s only look at the &lt;strong&gt;lead actors/actresses&lt;/strong&gt;; specifically, for each movie (identified by the &lt;code&gt;tconst&lt;/code&gt; value), filter the dataset to where the &lt;code&gt;ordering&lt;/code&gt; value is the lowest (in this case, the person at rank &lt;code&gt;1&lt;/code&gt; may not necessarily be an actor/actress).&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;df_principals &amp;lt;- read_tsv(&#39;title.principals.tsv&#39;, na = &amp;quot;\\N&amp;quot;, quote = &#39;&#39;) %&amp;gt;%
 filter(str_detect(category, &amp;quot;actor|actress&amp;quot;)) %&amp;gt;%
@@ -94,8 +94,8 @@ df_ratings &amp;lt;- df_ratings %&amp;gt;% left_join(df_principals)
 filter(titleType == &amp;quot;movie&amp;quot;, !is.na(birthYear), numVotes &amp;gt;= 10) %&amp;gt;%
 mutate(age_lead = startYear - birthYear)
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/img/imdb-data-analysis/denorm1.png&#34; alt=&#34;&#34; /&gt;
-&lt;img src=&#34;/img/imdb-data-analysis/denorm2.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/imdb-data-analysis/denorm1.png&#34; alt=&#34;&#34; /&gt;
+&lt;img src=&#34;https://minimaxir.com/img/imdb-data-analysis/denorm2.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 &lt;h2 id=&#34;plotting-ages&#34;&gt;Plotting Ages&lt;/h2&gt;
 &lt;p&gt;Age discrimination in movie casting has been a recurring issue in Hollywood; in fact, in 2017 &lt;a href=&#34;https://www.hollywoodreporter.com/thr-esq/judge-pauses-enforcement-imdb-age-censorship-law-978797&#34; target=&#34;_blank&#34;&gt;a law was signed&lt;/a&gt; to force IMDb to remove an actor&amp;rsquo;s age upon request, which in February 2018 was &lt;a href=&#34;https://www.hollywoodreporter.com/thr-esq/californias-imdb-age-censorship-law-declared-unconstitutional-1086540&#34; target=&#34;_blank&#34;&gt;ruled to be unconstitutional&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;Have the ages of movie leads changed over time? For this example, we&amp;rsquo;ll use a &lt;a href=&#34;https://ggplot2.tidyverse.org/reference/geom_ribbon.html&#34; target=&#34;_blank&#34;&gt;ribbon plot&lt;/a&gt; to plot the ranges of ages of movie leads. A simple way to do that is, for each year, calculate the 25th &lt;a href=&#34;https://en.wikipedia.org/wiki/Percentile&#34; target=&#34;_blank&#34;&gt;percentile&lt;/a&gt; of the ages, the 50th percentile (i.e. the median), and the 75th percentile, where the 25th and 75th percentiles are the ribbon bounds and the line represents the median.&lt;/p&gt;
@@ -110,7 +110,7 @@ high_age = quantile(age_lead, 0.75, na.rm=T))
 geom_ribbon(aes(ymin = low_age, ymax = high_age), alpha = 0.2) +
 geom_line(aes(y = med_age))
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/img/imdb-data-analysis/imdb-8.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/imdb-data-analysis/imdb-8.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Turns out that in the 2000&amp;rsquo;s, the median age of lead actors started to &lt;em&gt;increase&lt;/em&gt;? Both the upper and lower bounds increased too. That doesn&amp;rsquo;t coalesce with the age discrimination complaints.&lt;/p&gt;
 &lt;p&gt;Another aspect of these complaints is gender, as female actresses tend to be younger than male actors. Thanks to the magic of ggplot2 and dplyr, separating actors/actresses is relatively simple: add gender (encoded in &lt;code&gt;category&lt;/code&gt;) as a grouping variable, add it as a color/fill aesthetic in ggplot, and set colors appropriately (I recommend the &lt;a href=&#34;http://colorbrewer2.org/&#34; target=&#34;_blank&#34;&gt;ColorBrewer&lt;/a&gt; qualitative palettes for categorical variables).&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;df_actor_ages_lead &amp;lt;- df_ratings_movies %&amp;gt;%
@@ -124,7 +124,7 @@ geom_line(aes(y = med_age)) +
 scale_fill_brewer(palette = &amp;quot;Set1&amp;quot;) +
 scale_color_brewer(palette = &amp;quot;Set1&amp;quot;)
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/img/imdb-data-analysis/imdb-9.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/imdb-data-analysis/imdb-9.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;There&amp;rsquo;s about a 10-year gap between the ages of male and female leads, and the gap doesn&amp;rsquo;t change overtime. But both start to rise at the same time.&lt;/p&gt;
 &lt;p&gt;One possible explanation for this behavior is actor reuse: if Hollywood keeps casting the same actor/actresses, by construction the ages of the leads will start to steadily increase. Let&amp;rsquo;s verify that: with our list of movies and their lead actors, for each lead actor, order all their movies by release year, and add a ranking for the #th time that actor has been a lead actor. This is possible through the use of &lt;code&gt;row_number&lt;/code&gt; in dplyr, and &lt;a href=&#34;https://cran.r-project.org/web/packages/dplyr/vignettes/window-functions.html&#34; target=&#34;_blank&#34;&gt;window functions&lt;/a&gt; like &lt;code&gt;row_number&lt;/code&gt; are data science&amp;rsquo;s most useful secret.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;df_ratings_movies_nth &amp;lt;- df_ratings_movies %&amp;gt;%
@@ -132,9 +132,9 @@ group_by(nconst) %&amp;gt;%
 arrange(startYear) %&amp;gt;%
 mutate(nth_lead = row_number())
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/img/imdb-data-analysis/row_number.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/imdb-data-analysis/row_number.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;One more ribbon plot later (w/ same code as above + custom y-axis breaks):&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/img/imdb-data-analysis/imdb-12.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/imdb-data-analysis/imdb-12.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Huh. The median and upper-bound #th time has &lt;em&gt;dropped&lt;/em&gt; over time? Hollywood has been promoting more newcomers as leads? That&amp;rsquo;s not what I expected!&lt;/p&gt;
 &lt;p&gt;More work definitely needs to be done in this area. In the meantime, the official IMDb datasets are a lot more robust than I thought they would be! And I only used a fraction of the datasets; the rest tie into TV shows, which are a bit messier. Hopefully you&amp;rsquo;ve seen a good taste of the power of R and ggplot2 for playing with big-but-not-big data!&lt;/p&gt;
 &lt;hr /&gt;
