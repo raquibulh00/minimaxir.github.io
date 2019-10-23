@@ -17,11 +17,11 @@
 &lt;h2 id=&#34;wtf&#34;&gt;WTF?&lt;/h2&gt;
 &lt;p&gt;On a NES and various other rereleases, inputting that code will cause the game to either simply reset or transform the game into a glitched wonderland:&lt;/p&gt;
 &lt;div style=&#34;position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;&#34;&gt;
-&lt;iframe src=&#34;//www.youtube.com/embed/x3UyVylP7AI&#34; style=&#34;position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;&#34; allowfullscreen title=&#34;YouTube Video&#34;&gt;&lt;/iframe&gt;
+&lt;iframe src=&#34;https://www.youtube.com/embed/x3UyVylP7AI&#34; style=&#34;position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;&#34; allowfullscreen title=&#34;YouTube Video&#34;&gt;&lt;/iframe&gt;
 &lt;/div&gt;
 &lt;p&gt;But what happens when you enter the password on an emulated Virtual Console, where the game environment is sandboxed? In the case of the 3DS Virtual Console, the &lt;em&gt;3DS completely crashes&lt;/em&gt;:&lt;/p&gt;
 &lt;div style=&#34;position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;&#34;&gt;
-&lt;iframe src=&#34;//www.youtube.com/embed/pjQ7SjB_6a8&#34; style=&#34;position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;&#34; allowfullscreen title=&#34;YouTube Video&#34;&gt;&lt;/iframe&gt;
+&lt;iframe src=&#34;https://www.youtube.com/embed/pjQ7SjB_6a8&#34; style=&#34;position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;&#34; allowfullscreen title=&#34;YouTube Video&#34;&gt;&lt;/iframe&gt;
 &lt;/div&gt;
 &lt;h2 id=&#34;rated-e-for-everyone&#34;&gt;Rated E for Everyone?&lt;/h2&gt;
 &lt;p&gt;You may be asking &amp;ldquo;did someone at Nintendo actually program a consequence for profanity in the game? Is the glitching and crashing a punishment for the perverse player?&amp;rdquo; In truth, the password is merely a coincidence.&lt;/p&gt;
@@ -46,7 +46,7 @@ called the reset bit, because it guarantees an invalid password.&lt;/p&gt;
 &lt;p&gt;Not as catchy, unfortunately.&lt;/p&gt;
 &lt;p&gt;In fact, the Justin Bailey password is also a completely coincidental password. Sometimes, passwords can just do very unexpected things.&lt;/p&gt;</description></item><item><title>Super Mario World &#34;Completed&#34; in Under 3 Minutes by Corrupting the RAM</title><link>https://minimaxir.com/2013/03/127-yoshis-in-slot-6/</link><pubDate>Sun, 24 Mar 2013 21:44:00 -0700</pubDate><guid>https://minimaxir.com/2013/03/127-yoshis-in-slot-6/</guid><description>
 &lt;div style=&#34;position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;&#34;&gt;
-&lt;iframe src=&#34;//www.youtube.com/embed/Syo5sI-iOgY&#34; style=&#34;position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;&#34; allowfullscreen title=&#34;YouTube Video&#34;&gt;&lt;/iframe&gt;
+&lt;iframe src=&#34;https://www.youtube.com/embed/Syo5sI-iOgY&#34; style=&#34;position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;&#34; allowfullscreen title=&#34;YouTube Video&#34;&gt;&lt;/iframe&gt;
 &lt;/div&gt;
 &lt;p&gt;Watch the video above, you won&amp;rsquo;t regret it. (the fun part starts at 1:12)&lt;/p&gt;
 &lt;p&gt;This is a &lt;a href=&#34;http://tasvideos.org/&#34; target=&#34;_blank&#34;&gt;Tool-Assisted Speed Run&lt;/a&gt; (TAS) of the Super Nintendo classic Super Mario World. TASes use an emulator to perform optimal game actions with frame-by-frame precision in order to complete the game in the lowest amount of time, and can use &amp;ldquo;save states&amp;rdquo; to reverse any gameplay mistakes. Games on older consoles frequently have glitches that require such precision that consequently are very difficult to perform on a console consistently, making TASes more of an art form than actual gameplay advice.&lt;/p&gt;
@@ -81,15 +81,15 @@ called the reset bit, because it guarantees an invalid password.&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;Install the Stylish extension for your browser.&lt;/li&gt;
 &lt;li&gt;In the extension preferences, go to &amp;ldquo;Managed Installed Styles&amp;rdquo; and select &amp;ldquo;Write New Style&amp;rdquo;&lt;/li&gt;
-&lt;li&gt;Paste this CSS code in the &amp;ldquo;Code&amp;rdquo; textbox:&lt;/li&gt;
-&lt;/ol&gt;
+&lt;li&gt;&lt;p&gt;Paste this CSS code in the &amp;ldquo;Code&amp;rdquo; textbox:&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-css&#34;&gt;body, ._li, .main {
 background-image: url(http://i.imgur.com/UN5HE.png) !important;
 background-position: right bottom !important;
 background-repeat: no-repeat !important;
 background-attachment: fixed !important;
 }
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
 &lt;p&gt;And you&amp;rsquo;re done! Justin will appear pretty much everywhere. Yes, there are a lot of &lt;em&gt;!important&lt;/em&gt; declarations, but Justin Timberlake is an important man.&lt;/p&gt;
 &lt;p&gt;In fact, by using the HTML snippet in this &lt;a href=&#34;https://github.com/minimaxir/display-justin-timberlake-sexiness&#34; target=&#34;_blank&#34;&gt;GitHub repository&lt;/a&gt;, you can add Justin to your own site!&lt;/p&gt;
 &lt;p&gt;Feel free to narrow down the domains where Justin appears by using Stylish as necessary. Although, why would you do such a thing!?&lt;/p&gt;
@@ -101,7 +101,7 @@ background-attachment: fixed !important;
 &lt;p&gt;Using the power of Stylish, I present to you, a sneak peek into TechCrunch&amp;rsquo;s 2013 redesign.&lt;/p&gt;
 &lt;p&gt;I made a &lt;em&gt;few&lt;/em&gt; stylistic additions as well. It&amp;rsquo;s magic.&lt;/p&gt;
 &lt;div style=&#34;position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;&#34;&gt;
-&lt;iframe src=&#34;//www.youtube.com/embed/j6m2pjjhnuU&#34; style=&#34;position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;&#34; allowfullscreen title=&#34;YouTube Video&#34;&gt;&lt;/iframe&gt;
+&lt;iframe src=&#34;https://www.youtube.com/embed/j6m2pjjhnuU&#34; style=&#34;position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;&#34; allowfullscreen title=&#34;YouTube Video&#34;&gt;&lt;/iframe&gt;
 &lt;/div&gt;
 &lt;p&gt;You can find a copy of the CSS I used to emulate this wonderful layout in &lt;a href=&#34;https://github.com/minimaxir/techcrunch-1999&#34; target=&#34;_blank&#34;&gt;this GitHub repository&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;Will you let Timberlake enrich &lt;em&gt;your&lt;/em&gt; life? He&amp;rsquo;s waiting. In the lower-right corner of your screen.&lt;/p&gt;</description></item><item><title>Auto-Save Images From Reddit To Computer Without Visiting The Site (Using IFTTT)</title><link>https://minimaxir.com/2013/01/if-cute-then-happiness/</link><pubDate>Sun, 13 Jan 2013 21:32:00 -0700</pubDate><guid>https://minimaxir.com/2013/01/if-cute-then-happiness/</guid><description>

@@ -1,4 +1,117 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Data Visualization on Max Woolf&#39;s Blog</title><link>https://minimaxir.com/categories/data-visualization/</link><description>Recent content in Data Visualization on Max Woolf&#39;s Blog</description><generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>Copyright Max Woolf &amp;copy; {year}</copyright><lastBuildDate>Mon, 10 Sep 2018 09:15:00 -0700</lastBuildDate><atom:link href="https://minimaxir.com/categories/data-visualization/index.xml" rel="self" type="application/rss+xml"/><item><title>Problems with Predicting Post Performance on Reddit and Other Link Aggregators</title><link>https://minimaxir.com/2018/09/modeling-link-aggregators/</link><pubDate>Mon, 10 Sep 2018 09:15:00 -0700</pubDate><guid>https://minimaxir.com/2018/09/modeling-link-aggregators/</guid><description>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Data Visualization on Max Woolf&#39;s Blog</title><link>https://minimaxir.com/categories/data-visualization/</link><description>Recent content in Data Visualization on Max Woolf&#39;s Blog</description><generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>Copyright Max Woolf &amp;copy; {year}</copyright><lastBuildDate>Wed, 23 Oct 2019 09:00:00 -0700</lastBuildDate><atom:link href="https://minimaxir.com/categories/data-visualization/index.xml" rel="self" type="application/rss+xml"/><item><title>Visualizing Airline Flight Characteristics Between SFO and JFK</title><link>https://minimaxir.com/2019/10/sfo-jfk-flights/</link><pubDate>Wed, 23 Oct 2019 09:00:00 -0700</pubDate><guid>https://minimaxir.com/2019/10/sfo-jfk-flights/</guid><description>
+&lt;p&gt;In March, &lt;a href=&#34;https://cloud.google.com&#34; target=&#34;_blank&#34;&gt;Google Compute Platform&lt;/a&gt; developer advocate &lt;a href=&#34;https://twitter.com/felipehoffa&#34; target=&#34;_blank&#34;&gt;Felipe Hoffa&lt;/a&gt; made a tweet about airline flight data from San Francisco International Airport (SFO) to Seattle-Tacoma International Airport (SEA):&lt;/p&gt;
+&lt;blockquote class=&#34;twitter-tweet&#34;&gt;&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;The time to fly from San Francisco to Seattle (SFO-&amp;gt;SEA) keeps getting longer throughout the years - with a huge increase in how much time the airplane spends taxiing around SeaTac .&lt;br&gt;&lt;br&gt;Playing with US flights data in BigQuery: &lt;a href=&#34;https://t.co/eD9unaokWx&#34;&gt;https://t.co/eD9unaokWx&lt;/a&gt; &lt;a href=&#34;https://t.co/3vfnBhiJv4&#34;&gt;pic.twitter.com/3vfnBhiJv4&lt;/a&gt;&lt;/p&gt;&amp;mdash; Felipe Hoffa (@felipehoffa) &lt;a href=&#34;https://twitter.com/felipehoffa/status/1111050585120206848?ref_src=twsrc%5Etfw&#34;&gt;March 27, 2019&lt;/a&gt;&lt;/blockquote&gt;
+&lt;script async src=&#34;https://platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
+&lt;p&gt;Particularly, his visualization of total elapsed times by airline caught my eye.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://pbs.twimg.com/media/D2s9oFtX4AEK6nD?format=jpg&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;The overall time for flights from SFO to SEA goes up drastically starting in 2015, and this increase occurs across multiple airlines, implying that it&amp;rsquo;s not an airline-specific problem. But what could intuitively cause that?&lt;/p&gt;
+&lt;p&gt;U.S. domestic airline data is &lt;a href=&#34;https://www.transtats.bts.gov/Tables.asp?DB_ID=120&#34; target=&#34;_blank&#34;&gt;freely distributed&lt;/a&gt; by the United States Department of Transportation. Normally it&amp;rsquo;s a pain to work with as it&amp;rsquo;s very large with millions of rows, but BigQuery makes playing with such data relatively easy, fun, and free. What other interesting factoids can be found?&lt;/p&gt;
+&lt;h2 id=&#34;expanding-on-sfo-sea&#34;&gt;Expanding on SFO → SEA&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://cloud.google.com/bigquery/&#34; target=&#34;_blank&#34;&gt;BigQuery&lt;/a&gt; is a big data warehousing tool that allows you to query massive amounts of data. The table Hoffa created from the airline data (&lt;code&gt;fh-bigquery.flights.ontime_201903&lt;/code&gt;) is 83.37 GB and 184 &lt;em&gt;million&lt;/em&gt; rows. You can query 1 TB of data from it for free, but since BQ will only query against the fields you request, the queries in this post only consume about 2 GB each, allowing you to run them well within that quota.&lt;/p&gt;
+&lt;p&gt;Hoffa&amp;rsquo;s query that runs on BigQuery looks like this:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-sql&#34;&gt;SELECT FlightDate_year, Reporting_Airline
+, AVG(ActualElapsedTime) ActualElapsedTime
+, AVG(TaxiOut) TaxiOut
+, AVG(TaxiIn) TaxiIn
+, AVG(AirTime) AirTime
+, COUNT(*) c
+FROM `fh-bigquery.flights.ontime_201903`
+WHERE Origin = &#39;SFO&#39;
+AND Dest = &#39;SEA&#39;
+AND FlightDate_year &amp;gt; &#39;2010-01-01&#39;
+GROUP BY 1,2
+ORDER BY 1 DESC, 3 DESC
+LIMIT 1000
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;For each year and airline after 2010, the query calculates the average metrics specified for flights on the SFO → SEA route.&lt;/p&gt;
+&lt;p&gt;I made a few query and data visualization tweaks to what Hoffa did above, and here&amp;rsquo;s the result showing the increase in elapsed airline flight time, over time for that route:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/sfo-jfk-flights/sfo_sea_flight_duration.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Let&amp;rsquo;s explain what&amp;rsquo;s going on here.&lt;/p&gt;
+&lt;p&gt;A common trend in statistics is avoiding using &lt;a href=&#34;https://en.wikipedia.org/wiki/Average&#34; target=&#34;_blank&#34;&gt;averages&lt;/a&gt; as a summary statistic whenever possible, as averages can be overly affected by strong outliers (and with airline flights, there are definitely strong outliers!). The solution is to use a &lt;a href=&#34;https://en.wikipedia.org/wiki/Median&#34; target=&#34;_blank&#34;&gt;median&lt;/a&gt; instead, but one problem: medians are hard and &lt;a href=&#34;https://www.periscopedata.com/blog/medians-in-sql&#34; target=&#34;_blank&#34;&gt;computationally complex&lt;/a&gt; to calculate compared to simple averages. Despite the rise of &amp;ldquo;big data&amp;rdquo;, most databases and BI tools don&amp;rsquo;t have a &lt;code&gt;MEDIAN&lt;/code&gt; function that&amp;rsquo;s as easy to use as an &lt;code&gt;AVG&lt;/code&gt; function. But BigQuery has an uncommon &lt;a href=&#34;https://cloud.google.com/bigquery/docs/reference/standard-sql/approximate_aggregate_functions#approx_quantiles&#34; target=&#34;_blank&#34;&gt;APPROX_QUANTILES&lt;/a&gt; function, which calculates the specified amount of quantiles; for example, if you call &lt;code&gt;APPROX_QUANTILES(ActualElapsedTime, 100)&lt;/code&gt;, it will return an array with the 100 quantiles, where the median will be the 50th quantile. BigQuery &lt;a href=&#34;https://cloud.google.com/bigquery/docs/reference/standard-sql/approximate-aggregation&#34; target=&#34;_blank&#34;&gt;uses&lt;/a&gt; an algorithmic trick called &lt;a href=&#34;https://en.wikipedia.org/wiki/HyperLogLog&#34; target=&#34;_blank&#34;&gt;HyperLogLog++&lt;/a&gt; to calculate these quantiles efficiently even with millions of data points. But since we get other quantiles like the 5th, 25th, 75th, and 95th quantiles for free with that approach, we can visualize the &lt;em&gt;spread&lt;/em&gt; of the data.&lt;/p&gt;
+&lt;p&gt;We can aggregate the data by month for more granular trends and calculate the &lt;code&gt;APPROX_QUANTILES&lt;/code&gt; in a subquery so it only has to be computed once. Hoffa also uploaded a more recent table (&lt;code&gt;fh-bigquery.flights.ontime_201908&lt;/code&gt;) with a few additional months of data. To make things more simple, we&amp;rsquo;ll ignore aggregating by airlines since the metrics do not vary strongly between them. The final query ends up looking like this:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-sql&#34;&gt;#standardSQL
+SELECT Year, Month, num_flights,
+time_q[OFFSET(5)] AS q_5,
+time_q[OFFSET(25)] AS q_25,
+time_q[OFFSET(50)] AS q_50,
+time_q[OFFSET(75)] AS q_75,
+time_q[OFFSET(95)] AS q_95
+FROM (
+SELECT Year, Month,
+COUNT(*) as num_flights,
+APPROX_QUANTILES(ActualElapsedTime, 100) AS time_q
+FROM `fh-bigquery.flights.ontime_201908`
+WHERE Origin = &#39;SFO&#39;
+AND Dest = &#39;SEA&#39;
+AND FlightDate_year &amp;gt; &#39;2010-01-01&#39;
+GROUP BY Year, Month
+)
+ORDER BY Year, Month
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The resulting data table:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/sfo-jfk-flights/table.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;In retrospect, since we&amp;rsquo;re only focusing on one route, it isn&amp;rsquo;t &lt;em&gt;big&lt;/em&gt; data (this query only returns data on 64,356 flights total), but it&amp;rsquo;s still a very useful skill if you need to analyze more of the airline data (the &lt;code&gt;APPROX_QUANTILES&lt;/code&gt; function can handle &lt;em&gt;millions&lt;/em&gt; of data points very quickly).&lt;/p&gt;
+&lt;p&gt;As a professional data scientist, one of my favorite types of data visualization is a &lt;a href=&#34;https://en.wikipedia.org/wiki/Box_plot&#34; target=&#34;_blank&#34;&gt;box plot&lt;/a&gt;, as it provides a way to visualize spread without being visually intrusive. Data visualization tools like &lt;a href=&#34;https://www.r-project.org&#34; target=&#34;_blank&#34;&gt;R&lt;/a&gt; and &lt;a href=&#34;https://ggplot2.tidyverse.org/index.html&#34; target=&#34;_blank&#34;&gt;ggplot2&lt;/a&gt; make constructing them &lt;a href=&#34;https://ggplot2.tidyverse.org/reference/geom_boxplot.html&#34; target=&#34;_blank&#34;&gt;very easy to do&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/sfo-jfk-flights/geom_boxplot-1.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;By default, for each box representing a group, the thick line in the middle of the box is the median, the lower bound of the box is the 25th quantile and the upper bound is the 75th quantile. The whiskers are normally a function of the &lt;a href=&#34;https://en.wikipedia.org/wiki/Interquartile_range&#34; target=&#34;_blank&#34;&gt;interquartile range&lt;/a&gt; (IQR), but if there&amp;rsquo;s enough data, I prefer to use the 5th and 95th quantiles instead.&lt;/p&gt;
+&lt;p&gt;If you feed ggplot2&amp;rsquo;s &lt;code&gt;geom_boxplot()&lt;/code&gt; with raw data, it will automatically calculate the corresponding metrics for visualization; however, with big data, the data may not fit into memory and as noted earlier, medians and other quantiles are computationally expensive to calculate. Because we precomputed the quantiles with the query above for every year and month, we can use those explicitly. (The minor downside is that this will not include outliers)&lt;/p&gt;
+&lt;p&gt;Additionally for box plots, I like to fill in each box with a different color corresponding to the year in order to better perceive data &lt;a href=&#34;https://en.wikipedia.org/wiki/Seasonality&#34; target=&#34;_blank&#34;&gt;seasonality&lt;/a&gt;. In the case of airline flights, seasonality is more literal: weather has an intuitive impact on flight times and delays, and during winter months there are also holidays which could affect airline logistics.&lt;/p&gt;
+&lt;p&gt;The resulting ggplot2 code looks like this:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;plot &amp;lt;-
+ggplot(df_tf,
+aes(
+x = date,
+ymin = q_5,
+lower = q_25,
+middle = q_50,
+upper = q_75,
+ymax = q_95,
+group = date,
+fill = year_factor
+)) +
+geom_boxplot(stat = &amp;quot;identity&amp;quot;, size = 0.3) +
+scale_fill_hue(l = 50, guide = F) +
+scale_x_date(date_breaks = &#39;1 year&#39;, date_labels = &amp;quot;%Y&amp;quot;) +
+scale_y_continuous(breaks = pretty_breaks(6)) +
+labs(
+title = &amp;quot;Distribution of Flight Times of Flights From SFO → SEA, by Month&amp;quot;,
+subtitle = &amp;quot;via US DoT. Box bounds are 25th/75th percentiles, whiskers are 5th/95th percentiles.&amp;quot;,
+y = &#39;Total Elapsed Flight Time (Minutes)&#39;,
+fill = &#39;&#39;,
+caption = &#39;Max Woolf — minimaxir.com&#39;
+) +
+theme(axis.title.x = element_blank())
+ggsave(&#39;sfo_sea_flight_duration.png&#39;,
+plot,
+width = 6,
+height = 4)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;And behold (again)!&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/sfo-jfk-flights/sfo_sea_flight_duration.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;You can see that the boxes do indeed trend upward after 2016, although per-month medians are in flux. The spread is also increasingly slowly over time. But what&amp;rsquo;s interesting is the seasonality; pre-2016, the summer months (the &amp;ldquo;middle&amp;rdquo; of a given color) have a &lt;em&gt;very&lt;/em&gt; significant drop in total time, which doesn&amp;rsquo;t occur as strongly after 2016. Hmm.&lt;/p&gt;
+&lt;h2 id=&#34;sfo-and-jfk&#34;&gt;SFO and JFK&lt;/h2&gt;
+&lt;p&gt;Since I occasionally fly from San Francisco to New York City, it might be interesting (for completely selfish reasons) to track trends over time for flights between those areas. On the San Francisco side I choose SFO, and for the New York side I choose John F. Kennedy International Airport (JFK), as the data goes back very far for those routes specifically, and I only want to look at a single airport at a time (instead of including other NYC airports such as Newark Liberty International Airport [EWR] and LaGuardia Airport [LGA]) to limit potential data confounders.&lt;/p&gt;
+&lt;p&gt;Fortunately, the code and query changes are minimal: in the query, change the target metric to whatever metric you want, and the &lt;code&gt;Origin&lt;/code&gt; and &lt;code&gt;Dest&lt;/code&gt; in the &lt;code&gt;WHERE&lt;/code&gt; clause to what you want, and if you want to calculate metrics other than elapsed time, change the metric in &lt;code&gt;APPROX_QUANTILES&lt;/code&gt; accordingly.&lt;/p&gt;
+&lt;p&gt;Here&amp;rsquo;s the chart of total elapsed time from SFO → JFK:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/sfo-jfk-flights/sfo_jfk_flight_duration.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;And here&amp;rsquo;s the reverse, from JFK → SFO:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/sfo-jfk-flights/jfk_sfo_flight_duration.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Unlike the SFO → SEA charts, both charts are relatively flat over the years. However, when looking at seasonality, SFO → JFK dips in the summer and spikes during winter, while JFK → SFO &lt;em&gt;does the complete opposite&lt;/em&gt;: dips during the winter and spikes during the summer, which is similar to the SFO → SEA route. I don&amp;rsquo;t have any guesses what would cause that behavior.&lt;/p&gt;
+&lt;p&gt;How about flight speed (calculated via air time divided by distance)? Have new advances in airline technology made planes faster and/or more efficient?&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/sfo-jfk-flights/sfo_jfk_flight_speed.png&#34; alt=&#34;&#34; /&gt;
+&lt;img src=&#34;https://minimaxir.com/img/sfo-jfk-flights/jfk_sfo_flight_speed.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;The expected flight speed for a commercial airplane, &lt;a href=&#34;https://en.wikipedia.org/wiki/Cruise_(aeronautics)&#34; target=&#34;_blank&#34;&gt;per Wikipedia&lt;/a&gt;, is 547-575 mph, so the metrics from SFO pass the sanity check. The metrics from JFK indicate there&amp;rsquo;s about a 20% drop in flight speed potentially due to wind resistance, which makes sense. Month-to-month, the speed trends are inverse to the total elapsed time, which makes sense intuitively as they are strongly negatively correlated.&lt;/p&gt;
+&lt;p&gt;Lastly, what about flight departure delays? Are airlines becoming more efficient, or has increased demand caused more congestion?&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/sfo-jfk-flights/sfo_jfk_departure_delay.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Wait a second. In this case, massive 2-3 hour flight delays are frequent enough that even just the 95% percentile skews the entire plot. Let&amp;rsquo;s remove the whiskers in order to look at trends more clearly.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/sfo-jfk-flights/sfo_jfk_departure_delay_nowhiskers.png&#34; alt=&#34;&#34; /&gt;
+&lt;img src=&#34;https://minimaxir.com/img/sfo-jfk-flights/jfk_sfo_departure_delay_nowhiskers.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;A negative delay implies the flight leaves early, so we can conclude on average, flights leave slightly earlier than the stated departure time. Even without the whiskers, we can see major spikes at the 75th percentile level for summer months, and said spikes were especially bad in 2017 for both airports.&lt;/p&gt;
+&lt;p&gt;These box plots are only an &lt;a href=&#34;https://en.wikipedia.org/wiki/Exploratory_data_analysis&#34; target=&#34;_blank&#34;&gt;exploratory data analysis&lt;/a&gt;. Determining the &lt;em&gt;cause&lt;/em&gt; of changes in these flight metrics is difficult even for experts (I am definitely not an expert!) and many not even be possible to determine from publicly-available data.&lt;/p&gt;
+&lt;p&gt;But there are still other fun things that can be done with the airline flight data, such as faceting airline trends by time and the inclusion of other airports, which is &lt;a href=&#34;https://twitter.com/minimaxir/status/1115261670153048065&#34; target=&#34;_blank&#34;&gt;&lt;em&gt;interesting&lt;/em&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;hr /&gt;
+&lt;p&gt;&lt;em&gt;You can view the BigQuery queries used to get the data, plus the R and ggplot2 used to create the data visualizations, in &lt;a href=&#34;http://minimaxir.com/notebooks/sfo-jfk-flights/&#34; target=&#34;_blank&#34;&gt;this R Notebook&lt;/a&gt;. You can also view the images/code used for this post in &lt;a href=&#34;https://github.com/minimaxir/sfo-jfk-flights&#34; target=&#34;_blank&#34;&gt;this GitHub repository&lt;/a&gt;&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;You are free to use the data visualizations from this article however you wish, but it would be greatly appreciated if proper attribution is given to this article and/or myself!&lt;/em&gt;&lt;/p&gt;</description></item><item><title>Problems with Predicting Post Performance on Reddit and Other Link Aggregators</title><link>https://minimaxir.com/2018/09/modeling-link-aggregators/</link><pubDate>Mon, 10 Sep 2018 09:15:00 -0700</pubDate><guid>https://minimaxir.com/2018/09/modeling-link-aggregators/</guid><description>
 &lt;p&gt;&lt;a href=&#34;https://www.reddit.com&#34; target=&#34;_blank&#34;&gt;Reddit&lt;/a&gt;, &amp;ldquo;the front page of the internet&amp;rdquo; is a link aggregator where anyone can submit links to cool happenings. Over the years, Reddit has expanded from just being a link aggregator, to allowing image and videos, and as of recently, hosting images and videos itself.&lt;/p&gt;
 &lt;p&gt;Reddit is broken down into subreddits, where each subreddit represents each own community around a particular interest, like &lt;a href=&#34;https://www.reddit.com/r/aww&#34; target=&#34;_blank&#34;&gt;/r/aww&lt;/a&gt; for pet photos and &lt;a href=&#34;https://www.reddit.com/r/politics/&#34; target=&#34;_blank&#34;&gt;/r/politics&lt;/a&gt; for U.S. politics. The posts on each subreddit are ranked by some function of both time elapsed since the submission was made, and the &lt;em&gt;score&lt;/em&gt; of the submission as determined by upvotes and downvotes from other users.&lt;/p&gt;
 &lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/modeling-link-aggregators/reddit_aww.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
@@ -284,126 +397,4 @@ mutate(nth_lead = row_number())
 &lt;p&gt;There&amp;rsquo;s a lot more than can be done looking at question tags on Stack Overflow. I was surprised to see that all types of programming languages have quick answer times and a high probability of receiving an acceptable answer! I&amp;rsquo;ll definitely keep an eye on the SO archives as they are released, and I&amp;rsquo;m excited to see how trends change in the future.&lt;/p&gt;
 &lt;hr /&gt;
 &lt;p&gt;&lt;em&gt;You can view the R and ggplot2 code used to create the data visualizations in &lt;a href=&#34;http://minimaxir.com/notebooks/stack-overflow-questions/&#34; target=&#34;_blank&#34;&gt;this R Notebook&lt;/a&gt;. You can also view the images/data used for this post in &lt;a href=&#34;https://github.com/minimaxir/stack-overflow-questions&#34; target=&#34;_blank&#34;&gt;this GitHub repository&lt;/a&gt;&lt;/em&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;em&gt;You are free to use the data visualizations from this article however you wish, but it would be greatly appreciated if proper attribution is given to this article and/or myself!&lt;/em&gt;&lt;/p&gt;</description></item><item><title>How to Make High Quality Data Visualizations for Websites With R and ggplot2</title><link>https://minimaxir.com/2017/08/ggplot2-web/</link><pubDate>Mon, 14 Aug 2017 09:00:00 -0700</pubDate><guid>https://minimaxir.com/2017/08/ggplot2-web/</guid><description>
-&lt;p&gt;If you&amp;rsquo;ve been following my blog, I like to use &lt;a href=&#34;https://cran.r-project.org&#34; target=&#34;_blank&#34;&gt;R&lt;/a&gt; and &lt;a href=&#34;http://ggplot2.tidyverse.org/reference/&#34; target=&#34;_blank&#34;&gt;ggplot2&lt;/a&gt; for data visualization. A lot.&lt;/p&gt;
-&lt;p&gt;One of my older blog posts, &lt;a href=&#34;http://minimaxir.com/2015/02/ggplot-tutorial/&#34; target=&#34;_blank&#34;&gt;An Introduction on How to Make Beautiful Charts With R and ggplot2&lt;/a&gt;, is still one of my most-trafficked posts years later, and even today I see techniques from that particular post incorporated into modern data visualizations on sites such as &lt;a href=&#34;https://www.reddit.com&#34; target=&#34;_blank&#34;&gt;Reddit&amp;rsquo;s&lt;/a&gt; &lt;a href=&#34;https://www.reddit.com/r/dataisbeautiful/&#34; target=&#34;_blank&#34;&gt;/r/dataisbeautiful&lt;/a&gt; subreddit.&lt;/p&gt;
-&lt;p&gt;However, that post is a little outdated. Thanks to a few updates to ggplot2 since then and other advances in data visualization best-practices, making pretty charts for websites/blogs using R and ggplot2 is even more easy, quick, &lt;em&gt;and&lt;/em&gt; fun!&lt;/p&gt;
-&lt;h2 id=&#34;quick-introduction-to-ggplot2&#34;&gt;Quick Introduction to ggplot2&lt;/h2&gt;
-&lt;p&gt;ggplot2 uses a more concise setup toward creating charts as opposed to the more declarative style of Python&amp;rsquo;s &lt;a href=&#34;https://matplotlib.org&#34; target=&#34;_blank&#34;&gt;matplotlib&lt;/a&gt; and base R. And it also includes a few example datasets for practicing ggplot2 functionality; for example, the &lt;code&gt;mpg&lt;/code&gt; dataset is a &lt;a href=&#34;http://ggplot2.tidyverse.org/reference/mpg.html&#34; target=&#34;_blank&#34;&gt;dataset&lt;/a&gt; of the performance of popular models of cars in 1998 and 2008.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/ggplot2-web/mpg.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;Let&amp;rsquo;s say you want to create a &lt;a href=&#34;https://en.wikipedia.org/wiki/Scatter_plot&#34; target=&#34;_blank&#34;&gt;scatter plot&lt;/a&gt;. Following &lt;a href=&#34;http://ggplot2.tidyverse.org/reference/geom_smooth.html&#34; target=&#34;_blank&#34;&gt;a great example&lt;/a&gt; from the ggplot2 documentation, let&amp;rsquo;s plot the highway mileage of the car vs. the &lt;a href=&#34;https://en.wikipedia.org/wiki/Engine_displacement&#34; target=&#34;_blank&#34;&gt;volume displacement&lt;/a&gt; of the engine. In ggplot2, first you instantiate the chart with the &lt;code&gt;ggplot()&lt;/code&gt; function, specifying the source dataset and the core aesthetics you want to plot, such as x, y, color, and fill. In this case, we set the core aesthetics to x = displacement and y = mileage, and add a &lt;code&gt;geom_point()&lt;/code&gt; layer to make a scatter plot:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;p &amp;lt;- ggplot(mpg, aes(x = displ, y = hwy)) +
-geom_point()
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/ggplot2-web/plot1.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;As we can see, there is a negative correlation between the two metrics. I&amp;rsquo;m sure you&amp;rsquo;ve seen plots like these around the internet before. But with only a couple of lines of codes, you can make them look more contemporary.&lt;/p&gt;
-&lt;p&gt;ggplot2 lets you add a well-designed theme with just one line of code. Relatively new to &lt;code&gt;ggplot2&lt;/code&gt; is &lt;code&gt;theme_minimal()&lt;/code&gt;, which &lt;a href=&#34;http://ggplot2.tidyverse.org/reference/ggtheme.html&#34; target=&#34;_blank&#34;&gt;generates&lt;/a&gt; a muted style similar to &lt;a href=&#34;http://fivethirtyeight.com&#34; target=&#34;_blank&#34;&gt;FiveThirtyEight&lt;/a&gt;&amp;rsquo;s modern data visualizations:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;p &amp;lt;- p +
-theme_minimal()
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/ggplot2-web/plot2.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;But we can still add color. Setting a color aesthetic on a character/categorical variable will set the colors of the corresponding points, making it easy to differentiate at a glance.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;p &amp;lt;- ggplot(mpg, aes(x = displ, y = hwy, color=class)) +
-geom_point() +
-theme_minimal()
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/ggplot2-web/plot3.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;Adding the color aesthetic certainly makes things much prettier. ggplot2 automatically adds a legend for the colors as well.
-However, for this particular visualization, it is difficult to see trends in the points for each class. A easy way around this is to add a &lt;a href=&#34;https://en.wikipedia.org/wiki/Least_squares&#34; target=&#34;_blank&#34;&gt;least squares regression&lt;/a&gt; trendline for each class &lt;a href=&#34;http://ggplot2.tidyverse.org/reference/geom_smooth.html&#34; target=&#34;_blank&#34;&gt;using&lt;/a&gt; &lt;code&gt;geom_smooth()&lt;/code&gt; (which normally adds a smoothed line, but since there isn&amp;rsquo;t a lot of data for each group, we force it to a linear model and do not plot confidence intervals)&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;p &amp;lt;- p +
-geom_smooth(method = &amp;quot;lm&amp;quot;, se = F)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/ggplot2-web/plot4.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;Pretty neat, and now comparative trends are much more apparent! For example, pickups and SUVs have similar efficiency, which makes intuitive sense.&lt;/p&gt;
-&lt;p&gt;The chart axes should be labeled (&lt;em&gt;always&lt;/em&gt; label your charts!). All the typical labels, like &lt;code&gt;title&lt;/code&gt;, &lt;code&gt;x&lt;/code&gt;-axis, and &lt;code&gt;y&lt;/code&gt;-axis can be done with the &lt;code&gt;labs()&lt;/code&gt; function. But relatively new to ggplot2 are the &lt;code&gt;subtitle&lt;/code&gt; and &lt;code&gt;caption&lt;/code&gt; fields, both of do what you expect:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;p &amp;lt;- p +
-labs(title=&amp;quot;Efficiency of Popular Models of Cars&amp;quot;,
-subtitle=&amp;quot;By Class of Car&amp;quot;,
-x=&amp;quot;Engine Displacement (liters)&amp;quot;,
-y=&amp;quot;Highway Miles per Gallon&amp;quot;,
-caption=&amp;quot;by Max Woolf — minimaxir.com&amp;quot;)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/ggplot2-web/plot5.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;That&amp;rsquo;s a pretty good start. Now let&amp;rsquo;s take it to the next level.&lt;/p&gt;
-&lt;h2 id=&#34;how-to-save-a-ggplot2-chart-for-web&#34;&gt;How to Save A ggplot2 chart For Web&lt;/h2&gt;
-&lt;p&gt;Something surprisingly undiscussed in the field of data visualization is how to &lt;em&gt;save&lt;/em&gt; a chart as a high quality image file. For example, with &lt;a href=&#34;https://products.office.com/en-us/excel&#34; target=&#34;_blank&#34;&gt;Excel&lt;/a&gt; charts, Microsoft &lt;a href=&#34;https://support.office.com/en-us/article/Save-a-chart-as-a-picture-in-Excel-for-Windows-254bbf9a-1ce1-459f-914a-4902e8ca9217&#34; target=&#34;_blank&#34;&gt;officially recommends&lt;/a&gt; to copy the chart, &lt;em&gt;paste it as an image back into Excel&lt;/em&gt;, then save the pasted image, without having any control over image quality and size in the browser (the &lt;em&gt;real&lt;/em&gt; best way to save an Excel/&lt;a href=&#34;https://www.apple.com/numbers/&#34; target=&#34;_blank&#34;&gt;Numbers&lt;/a&gt; chart as an image for a webpage is to copy/paste the chart object into a &lt;a href=&#34;https://products.office.com/en-us/powerpoint&#34; target=&#34;_blank&#34;&gt;PowerPoint&lt;/a&gt;/&lt;a href=&#34;https://www.apple.com/keynote/&#34; target=&#34;_blank&#34;&gt;Keynote&lt;/a&gt; slide, and export &lt;em&gt;the slide&lt;/em&gt; as an image. This also makes it extremely easy to annotate/brand said chart beforehand in PowerPoint/Keynote).&lt;/p&gt;
-&lt;p&gt;R IDEs such as &lt;a href=&#34;https://www.rstudio.com&#34; target=&#34;_blank&#34;&gt;RStudio&lt;/a&gt; have a chart-saving UI with the typical size/filetype options. But if you save an image from this UI, the shapes and texts of the resulting image will be heavily aliased (R &lt;a href=&#34;https://danieljhocking.wordpress.com/2013/03/12/high-resolution-figures-in-r/&#34; target=&#34;_blank&#34;&gt;renders images at 72 dpi&lt;/a&gt; by default, which is much lower than that of modern HiDPI/Retina displays).&lt;/p&gt;
-&lt;p&gt;The data visualizations used earlier in this post were generated in-line as a part of an &lt;a href=&#34;http://rmarkdown.rstudio.com/r_notebooks.html&#34; target=&#34;_blank&#34;&gt;R Notebook&lt;/a&gt;, but it is surprisingly difficult to extract the generated chart as a separate file. But ggplot2 also has &lt;code&gt;ggsave()&lt;/code&gt;, which saves the image to disk using antialiasing and makes the fonts/shapes in the chart look much better, and assumes a default dpi of 300. Saving charts using &lt;code&gt;ggsave()&lt;/code&gt;, and adjusting the sizes of the text and geoms to compensate for the higher dpi, makes the charts look very presentable. A width of 4 and a height of 3 results in a 1200x900px image, which if posted on a blog with a content width of ~600px (like mine), will render at full resolution on HiDPI/Retina displays, or downsample appropriately otherwise. Due to modern PNG compression, the file size/bandwidth cost for using larger images is minimal.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;p &amp;lt;- ggplot(mpg, aes(x = displ, y = hwy, color=class)) +
-geom_smooth(method = &amp;quot;lm&amp;quot;, se=F, size=0.5) +
-geom_point(size=0.5) +
-theme_minimal(base_size=9) +
-labs(title=&amp;quot;Efficiency of Popular Models of Cars&amp;quot;,
-subtitle=&amp;quot;By Class of Car&amp;quot;,
-x=&amp;quot;Engine Displacement (liters)&amp;quot;,
-y=&amp;quot;Highway Miles per Gallon&amp;quot;,
-caption=&amp;quot;by Max Woolf — minimaxir.com&amp;quot;)
-ggsave(&amp;quot;tutorial-0.png&amp;quot;, p, width=4, height=3)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/ggplot2-web/tutorial-0.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;Compare to the previous non-ggsave chart, which is more blurry around text/shapes:&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/ggplot2-web/plot5.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;For posterity, here&amp;rsquo;s the same chart saved at 1200x900px using the RStudio image-saving UI:&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/ggplot2-web/plot-1200-900.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;Note that the antialiasing optimizations assume that you are &lt;em&gt;not&lt;/em&gt; uploading the final chart to a service like &lt;a href=&#34;https://medium.com&#34; target=&#34;_blank&#34;&gt;Medium&lt;/a&gt; or &lt;a href=&#34;https://wordpress.com&#34; target=&#34;_blank&#34;&gt;WordPress.com&lt;/a&gt;, which will compress the images and reduce the quality anyways. But if you are uploading it to Reddit or self-hosting your own blog, it&amp;rsquo;s definitely worth it.&lt;/p&gt;
-&lt;h2 id=&#34;fancy-fonts&#34;&gt;Fancy Fonts&lt;/h2&gt;
-&lt;p&gt;Changing the chart font is another way to add a personal flair.
-Theme functions like &lt;code&gt;theme_minimal()&lt;/code&gt; accept a &lt;code&gt;base_family&lt;/code&gt; parameter. With that, you can specify any font family as the default instead of the base sans-serif. (On Windows, you may need to install the &lt;code&gt;extrafont&lt;/code&gt; package first). Fonts from &lt;a href=&#34;https://fonts.google.com&#34; target=&#34;_blank&#34;&gt;Google Fonts&lt;/a&gt; are free and work easily with ggplot2 once installed. For example, we can use &lt;a href=&#34;https://fonts.google.com/specimen/Roboto&#34; target=&#34;_blank&#34;&gt;Roboto&lt;/a&gt;, Google&amp;rsquo;s modern font which has also been getting a lot of usage on &lt;a href=&#34;https://stackoverflow.com&#34; target=&#34;_blank&#34;&gt;Stack Overflow&lt;/a&gt;&amp;rsquo;s great ggplot2 &lt;a href=&#34;https://stackoverflow.blog/2017/06/15/developers-use-spaces-make-money-use-tabs/&#34; target=&#34;_blank&#34;&gt;data visualizations&lt;/a&gt;.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;p &amp;lt;- p +
-theme_minimal(base_size=9, base_family=&amp;quot;Roboto&amp;quot;)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/ggplot2-web/tutorial-1.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;A general text design guideline is to use fonts of different weights/widths for different hierarchies of content. In this case, we can use a bolder condensed font for the title, and deemphasize the subtitle and caption using lighter colors, all done using the &lt;code&gt;theme()&lt;/code&gt; &lt;a href=&#34;http://ggplot2.tidyverse.org/reference/theme.html&#34; target=&#34;_blank&#34;&gt;function&lt;/a&gt;.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;p &amp;lt;- p +
-theme(plot.subtitle = element_text(color=&amp;quot;#666666&amp;quot;),
-plot.title = element_text(family=&amp;quot;Roboto Condensed Bold&amp;quot;),
-plot.caption = element_text(color=&amp;quot;#AAAAAA&amp;quot;, size=6))
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/ggplot2-web/tutorial-2.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;It&amp;rsquo;s worth nothing that data visualizations posted on websites should be easily &lt;em&gt;legible&lt;/em&gt; for mobile-device users as well, hence the intentional use of larger fonts relative to charts typically produced in the desktop-oriented Excel.&lt;/p&gt;
-&lt;p&gt;Additionally, all theming options can be set as a session default at the beginning of a script using &lt;code&gt;theme_set()&lt;/code&gt;, saving even more time instead of having to recreate the theme for each chart.&lt;/p&gt;
-&lt;h2 id=&#34;the-ggplot2-colors&#34;&gt;The &amp;ldquo;ggplot2 colors&amp;rdquo;&lt;/h2&gt;
-&lt;p&gt;The &amp;ldquo;ggplot2 colors&amp;rdquo; for categorical variables are infamous for being the primary indicator of a chart being made with ggplot2. But there is a science to it; ggplot2 by default selects colors using the &lt;code&gt;scale_color_hue()&lt;/code&gt; &lt;a href=&#34;http://ggplot2.tidyverse.org/reference/scale_hue.html&#34; target=&#34;_blank&#34;&gt;function&lt;/a&gt;, which selects colors in the HSL space by changing the hue [H] between 0 and 360, keeping saturation [S] and lightness [L] constant. As a result, ggplot2 selects the most &lt;em&gt;distinct&lt;/em&gt; colors possible while keeping lightness constant. For example, if you have 2 different categories, ggplot2 chooses the colors with h = 0 and h = 180; if 3 colors, h = 0, h = 120, h = 240, etc.&lt;/p&gt;
-&lt;p&gt;It&amp;rsquo;s smart, but does make a given chart lose distinctness when many other ggplot2 charts use the same selection methodology. A quick way to take advantage of this hue dispersion while still making the colors unique is to change the lightness; by default, &lt;code&gt;l = 65&lt;/code&gt;, but setting it slightly lower will make the charts look more professional/&lt;a href=&#34;https://www.bloomberg.com&#34; target=&#34;_blank&#34;&gt;Bloomberg&lt;/a&gt;-esque.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;p_color &amp;lt;- p +
-scale_color_hue(l = 40)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/ggplot2-web/tutorial-4.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
-&lt;h2 id=&#34;rcolorbrewer&#34;&gt;RColorBrewer&lt;/h2&gt;
-&lt;p&gt;Another coloring option for ggplot2 charts are the &lt;a href=&#34;http://colorbrewer2.org/#type=sequential&amp;amp;scheme=BuGn&amp;amp;n=3&#34; target=&#34;_blank&#34;&gt;ColorBrewer&lt;/a&gt; palettes implemented with the &lt;code&gt;RColorBrewer&lt;/code&gt; package, which are supported natively in ggplot2 with functions such as &lt;code&gt;scale_color_brewer()&lt;/code&gt;. The sequential palettes like &amp;ldquo;Blues&amp;rdquo; and &amp;ldquo;Greens&amp;rdquo; do what the name implies:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;p_color &amp;lt;- p +
-scale_color_brewer(palette=&amp;quot;Blues&amp;quot;)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/ggplot2-web/tutorial-5.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;A famous diverging palette for visualizations on /r/dataisbeautiful is the &amp;ldquo;Spectral&amp;rdquo; palette, which is a lighter rainbow (recommended for dark backgrounds)&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/ggplot2-web/tutorial-6.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;However, while the charts look pretty, it&amp;rsquo;s difficult to tell the categories apart. The qualitative palettes fix this problem, and have more distinct possibilities than the &lt;code&gt;scale_color_hue()&lt;/code&gt; approach mentioned earlier.&lt;/p&gt;
-&lt;p&gt;Here are 3 examples of qualitative palettes, &amp;ldquo;Set1&amp;rdquo;, &amp;ldquo;Set2&amp;rdquo;, and &amp;ldquo;Set3,&amp;rdquo; whichever fit your preference.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/ggplot2-web/tutorial-7.png&#34; alt=&#34;&#34; /&gt;
-&lt;img src=&#34;https://minimaxir.com/img/ggplot2-web/tutorial-8.png&#34; alt=&#34;&#34; /&gt;
-&lt;img src=&#34;https://minimaxir.com/img/ggplot2-web/tutorial-9.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
-&lt;h2 id=&#34;viridis-and-accessibility&#34;&gt;Viridis and Accessibility&lt;/h2&gt;
-&lt;p&gt;Let&amp;rsquo;s mix up the visualization a bit. A rarely-used-but-very-useful ggplot2 geom is &lt;code&gt;geom2d_bin()&lt;/code&gt;, which counts the number of points in a given 2d spatial area:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;p &amp;lt;- ggplot(mpg, aes(x = displ, y = hwy)) +
-geom_bin2d(bins=10) +
-[...theming options...]
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/ggplot2-web/tutorial-tile.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;We see that the largest number of points are centered around (2,30). However, the default ggplot2 color palette for continuous variables is &lt;em&gt;boring&lt;/em&gt;. Yes, we can use the RColorBrewer sequential palettes above, but as noted, they aren&amp;rsquo;t perceptually distinct, and could cause issues for readers who are colorblind.&lt;/p&gt;
-&lt;p&gt;The &lt;a href=&#34;https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html&#34; target=&#34;_blank&#34;&gt;viridis R package&lt;/a&gt; provides a set of 4 high-contrast palettes which are very colorblind friendly, and works easily with ggplot2 by extending a &lt;code&gt;scale_fill_viridis()/scale_color_viridis()&lt;/code&gt; function.&lt;/p&gt;
-&lt;p&gt;The default &amp;ldquo;viridis&amp;rdquo; palette has been increasingly popular on the web lately:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;p_color &amp;lt;- p +
-scale_fill_viridis(option=&amp;quot;viridis&amp;quot;)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/ggplot2-web/tutorial-10.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;&amp;ldquo;magma&amp;rdquo; and &amp;ldquo;inferno&amp;rdquo; are similar, and give the data visualization a fiery edge:&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/ggplot2-web/tutorial-11.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/ggplot2-web/tutorial-12.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;Lastly, &amp;ldquo;plasma&amp;rdquo; is a mix between the 3 palettes above:&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/ggplot2-web/tutorial-13.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
-&lt;h2 id=&#34;next-steps&#34;&gt;Next Steps&lt;/h2&gt;
-&lt;p&gt;FiveThirtyEight actually uses ggplot2 for their data journalism workflow &lt;a href=&#34;https://channel9.msdn.com/Events/useR-international-R-User-conference/useR2016/FiveThirtyEights-data-journalism-workflow-with-R?ocid=player&#34; target=&#34;_blank&#34;&gt;in an interesting way&lt;/a&gt;; they render the base chart using ggplot2, but export it as as a SVG/PDF vector file which can scale to any size, and then the design team annotates/customizes the data visualization in &lt;a href=&#34;http://www.adobe.com/products/illustrator.html&#34; target=&#34;_blank&#34;&gt;Adobe Illustrator&lt;/a&gt; before exporting it as a static PNG for the article (in general, I recommend using an external image editor to add text annotations to a data visualization because doing it manually in ggplot2 is inefficient).&lt;/p&gt;
-&lt;p&gt;For general use cases, ggplot2 has very strong defaults for beautiful data visualizations. And certainly there is a lot &lt;em&gt;more&lt;/em&gt; you can do to make a visualization beautiful than what&amp;rsquo;s listed in this post, such as using facets and tweaking parameters of geoms for further distinction, but those are more specific to a given data visualization. In general, it takes little additional effort to make something &lt;em&gt;unique&lt;/em&gt; with ggplot2, and the effort is well worth it. And prettier charts are more persuasive, which is a good return-on-investment.&lt;/p&gt;
-&lt;hr /&gt;
-&lt;p&gt;&lt;em&gt;You can view the R and ggplot2 code used to create the data visualizations in &lt;a href=&#34;http://minimaxir.com/notebooks/ggplot2-web/&#34; target=&#34;_blank&#34;&gt;this R Notebook&lt;/a&gt;. You can also view the images/data used for this post in &lt;a href=&#34;https://github.com/minimaxir/ggplot2-web&#34; target=&#34;_blank&#34;&gt;this GitHub repository&lt;/a&gt;&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;&lt;em&gt;You are free to use the data visualizations from this article however you wish, but it would be greatly appreciated if proper attribution is given to this article and/or myself!&lt;/em&gt;&lt;/p&gt;</description></item></channel></rss>

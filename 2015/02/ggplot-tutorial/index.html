@@ -6,10 +6,10 @@
 library(ggplot2); library(scales); library(grid); library(RColorBrewer)
 </code></pre><p>The dataset we&rsquo;ll use is my <a href=http://minimaxir.com/csv/buzzfeed_linkbait_headlines.csv target=_blank>list of 15,101 BuzzFeed listicles</a> that I used <a href=http://minimaxir.com/2015/01/linkbait/ target=_blank>in my previous blog post</a>, including both the listicle size and number of Facebook shares the listicle received, which have been prefiltered to listicle sizes of 50 or less, and have received atleast 1 Facebook share. Download the file, and set the working directory of R to the containing folder. We load the dataset into R by reading the CSV:</p><pre><code class=language-R>df &lt;- read.csv(&quot;buzzfeed_linkbait_headlines.csv&quot;, header=T)
 </code></pre><p>We can make a basic histogram in two lines of code.</p><pre><code class=language-R>ggplot(df, aes(listicle_size)) +
-    geom_histogram(binwidth=1)
+	geom_histogram(binwidth=1)
 </code></pre><p>The first line instantiates the charts and defines the variables used for plotting. We declare the use of the data frame <code>df</code>, and the <code>listicle_size</code> vector from that data frame as the plotting aesthetic. The second line tells ggplot to make a histogram out of the given data with <code>geom_histogram</code>, and we specify a binwidth of 1 so that each column represents one discrete value of listicle. Running that code will cause a plot to pop up.</p><p><img src=/img/ggplot-tutorial/tutorial_1.png alt></p><p>Not a bad start. In order to save the created plot, we use the <code>ggsave</code> command, which saves the last-generated plot to an image in your working directory. The first parameter, the filename, determines the filetype.</p><pre><code class=language-R>ggsave(&quot;tutorial_1.png&quot;, dpi=300, width=4, height=3)
 </code></pre><p>Now we can add a theme to make it look classy.</p><p>A ggplot2 theme is a function that overrides the graphical parameters of the default theme. Here&rsquo;s the long code block for my FiveThirtyEight-inspired theme, with code comments for each code subblock:</p><pre><code class=language-R>fte_theme &lt;- function() {
-      
+	  
 # Generate the colors for the chart procedurally with RColorBrewer
 palette &lt;- brewer.pal(&quot;Greys&quot;, n=9)
 color.background = palette[2]
@@ -17,70 +17,70 @@ color.grid.major = palette[3]
 color.axis.text = palette[6]
 color.axis.title = palette[7]
 color.title = palette[9]
-      
+	  
 # Begin construction of chart
 theme_bw(base_size=9) +
-        
+	    
 # Set the entire chart region to a light gray color
 theme(panel.background=element_rect(fill=color.background, color=color.background)) +
 theme(plot.background=element_rect(fill=color.background, color=color.background)) +
 theme(panel.border=element_rect(color=color.background)) +
-      
+	  
 # Format the grid
 theme(panel.grid.major=element_line(color=color.grid.major,size=.25)) +
 theme(panel.grid.minor=element_blank()) +
 theme(axis.ticks=element_blank()) +
-      
+	  
 # Format the legend, but hide by default
 theme(legend.position=&quot;none&quot;) +
 theme(legend.background = element_rect(fill=color.background)) +
 theme(legend.text = element_text(size=7,color=color.axis.title)) +
-      
+	  
 # Set title and axis labels, and format these and tick marks
 theme(plot.title=element_text(color=color.title, size=10, vjust=1.25)) +
 theme(axis.text.x=element_text(size=7,color=color.axis.text)) +
 theme(axis.text.y=element_text(size=7,color=color.axis.text)) +
 theme(axis.title.x=element_text(size=8,color=color.axis.title, vjust=0)) +
 theme(axis.title.y=element_text(size=8,color=color.axis.title, vjust=1.25)) +
-      
+	  
 # Plot margins
 theme(plot.margin = unit(c(0.35, 0.2, 0.3, 0.35), &quot;cm&quot;))
 }
 </code></pre><p>Adding the completed theme to the chart is just one line of code:</p><pre><code class=language-R>ggplot(df, aes(listicle_size)) +
-    geom_histogram(binwidth=1) +
-    fte_theme()
+	geom_histogram(binwidth=1) +
+	fte_theme()
 </code></pre><p><img src=/img/ggplot-tutorial/tutorial_2.png alt></p><p>A little more classy. Now that the core design of the chart is present, we can make polish the chart to make it more beautiful.</p><p>Of course, all charts need properly labled axes and a title. We can add that with the <code>labs</code> function:</p><pre><code class=language-R>ggplot(df, aes(listicle_size)) +
-    geom_histogram(binwidth=1) +
-    fte_theme() +
+	geom_histogram(binwidth=1) +
+	fte_theme() +
 labs(title=&quot;Distribution of Listicle Sizes for BuzzFeed Listicles&quot;, x=&quot;# of Entries in Listicle&quot;, y=&quot;# of Listicles&quot;)
 </code></pre><p><img src=/img/ggplot-tutorial/tutorial_3.png alt></p><p>Now we can add a few finishing touches. For the x-axis, we can set the breaks to 5 instead of 10 using <code>scale_x_continuous</code> since we have the room. For the y-axis, since we have an axis value with 4 digits, we can set the formatting to use a comma with <code>scale_y_continuous</code>. Lastly, we can add a line at y = 0 using <code>geom_line</code> to further seperate the data. Lastly, in <code>geom_histogram</code>, we can change the fill of the bars to a red color for more thematic branding, and also reduce the opacity to make the grid lines visible behind the chart.</p><p>Putting it all together:</p><pre><code class=language-R>ggplot(df, aes(listicle_size)) +
-    geom_histogram(binwidth=1, fill=&quot;#c0392b&quot;, alpha=0.75) +
-    fte_theme() +
-    labs(title=&quot;Distribution of Listicle Sizes for BuzzFeed Listicles&quot;, x=&quot;# of Entries in Listicle&quot;, y=&quot;# of Listicles&quot;) +
-    scale_x_continuous(breaks=seq(0,50, by=5)) +
-    scale_y_continuous(labels=comma) + 
-    geom_hline(yintercept=0, size=0.4, color=&quot;black&quot;)
+ 	geom_histogram(binwidth=1, fill=&quot;#c0392b&quot;, alpha=0.75) +
+	fte_theme() +
+	labs(title=&quot;Distribution of Listicle Sizes for BuzzFeed Listicles&quot;, x=&quot;# of Entries in Listicle&quot;, y=&quot;# of Listicles&quot;) +
+	scale_x_continuous(breaks=seq(0,50, by=5)) +
+	scale_y_continuous(labels=comma) + 
+	geom_hline(yintercept=0, size=0.4, color=&quot;black&quot;)
 </code></pre><p><img src=/img/ggplot-tutorial/tutorial_4.png alt></p><p>That&rsquo;s pretty professional and is a good stopping point. Normally, I would change the text fonts as well, but that&rsquo;s a subject for another post.</p><h2 id=making-a-ggplot2-scatterplot>Making a ggplot2 Scatterplot</h2><p>Scatterplots are also efficient to do in ggplot2, which especially useful as making a plot containing 15,101 points might cause spreadsheets to freeze.</p><p>Creating a scatterplot of the relationship between listicle size and the number of Facebook shares the listicle receives is essentially the same procedure as creating a histogram, except that the x-axis and y-axis aesthetic vectors must be declared explicitly.</p><pre><code class=language-R>ggplot(df, aes(x=listicle_size, y=num_fb_shares)) +
-    geom_point()
+	geom_point()
 </code></pre><p><img src=/img/ggplot-tutorial/tutorial_5.png alt></p><p>Because there are a few listicles with <em>over 1 million</em> Facebook shares (welcome to 2015), the entire plot is skewed. As a result, we need to compress the plot by scaling the y-axis logarithmically using <code>scale_y_log10</code>. Additionally, there will be a large amount of overlap between points due to the large sample size, so we need to greatly reduce the opacity of the points. (I set to 5% for this chart, but the best value can be determined through trial and error)</p><pre><code class=language-R>ggplot(df, aes(x=listicle_size, y=num_fb_shares)) +
-    geom_point(alpha=0.05) +
-    scale_y_log10(labels=comma)
+	geom_point(alpha=0.05) +
+	scale_y_log10(labels=comma)
 </code></pre><p><img src=/img/ggplot-tutorial/tutorial_6.png alt></p><p>That&rsquo;s a lot more intuitive, and it makes it clear that there is indeed a positive relationship between listicle size and the number of Facebook shares.</p><p>Now we can apply the theme and labels:</p><pre><code class=language-R>ggplot(df, aes(x=listicle_size, y=num_fb_shares)) +
-    geom_point(alpha=0.05) +
-    scale_y_log10(labels=comma) +
-    fte_theme() +
-    labs(x=&quot;# of Entries in Listicle&quot;, y=&quot;# of Facebook Shares&quot;, title=&quot;FB Shares vs. Listicle Size for BuzzFeed Listicles&quot;)
+	geom_point(alpha=0.05) +
+	scale_y_log10(labels=comma) +
+	fte_theme() +
+	labs(x=&quot;# of Entries in Listicle&quot;, y=&quot;# of Facebook Shares&quot;, title=&quot;FB Shares vs. Listicle Size for BuzzFeed Listicles&quot;)
 </code></pre><p><img src=/img/ggplot-tutorial/tutorial_7.png alt></p><p>And then the final touches. We can include the same horizontal line, x-axis behavior, and point color as with the last plot. However, for the y-axis, we have room to include each power of 10 between 1 and 1,000,000 as breaks, which we can do through a cute R syntax trick: <code>10^(0:6)</code>. While the chart shows a positive relationship between the variables, the shape is ambiguous and it may be helpful to add a trend line. We use <code>geom_smooth</code> to add a trendline representing a <a href=http://www.inside-r.org/r-doc/mgcv/gam target=_blank>generalized additive model</a> with a 95% confidence interval.</p><p>Putting it all together:</p><pre><code class=language-R>ggplot(df, aes(x=listicle_size, y=num_fb_shares)) +
-    geom_point(alpha=0.05, color=&quot;#c0392b&quot;) +
-    scale_x_continuous(breaks=seq(0,50, by=5)) +
-    scale_y_log10(labels=comma, breaks=10^(0:6)) +
-    geom_hline(yintercept=1, size=0.4, color=&quot;black&quot;) +
-    geom_smooth(alpha=0.25, color=&quot;black&quot;, fill=&quot;black&quot;) +
-    fte_theme() +
-    labs(x=&quot;# of Entries in Listicle&quot;, y=&quot;# of Facebook Shares&quot;, title=&quot;FB Shares vs. Listicle Size for BuzzFeed Listicles&quot;)
+	geom_point(alpha=0.05, color=&quot;#c0392b&quot;) +
+	scale_x_continuous(breaks=seq(0,50, by=5)) +
+	scale_y_log10(labels=comma, breaks=10^(0:6)) +
+	geom_hline(yintercept=1, size=0.4, color=&quot;black&quot;) +
+	geom_smooth(alpha=0.25, color=&quot;black&quot;, fill=&quot;black&quot;) +
+	fte_theme() +
+	labs(x=&quot;# of Entries in Listicle&quot;, y=&quot;# of Facebook Shares&quot;, title=&quot;FB Shares vs. Listicle Size for BuzzFeed Listicles&quot;)
 </code></pre><p><img src=/img/ggplot-tutorial/tutorial_8.png alt></p><p>Now that is pretty insightful.</p><p>Hopefully, this small overview of how ggplot2 gives you an small idea of what it can do. This is just the tip of the iceberg. However, making cooler charts such as categorical bar charts, charts with multiple factor variables, and charts with multiple facets require smart data preprocessing, which is a topic for another blog post.</p><hr><p><em>You can access a copy of the code used in this blog post <a href=https://github.com/minimaxir/ggplot-tutorial target=_blank>at this GitHub repository</a>.</em></p><div class="alert alert-note"><div>If you liked this blog post, I have set up a <a href=https://www.patreon.com/minimaxir target=_blank>Patreon</a> to fund my machine learning/deep learning/software/hardware needs for my future crazy yet cool projects, and any monetary contributions to the Patreon are appreciated and will be put to good creative use.</div></div></div><div class=article-tags><a class="badge badge-light" href=/tags/r/>R</a>
 <a class="badge badge-light" href=/tags/ggplot2/>ggplot2</a></div><div class="media author-card" itemscope itemtype=http://schema.org/Person><img class="portrait mr-3" src="https://s.gravatar.com/avatar/28f09e3deff62333b3f32f19d3971d46?s=200')" itemprop=image alt=Avatar><div class=media-body><h5 class=card-title itemprop=name><a href=https://minimaxir.com/>Max Woolf</a></h5><h6 class=card-subtitle>Data Scientist at BuzzFeed</h6><p class=card-text itemprop=description>Ex-Apple. Carnegie Mellon graduate. Plotter of pretty charts. Former TechCrunch comment troll.</p><ul class=network-icon aria-hidden=true><li><a itemprop=sameAs href=https://twitter.com/minimaxir target=_blank rel=noopener><i class="fab fa-twitter"></i></a></li><li><a itemprop=sameAs href=https://linkedin.com/in/minimaxir target=_blank rel=noopener><i class="fab fa-linkedin"></i></a></li><li><a itemprop=sameAs href=https://youtube.com/minimaxir target=_blank rel=noopener><i class="fab fa-youtube"></i></a></li><li><a itemprop=sameAs href=https://twitch.tv/minimaxir target=_blank rel=noopener><i class="fab fa-twitch"></i></a></li><li><a itemprop=sameAs href=mailto:max@minimaxir.com><i class="fas fa-envelope"></i></a></li></ul></div></div><div class=article-widget><div class=hr-light></div><h3>Related</h3><ul><li><a href=/2015/01/linkbait/>Quantifying the Clickbait and Linkbait in BuzzFeed Article Titles</a></li><li><a href=/2015/01/tree-time/>Locating All the Christmas Trees on Instagram</a></li><li><a href=/2014/12/reddit-statistics/>A Statistical Analysis of 142 Million Reddit Submissions</a></li><li><a href=/2014/10/hn-comments-about-comments/>The Quality, Popularity, and Negativity of 5.6 Million Hacker News Comments</a></li><li><a href=/2014/09/one-star-five-stars/>The Statistical Difference Between 1-Star and 5-Star Reviews on Yelp</a></li></ul></div><div class=article-widget><div class=post-nav><div class=post-nav-item><div class=meta-nav>Next</div><a href=/2015/02/password-numbers/ rel=next>Analyzing the Patterns of Numbers in 10 Million Passwords</a></div><div class=post-nav-item><div class=meta-nav>Previous</div><a href=/2015/01/linkbait/ rel=prev>Quantifying the Clickbait and Linkbait in BuzzFeed Article Titles</a></div></div></div><section id=comments><div id=disqus_thread></div><script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return;}
-var d=document,s=d.createElement('script');s.async=true;s.src='//'+"minimaxir"+'.disqus.com/embed.js';s.setAttribute('data-timestamp',+new Date());(d.head||d.body).appendChild(s);})();</script><noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a></section></div></article><script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin=anonymous></script><script src=https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin=anonymous></script><script src=https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin=anonymous></script><script src=https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js integrity="sha256-X5PoE3KU5l+JcX+w09p/wHl9AzK333C4hJ2I9S5mD4M=" crossorigin=anonymous></script><script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js integrity="sha256-aYTdUrn6Ow1DDgh5JTc3aDGnnju48y/1c8s1dgkYPQ8=" crossorigin=anonymous></script><script src=//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/languages/r.min.js></script><script>hljs.initHighlightingOnLoad();</script><script src=/js/academic.min.bc1d5e4f014b8d38d75521ad1ae2ab18.js></script><div class=container><footer class=site-footer><p class=powered-by>Copyright Max Woolf &copy; 2019 &middot;
+var d=document,s=d.createElement('script');s.async=true;s.src='//'+"minimaxir"+'.disqus.com/embed.js';s.setAttribute('data-timestamp',+new Date());(d.head||d.body).appendChild(s);})();</script><noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a></section></div></article><script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin=anonymous></script><script src=https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin=anonymous></script><script src=https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin=anonymous></script><script src=https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js integrity="sha256-X5PoE3KU5l+JcX+w09p/wHl9AzK333C4hJ2I9S5mD4M=" crossorigin=anonymous></script><script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js integrity="sha256-aYTdUrn6Ow1DDgh5JTc3aDGnnju48y/1c8s1dgkYPQ8=" crossorigin=anonymous></script><script src=//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/languages/r.min.js></script><script>hljs.initHighlightingOnLoad();</script><script src=/js/academic.min.fa2e27444bc8d51f81714869209e3287.js></script><div class=container><footer class=site-footer><p class=powered-by>Copyright Max Woolf &copy; 2019 &middot;
 Powered by the
 <a href=https://sourcethemes.com/academic/ target=_blank rel=noopener>Academic theme</a> for
 <a href=https://gohugo.io target=_blank rel=noopener>Hugo</a>.

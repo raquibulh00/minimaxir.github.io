@@ -258,8 +258,7 @@ LIMIT 500
 &lt;li&gt;Aggregate the keywords by both subreddit and the word itself, and obtain the # of distinct submissions the word is present in, the average score among all submissions, etc.&lt;/li&gt;
 &lt;li&gt;Keep only words which occur in atleast 1,000 distinct submissions, which is important for getting a good average.&lt;/li&gt;
 &lt;li&gt;For each subreddit, rank each remaining word by their average score, descending.&lt;/li&gt;
-&lt;li&gt;Keep only the Top 20 words for each subreddit. 500 subreddits x 20 words = 10,000 rows maximum, which the limit BigQuery allows for web download, so that works out well.&lt;/li&gt;
-&lt;/ul&gt;
+&lt;li&gt;&lt;p&gt;Keep only the Top 20 words for each subreddit. 500 subreddits x 20 words = 10,000 rows maximum, which the limit BigQuery allows for web download, so that works out well.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-sql&#34;&gt;SELECT * FROM (
 SELECT subreddit, word, num_words, avg_score, lower_95, median, upper_95, ROW_NUMBER() OVER (PARTITION BY subreddit ORDER BY avg_score DESC) score_rank
 FROM (
@@ -274,7 +273,8 @@ HAVING num_words &amp;gt;= 1000
 ))
 WHERE score_rank &amp;lt;= 20
 ORDER BY subreddit, avg_score DESC
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
 &lt;p&gt;Phew! That query results in &lt;a href=&#34;https://docs.google.com/spreadsheets/d/1MRfLR_TBO8zveKaifqVXTN0da7tf0FQOr5a2LVkZgkg/edit?usp=sharing&#34; target=&#34;_blank&#34;&gt;this output&lt;/a&gt;, which we can use to plot a bar chart for each subreddit.&lt;/p&gt;
 &lt;h2 id=&#34;plotting-the-words&#34;&gt;Plotting the Words&lt;/h2&gt;
 &lt;p&gt;&lt;em&gt;The R code used to generate the charts is available in &lt;a href=&#34;https://github.com/minimaxir/reddit-subreddit-keywords/blob/master/reddit_subreddit_words.ipynb&#34; target=&#34;_blank&#34;&gt;this Jupyter notebook&lt;/a&gt;, open-sourced on GitHub. Additionally, all 500 charts with the keyword ranks for all 500 subreddits are available in &lt;a href=&#34;https://github.com/minimaxir/reddit-subreddit-keywords/tree/master/subreddit-mean&#34; target=&#34;_blank&#34;&gt;the parent repository&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;

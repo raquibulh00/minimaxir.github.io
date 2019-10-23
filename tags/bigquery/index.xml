@@ -48,8 +48,7 @@ dev.off()
 &lt;ul&gt;
 &lt;li&gt;Filter the data slightly to reduce some erroneous points.&lt;/li&gt;
 &lt;li&gt;The theme must be primarily a black background, with most of the ggplot2 theme attributes stripped out and the margins nullified. (implemented as &lt;code&gt;theme_map_dark()&lt;/code&gt;; code is in the notebook)&lt;/li&gt;
-&lt;li&gt;Set the resolution of the rendering device to 300 DPI; this reduces some of the aliasing in the resulting image.&lt;/li&gt;
-&lt;/ul&gt;
+&lt;li&gt;&lt;p&gt;Set the resolution of the rendering device to 300 DPI; this reduces some of the aliasing in the resulting image.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-R&#34;&gt;plot &amp;lt;- ggplot(df %&amp;gt;% filter(num_pickups &amp;gt; 10), aes(x=long, y=lat)) +
 geom_point(color=&amp;quot;white&amp;quot;, size=0.06) +
 scale_x_continuous(limits=c(min_long, max_long)) +
@@ -58,7 +57,8 @@ theme_map_dark()
 png(&amp;quot;nyc-taxi-3.png&amp;quot;, w=600, h=600, res=300)
 plot
 dev.off()
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
 &lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/nyc-ggplot2-howto/nyc-taxi-3.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Right on track! Now time to make things more professional.&lt;/p&gt;
 &lt;p&gt;This requires the implementation of a few more aesthetics:&lt;/p&gt;
@@ -99,8 +99,7 @@ border: 3px solid red;
 &lt;li&gt;Set the aggregation to the &lt;code&gt;sum&lt;/code&gt; function, so it sums up all the revenues within a bin.&lt;/li&gt;
 &lt;li&gt;Scale the total hex revenues with a gradient.&lt;/li&gt;
 &lt;li&gt;Tweak all the aesthetics: color of the base points, the color of the hexes, the transparency of the hexes, and the name of the chart.&lt;/li&gt;
-&lt;li&gt;Set the chart dimensions to avoid the &lt;code&gt;coord_equal()&lt;/code&gt; issue mention above.&lt;/li&gt;
-&lt;/ul&gt;
+&lt;li&gt;&lt;p&gt;Set the chart dimensions to avoid the &lt;code&gt;coord_equal()&lt;/code&gt; issue mention above.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-R&#34;&gt;plot &amp;lt;- ggplot(df %&amp;gt;% filter(num_pickups &amp;gt; 20), aes(x=long, y=lat, z=total_revenue)) +
 geom_point(size=0.06, color=&amp;quot;#999999&amp;quot;) +
 stat_summary_hex(fun = sum, bins=100, alpha=0.7) +
@@ -113,7 +112,8 @@ coord_equal()
 png(&amp;quot;nyc-taxi-5.png&amp;quot;, w=950, h=860, res=300)
 plot
 dev.off()
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
 &lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/nyc-ggplot2-howto/nyc-taxi-5.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;That wasn&amp;rsquo;t too bad. The gradient shows that &lt;a href=&#34;https://www.google.com/maps/place/penn+station+nyc/@40.750568,-73.993519,15z&#34; target=&#34;_blank&#34;&gt;Penn Station&lt;/a&gt; in Manhattan, along with the two airports, are the largest revenue generators.&lt;/p&gt;
 &lt;p&gt;I &lt;a href=&#34;https://www.reddit.com/r/dataisbeautiful/comments/3sjmc0/total_revenue_for_nyc_yellow_taxis_by_pickup/&#34; target=&#34;_blank&#34;&gt;posted the hex-overlayed map&lt;/a&gt; on Reddit to /r/dataisbeautiful as a part of my data visualization beta-testing. Although the chart received just under 200 upvotes, the comments in the Reddit thread were &lt;em&gt;unanimously negative&lt;/em&gt;. Reddit user /u/DanHeidel &lt;a href=&#34;https://www.reddit.com/r/dataisbeautiful/comments/3sjmc0/total_revenue_for_nyc_yellow_taxis_by_pickup/cwxuy1e&#34; target=&#34;_blank&#34;&gt;posted a long rant&lt;/a&gt; on the problems with the aesthetics of the chart. And for the most part, I agree with his assessment.&lt;/p&gt;
@@ -169,8 +169,7 @@ LIMIT 500
 &lt;li&gt;Aggregate the keywords by both subreddit and the word itself, and obtain the # of distinct submissions the word is present in, the average score among all submissions, etc.&lt;/li&gt;
 &lt;li&gt;Keep only words which occur in atleast 1,000 distinct submissions, which is important for getting a good average.&lt;/li&gt;
 &lt;li&gt;For each subreddit, rank each remaining word by their average score, descending.&lt;/li&gt;
-&lt;li&gt;Keep only the Top 20 words for each subreddit. 500 subreddits x 20 words = 10,000 rows maximum, which the limit BigQuery allows for web download, so that works out well.&lt;/li&gt;
-&lt;/ul&gt;
+&lt;li&gt;&lt;p&gt;Keep only the Top 20 words for each subreddit. 500 subreddits x 20 words = 10,000 rows maximum, which the limit BigQuery allows for web download, so that works out well.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-sql&#34;&gt;SELECT * FROM (
 SELECT subreddit, word, num_words, avg_score, lower_95, median, upper_95, ROW_NUMBER() OVER (PARTITION BY subreddit ORDER BY avg_score DESC) score_rank
 FROM (
@@ -185,7 +184,8 @@ HAVING num_words &amp;gt;= 1000
 ))
 WHERE score_rank &amp;lt;= 20
 ORDER BY subreddit, avg_score DESC
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
 &lt;p&gt;Phew! That query results in &lt;a href=&#34;https://docs.google.com/spreadsheets/d/1MRfLR_TBO8zveKaifqVXTN0da7tf0FQOr5a2LVkZgkg/edit?usp=sharing&#34; target=&#34;_blank&#34;&gt;this output&lt;/a&gt;, which we can use to plot a bar chart for each subreddit.&lt;/p&gt;
 &lt;h2 id=&#34;plotting-the-words&#34;&gt;Plotting the Words&lt;/h2&gt;
 &lt;p&gt;&lt;em&gt;The R code used to generate the charts is available in &lt;a href=&#34;https://github.com/minimaxir/reddit-subreddit-keywords/blob/master/reddit_subreddit_words.ipynb&#34; target=&#34;_blank&#34;&gt;this Jupyter notebook&lt;/a&gt;, open-sourced on GitHub. Additionally, all 500 charts with the keyword ranks for all 500 subreddits are available in &lt;a href=&#34;https://github.com/minimaxir/reddit-subreddit-keywords/tree/master/subreddit-mean&#34; target=&#34;_blank&#34;&gt;the parent repository&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
@@ -291,8 +291,7 @@ ORDER BY num_words DESC
 &lt;ul&gt;
 &lt;li&gt;Aggregate by subreddit, month, and count of unique comment authors on &lt;em&gt;all&lt;/em&gt; comments (this will result in a query with a lot of data processed!)&lt;/li&gt;
 &lt;li&gt;For each month, rank the subreddits by number of unique authors.&lt;/li&gt;
-&lt;li&gt;Take the top 20 subreddits by rank for each given month.&lt;/li&gt;
-&lt;/ul&gt;
+&lt;li&gt;&lt;p&gt;Take the top 20 subreddits by rank for each given month.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-sql&#34;&gt;SELECT subreddit, date, unique_authors FROM
 (SELECT subreddit, date, unique_authors, ROW_NUMBER() OVER (PARTITION BY date ORDER BY unique_authors DESC) rank FROM
 (SELECT subreddit, LEFT(DATE(SEC_TO_TIMESTAMP(created_utc)), 7) as date, COUNT(UNIQUE(author)) as unique_authors FROM TABLE_QUERY([fh-bigquery:reddit_comments], &amp;quot;table_id CONTAINS &#39;20&#39; AND LENGTH(table_id)&amp;lt;8&amp;quot;)
@@ -300,7 +299,8 @@ GROUP EACH BY subreddit, date
 ))
 WHERE rank &amp;lt;= 20
 ORDER BY date ASC, unique_authors DESC
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
 &lt;p&gt;11.9 seconds and 53.3 GB (!) later, we can create a Top 20 Subreddits visualization for each month, and combine each image into a GIF with my trusty &lt;a href=&#34;https://github.com/minimaxir/frames-to-gif-osx&#34; target=&#34;_blank&#34;&gt;Convert Frames to GIF&lt;/a&gt; tool.&lt;/p&gt;
 &lt;p&gt;&lt;img src=&#34;https://minimaxir.com/img/reddit-bigquery/subreddit-ranks.gif&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;You can view the individual frames &lt;a href=&#34;https://github.com/minimaxir/reddit-bigquery/tree/master/subreddit-ranks&#34; target=&#34;_blank&#34;&gt;in the project GitHub repository&lt;/a&gt;. There are many trends revealed, such how some subreddits die over time (&lt;a href=&#34;https://www.reddit.com/r/fffffffuuuuuuuuuuuu&#34; target=&#34;_blank&#34;&gt;r/fffffffuuuuuuuuuuuu&lt;/a&gt;, &lt;a href=&#34;https://www.reddit.com/r/technology&#34; target=&#34;_blank&#34;&gt;/r/technology&lt;/a&gt;), how some rise over time (&lt;a href=&#34;https://www.reddit.com/r/pcmasterrace&#34; target=&#34;_blank&#34;&gt;/r/pcmasterrace&lt;/a&gt;), and how some subreddits have relative monthly spikes (&lt;a href=&#34;https://www.reddit.com/r/thebutton&#34; target=&#34;_blank&#34;&gt;/r/thebutton&lt;/a&gt;). Note that the colors have no visual meaning but are used to help easily differentiate between subreddits.&lt;/p&gt;

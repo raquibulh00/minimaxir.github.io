@@ -5,7 +5,7 @@
 &lt;p&gt;How strong is the relationship between Tomatometer scores and box office success, anyways? Or are other, better metrics? Time to make some pretty charts.&lt;/p&gt;
 &lt;p&gt;I obtained a large amount of movie data from the &lt;a href=&#34;http://www.omdbapi.com&#34; target=&#34;_blank&#34;&gt;OMDb API&lt;/a&gt;, which provides easy access to movie metadata from IMDb and Rotten Tomatoes. This data contains Rotten Tomatoes Tomatometer scores, Rotten Tomatoes Audience Scores, IMDb User Rankings, and Metacritic Scores. If you want to know how I processed the data in R and plotted the charts using ggplot2, I have &lt;a href=&#34;https://www.youtube.com/watch?v=F5Hjlkxw_2A&#34; target=&#34;_blank&#34;&gt;prepared a screencast&lt;/a&gt; for your viewing pleasure.&lt;/p&gt;
 &lt;div style=&#34;position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;&#34;&gt;
-&lt;iframe src=&#34;//www.youtube.com/embed/F5Hjlkxw_2A&#34; style=&#34;position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;&#34; allowfullscreen title=&#34;YouTube Video&#34;&gt;&lt;/iframe&gt;
+&lt;iframe src=&#34;https://www.youtube.com/embed/F5Hjlkxw_2A&#34; style=&#34;position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;&#34; allowfullscreen title=&#34;YouTube Video&#34;&gt;&lt;/iframe&gt;
 &lt;/div&gt;
 &lt;p&gt;For this analysis, we will be looking at the &lt;a href=&#34;http://www.r-statistics.com/2013/05/log-transformations-for-skewed-and-wide-distributions-from-practical-data-science-with-r/&#34; target=&#34;_blank&#34;&gt;log-transformation&lt;/a&gt; of domestic box office revenue, since the values are skewed by mega-blockbusters like the ones mentioned previously. Revenues are not inflation-adjusted since the rating data is only present for recent years and due to the log-transformation already present, inflation correction would not impact this particular analysis much.&lt;/p&gt;
 &lt;h2 id=&#34;rotten-tomatoes-tomatometer&#34;&gt;Rotten Tomatoes Tomatometer&lt;/h2&gt;
@@ -60,7 +60,7 @@
 &lt;h2 id=&#34;let-s-code&#34;&gt;Let&amp;rsquo;s Code!&lt;/h2&gt;
 &lt;p&gt;I have recorded a screencast of myself coding in R to play around with data from &lt;a href=&#34;http://www.yelp.com/dataset_challenge&#34; target=&#34;_blank&#34;&gt;Yelp Dataset Challenge&lt;/a&gt; and &lt;a href=&#34;https://www.youtube.com/watch?v=Emt9bn0D5ZI&#34; target=&#34;_blank&#34;&gt;uploaded it to YouTube&lt;/a&gt;. Additionally, the video can be played at an unusually high quality for screencasting: 1440p on supported browsers, at 60 frames per second.&lt;/p&gt;
 &lt;div style=&#34;position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;&#34;&gt;
-&lt;iframe src=&#34;//www.youtube.com/embed/Emt9bn0D5ZI&#34; style=&#34;position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;&#34; allowfullscreen title=&#34;YouTube Video&#34;&gt;&lt;/iframe&gt;
+&lt;iframe src=&#34;https://www.youtube.com/embed/Emt9bn0D5ZI&#34; style=&#34;position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;&#34; allowfullscreen title=&#34;YouTube Video&#34;&gt;&lt;/iframe&gt;
 &lt;/div&gt;
 &lt;p&gt;This particular screencast is also my first significant attempt at working with audio/video editing and voice-over. Feel free to provide suggestions for future videos.&lt;/p&gt;
 &lt;p&gt;Since the screencast is 40 minutes long (inadvertently!), I&amp;rsquo;ve written an abridged summary of the screencast, along with some clarification of points made.&lt;/p&gt;
